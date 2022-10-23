@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+:root {
+  /* Basic colors */
+  --white: #ffffff;
+  --red: #ff5454;
+  --green: #9ad150;
+  --orange: #ffa770;
+  --yellow: #f3da8d;
+
+  --blue: #b6cde2;
+  --l-blue: #80a4ed;
+
+  --d-gray: #a0a0a0;
+  --l-gray: #d3d3d3;
+
+  --d-black: #1d1d1b;
+  --m-black: #2e3336;
+  --l-black: #3e4851;
+}
+
+@layer base {
+  [data-theme="light"] {
+    --background-color: #d3d3d34d;
+    --background-inv-color: var(var(--l-black));
+
+    --text-color: var(--l-black);
+    --text-inv-color: var(--l-white);
+    --hint-color: var(--d-gray);
+    --hint-inv-color: #3e485199;
+    --label-color: var(--l-white);
+
+    --action-color: var(--orange);
+    --selection-color: var(--yellow);
+  }
+
+  [data-theme="dark"] {
+    --background-color: #1d1d1be0;
+    --background-inv-color: var(var(--l-black));
+
+    --text-color: var(--white);
+    --text-inv-color: var(--d-gray);
+    --hint-color: var(--l-gray);
+    --hint-inv-color: #3e485199;
+    --label-color: var(--l-white);
+
+    --action-color: var(--orange);
+    --selection-color: var(--yellow);
+  }
+}
