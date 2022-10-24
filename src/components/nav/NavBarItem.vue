@@ -1,6 +1,7 @@
 <template>
-  <button class="navbar-item" @click="onClick">
-    <slot class="navbar-item-icon"></slot>
+  <button class="btn btn-ghost w-14 h-14" :class="{'selected': selected}"
+    @click="onClick">
+    <slot class="inline-block"></slot>
   </button>
 </template>
 
@@ -8,11 +9,15 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "NavBarIcon",
+  name: "NavBarItem",
   emits: ['item-click'],
   props: {
     page: String,
     path: String,
+    selected: {
+      type: Boolean,
+      default: false
+    },
   },
   methods: {
     onClick() {
@@ -28,11 +33,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.navbar-item {
-  @apply btn btn-ghost w-14 h-14 rounded-box;
-}
+  .selected {
+    background-color: var(--yellow);
+  }
 
-.navbar-item-icon {
-  @apply inline-block h-6 w-6 stroke-white;
-}
+  .selected:hover {
+    background-color: var(--yellow);
+  }
 </style>
