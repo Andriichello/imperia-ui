@@ -1,0 +1,28 @@
+<template>
+  <div class="base-div">
+    <h2>Login</h2>
+  </div>
+</template>
+
+<script>
+import { defineComponent } from "vue";
+
+export default defineComponent({
+  name: "LoginView",
+  components: {},
+});
+</script>
+
+<style scoped>
+.base-div {
+  background-color: var(--l-black);
+  @apply rounded-box;
+  min-width: 100px;
+  min-height: 100px;
+  padding: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

@@ -1,6 +1,8 @@
 <template>
   <NavBar />
-  <router-view />
+  <div class="wrapper">
+    <router-view />
+  </div>
 </template>
 
 <script lang="ts">
@@ -14,3 +16,19 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped>
+  .wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    align-self: center;
+
+    color: var(--white);
+  }
+</style>

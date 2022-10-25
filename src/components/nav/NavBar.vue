@@ -73,6 +73,7 @@ export default defineComponent({
       }
 
       this.setPage(page);
+      this.$router.push(page);
     }
   },
 });
@@ -81,7 +82,7 @@ export default defineComponent({
 
 <style scoped>
 nav {
-  @apply fixed top-0 left-0 h-screen p-3 flex flex-col items-center justify-between gap-3;
+  @apply h-screen p-3 flex flex-col items-center justify-between gap-3;
   background-color: var(--l-black);
 }
 

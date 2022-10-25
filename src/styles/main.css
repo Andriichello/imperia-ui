@@ -62,3 +62,7 @@ html, body {
     --selection-color: var(--yellow);
   }
 }
+
+#app {
+  @apply h-screen w-screen flex flex-row justify-center items-center;
+}

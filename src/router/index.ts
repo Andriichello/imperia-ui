@@ -1,11 +1,36 @@
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import HistoryView from '../views/HistoryView.vue'
+import ProfileView from '../views/ProfileView.vue'
+import MarketplaceView from '../views/MarketplaceView.vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
-  // {
-  //   path: '/',
-  //   name: 'home',
-  //   component: HomeView
-  // },
+  {
+    path: '/home',
+    name: 'home',
+    component: HomeView
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginView
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView
+  },
+  {
+    path: '/marketplace',
+    name: 'marketplace',
+    component: MarketplaceView
+  },
+  {
+    path: '/history',
+    name: 'history',
+    component: HistoryView
+  },
   // {
   //   path: '/about',
   //   name: 'about',
