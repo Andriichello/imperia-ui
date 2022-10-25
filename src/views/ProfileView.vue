@@ -1,22 +1,22 @@
 <template>
-  <div class="base-div">
-    <h2>Profile</h2>
-  </div>
+  <ProfileForm/> 
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import ProfileForm from "../components/forms/ProfileForm.vue";
 
 export default defineComponent({
   name: "ProfileView",
-  components: {},
+  components: {
+    ProfileForm
+  },
 });
 </script>
 
 <style scoped>
 .base-div {
-  background-color: var(--l-black);
-  @apply rounded-box;
+  @apply rounded-box bg-base-300;
   min-width: 100px;
   min-height: 100px;
   padding: 12px;

@@ -34,6 +34,11 @@ html, body {
 }
 
 @layer base {
+  * {
+    --icon-color: hsla(var(--bc) / var(--tw-text-opacity, 1));
+    --error-btn-text: hsl(var(--erc, var(--nc)) / var(--tw-text-opacity));
+  }
+
   [data-theme="light"] {
     --background-color: #d3d3d34d;
     --background-inv-color: var(var(--l-black));
@@ -50,7 +55,21 @@ html, body {
 
   [data-theme="dark"] {
     --background-color: #1d1d1be0;
-    --background-inv-color: var(var(--l-black));
+    --background-inv-color: var(--l-black);
+
+    --text-color: var(--white);
+    --text-inv-color: var(--d-gray);
+    --hint-color: var(--l-gray);
+    --hint-inv-color: #3e485199;
+    --label-color: var(--l-white);
+
+    --action-color: var(--orange);
+    --selection-color: var(--yellow);
+  }
+
+  [data-theme="night"] {
+    --background-color: #1d1d1be0;
+    --background-inv-color: var(--l-black);
 
     --text-color: var(--white);
     --text-inv-color: var(--d-gray);

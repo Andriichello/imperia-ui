@@ -1,28 +1,28 @@
 <template>
   <nav>
     <div class="nav-block">
-      <NavBarItem @item-click="onItemClick" page="home" path="/home" :selected="isSelected('home')">
-        <BaseIcon title="home" :color="isSelected('home') ? 'var(--d-black)' : 'white'" width="32" height="32" viewBox="0 0 24 24">
+      <NavBarItem @item-click="onItemClick" page="home" path="/home" :selected="isSelected('home')" v-show="!onlyThemeSwitcher">
+        <BaseIcon title="home" :color="iconColor('home')" width="32" height="32" viewBox="0 0 24 24">
           <path d="M9.73049 2.78823C11.0005 1.77923 12.7805 1.73923 14.0895 2.66823L14.2505 2.78823L20.3395 7.65923C21.0095 8.17823 21.4205 8.94923 21.4905 9.78823L21.5005 9.98923V18.0982C21.5005 20.1882 19.8495 21.8882 17.7805 21.9982H15.7905C14.8395 21.9792 14.0705 21.2392 14.0005 20.3092L13.9905 20.1682V17.3092C13.9905 16.9982 13.7595 16.7392 13.4505 16.6882L13.3605 16.6782H10.6895C10.3705 16.6882 10.1105 16.9182 10.0705 17.2182L10.0605 17.3092V20.1592C10.0605 20.2182 10.0495 20.2882 10.0405 20.3382L10.0305 20.3592L10.0195 20.4282C9.90049 21.2792 9.20049 21.9282 8.33049 21.9892L8.20049 21.9982H6.41049C4.32049 21.9982 2.61049 20.3592 2.50049 18.2982V9.98923C2.50949 9.13823 2.88049 8.34823 3.50049 7.79823L9.73049 2.78823ZM13.3805 3.87823C12.6205 3.26823 11.5405 3.23923 10.7405 3.76823L10.5895 3.87823L4.50949 8.77923C4.16049 9.03823 3.95049 9.42823 3.90049 9.83823L3.88949 9.99823V18.0982C3.88949 19.4282 4.92949 20.5182 6.25049 20.5982H8.20049C8.42049 20.5982 8.61049 20.4492 8.63949 20.2392L8.66049 20.0592L8.67049 20.0082V17.3092C8.67049 16.2392 9.49049 15.3692 10.5405 15.2882H13.3605C14.4295 15.2882 15.2995 16.1092 15.3805 17.1592V20.1682C15.3805 20.3782 15.5305 20.5592 15.7305 20.5982H17.5895C18.9295 20.5982 20.0195 19.5692 20.0995 18.2582L20.1105 18.0982V9.99823C20.0995 9.56923 19.9205 9.16823 19.6105 8.86923L19.4805 8.75823L13.3805 3.87823Z"/>
         </BaseIcon>
       </NavBarItem>
 
-      <NavBarItem @item-click="onItemClick" page="marketplace" path="/marketplace" :selected="isSelected('marketplace')">
-         <BaseIcon title="marketplace" :color="isSelected('marketplace') ? 'var(--d-black)' : 'white'" width="32" height="32" viewBox="0 0 24 24">
+      <NavBarItem @item-click="onItemClick" page="marketplace" path="/marketplace" :selected="isSelected('marketplace')" v-show="!onlyThemeSwitcher">
+         <BaseIcon title="marketplace" :color="iconColor('marketplace')" width="32" height="32" viewBox="0 0 24 24">
           <path d="M21.9636 6.7743L20.535 2.48859C20.4378 2.19675 20.1647 1.99992 19.8572 2H4.14287C3.83529 1.99992 3.5622 2.19675 3.46502 2.48859L2.03642 6.7743C2.01441 6.84101 2.0021 6.91053 2.00001 6.98072C2.00001 6.98787 2.00001 6.99285 2.00001 7.00001V7.71431C2.00261 8.83345 2.53183 9.88613 3.42857 10.5557C3.42857 10.5615 3.42857 10.5657 3.42857 10.5714V19.8571C3.42857 21.0406 4.38796 22 5.57142 22H18.4286C19.612 22 20.5714 21.0406 20.5714 19.8571V10.5714C20.5714 10.5657 20.5714 10.5614 20.5714 10.5557C21.4681 9.88613 21.9974 8.83345 22 7.71431V7.00001C22 6.99285 22 6.98787 22 6.98072C21.9979 6.91049 21.9856 6.84097 21.9636 6.7743ZM4.7 3.42856H19.3422L20.295 6.28571H3.7L4.7 3.42856ZM13.4286 20.5714H10.5714V14.8571H13.4286V20.5714ZM19.1429 19.8571C19.1429 20.2516 18.8231 20.5714 18.4286 20.5714H14.8571V14.1429C14.8571 13.7484 14.5373 13.4286 14.1428 13.4286H9.85713C9.46263 13.4286 9.14283 13.7484 9.14283 14.1429V20.5714H5.57142C5.17692 20.5714 4.85712 20.2516 4.85712 19.8571V11.2143C5.85954 11.4201 6.90192 11.1808 7.71428 10.5586C8.98936 11.4951 10.7249 11.4951 12 10.5586C13.2751 11.4951 15.0106 11.4951 16.2857 10.5586C17.0981 11.1809 18.1404 11.4201 19.1429 11.2143V19.8571ZM18.4286 9.85712C17.8109 9.85675 17.2243 9.58579 16.8235 9.1157C16.564 8.81868 16.1127 8.78829 15.8157 9.04786C15.7916 9.06891 15.7689 9.0916 15.7479 9.1157C14.9536 10.0021 13.5912 10.0768 12.7048 9.28265C12.6462 9.23009 12.5904 9.17438 12.5378 9.1157C12.2583 8.81868 11.7909 8.80445 11.4938 9.08402C11.4829 9.09428 11.4724 9.10482 11.4621 9.1157C10.6679 10.0021 9.30552 10.0768 8.41908 9.28265C8.3604 9.23009 8.30469 9.17438 8.25213 9.1157C7.97259 8.81868 7.50514 8.80445 7.20811 9.08402C7.19723 9.09428 7.18664 9.10482 7.17643 9.1157C6.77569 9.58579 6.18917 9.85675 5.57142 9.85712C4.38796 9.85712 3.42857 8.89774 3.42857 7.71427H20.5714C20.5714 8.89774 19.612 9.85712 18.4286 9.85712Z"/>
         </BaseIcon>
       </NavBarItem>
 
-      <NavBarItem @item-click="onItemClick" page="history" path="/history" :selected="isSelected('history')">
-        <BaseIcon title="history" :color="isSelected('history') ? 'var(--d-black)' : 'white'" width="32" height="32" viewBox="0 0 24 24">
+      <NavBarItem @item-click="onItemClick" page="history" path="/history" :selected="isSelected('history')" v-show="!onlyThemeSwitcher">
+        <BaseIcon title="history" :color="iconColor('history')" width="32" height="32" viewBox="0 0 24 24">
           <path d="M14.9857 2C18.0482 2 20 3.43503 20 6.25765V20.3309C20 20.7736 19.8285 21.1982 19.5232 21.5112C19.2179 21.8242 18.8038 22 18.3608 22C18.0965 21.9957 17.8368 21.9291 17.5863 21.7971L11.974 18.6635L6.38442 21.8037C5.7112 22.1624 4.89545 21.9969 4.38431 21.3975L4.28627 21.2719L4.19263 21.1174C4.07042 20.8782 4.00448 20.613 4 20.3309V6.43434C4 3.49929 5.90915 2 9.01434 2H14.9857ZM14.9857 3.44775H9.01434C6.61925 3.44775 5.41205 4.39579 5.41205 6.43434L5.41195 20.3189C5.41267 20.3631 5.42346 20.4065 5.41172 20.3897L5.44919 20.4519C5.51373 20.5421 5.63485 20.5715 5.71962 20.5265L11.3068 17.3883C11.7233 17.1576 12.225 17.1576 12.6435 17.3894L18.2463 20.5173C18.2887 20.5397 18.3355 20.5517 18.372 20.5523C18.4293 20.5523 18.4842 20.529 18.5247 20.4875C18.5652 20.446 18.5879 20.3897 18.5879 20.3309V6.25765C18.5879 4.35788 17.35 3.44775 14.9857 3.44775ZM15.4079 8.31663C15.7978 8.31663 16.1139 8.64072 16.1139 9.0405C16.1139 9.40697 15.8483 9.70984 15.5037 9.75777L15.4079 9.76438H8.54042C8.1505 9.76438 7.8344 9.44029 7.8344 9.0405C7.8344 8.67404 8.10001 8.37117 8.44462 8.32324L8.54042 8.31663H15.4079Z"/>
         </BaseIcon>
       </NavBarItem>
     </div>
 
     <div class="nav-block">
-      <NavBarItem @item-click="onItemClick" page="profile" path="/profile" :selected="isSelected('profile')">
-         <BaseIcon title="profile" :color="isSelected('profile') ? 'var(--d-black)' : 'white'" width="32" height="32" viewBox="0 0 24 24">
+      <NavBarItem @item-click="onItemClick" page="profile" path="/profile" :selected="isSelected('profile')" v-show="!onlyThemeSwitcher">
+         <BaseIcon title="profile" :color="iconColor('profile')" width="32" height="32" viewBox="0 0 24 24">
           <mask id="mask0_60_12019" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="14" width="16" height="8">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M4 14.4961H19.8399V21.8701H4V14.4961Z"/>
           </mask>
@@ -45,7 +45,6 @@
 
 <script>
 import { defineComponent } from "vue";
-import { mapGetters, mapActions } from "vuex";
 import BaseIcon from "../icons/BaseIcon.vue";
 import NavBarItem from "./NavBarItem.vue";
 import ThemeSwitcher from "../theme/ThemeSwitcher.vue";
@@ -58,22 +57,26 @@ export default defineComponent({
     ThemeSwitcher,
   },
   methods: {
-    ...mapGetters({
-      getPage: "nav/get",
-    }),
-    ...mapActions({
-      setPage: "nav/set",
-    }),
     isSelected(page) {
-      return page === this.getPage();
+      return page === this.page;
+    },
+    iconColor(page) {
+      return this.isSelected(page) ? 'var(--text-black)' : 'var(--icon-color)';
     },
     onItemClick({ page }) {
       if (this.isSelected(page)) {
         return;
       }
 
-      this.setPage(page);
       this.$router.push(page);
+    }
+  },
+  computed: {
+    page() {
+      return this.$router.currentRoute.value.name;
+    },
+    onlyThemeSwitcher() {
+      return this.page === 'login' || this.page === 'register';
     }
   },
 });
@@ -82,8 +85,7 @@ export default defineComponent({
 
 <style scoped>
 nav {
-  @apply h-screen p-3 flex flex-col items-center justify-between gap-3;
-  background-color: var(--l-black);
+  @apply fixed h-screen top-0 left-0 p-3 flex flex-col items-center justify-between gap-3 bg-base-300;
 }
 
 .nav-block {

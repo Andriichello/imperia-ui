@@ -15,8 +15,7 @@ export default defineComponent({
 
 <style scoped>
 .base-div {
-  background-color: var(--l-black);
-  @apply rounded-box;
+  @apply rounded-box bg-base-300;
   min-width: 100px;
   min-height: 100px;
   padding: 12px;
