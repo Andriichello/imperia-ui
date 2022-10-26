@@ -1,38 +1,32 @@
 <template>
-  <AuthForm @on-submit="onLogin" title="Welcome back!" link="Don't have an account?" button="Log In" to="/register">
-    <template #inputs>
-        <div class="form-control w-full max-w-md">
-        <label class="label">
-          <span class="label-text">Email</span>
-        </label>
-        <input type="text" placeholder="Email..." class="input input-bordered w-full max-w-xs" />
-      </div>
-
-      <div class="form-control w-full max-w-md">
-        <label class="label">
-          <span class="label-text">Password</span>
-        </label>
-        <input type="password" placeholder="Password..." class="input input-bordered w-full max-w-xs" />
-      </div>
-    </template>
-  </AuthForm>
+  <LoginForm @on-login="onLogin"/>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import AuthForm from "../components/forms/AuthForm.vue";
+import { mapActions, mapGetters } from "vuex";
+import LoginForm from "../components/forms/LoginForm.vue";
 
 export default defineComponent({
   name: "LoginView",
   components: {
-    AuthForm,
+    LoginForm,
   },
   methods: {
-    onLogin(data) {
-      console.log('onLogin: ', data);
-
-      this.$router.push('/home');
+    ...mapGetters({
+      getLogin: 'auth/login',
+    }),
+    ...mapActions({
+      apiMe: 'auth/me',
+      apiLogin: 'auth/login',
+    }),
+    onLogin(form) {
+      // todo: validate form
+      this.apiLogin(form);
     }
+  },
+  mounted() {
+    console.log(this.$route)
   }
 });
 </script>
