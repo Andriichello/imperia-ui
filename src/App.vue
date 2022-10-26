@@ -27,12 +27,14 @@ export default defineComponent({
     }),
   },
   watch: {
-    authorized(newValue) {
+    authorized(newValue, oldValue) {
       const isLogin = this.$route.name === 'login'; 
       const isRegister = this.$route.name === 'register'; 
 
       if (newValue && (isLogin || isRegister)) {
         this.$router.push(this.$route.query.redirect ?? '/home');
+      } else if (!newValue && newValue !== oldValue) {
+         this.$router.push('/login');
       }
     }
   },

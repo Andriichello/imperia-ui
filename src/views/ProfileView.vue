@@ -1,9 +1,10 @@
 <template>
-  <ProfileForm /> 
+  <ProfileForm @on-logout="onLogout"/> 
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import { mapActions } from "vuex";
 import ProfileForm from "../components/forms/ProfileForm.vue";
 
 export default defineComponent({
@@ -11,6 +12,14 @@ export default defineComponent({
   components: {
     ProfileForm
   },
+  methods: {
+    ...mapActions({
+      apiLogout: 'auth/logout',
+    }),
+    onLogout() {
+      this.apiLogout();
+    }
+  }
 });
 </script>
 

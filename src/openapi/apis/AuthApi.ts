@@ -114,7 +114,7 @@ export class AuthApi extends runtime.BaseAPI {
     const response = await this.request(
       {
         path: `/api/logout`,
-        method: "POST",
+        method: "DELETE",
         headers: headerParameters,
         query: queryParameters,
       },

@@ -1,5 +1,5 @@
 import { authHeaders } from "@/helpers";
-import { instanceOfLoginResponse, instanceOfMeResponse, LoginRequest, LoginResponse, MeResponse, RegisterRequest, RegisterResponse, User } from "@/openapi";
+import { instanceOfLoginResponse, instanceOfLogoutResponse, instanceOfMeResponse, LoginRequest, LoginResponse, LogoutResponse, MeResponse, RegisterRequest, RegisterResponse, User } from "@/openapi";
 import { AuthApi, UsersApi } from "@/openapi"
 
 interface AuthState {
@@ -7,6 +7,7 @@ interface AuthState {
   token: string | null,
   me: MeResponse | Response | null,
   login: LoginResponse | Response | null,
+  logout: LogoutResponse | Response | null,
   register: RegisterResponse | Response | null,
 }
 
@@ -15,6 +16,7 @@ const state: AuthState = {
   token: localStorage.getItem('access-token'),
   me: null,
   login: null,
+  logout: null,
   register: null,
 };
 
@@ -30,6 +32,9 @@ const getters = {
   },
   login(state: AuthState) {
     return state.login;
+  },
+  logout(state: AuthState) {
+    return state.logout;
   },
   register(state: AuthState) {
     return state.register;
@@ -87,6 +92,19 @@ const actions = {
     if (instanceOfLoginResponse(login)) {
       dispatch('token', login.data.token);
       dispatch('user', login.data.user);
+    }
+  },
+  async logout({ commit, dispatch }) {
+    const logout = await (new AuthApi())
+      .logout({ headers: { ...authHeaders(state.token) } })
+      .then(response => response)
+      .catch(error => error.response);
+    
+    commit('logout', logout);
+
+    if (instanceOfLogoutResponse(logout)) {
+      dispatch('token', null);
+      dispatch('user', null);
     }
   },
   async register({ commit }, request: RegisterRequest) {

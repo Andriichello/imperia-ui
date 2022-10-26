@@ -24,9 +24,6 @@ export default defineComponent({
       // todo: validate form
       this.apiLogin(form);
     }
-  },
-  mounted() {
-    console.log(this.$route)
   }
 });
 </script>
