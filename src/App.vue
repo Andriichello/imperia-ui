@@ -1,30 +1,60 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view/>
+  <div class="wrapper">
+    <router-view />
+  </div>
+  <NavBar />
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script lang="ts">
+import { defineComponent } from "vue";
+import { mapGetters, mapActions } from "vuex";
+import NavBar from "./components/nav/NavBar.vue";
 
-nav {
-  padding: 30px;
-}
+export default defineComponent({
+  name: "App",
+  components: {
+    NavBar,
+  },
+  computed: {
+    ...mapGetters({
+      authorized: 'auth/authorized',
+    }),
+  },
+  methods: { 
+    ...mapActions({
+      resolveAuth: 'auth/resolve',
+      resolveTheme: 'theme/resolve',
+    }),
+  },
+  watch: {
+    authorized(newValue, oldValue) {
+      const isLogin = this.$route.name === 'login'; 
+      const isRegister = this.$route.name === 'register'; 
 
-nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+      if (newValue && (isLogin || isRegister)) {
+        this.$router.push(this.$route.query.redirect ?? '/home');
+      } else if (!newValue && newValue !== oldValue) {
+         this.$router.push('/login');
+      }
+    }
+  },
+  mounted() {
+    this.resolveAuth();
+    this.resolveTheme();
+  },
+});
+</script>
 
-nav a.router-link-exact-active {
-  color: #42b983;
-}
+<style scoped>
+  .wrapper {
+    @apply pl-20;
+
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    align-self: center;
+  }
 </style>

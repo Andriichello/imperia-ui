@@ -1,18 +1,27 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <div class="base-div">
+    <h2>Home</h2>
   </div>
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import HelloWorld from '@/components/HelloWorld.vue'; // @ is an alias to /src
+<script>
+import { defineComponent } from "vue";
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class HomeView extends Vue {}
+export default defineComponent({
+  name: "HomeView",
+  components: {},
+});
 </script>
+
+<style scoped>
+.base-div {
+  @apply rounded-box bg-base-300;
+  min-width: 100px;
+  min-height: 100px;
+  padding: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>
