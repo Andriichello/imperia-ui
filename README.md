@@ -17,12 +17,17 @@ npm run build
 
 ### Run your unit tests
 ```
-npm run test:unit
+npm run test
 ```
 
 ### Lints and fixes files
 ```
 npm run lint
+```
+
+### Regenerate `/src/openapi` (`imperia-api` must be running locally on http://localhost:8080)
+```
+npm run openapi
 ```
 
 ### Customize configuration
