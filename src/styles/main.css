@@ -37,6 +37,9 @@ html, body {
   * {
     --icon-color: hsla(var(--bc) / var(--tw-text-opacity, 1));
     --error-btn-text: hsl(var(--erc, var(--nc)) / var(--tw-text-opacity));
+  
+    --rounded-box: 0.25rem;
+    --padding-card: 1rem;
   }
 
   [data-theme="light"] {

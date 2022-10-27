@@ -74,11 +74,13 @@ const actions = {
   
     if (instanceOfMeResponse(me)) {
       dispatch('user', me.data);
-    }
+    } 
 
-    if (me instanceof Response && me.status === 401) {
-      dispatch('user', null);
-      dispatch('token', null);
+    if (me instanceof Response) {
+      if (me.status === 401) {
+        dispatch('user', null);
+        dispatch('token', null);
+      }
     }
   },
   async login({ commit, dispatch }, request: LoginRequest) {
@@ -134,6 +136,9 @@ const mutations = {
   },
   login(state: AuthState, login: LoginResponse | Response | null) {
     state.login = login;
+  },
+  logout(state: AuthState, logout: LogoutResponse | Response | null) {
+    state.logout = logout;
   },
   register(state: AuthState, register: RegisterResponse | Response | null) {
     state.register = register;

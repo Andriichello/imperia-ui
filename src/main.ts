@@ -18,9 +18,6 @@ router.beforeEach((to, from, next) => {
     } else if (isOpen || isAuth) {
         next();
     } else {
-        console.log('to: ', to);
-        console.log('from: ', from);
-
         next(`/login?redirect=${to.path}`);
     }
 })

@@ -54,7 +54,7 @@ export interface RegisterRequest {
    * @type {string}
    * @memberof RegisterRequest
    */
-  passwordConfirmation?: string;
+  passwordConfirmation: string;
 }
 
 /**
@@ -65,6 +65,7 @@ export function instanceOfRegisterRequest(value: object): boolean {
   isInstance = isInstance && "name" in value;
   isInstance = isInstance && "email" in value;
   isInstance = isInstance && "password" in value;
+  isInstance = isInstance && "passwordConfirmation" in value;
 
   return isInstance;
 }
@@ -86,9 +87,7 @@ export function RegisterRequestFromJSONTyped(
     email: json["email"],
     phone: !exists(json, "phone") ? undefined : json["phone"],
     password: json["password"],
-    passwordConfirmation: !exists(json, "password_confirmation")
-      ? undefined
-      : json["password_confirmation"],
+    passwordConfirmation: json["password_confirmation"],
   };
 }
 

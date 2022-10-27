@@ -9,55 +9,80 @@
         <div class="auth-card-title">
           <h1>First time here?</h1>
         </div>
+        
         <div class="auth-card-divider"></div>
+
+        <label class="label flex-grow justify-center" v-if="!hasErrors && message">
+          <span class="label-text-alt text-error text-sm">
+            {{ message }}
+          </span>
+        </label>
 
         <form @submit.prevent="onRegister" class="form-control w-full max-w-md">
           <div class="form-control w-full max-w-md">
-            <label class="label">
+            <label class="label flex-col items-start">
               <span class="label-text">Name</span>
             </label>
-            <input v-model="name" name="name" type="text" placeholder="Name..." class="input input-bordered w-full max-w-md" />
+            <input v-model="name" name="name" type="text" required placeholder="Name..." class="input input-bordered w-full max-w-md" />
+            <label class="label flex-col items-start" v-if="nameErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in nameErrors" :key="error">
+                {{ error }}
+              </span>
+            </label>
           </div>
 
           <div class="form-control w-full max-w-md">
-            <label class="label">
+            <label class="label flex-col items-start">
               <span class="label-text">Surname</span>
             </label>
-            <input v-model="surname" name="surname" type="text" placeholder="Surname..." class="input input-bordered w-full max-w-md" />
+            <input v-model="surname" name="surname" type="text" required placeholder="Surname..." class="input input-bordered w-full max-w-md" />
+            <label class="label flex-col items-start" v-if="surnameErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in surnameErrors" :key="error">
+                {{ error }}
+              </span>
+            </label>
           </div>
 
           <div class="form-control w-full max-w-md">
-            <label class="label">
+            <label class="label flex-col items-start">
               <span class="label-text">Email</span>
             </label>
-            <input v-model="email" name="email" type="email" placeholder="Email..." class="input input-bordered w-full max-w-md" />
-          </div>
-
-          <div class="form-control w-full max-w-md">
-            <label class="label">
-              <span class="label-text">Phone</span>
+            <input v-model="email" name="email" type="email" required placeholder="Email..." class="input input-bordered w-full max-w-md" />
+            <label class="label flex-col items-start" v-if="emailErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">
+                {{ error }}
+              </span>
             </label>
-            <input v-model="phone" name="phone" type="tel" placeholder="Phone..." class="input input-bordered w-full max-w-md" />
           </div>
 
           <div class="form-control w-full max-w-md">
-            <label class="label">
+            <label class="label flex-col items-start">
               <span class="label-text">Password</span>
             </label>
-            <input v-model="password" name="password" type="password" placeholder="Password..." class="input input-bordered w-full max-w-md" />
+            <input v-model="password" name="password" type="password" required placeholder="Password..." class="input input-bordered w-full max-w-md" />
+            <label class="label flex-col items-start" v-if="passwordErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in passwordErrors" :key="error">
+                {{ error }}
+              </span>
+            </label>
           </div>
 
             <div class="form-control w-full max-w-md">
-            <label class="label">
+            <label class="label flex-col items-start">
               <span class="label-text">Password Confirmation</span>
             </label>
-            <input v-model="password_confirmation" name="password_confirmation" type="password" placeholder="Password Confirmation..." class="input input-bordered w-full max-w-md" />
+            <input v-model="passwordConfirmation" name="passwordConfirmation" type="password" required placeholder="Password Confirmation..." class="input input-bordered w-full max-w-md" />
+            <label class="label flex-col items-start" v-if="passwordConfirmationErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in passwordConfirmationErrors" :key="error">
+                {{ error }}
+              </span>
+            </label>
           </div>
         
-          <router-link to="/login" class="link link-hover font-bold self-end mt-4 mb-4">Don't have an account?</router-link>
+          <router-link to="/login" class="link link-hover font-bold self-end mt-4 mb-4">Already have an account?</router-link>
 
           <div class="card-actions w-full">
-            <button type="submit" class="btn btn-block btn-primary">Log In</button>
+            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': registering }">Register</button>
           </div>
         </form>
       </div>
@@ -74,7 +99,14 @@ export default defineComponent({
   components: {
     LogoIcon
   },
-  emits: ["on-login"],
+  emits: ["on-register"],
+  props: {
+    errors: null,
+    registering: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       name: null,
@@ -82,12 +114,41 @@ export default defineComponent({
       email: null,
       phone: null,
       password: null,
-      password_confirmation: null,
+      passwordConfirmation: null,
     };
   },
+  computed: {
+    hasMessage() {
+      return this.errors && this.errors.hasMessage()
+    },
+    message() {
+      return this.hasMessage ? this.errors.message : null;
+    },
+    hasErrors() {
+      return this.errors && this.errors.hasErrors()
+    },
+    nameErrors() {
+      return this.getErrorsForAttribute('name');
+    },
+    surnameErrors() {
+      return this.getErrorsForAttribute('surname');
+    },
+    emailErrors() {
+      return this.getErrorsForAttribute('email');
+    },
+    passwordErrors() {
+      return this.getErrorsForAttribute('password');
+    },
+    passwordConfirmationErrors() {
+      return this.getErrorsForAttribute('password_confirmation');
+    },
+  },
   methods: {
-     onLogin() {
-      this.$emit("on-login", this.$data);
+    getErrorsForAttribute(attribute) {
+      return this.hasErrors ? this.errors.about(attribute) : null;
+    },
+    onRegister() {
+      this.$emit("on-register", this.$data);
     }
   }
 });
@@ -109,9 +170,6 @@ export default defineComponent({
 
 .auth-card {
   @apply card shadow-xl block bg-base-300;
-
-  --rounded-box: 0.25rem;
-  --padding-card: 1rem;
 }
 
 .auth-card-body {
