@@ -1,4 +1,4 @@
-# imperia-ui
+# `imperia-ui`
 
 ## Project setup
 ```
