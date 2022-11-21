@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-ghost w-14 h-14 p-2" :class="{'selected': selected}"
+  <button :class="{'selected': selected}"
     @click="onClick">
     <slot class="inline-block"></slot>
   </button>
@@ -9,30 +9,29 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "NavBarItem",
-  emits: ['item-click'],
+  name: "TabSwitcherItem",
+  emits: ['switch-tab'],
   props: {
-    page: String,
-    path: String,
-    selected: {
-      type: Boolean,
-      default: false
-    },
+    tab: String,
+    selected: Boolean,
   },
   methods: {
     onClick() {
-      const args = {
-        page: this.page,
-        path: this.path,
-      };
+      if (this.selected) {
+        return;
+      }
 
-      this.$emit('item-click', args);
+      this.$emit('switch-tab', this.tab);
     }
   },
 });
 </script>
 
 <style scoped>
+  button {
+    @apply btn btn-ghost w-14 h-14 p-2;
+  }
+
   .selected {
     background-color: var(--yellow);
   }

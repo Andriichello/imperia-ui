@@ -1,8 +1,11 @@
 <template>
+  <div class="holder"></div>
+  
   <div class="wrapper">
     <router-view />
   </div>
-  <NavBar />
+
+  <NavBar :page="page" class="nav"/>
 </template>
 
 <script lang="ts">
@@ -17,11 +20,13 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      page: 'nav/get',
       authorized: 'auth/authorized',
     }),
   },
   methods: { 
     ...mapActions({
+      setPage: 'nav/set',
       resolveAuth: 'auth/resolve',
       resolveTheme: 'theme/resolve',
     }),
@@ -47,14 +52,36 @@ export default defineComponent({
 
 <style scoped>
   .wrapper {
-    @apply pl-20;
+    overflow-x: auto;
+    overflow-y: auto;
 
     display: flex;
-    flex-grow: 1;
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    justify-self: center;
-    align-self: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+
+    max-width: 100%;
+    flex: 0 1 100%;
+  }
+
+  .holder {
+    @apply bg-green-200;
+
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 80px;
+    min-height: 100vh;
+  }
+
+  .nav {
+    width: 80px;
+    height: 100vh;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    flex-grow: 0;
+    flex-wrap: nowrap;
   }
 </style>

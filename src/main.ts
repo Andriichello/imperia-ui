@@ -16,11 +16,15 @@ router.beforeEach((to, from, next) => {
     if (isLoginOrRegister && isAuth) {
         next('home');
     } else if (isOpen || isAuth) {
-        next();
+        to.path === '/' ? next('home') : next();
     } else {
         next(`/login?redirect=${to.path}`);
     }
 })
+
+router.afterEach(() => {
+    store.dispatch('nav/resolve');
+});
 
 app.use(store).use(router);
 app.mount('#app');

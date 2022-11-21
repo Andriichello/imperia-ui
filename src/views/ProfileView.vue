@@ -1,5 +1,7 @@
 <template>
-  <ProfileForm @on-logout="onLogout" :user="user" :loggingOut="loggingOut"/> 
+  <div class="profile">
+    <ProfileForm @on-logout="onLogout" :user="user" :loggingOut="loggingOut"/> 
+  </div>
 </template>
 
 <script>
@@ -43,14 +45,14 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.base-div {
-  @apply rounded-box bg-base-300;
+.profile {
   min-width: 100px;
   min-height: 100px;
-  padding: 12px;
-  
+
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-grow: 1;
+  flex-shrink: 1;
 }
 </style>

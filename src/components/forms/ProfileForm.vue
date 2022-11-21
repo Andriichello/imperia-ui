@@ -127,9 +127,8 @@ export default defineComponent({
 
 <style scoped>
 .profile-container {
-  min-width: 100px;
-  min-height: 100px;
   padding: 12px;
+  padding-bottom: 24px;
 
   display: flex;
   flex-direction: column;

@@ -157,10 +157,10 @@ export default defineComponent({
 
 <style scoped>
 .auth-container {
-  min-width: 100px;
-  min-height: 100px;
   padding: 12px;
+  padding-bottom: 24px;
 
+  flex-basis: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
