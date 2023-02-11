@@ -27,11 +27,6 @@ export default defineComponent({
     OrderBasket,
     ContentList,
   },
-  mounted() {
-    this.loadMenus({ resource: this.tab });
-    this.loadCategories({ resource: this.tab });
-    this.loadItems({ resource: this.tab });
-  },
   computed: {
     ...mapGetters({
       'tab': 'marketplace/tab',

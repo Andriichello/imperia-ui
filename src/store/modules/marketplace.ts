@@ -1,5 +1,5 @@
 import { authHeaders } from "@/helpers";
-import { CategoriesApi, Category, IndexCategoriesRequest, IndexCategoryResponse, IndexMenuResponse, IndexProductResponse, IndexProductsRequest, IndexServiceResponse, IndexSpaceResponse, IndexTicketResponse, Menu, MenusApi, Product, ProductsApi, Service, Space, Ticket } from "@/openapi";
+import { CategoriesApi, Category, IndexCategoriesRequest, IndexCategoryResponse, IndexMenuResponse, IndexProductResponse, IndexProductsRequest, IndexServiceResponse, IndexServicesRequest, IndexSpaceResponse, IndexSpacesRequest, IndexTicketResponse, IndexTicketsRequest, Menu, MenusApi, Product, ProductsApi, Service, ServicesApi, Space, SpacesApi, Ticket, TicketsApi } from "@/openapi";
 
 class ResourceGroup <I, R> {
   public menus?: Menu[] | null;
@@ -84,7 +84,7 @@ class MarketplaceState {
   public filters: MarketplaceFilters;
 
   constructor() {
-    this.tab = 'products';
+    this.tab;
     this.groups = new MarketplaceGroup();
     this.filters = new MarketplaceFilters();
   }
@@ -139,8 +139,15 @@ const getters = {
 };
 
 const actions = {
-  selectTab({ commit }, tab: string) {
+  selectTab({ commit, dispatch }, tab: string) {
     commit('selectTab', tab);
+
+    if (tab === 'products') {
+      dispatch('loadMenusIfMissing', { resource: tab });
+    }
+
+    dispatch('loadCategoriesIfMissing', { resource: tab });
+    dispatch('loadItemsIfMissing', { resource: tab });
   },
   async loadMenus({ commit, rootGetters }, { resource }) {
     const menus = await (new MenusApi())
@@ -151,6 +158,13 @@ const actions = {
     commit('setMenusResponse', { response: menus, resource });
     commit('setMenus', { menus: menus.data ?? [], resource });
   },
+  async loadMenusIfMissing({ state, dispatch }, { resource }) {
+    if (state.groups[resource].menusResponse) {
+      return;
+    }
+
+    dispatch('loadMenus', { resource })
+  },
   async loadCategories({ commit, getters, rootGetters }, {resource}) {
     const categories = await (new CategoriesApi())
       .indexCategories({ filterTarget: resource }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
@@ -159,6 +173,13 @@ const actions = {
 
     commit('setCategoriesResponse', { response: categories, resource });
     commit('setCategories', { categories: categories.data ?? [], resource });
+  },
+  async loadCategoriesIfMissing({ state, dispatch }, { resource }) {
+    if (state.groups[resource].categoriesResponse) {
+      return;
+    }
+
+    dispatch('loadCategories', { resource })
   },
   async loadItems({ commit, getters, rootGetters }, { resource }) {
     let items = null;
@@ -178,10 +199,53 @@ const actions = {
         .indexProducts(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
         .then(response => response)
         .catch(error => error.response);  
+    } else if (resource === 'spaces') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexSpacesRequest = {};
+
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new SpacesApi())
+        .indexSpaces(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
+    } else if (resource === 'tickets') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexTicketsRequest = {};
+
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new TicketsApi())
+        .indexTickets(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
+    } else if (resource === 'services') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexServicesRequest = {};
+
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new ServicesApi())
+        .indexServices(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
     }
 
     commit('setItemsResponse', { response: items, resource });
     commit('setItems', { items: items.data ?? [], resource });
+  },
+  async loadItemsIfMissing({ state, dispatch }, { resource }) {
+    if (state.groups[resource].itemsResponse) {
+      return;
+    }
+
+    dispatch('loadItems', { resource })
   },
   selectMenu({ commit, dispatch }, { menu, resource }) {
     commit('selectMenu', { menu, resource });

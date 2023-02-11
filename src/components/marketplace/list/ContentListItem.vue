@@ -3,8 +3,8 @@
     <figure class="px-2 pt-2">
       <img
         class="list-item-img"
-        alt="Margarita"
-        :src="item.media[0].url"
+        :alt="item.title"
+        :src="image()"
       />
     </figure>
     <div class="list-item-body">
@@ -12,8 +12,11 @@
         <span class="list-item-title">{{ item.title }}</span>
         <span class="list-item-description">{{ item.description }}</span>
         <div class="list-item-info">
-          <span class="list-item-weight">{{ weight() }}</span
-          ><span class="list-item-price">{{ price() }}</span>
+          <span class="list-item-weight"
+            v-if="item.type === 'products' || item.type === 'services'">
+              {{ weight() }}
+          </span>
+          <span class="list-item-price">{{ price() }}</span>
         </div>
       </div>
     </div>
@@ -31,11 +34,32 @@ export default defineComponent({
   },
   computed: {},
   methods: {
+    image() {
+      if (this.item.media && this.item.media.length) {
+        return this.item.media[0].url;
+      }
+
+      if (this.item.defaultMedia && this.item.defaultMedia.length) {
+        return this.item.defaultMedia[0].url;
+      }
+
+      return null;
+    },
     price() {
+      if (this.item.type === 'services') {
+        return this.item.oncePaidPrice === 0 
+          ? 'Free' : '$' + this.item.oncePaidPrice;
+      }
+
       return this.item.price === 0 
         ? 'Free' : '$' + this.item.price;
     },
     weight() {
+      if (this.item.type === 'services') {
+        return this.item.hourlyPaidPrice === 0 
+          ? '' : '$' + this.item.hourlyPaidPrice + '/hour';
+      }
+
       return this.item.weight > 1000 
         ? this.item.weight / 1000 + 'kg' : this.item.weight + 'g'; 
     },

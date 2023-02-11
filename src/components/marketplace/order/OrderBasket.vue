@@ -1,6 +1,6 @@
 <template>
   <div class="order-basket">
-    <TabSwitcher :tab="tab" @switch-tab="switchTab"/>
+    <TabSwitcher :tab="tab"/>
   </div>
 </template>
 
@@ -17,11 +17,6 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       tab: 'marketplace/tab',
-    }),
-  },
-  methods: {
-    ...mapActions({
-      switchTab: 'marketplace/selectTab'
     }),
   },
 });
