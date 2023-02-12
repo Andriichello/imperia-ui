@@ -9,6 +9,7 @@ class ResourceGroup <I, R> {
   public menusResponse?: IndexMenuResponse | null; 
   public categoriesResponse: IndexCategoryResponse | null; 
   public itemsResponse: R | null; 
+  public moreItemsResponse: R | null; 
 
   constructor() {
     this.categories = null;
@@ -16,6 +17,7 @@ class ResourceGroup <I, R> {
 
     this.categoriesResponse = null;
     this.itemsResponse = null;
+    this.moreItemsResponse = null;
   }
 
   public areMenusDefined(): boolean {
@@ -114,6 +116,20 @@ const getters = {
   items(state, getters) {
     return (resource: string = null) => {
       return getters.groups(resource).items;
+    };
+  },
+  itemsTotal(state, getters) {
+    return (resource: string = null) => {
+      if (!resource) {
+        return null;
+      }
+  
+      const response = getters.groups(resource).itemsResponse;
+      if (!response || !response.meta || !response.meta.total) {
+        return null;
+      }
+  
+      return response.meta.total;
     };
   },
   filters(state: MarketplaceState) {
@@ -247,6 +263,73 @@ const actions = {
 
     dispatch('loadItems', { resource })
   },
+  async loadMoreItems({ state, commit, getters, rootGetters }, { resource }) {
+    let items = null;
+    let page = null;
+
+    const response = state.groups[resource].moreItemsResponse;
+    if (!response) {
+      page = 2;
+    } else {
+      page = response.meta.currentPage + 1;
+    }
+
+    if (resource === 'products') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexProductsRequest = { pageNumber: page };
+
+      if (filters.menu) {
+        request.filterMenus = String(filters.menu.id);
+      }
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new ProductsApi())
+        .indexProducts(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
+    } else if (resource === 'spaces') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexSpacesRequest = { pageNumber: page };
+
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new SpacesApi())
+        .indexSpaces(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
+    } else if (resource === 'tickets') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexTicketsRequest = { pageNumber: page };
+
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new TicketsApi())
+        .indexTickets(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
+    } else if (resource === 'services') {
+      const filters : ResourceFilters = getters['filters'](resource);
+      const request : IndexServicesRequest = { pageNumber: page };
+
+      if (filters.category) {
+        request.filterCategories = String(filters.category.id);
+      }
+
+      items = await (new ServicesApi())
+        .indexServices(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);  
+    }
+
+    commit('setMoreItemsResponse', { response: items, resource });
+    commit('appendItems', { items: items.data ?? [], resource });
+  },
   selectMenu({ commit, dispatch }, { menu, resource }) {
     commit('selectMenu', { menu, resource });
     commit('selectCategory', { category: null, resource });
@@ -282,8 +365,15 @@ const mutations = {
   setItems(state: MarketplaceState, { items, resource }) {
     state.groups[resource].items = items;
   },
+  appendItems(state: MarketplaceState, { items, resource }) {
+    state.groups[resource].items = state.groups[resource].items.concat(items);
+  },
   setItemsResponse(state: MarketplaceState, { response, resource }) {
     state.groups[resource].itemsResponse = response;
+    state.groups[resource].moreItemsResponse = null;
+  },
+  setMoreItemsResponse(state: MarketplaceState, { response, resource }) {
+    state.groups[resource].moreItemsResponse = response;
   },
   selectMenu(state: MarketplaceState, { menu, resource }) {
     state.filters[resource].menu = menu;

@@ -5,8 +5,8 @@
     <div class="marketplace-content"> 
       <MenuSwitcher :menus="menus" :selected="selectedMenu" @switch-menu="onSwitchMenu" class="menu-switcher"/>
       <CategorySwitcher :categories="categories" :selected="selectedCategory" @switch-category="onSwitchCategory" class="category-switcher"/>
-      <ContentList type="items" :items="items" class="content-list"/>
-   
+      <ContentList type="items" :items="items" class="content-list"/> 
+      <ContentListMore :count="itemsCount" :total="itemsTotal" :loading="loadingMore" v-if="items" @load-more="onLoadMoreItems"/>  
     </div>     
   </div>
 </template>
@@ -17,6 +17,7 @@ import MenuSwitcher from "@/components/marketplace/menu/MenuSwitcher.vue";
 import CategorySwitcher from "@/components/marketplace/category/CategorySwitcher.vue";
 import OrderBasket from "@/components/marketplace/order/OrderBasket.vue";
 import ContentList from "@/components/marketplace/list/ContentList.vue";
+import ContentListMore from "@/components/marketplace/list/ContentListMore.vue";
 import { mapActions, mapGetters } from "vuex";
 
 export default defineComponent({
@@ -26,6 +27,12 @@ export default defineComponent({
     CategorySwitcher,
     OrderBasket,
     ContentList,
+    ContentListMore,
+  },
+  data() {
+    return {
+      loadingMore: false,
+    };
   },
   computed: {
     ...mapGetters({
@@ -40,6 +47,12 @@ export default defineComponent({
     items() {
       return this.$store.getters['marketplace/items'](this.tab);
     },
+    itemsCount() {
+      return this.items ? this.items.length : 0;
+    },
+    itemsTotal() {
+      return this.$store.getters['marketplace/itemsTotal'](this.tab);
+    },
     selectedMenu() {
       return this.$store.getters['marketplace/menu'](this.tab);
     },
@@ -50,15 +63,28 @@ export default defineComponent({
       return this.$store.getters['marketplace/search'](this.tab);
     },
   },
+  watch: {
+    items: {
+      async handler(newValue, oldValue) {
+        console.log('items: ', newValue, oldValue);
+        this.loadingMore = false;
+      }
+    },
+  },
   methods: {
     ...mapActions({
       'loadMenus': 'marketplace/loadMenus',
       'loadCategories': 'marketplace/loadCategories',
       'loadItems': 'marketplace/loadItems',
+      'loadMoreItems': 'marketplace/loadMoreItems',
       'selectMenu': 'marketplace/selectMenu',
       'selectCategory': 'marketplace/selectCategory',
       'applySearch': 'marketplace/applySearch',
     }),
+    onLoadMoreItems() {
+      this.loadingMore = true;
+      this.loadMoreItems({ resource: this.tab });
+    },
     onSwitchMenu(menu) {
       this.selectMenu({ menu, resource: this.tab });
     },
@@ -75,7 +101,7 @@ export default defineComponent({
   flex-grow: 1;
 
   max-width: 100%;
-  min-width: 320px;
+  min-width: 260px;
 }
 
 .marketplace-content {
@@ -90,6 +116,7 @@ export default defineComponent({
   
   margin-left: auto;
   margin-right: auto;
+  padding-bottom: 40px;
 }
 
 .marketplace-basket { 

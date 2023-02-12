@@ -45,7 +45,7 @@ export default defineComponent({
   flex-wrap: wrap;
   gap: 32px;
   margin-top: 16px;
-  padding: 0 32px 124px 32px;
+  padding: 0 32px 32px 32px;
 }
 
 .content-list-col {
