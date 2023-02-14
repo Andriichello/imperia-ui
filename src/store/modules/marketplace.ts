@@ -383,7 +383,7 @@ const mutations = {
   },
   selectCategory(state: MarketplaceState, { category, resource }) {
     state.filters[resource].category = category;
-  }
+  },
 };
 
 export default {

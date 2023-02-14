@@ -1,102 +1,41 @@
 <template>
-  <div class="marketplace">
-    <OrderBasket class="marketplace-basket"/>
+  <div class="marketplace-view">
+    <TabSwitcher :tab="tab"/>
+    
+    <Basket v-if="showing" class="basket-component"/>
+    <Marketplace v-else class="marketplace-component"/>
 
-    <div class="marketplace-content"> 
-      <MenuSwitcher :menus="menus" :selected="selectedMenu" @switch-menu="onSwitchMenu" class="menu-switcher"/>
-      <CategorySwitcher :categories="categories" :selected="selectedCategory" @switch-category="onSwitchCategory" class="category-switcher"/>
-      <ContentList type="items" :items="items" class="content-list"/> 
-      <ContentListMore :count="itemsCount" :total="itemsTotal" :loading="loadingMore" v-if="items" @load-more="onLoadMoreItems"/>  
-    </div>     
+    <BasketSwitcher class="basket-switcher"/>    
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import MenuSwitcher from "@/components/marketplace/menu/MenuSwitcher.vue";
-import CategorySwitcher from "@/components/marketplace/category/CategorySwitcher.vue";
-import OrderBasket from "@/components/marketplace/order/OrderBasket.vue";
-import ContentList from "@/components/marketplace/list/ContentList.vue";
-import ContentListMore from "@/components/marketplace/list/ContentListMore.vue";
-import { mapActions, mapGetters } from "vuex";
+import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
+import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
+import Basket from "@/components/marketplace/basket/Basket.vue";
+import Marketplace from "@/components/marketplace/Marketplace.vue";
+import { mapGetters } from "vuex";
 
 export default defineComponent({
   name: "MarketplaceView",
   components: {
-    MenuSwitcher, 
-    CategorySwitcher,
-    OrderBasket,
-    ContentList,
-    ContentListMore,
-  },
-  data() {
-    return {
-      loadingMore: false,
-    };
+    TabSwitcher,
+    Basket,
+    Marketplace,
+    BasketSwitcher,
   },
   computed: {
     ...mapGetters({
-      'tab': 'marketplace/tab',
+      tab: 'marketplace/tab',
+      showing: 'basket/showing',
     }),
-    menus() {
-      return this.$store.getters['marketplace/menus'](this.tab);
-    },
-    categories() {
-      return this.$store.getters['marketplace/categories'](this.tab);
-    },
-    items() {
-      return this.$store.getters['marketplace/items'](this.tab);
-    },
-    itemsCount() {
-      return this.items ? this.items.length : 0;
-    },
-    itemsTotal() {
-      return this.$store.getters['marketplace/itemsTotal'](this.tab);
-    },
-    selectedMenu() {
-      return this.$store.getters['marketplace/menu'](this.tab);
-    },
-    selectedCategory() {
-      return this.$store.getters['marketplace/category'](this.tab);
-    },
-    appliedSearch() {
-      return this.$store.getters['marketplace/search'](this.tab);
-    },
-  },
-  watch: {
-    items: {
-      async handler(newValue, oldValue) {
-        console.log('items: ', newValue, oldValue);
-        this.loadingMore = false;
-      }
-    },
-  },
-  methods: {
-    ...mapActions({
-      'loadMenus': 'marketplace/loadMenus',
-      'loadCategories': 'marketplace/loadCategories',
-      'loadItems': 'marketplace/loadItems',
-      'loadMoreItems': 'marketplace/loadMoreItems',
-      'selectMenu': 'marketplace/selectMenu',
-      'selectCategory': 'marketplace/selectCategory',
-      'applySearch': 'marketplace/applySearch',
-    }),
-    onLoadMoreItems() {
-      this.loadingMore = true;
-      this.loadMoreItems({ resource: this.tab });
-    },
-    onSwitchMenu(menu) {
-      this.selectMenu({ menu, resource: this.tab });
-    },
-    onSwitchCategory(category) {
-      this.selectCategory({ category, resource: this.tab });
-    },
   },
 });
 </script>
 
 <style scoped>
-.marketplace {  
+.marketplace-view {  
   display: block;
   flex-grow: 1;
 
@@ -104,22 +43,11 @@ export default defineComponent({
   min-width: 260px;
 }
 
-.marketplace-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  justify-self: flex-start;
-  align-self: flex-start;
-
-  flex-wrap: wrap;
-  
-  margin-left: auto;
-  margin-right: auto;
-  padding-bottom: 40px;
+.basket-switcher {
+  @apply fixed right-3 bottom-3 overflow-hidden;
 }
 
-.marketplace-basket { 
+.basket-component { 
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -132,24 +60,9 @@ export default defineComponent({
   margin-right: auto;
 }
 
-.menu-switcher {
-  flex-basis: 90%;
-
+.marketplace-component {
   margin-left: auto;
   margin-right: auto;
-}
-
-.category-switcher {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.content-list {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
+  padding-bottom: 40px;
 }
 </style>

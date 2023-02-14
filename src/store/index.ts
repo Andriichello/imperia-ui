@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import nav from "./modules/nav";
 import auth from "./modules/auth";
 import theme from "./modules/theme";
+import basket from "./modules/basket";
 import marketplace from "./modules/marketplace";
 
 export default createStore({
@@ -9,6 +10,7 @@ export default createStore({
     'nav': nav,
     'auth': auth,
     'theme': theme,
+    'basket': basket,
     'marketplace': marketplace,
   }
 });
