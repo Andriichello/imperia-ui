@@ -16,6 +16,7 @@ import ContentList from "@/components/marketplace/list/ContentList.vue";
 import ContentListMore from "@/components/marketplace/list/ContentListMore.vue";
 
 export default defineComponent({
+  // eslint-disable-next-line
   name: "Marketplace",
   components: {
     MenuSwitcher, 
@@ -59,7 +60,7 @@ export default defineComponent({
   },
   watch: {
     items: {
-      async handler(newValue, oldValue) {
+      async handler() {
         this.loadingMore = false;
       }
     },

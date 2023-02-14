@@ -1,14 +1,19 @@
 <template>
   <div class="basket">
-    <h1>Basket</h1>
+    <Banquet />
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import Banquet from './Banquet.vue';
 
 export default defineComponent({
+  // eslint-disable-next-line
   name: "Basket",
+  components: {
+    Banquet,
+  },
 });
 </script>
 
