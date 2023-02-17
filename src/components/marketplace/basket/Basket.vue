@@ -6,7 +6,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Banquet from './Banquet.vue';
+import Banquet from '../banquet/Banquet.vue';
 
 export default defineComponent({
   // eslint-disable-next-line

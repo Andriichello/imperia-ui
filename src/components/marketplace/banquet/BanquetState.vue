@@ -44,4 +44,8 @@ export default defineComponent({
   background-color: hsl(var(--bc) / var(--tw-bg-opacity));
   --tw-bg-opacity: 0.1;
 }
+
+  span {
+    color: var(--text-color);
+  }
 </style>

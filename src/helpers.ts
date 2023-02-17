@@ -20,6 +20,19 @@ export function dateFormatted(date: Date | string | null): string | null {
     return day + '/' + month + '/' + year;
 }
 
+export function timeFormatted(date: Date | string | null): string | null {
+    if (date === null) {
+        return null;
+    }
+
+    date = new Date(date);
+
+    const hours = (1 + date.getHours()).toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return hours + ':' + minutes;
+}
+
 export class ResponseErrors {
     public message?: string;
     public errors?: string[] | object;
