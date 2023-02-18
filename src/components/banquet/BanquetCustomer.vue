@@ -16,15 +16,15 @@
     </BaseIcon>
 
     <div class="customer-info">
-      <span class="customer-name">{{ customer.name + ' ' + customer.surname}}</span>
-      <span class="customer-phone">{{ customer.phone }}</span>
+      <span class="customer-name">{{ name() }}</span>
+      <span class="customer-phone" v-if="phone()">{{ phone() }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import BaseIcon from '../../icons/BaseIcon.vue';
+import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
   name: "BanquetCustomer",
@@ -34,6 +34,22 @@ export default defineComponent({
   props: {
     customer: Object,
   },
+  methods: {
+    name() {
+      const noName = !this.customer || !this.customer.name;
+      const noSurname = !this.customer || !this.customer.surname;
+
+      return noName && noSurname ? 'Customer'
+        : this.customer.name + ' ' + this.customer.surname;
+    },
+    phone() {
+      if (!this.customer) {
+        return null;
+      }
+
+      return this.customer.phone ?? null;
+    }
+  }
 });
 </script>
 

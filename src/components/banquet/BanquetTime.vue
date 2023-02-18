@@ -6,8 +6,8 @@
     </BaseIcon>
 
     <div class="time-info">
-      <span class="time-val">{{ val(startAt) }}</span>
-      <span class="time-label">Start</span>
+      <span class="time-val">{{ val(startAt) ?? 'Start' }}</span>
+      <span class="time-label" v-if="val(startAt)">Start</span>
     </div>
 
     <div class="time-divider time-info">
@@ -15,8 +15,8 @@
     </div>
 
     <div class="time-info">
-      <span class="time-val">{{ val(endAt) }}</span>
-      <span class="time-label">End</span>
+      <span class="time-val">{{ val(endAt) ?? 'End' }}</span>
+      <span class="time-label" v-if="val(endAt)">End</span>
     </div>
   </div>
 </template>
@@ -24,7 +24,7 @@
 <script>
 import { timeFormatted } from "@/helpers";
 import { defineComponent } from "vue";
-import BaseIcon from '../../icons/BaseIcon.vue';
+import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
   name: "BanquetDate",
@@ -37,6 +37,9 @@ export default defineComponent({
   },
   methods: {
     val(date) {
+      if (!date) {
+        return null
+      }
       return timeFormatted(date); 
     }
   }

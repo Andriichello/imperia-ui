@@ -12,7 +12,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import BaseIcon from '../../icons/BaseIcon.vue';
+import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
   name: "BanquetDescription",

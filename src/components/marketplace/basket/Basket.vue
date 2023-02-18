@@ -1,12 +1,12 @@
 <template>
   <div class="basket">
-    <Banquet />
+    <Banquet :banquet="{}"/>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import Banquet from '../banquet/Banquet.vue';
+import Banquet from '@/components/banquet/Banquet.vue';
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -20,9 +20,6 @@ export default defineComponent({
 
 <style scoped>
 .basket {
-  display: flex;
-  align-self: stretch;
-  justify-content: flex-start;
-  align-items: flex-start;
+  @apply flex self-stretch justify-start items-start pl-4 pr-4;
 }
 </style>

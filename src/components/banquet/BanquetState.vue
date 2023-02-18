@@ -10,13 +10,13 @@
         <path fill-rule="evenodd" clip-rule="evenodd" d="M11.9991 9.2041C11.4461 9.2041 10.9941 8.7571 10.9941 8.2041C10.9941 7.6511 11.4371 7.2041 11.9891 7.2041H11.9991C12.5521 7.2041 12.9991 7.6511 12.9991 8.2041C12.9991 8.7571 12.5521 9.2041 11.9991 9.2041Z" />
       </g>
     </BaseIcon>
-    <span>{{ state }}</span>
+    <span>{{ state ?? 'draft' }}</span>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import BaseIcon from '../../icons/BaseIcon.vue';
+import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
   name: "BanquetState",

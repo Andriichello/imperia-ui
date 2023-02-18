@@ -33,6 +33,14 @@ export function timeFormatted(date: Date | string | null): string | null {
     return hours + ':' + minutes;
 }
 
+export function priceFormatted(price: number | null): string | null {
+    if (price === null) {
+        return null;
+    }
+
+    return '$' + price.toFixed(2);
+}
+
 export class ResponseErrors {
     public message?: string;
     public errors?: string[] | object;
