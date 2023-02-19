@@ -31,11 +31,11 @@ export default defineComponent({
 
 <style scoped>
 .list-more-container {
-  @apply flex flex-col flex-nowrap justify-center items-center gap-3 p-2;
+  @apply flex flex-col flex-nowrap justify-center items-center;
 }
 
 .list-more-body {
-  @apply card-body flex-col justify-center items-center p-1;
+  @apply flex flex-col justify-center items-center gap-3 p-1;
 
   min-width: 100%;
 }

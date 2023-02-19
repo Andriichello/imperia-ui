@@ -70,20 +70,6 @@ export default defineComponent({
   flex-wrap: wrap;
 }
 
-.menu-switcher {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.category-switcher {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .history-list {
   flex-basis: 90%;
 

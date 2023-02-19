@@ -9,7 +9,7 @@ class BasketState {
 
   constructor() {
     this.banquet = null;
-    this.showing = true;
+    this.showing = false;
   }
 }
 

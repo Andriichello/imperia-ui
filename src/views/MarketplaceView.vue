@@ -1,18 +1,12 @@
 <template>
-  <div class="marketplace-view">
-    <TabSwitcher :tab="tab"/>
-    
+  <div class="marketplace-view">    
     <Basket v-if="showing" class="basket-component"/>
     <Marketplace v-else class="marketplace-component"/>
-
-    <BasketSwitcher class="basket-switcher"/>    
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
-import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
 import Basket from "@/components/marketplace/basket/Basket.vue";
 import Marketplace from "@/components/marketplace/Marketplace.vue";
 import { mapGetters } from "vuex";
@@ -20,10 +14,8 @@ import { mapGetters } from "vuex";
 export default defineComponent({
   name: "MarketplaceView",
   components: {
-    TabSwitcher,
     Basket,
     Marketplace,
-    BasketSwitcher,
   },
   computed: {
     ...mapGetters({
@@ -35,7 +27,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.marketplace-view {  
+.marketplace-view {
+  @apply pl-3 pr-3 pt-2 pb-2;  
+
   display: block;
   flex-grow: 1;
 
@@ -63,6 +57,5 @@ export default defineComponent({
 .marketplace-component {
   margin-left: auto;
   margin-right: auto;
-  padding-bottom: 40px;
 }
 </style>

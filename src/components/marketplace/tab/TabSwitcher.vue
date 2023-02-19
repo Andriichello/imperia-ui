@@ -172,7 +172,7 @@ export default defineComponent({
 
 <style scoped>
 .switcher {
-  @apply flex flex-row items-center justify-center p-3 gap-3;
+  @apply flex flex-row items-center justify-center p-1 gap-3;
 
   margin-left: auto;
   margin-right: auto;

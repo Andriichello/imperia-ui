@@ -22,14 +22,12 @@ export default defineComponent({
 
 <style scoped>
 .history-list {
+  @apply gap-1;
+
   display: flex;
   flex-grow: 1;
   flex-wrap: wrap;
   justify-content: center;
-
-  gap: 32px;
-  margin-top: 16px;
-  padding: 0 16px 16px 16px;
 }
 
 .history-list-item {

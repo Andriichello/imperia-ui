@@ -1,9 +1,9 @@
 <template>
-    <div class="switcher">
-      <template v-for="category in categories" :key="category.id">
-        <CategorySwitcherItem :category="category" :selected="isSelected(category)" @switch-category="onSwitchCategory"/>
-      </template>
-    </div>
+  <div class="switcher">
+    <template v-for="category in categories" :key="category.id">
+      <CategorySwitcherItem :category="category" :selected="isSelected(category)" @switch-category="onSwitchCategory"/>
+    </template>
+  </div>
 </template>
 
 <script>
@@ -33,7 +33,7 @@ export default defineComponent({
 
 <style scoped>
   .switcher {
-    @apply flex flex-row items-center pt-2 pb-2 gap-3;
+    @apply flex flex-row items-center p-1 gap-3;
 
    flex-wrap: nowrap;
 

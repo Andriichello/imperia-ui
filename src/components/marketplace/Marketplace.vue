@@ -1,33 +1,46 @@
 <template>
-  <div class="marketplace"> 
-      <MenuSwitcher :menus="menus" :selected="selectedMenu" @switch-menu="onSwitchMenu" class="menu-switcher"/>
-      <CategorySwitcher :categories="categories" :selected="selectedCategory" @switch-category="onSwitchCategory" class="category-switcher"/>
-      <ContentList type="items" :items="items" class="content-list"/> 
-      <ContentListMore :count="itemsCount" :total="itemsTotal" :loading="loadingMore" v-if="items" @load-more="onLoadMoreItems"/>  
+  <div class="marketplace">
+    <TabSwitcher :tab="tab"/>
+
+    <MenuSwitcher :menus="menus" :selected="selectedMenu" @switch-menu="onSwitchMenu" class="w-full"/>
+    <CategorySwitcher :categories="categories" :selected="selectedCategory" @switch-category="onSwitchCategory" class="w-full"/>
+    <ContentList type="items" :items="items" class="w-full"/> 
+    <ContentListMore :count="itemsCount" :total="itemsTotal" :loading="loadingMore" v-if="items" @load-more="onLoadMoreItems" class="w-full"/>  
+    
+    <BasketSwitcher class="basket-switcher"/>  
   </div>    
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
+import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
 import MenuSwitcher from "@/components/marketplace/menu/MenuSwitcher.vue";
 import CategorySwitcher from "@/components/marketplace/category/CategorySwitcher.vue";
 import ContentList from "@/components/marketplace/list/ContentList.vue";
 import ContentListMore from "@/components/marketplace/list/ContentListMore.vue";
+import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Marketplace",
   components: {
+    TabSwitcher,
     MenuSwitcher, 
     CategorySwitcher,
     ContentList,
     ContentListMore,
+    BasketSwitcher,
   },
   data() {
     return {
       loadingMore: false,
     };
+  },
+  mounted() {
+    if (this.tab === undefined || this.tab === null) {
+      this.selectTab('products');
+    }
   },
   computed: {
     ...mapGetters({
@@ -72,6 +85,7 @@ export default defineComponent({
       'loadItems': 'marketplace/loadItems',
       'loadMoreItems': 'marketplace/loadMoreItems',
       'selectMenu': 'marketplace/selectMenu',
+      'selectTab': 'marketplace/selectTab',
       'selectCategory': 'marketplace/selectCategory',
       'applySearch': 'marketplace/applySearch',
     }),
@@ -92,6 +106,8 @@ export default defineComponent({
 
 <style scoped>
 .marketplace {
+  @apply gap-1;
+
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -102,24 +118,7 @@ export default defineComponent({
   flex-wrap: wrap;
 }
 
-.menu-switcher {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.category-switcher {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.content-list {
-  flex-basis: 90%;
-
-  margin-left: auto;
-  margin-right: auto;
+.basket-switcher {
+  @apply fixed right-3 bottom-3 overflow-hidden;
 }
 </style>

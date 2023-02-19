@@ -34,6 +34,8 @@ export default defineComponent({
 
 <style scoped>
 .base-div {
+  @apply p-3;
+
   display: flex;
   flex-basis: 100%;
   justify-content: center;

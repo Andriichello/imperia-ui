@@ -1,5 +1,5 @@
 <template>
-    <div class="switcher">
+    <div class="switcher" v-if="menus && menus.length">
       <template v-for="menu in menus" :key="menu.id">
         <MenuSwitcherItem :menu="menu" :selected="isSelected(menu)" @switch-menu="onSwitchMenu"/>
       </template>
@@ -33,14 +33,11 @@ export default defineComponent({
 
 <style scoped>
   .switcher {
-    @apply flex flex-row items-center pt-2 pb-2 gap-9;
+    @apply flex flex-row items-center p-1 gap-4;
 
     flex-wrap: nowrap;
 
     flex: 0 1 auto;
     overflow-x: auto;
-
-    margin-left: auto;
-    margin-right: auto;
   }
 </style>

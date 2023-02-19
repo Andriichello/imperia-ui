@@ -24,7 +24,8 @@ import { dateFormatted } from "@/helpers";
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "BanquetAdditional",
+  // eslint-disable-next-line
+  name: "Additional",
   props: {
     createdAt: String,
     updatedAt: String,

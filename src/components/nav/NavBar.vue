@@ -69,7 +69,7 @@ export default defineComponent({
         return;
       }
 
-      this.$router.push(page);
+      this.$router.push({path: '/' + page});
     }
   },
   computed: {

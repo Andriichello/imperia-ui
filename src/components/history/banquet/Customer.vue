@@ -1,6 +1,6 @@
 <template>
   <div class="customer">
-    <BaseIcon :width="32" :height="32" color="var(--text-color)" class="grow-0">
+    <BaseIcon :width="32" :height="32" title="customer" color="var(--text-color)" class="grow-0">
       <mask id="mask0_60_12019" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="14" width="16" height="8">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M4 14.4961H19.8399V21.8701H4V14.4961Z" fill="white" />
       </mask>
@@ -27,7 +27,8 @@ import { defineComponent } from "vue";
 import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
-  name: "BanquetCustomer",
+  // eslint-disable-next-line
+  name: "Customer",
   components: {
     BaseIcon,
   },

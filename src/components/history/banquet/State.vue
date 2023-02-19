@@ -1,6 +1,6 @@
 <template>
   <div class="banquet-state">
-    <BaseIcon :width="16" :height="16" color="var(--text-color)" class="grow-0">
+    <BaseIcon :width="16" :height="16" title="state" color="var(--text-color)" class="grow-0">
       <g>
         <mask id="mask0_61_13176" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2 2H21.9999V22H2V2Z"/>
@@ -19,12 +19,17 @@ import { defineComponent } from "vue";
 import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
-  name: "BanquetState",
+  // eslint-disable-next-line
+  name: "State",
   components: {
     BaseIcon,
   },
   props: {
     state: String,
+    readonly: {
+      type: Boolean,
+      default: false,
+    }
   },
 });
 </script>

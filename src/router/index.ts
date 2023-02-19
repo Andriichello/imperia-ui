@@ -4,7 +4,7 @@ import RegisterView from '../views/RegisterView.vue'
 import HistoryView from '../views/HistoryView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import MarketplaceView from '../views/MarketplaceView.vue'
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw } from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -40,7 +40,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/marketplace',
+    path: '/marketplace/:id?',
     name: 'marketplace',
     component: MarketplaceView,
     meta: {

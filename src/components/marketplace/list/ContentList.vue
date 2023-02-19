@@ -39,16 +39,17 @@ export default defineComponent({
 
 <style scoped>
 .content-list {
+  @apply gap-4 p-1;
+
   display: flex;
   flex-basis: 236px;
   flex-grow: 1;
   flex-wrap: wrap;
-  gap: 32px;
-  margin-top: 16px;
-  padding: 0 32px 32px 32px;
 }
 
 .content-list-col {
+  @apply gap-4;
+
   flex-basis: 212px;
   display: flex;
   flex-direction: column;
@@ -56,6 +57,5 @@ export default defineComponent({
   flex-wrap: wrap;
   justify-content: start;
   align-items: stretch;
-  gap: 16px;
 }
 </style>
