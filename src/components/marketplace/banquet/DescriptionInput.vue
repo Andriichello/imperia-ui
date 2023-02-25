@@ -6,7 +6,7 @@
         </BaseIcon>
       </div>
 
-      <span class="description-span">{{ value }}</span>
+      <input class="description-input" v-model="description" placeholder="Description..."/>
     </div>
 </template>
 
@@ -15,32 +15,36 @@ import { defineComponent } from "vue";
 import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({
-  // eslint-disable-next-line
-  name: "Description",
-  props: {
-    value: String,
-  },
+  name: "DescriptionInput",
   components: {
     BaseIcon,
   },
   computed: {
+    description: {
+       get() {
+        return this.$store.getters['basket/description'];
+      },
+      set(value) {
+        return this.$store.commit('basket/setDescription', value);
+      },
+    },
     iconColor() {
-      return this.value && this.value.length > 0
+      return this.description && this.description.length > 0
         ? 'var(--text-color)' : 'var(--hint-color)';
-    }
-  }
-  // watch: {
-  //   description(newValue) {
-  //     this.iconColor = newValue && newValue.length > 0
-  //       ? 'var(--text-color)' : 'var(--hint-color)';
-  //   }
-  // }
+    },
+  },
+  watch: {
+    description(newValue) {
+      this.iconColor = newValue && newValue.length > 0
+        ? 'var(--text-color)' : 'var(--hint-color)';
+    },
+  },
 });
 </script>
 
 <style scoped>
-  .description-span {
-    @apply w-full p-0 ml-1 h-auto;
+  .description-input {
+    @apply input w-full p-0 ml-1 h-auto;
 
     color: var(--text-color);
     font-size: 12px;

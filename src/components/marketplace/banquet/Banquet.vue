@@ -2,14 +2,14 @@
   <div class="banquet-card">
     <div class="banquet-body">
       <div class="flex basis-full gap-1">
-        <Title :value="banquet.title" @clicked="onTitleClicked(banquet)"/>
+        <TitleInput/>
 
         <div class="flex flex-grow-0">
           <State :state="banquet.state"/>
         </div>
       </div>
     
-      <Description :value="banquet.description" class="basis-full"/>
+      <DescriptionInput class="basis-full"/>
     
       <div class="flex flex-row basis-full justify-between">
         <Customer :customer="banquet.customer"/>
@@ -25,13 +25,13 @@
 <script>
 import { defineComponent } from "vue";
 import { mapActions } from "vuex";
-import Title from './Title.vue';
-import State from './State.vue';
-import Description from './Description.vue';
-import Customer from './Customer.vue';
-import Date from './Date.vue';
-import Time from './Time.vue';
-import Totals from './Totals.vue';
+import TitleInput from '../banquet/TitleInput.vue';
+import State from '@/components/history/banquet/State.vue';
+import DescriptionInput from '../banquet/DescriptionInput.vue';
+import Customer from '@/components/history/banquet/Customer.vue';
+import Date from '@/components/history/banquet/Date.vue';
+import Time from '@/components/history/banquet/Time.vue';
+import Totals from '@/components/history/banquet/Totals.vue';
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -44,9 +44,9 @@ export default defineComponent({
     },
   },
   components: {
-    Title,
+    TitleInput,
     State,
-    Description,
+    DescriptionInput,
     Customer,
     Date,
     Time,

@@ -9,7 +9,7 @@
 import { defineComponent } from "vue";
 import Basket from "@/components/marketplace/basket/Basket.vue";
 import Marketplace from "@/components/marketplace/Marketplace.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default defineComponent({
   name: "MarketplaceView",
@@ -23,6 +23,21 @@ export default defineComponent({
       showing: 'basket/showing',
     }),
   },
+  methods: {
+     ...mapActions({
+      loadBanquet: 'basket/loadBanquet',
+    }),
+  },
+  updated() {
+    const id = this.$route.params.id;
+    if (isNaN(id) || !id) {
+      return;
+    }
+
+    if (!this.banquet || this.banquet.id != id) {
+      this.loadBanquet({ id: id });
+    }
+  }
 });
 </script>
 
@@ -43,7 +58,7 @@ export default defineComponent({
 
 .basket-component { 
   display: flex;
-  flex-direction: row;
+  flex-direction: col;
   justify-content: center;
   align-items: center;
 

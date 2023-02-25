@@ -1,5 +1,5 @@
 import { authHeaders } from "@/helpers";
-import { Banquet, BanquetsApi, IndexBanquetResponse, IndexBanquetsRequest } from "@/openapi";
+import { Banquet, BanquetsApi, IndexBanquetResponse, IndexBanquetsRequest, ShowBanquetResponse } from "@/openapi";
 
 class HistoryFilters {
   /** Applied search query */
@@ -12,13 +12,17 @@ class HistoryFilters {
 
 class HistoryState {
   public filters: HistoryFilters;
+  public banquet: Banquet | null;
   public banquets: Banquet[] | null;
+  public banquetResponse: ShowBanquetResponse | null;
   public banquetsResponse: IndexBanquetResponse | null;
   public moreBanquetsResponse: IndexBanquetResponse | null;
 
   constructor() {
     this.filters = new HistoryFilters();
+    this.banquet = null;
     this.banquets = null;
+    this.banquetResponse = null;
     this.banquetsResponse = null;
     this.moreBanquetsResponse = null;
   }

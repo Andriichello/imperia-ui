@@ -1,6 +1,10 @@
 <template>
   <div class="basket">
-    <TabSwitcher :tab="tab"/>
+    <!-- <TabSwitcher :tab="tab"/> -->
+
+    <div class="banquet">
+      <Banquet :banquet="form"/>
+    </div>
 
     <BasketSwitcher class="basket-switcher"/>  
   </div>
@@ -8,15 +12,29 @@
 
 <script>
 import { defineComponent } from "vue";
-import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
+// import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
 import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
+import Banquet from "../banquet/Banquet.vue";
+import { mapGetters, mapActions } from "vuex";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Basket",
   components: {
-    TabSwitcher,
+    // TabSwitcher,
+    Banquet,
     BasketSwitcher,
+  },
+  computed: {
+    ...mapGetters({
+      form: 'basket/form',
+      banquet: 'basket/banquet',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      loadBanquet: 'basket/loadBanquet',
+    }),
   },
 });
 </script>
@@ -24,11 +42,20 @@ export default defineComponent({
 
 <style scoped>
 .basket {
-  @apply flex self-stretch justify-start items-start pl-4 pr-4;
+  @apply gap-1;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  justify-self: flex-start;
+  align-self: flex-start;
+
+  flex-wrap: wrap;
 }
 
 .banquet {
-  max-width: 80%;
+  @apply p-1 w-full;
 }
 
 .basket-switcher {

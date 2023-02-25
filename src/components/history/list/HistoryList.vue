@@ -22,7 +22,7 @@ export default defineComponent({
 
 <style scoped>
 .history-list {
-  @apply gap-1;
+  @apply gap-3;
 
   display: flex;
   flex-grow: 1;
@@ -35,8 +35,7 @@ export default defineComponent({
   flex-basis: 100%;
   flex-direction: column;
   flex-grow: 1;
-  flex-wrap: wrap;
   justify-content: start;
-  align-items: center;
+  align-items: stretch;
 }
 </style>

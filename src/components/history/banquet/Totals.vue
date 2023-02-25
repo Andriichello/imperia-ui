@@ -9,7 +9,7 @@
         </BaseIcon>
 
         <div class="group-info">
-          <span class="group-total">{{ price(totals.products ?? 0.0) }}</span>
+          <span class="group-total">{{ price(productsTotal) }}</span>
           <span class="group-discount">{{ price(0.0) }}</span>
         </div>
       </div>
@@ -20,7 +20,7 @@
         </BaseIcon>
 
         <div class="group-info">
-          <span class="group-total">{{ price(totals.spaces ?? 0.0) }}</span>
+          <span class="group-total">{{ price(spacesTotal) }}</span>
           <span class="group-discount">{{ price(0.0) }}</span>
         </div>
       </div>
@@ -39,7 +39,7 @@
         </BaseIcon>
 
         <div class="group-info">
-          <span class="group-total">{{ price(totals.tickets ?? 0.0) }}</span>
+          <span class="group-total">{{ price(ticketsTotal) }}</span>
           <span class="group-discount">{{ price(0.0) }}</span>
         </div>
       </div>
@@ -63,7 +63,7 @@
         </BaseIcon>
 
         <div class="group-info">
-          <span class="group-total">{{ price(totals.services ?? 0.0) }}</span>
+          <span class="group-total">{{ price(servicesTotal) }}</span>
           <span class="group-discount">{{ price(0.0) }}</span>
         </div>
       </div>
@@ -77,9 +77,14 @@
         <span class="discount-value" v-if="discount">{{ price(discount) }}</span>
       </div>
 
+      <!-- <div class="totals-group">
+        <span class="advance-label" v-if="advance">Advance: </span>
+        <span class="advance-value" v-if="advance">{{ price(advance) }}</span>
+      </div> -->
+
       <div class="totals-group">
         <span class="total-label">Total: </span>
-        <span class="total-value">{{ price(totals.all ?? 0.0) }}</span>
+        <span class="total-value">{{ price(total) }}</span>
       </div>
     </div>
   </div>
@@ -98,7 +103,25 @@ export default defineComponent({
   },
   props: {
     totals: Object,
+    advance: Number,
     discount: Number,
+  },
+  computed: {
+    total() {
+      return this.totals ? this.totals.all : 0.0;
+    },
+    productsTotal() {
+      return this.totals ? this.totals.products : 0.0;
+    },
+    spacesTotal() {
+      return this.totals ? this.totals.spaces : 0.0;
+    },
+    ticketsTotal() {
+      return this.totals ? this.totals.tickets : 0.0;
+    },
+    servicesTotal() {
+      return this.totals ? this.totals.services : 0.0;
+    }
   },
   methods: {
     price(val) {
@@ -164,6 +187,16 @@ export default defineComponent({
 
 .total-value {
   font-size: 16px;
+  font-weight: 500;
+}
+
+.advance-label {
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.advance-value {
+  font-size: 12px;
   font-weight: 500;
 }
 
