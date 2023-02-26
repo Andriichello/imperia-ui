@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/AuthApi.ts
 apis/BanquetsApi.ts
 apis/CategoriesApi.ts

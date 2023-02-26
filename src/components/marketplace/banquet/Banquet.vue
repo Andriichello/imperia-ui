@@ -5,26 +5,26 @@
         <TitleInput/>
 
         <div class="flex flex-grow-0">
-          <State :state="banquet.state"/>
+          <State :state="state"/>
         </div>
       </div>
     
       <DescriptionInput class="basis-full"/>
     
       <div class="flex flex-row basis-full justify-between">
-        <Customer :customer="banquet.customer"/>
-        <Date :date="banquet.startAt"/>
-        <Time :startAt="banquet.startAt" :endAt="banquet.endAt"/>
+        <Customer :customer="customer"/>
+        <Date :date="startAt"/>
+        <Time :startAt="startAt" :endAt="endAt"/>
       </div>
 
-      <Totals :totals="banquet.totals" :advance="banquet.advanceAmount" class="basis-full"/>
+      <Totals :totals="totals" :advance="advanceAmount" class="basis-full"/>
     </div>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import TitleInput from '../banquet/TitleInput.vue';
 import State from '@/components/history/banquet/State.vue';
 import DescriptionInput from '../banquet/DescriptionInput.vue';
@@ -52,6 +52,16 @@ export default defineComponent({
     Time,
     Totals,
   },
+  computed: {
+    ...mapGetters({
+      state: 'basket/state',
+      startAt: 'basket/startAt',
+      endAt: 'basket/endAt',
+      customer: 'basket/customer',
+      totals: 'basket/totals',
+      advanceAmount: 'basket/advanceAmount',
+    }),
+  },
   methods: {
     ...mapActions({
       setBanquet: 'basket/setBanquet',
@@ -60,7 +70,7 @@ export default defineComponent({
       this.setBanquet(banquet);
       this.$router.push({path: '/marketplace/' + banquet.id, replace: true});
     }
-  }
+  },
 });
 </script>
 

@@ -1,5 +1,5 @@
 import { authHeaders } from "@/helpers";
-import { instanceOfLoginResponse, instanceOfLogoutResponse, instanceOfMeResponse, LoginRequest, LoginResponse, LogoutResponse, MeResponse, RegisterRequest, RegisterResponse, User } from "@/openapi";
+import { Customer, instanceOfLoginResponse, instanceOfLogoutResponse, instanceOfMeResponse, LoginRequest, LoginResponse, LogoutResponse, MeResponse, RegisterRequest, RegisterResponse, User } from "@/openapi";
 import { AuthApi, UsersApi } from "@/openapi"
 
 interface AuthState {
@@ -66,7 +66,7 @@ const actions = {
   },
   async me({ state, commit, dispatch }) {
     const me = await (new UsersApi())
-      .me({ headers: { ...authHeaders(state.token) } })
+      .me({ include: 'customer' }, { headers: { ...authHeaders(state.token) } })
       .then(response => response)
       .catch(error => error.response);
 
@@ -94,6 +94,8 @@ const actions = {
     if (instanceOfLoginResponse(login)) {
       dispatch('token', login.data.token);
       dispatch('user', login.data.user);
+
+      dispatch('me');
     }
   },
   async logout({ commit, dispatch }) {
@@ -107,6 +109,7 @@ const actions = {
     if (instanceOfLogoutResponse(logout)) {
       dispatch('token', null);
       dispatch('user', null);
+      dispatch('me', null);
     }
   },
   async register({ commit }, request: RegisterRequest) {

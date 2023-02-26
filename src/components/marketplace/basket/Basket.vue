@@ -3,7 +3,7 @@
     <!-- <TabSwitcher :tab="tab"/> -->
 
     <div class="banquet">
-      <Banquet :banquet="form"/>
+      <Banquet/>
     </div>
 
     <BasketSwitcher class="basket-switcher"/>  
@@ -34,7 +34,17 @@ export default defineComponent({
   methods: {
     ...mapActions({
       loadBanquet: 'basket/loadBanquet',
+      resolveCustomer: 'basket/resolveCustomer',
     }),
+  },
+  mounted() {
+    const id = this.$route.params.id;
+
+    if (id && this.banquet == null) {
+      this.loadBanquet(id);
+    }
+
+    this.resolveCustomer()
   },
 });
 </script>
