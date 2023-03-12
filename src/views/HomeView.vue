@@ -15,11 +15,9 @@ export default defineComponent({
 
 <style scoped>
 .base-div {
-  @apply rounded-box bg-base-300;
+  @apply rounded-box bg-base-300 flex-wrap;
   
-  max-width: 100px;
   min-width: 100px;
-  max-height: 100px;
   min-height: 100px;
   margin: 12px;
   padding: 12px;

@@ -13,7 +13,7 @@
     
       <div class="flex flex-row basis-full justify-between">
         <Customer :customer="customer" :readonly="!user || user.customer" @customer-click="onCustomerClick"/>
-        <Date :date="startAt"/>
+        <Date :date="date" @click="onDateClick({ date: startAt })" class="cursor-pointer"/>
         <Time :startAt="startAt" :endAt="endAt"/>
       </div>
 
@@ -36,7 +36,7 @@ import Totals from '@/components/history/banquet/Totals.vue';
 export default defineComponent({
   // eslint-disable-next-line
   name: "Banquet",
-  emits: ["customer-click"],
+  emits: ["customer-click", "date-click"],
   props: {
     banquet: Object,
     readonly: {
@@ -57,6 +57,7 @@ export default defineComponent({
     ...mapGetters({
       user: 'auth/user',
       state: 'basket/state',
+      date: 'basket/date',
       startAt: 'basket/startAt',
       endAt: 'basket/endAt',
       customer: 'basket/customer',
@@ -74,6 +75,9 @@ export default defineComponent({
     },
     onCustomerClick({ customer }) {
       this.$emit("customer-click", { customer });
+    },
+    onDateClick({ date }) {
+      this.$emit("date-click", { date });
     },
   },
 });

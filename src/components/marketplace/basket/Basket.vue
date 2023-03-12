@@ -5,16 +5,21 @@
       <!-- <TabSwitcher :tab="tab"/> -->
 
       <div class="banquet">
-        <Banquet @customer-click="onCustomerClick"/>
+        <Banquet @customer-click="onOpenCustomerPicker" @date-click="onOpenDatePicker"/>
         <SaveBasket :loading="false"/>
       </div>
 
       <BasketSwitcher class="basket-switcher"/>
     </template>
 
-    <template v-if="picker == 'customers'">
+    <template v-if="picker == 'customer'">
       <div class="picker">
-        <CustomerPicker @close-picker="onClosePicker"/>
+        <CustomerPicker @close-picker="onClosePicker" @select-customer="onSelectCustomer"/>
+      </div>
+    </template>
+    <template v-if="picker == 'date'">
+      <div class="picker">
+        <DatePicker @close-picker="onClosePicker" @day-click="onDayClick"/>
       </div>
     </template>
       
@@ -26,6 +31,7 @@ import { defineComponent } from "vue";
 // import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
 import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
 import CustomerPicker from "@/components/marketplace/customer/CustomerPicker.vue";
+import DatePicker from "@/components/marketplace/calendar/DatePicker.vue";
 import Banquet from "../banquet/Banquet.vue";
 import SaveBasket from "./SaveBasket.vue";
 import { mapGetters, mapActions } from "vuex";
@@ -37,6 +43,7 @@ export default defineComponent({
     // TabSwitcher,
     Banquet,
     CustomerPicker,
+    DatePicker,
     BasketSwitcher,
     SaveBasket,
   },
@@ -52,12 +59,25 @@ export default defineComponent({
       loadBanquet: 'basket/loadBanquet',
       resolveCustomer: 'basket/resolveCustomer',
       setPicker: 'basket/setPicker',
+      setDate: 'basket/setDate',
+      setCustomer: 'basket/setCustomer',
     }),
-    onCustomerClick({ customer }) {
-        this.setPicker('customers');
-    },
     onClosePicker() {
       this.setPicker(null);
+    },
+    onOpenDatePicker({ date }) {
+      this.setPicker('date');
+    },
+    onDayClick({ date }) {
+      this.setDate(date);
+      this.onClosePicker();
+    },
+    onOpenCustomerPicker({ customer }) {
+      this.setPicker('customer');
+    },
+    onSelectCustomer({ customer }) {
+      this.setCustomer(customer);
+      this.onClosePicker();
     },
   },
   mounted() {
@@ -92,7 +112,7 @@ export default defineComponent({
 }
 
 .picker {
-  @apply p-1 w-full;
+  @apply flex p-1 w-full justify-center;
 }
 
 .basket-switcher {

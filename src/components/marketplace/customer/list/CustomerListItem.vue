@@ -1,5 +1,5 @@
 <template>
-  <div class="customer-card">
+  <div class="customer-card" :class="{'selected': selected}">
     <div class="customer-header" @click="onClick">
       <BaseIcon :width="32" :height="32" title="customer" color="var(--text-color)" class="grow-0">
         <mask id="mask0_60_12019" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="14" width="16" height="8">
@@ -33,6 +33,10 @@ export default defineComponent({
   },
   props: {
     customer: Object,
+    selected: {
+      type: Boolean,
+      default: false,
+    }
   },
   methods: {
     name() {
@@ -92,5 +96,13 @@ export default defineComponent({
   display: flex;
   flex-wrap: wrap;
   flex-basis: 100%;
+}
+
+.selected {
+  background-color: var(--yellow);
+}
+
+.selected:hover {
+  background-color: var(--yellow);
 }
 </style>

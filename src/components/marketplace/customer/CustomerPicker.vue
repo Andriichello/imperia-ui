@@ -9,7 +9,7 @@
     </button>
     </div>
 
-    <CustomerList :customers="customers" class="customers-list" @select-customer="onSelectCustomer"/> 
+    <CustomerList :customers="customers" :selected="selected" class="customers-list" @select-customer="onSelectCustomer"/> 
     <CustomerListMore :count="customersCount" :total="customersTotal" :loading="loadingMore" v-if="customers" @load-more="onLoadMoreCustomers"/>  
   </div>    
 </template>
@@ -23,11 +23,17 @@ import CustomerListMore from "@/components/marketplace/customer/list/CustomerLis
 
 export default defineComponent({
   name: "CustomerPicker",
-  emits: ["close-picker"],
+  emits: ["close-picker", "select-customer"],
   components: {
     BaseIcon,
     CustomerList,
     CustomerListMore,
+  },
+  props: {
+    selectedCustomer: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -37,6 +43,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       filters: 'customers/filters',
+      selected: 'customers/selected',
       customers: 'customers/customers',
     }),
     customersCount() {
@@ -56,7 +63,6 @@ export default defineComponent({
   methods: {
     ...mapActions({
       'setSelected': 'customers/setSelected',
-      'setCustomer': 'basket/setCustomer',
       'loadCustomers': 'customers/loadCustomers',
       'loadCustomersIfMissing': 'customers/loadCustomersIfMissing',
       'loadMoreCustomers': 'customers/loadMoreCustomers',
@@ -71,8 +77,7 @@ export default defineComponent({
     },
     onSelectCustomer({ customer }) {
       this.setSelected(customer);
-      this.setCustomer(customer);
-      this.$emit('close-picker');
+      this.$emit('select-customer', { customer })
     },
   },
   mounted() {

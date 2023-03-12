@@ -1,6 +1,6 @@
 <template>
   <div class="customer-list">
-    <CustomerListItem :customers="customers" v-for="customer in customers" :key="customer.id" :customer="customer" class="customer-list-item" @select-customer="onSelectCustomer"/>
+    <CustomerListItem :customers="customers" v-for="customer in customers" :key="customer.id" :customer="customer" class="customer-list-item" @select-customer="onSelectCustomer" :selected="isSelected(customer)"/>
   </div>
 </template>
 
@@ -15,10 +15,17 @@ export default defineComponent({
     CustomerListItem,
   },
   props: {
-    type: String,
     customers: Array,
+    selected: {
+      type: Object,
+      default: null,
+    },
   },
   methods: {
+    isSelected(customer) {
+      return this.selected && customer 
+        && this.selected.id == customer.id; 
+    },
     onSelectCustomer({ customer }) {
       this.$emit('select-customer', { customer })
     },

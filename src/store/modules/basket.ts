@@ -10,6 +10,7 @@ class BanquetForm {
   public customer: number | Customer | null;
   public restaurant: number | Restaurant | null;
   public advanceAmount: number | null;
+  public date: Date | string | null;
   public startAt: Date | string | null;
   public endAt: Date | string | null;
 
@@ -28,6 +29,7 @@ class BanquetForm {
     form.customer = banquet.customer;
     form.restaurant = banquet.restaurantId;
     form.advanceAmount = banquet.advanceAmount;
+    form.date = banquet.startAt;
     form.startAt = banquet.startAt;
     form.endAt = banquet.endAt;
 
@@ -88,6 +90,9 @@ const getters = {
   advanceAmount(state: BasketState) {
     return state.form.advanceAmount;
   },
+  date(state: BasketState) {
+    return state.form.date;
+  },
   startAt(state: BasketState) {
     return state.form.startAt;
   },
@@ -136,6 +141,9 @@ const actions = {
   setCustomer({ commit }, value: Customer | null) {
     commit('setCustomer', value);
   },
+  setDate({ commit }, value: Date | string | null) {
+    commit('setDate', value);
+  },
 };
 
 const mutations = {
@@ -165,6 +173,9 @@ const mutations = {
   },
   setCustomer(state: BasketState, value) {
     state.form.customer = value;
+  },
+  setDate(state: BasketState, value) {
+    state.form.date = value;
   },
 };
 
