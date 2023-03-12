@@ -1,12 +1,23 @@
 <template>
   <div class="basket">
-    <!-- <TabSwitcher :tab="tab"/> -->
 
-    <div class="banquet">
-      <Banquet/>
-    </div>
+    <template v-if="picker == null">
+      <!-- <TabSwitcher :tab="tab"/> -->
 
-    <BasketSwitcher class="basket-switcher"/>  
+      <div class="banquet">
+        <Banquet @customer-click="onCustomerClick"/>
+        <SaveBasket :loading="false"/>
+      </div>
+
+      <BasketSwitcher class="basket-switcher"/>
+    </template>
+
+    <template v-if="picker == 'customers'">
+      <div class="picker">
+        <CustomerPicker @close-picker="onClosePicker"/>
+      </div>
+    </template>
+      
   </div>
 </template>
 
@@ -14,7 +25,9 @@
 import { defineComponent } from "vue";
 // import TabSwitcher from "@/components/marketplace/tab/TabSwitcher.vue";
 import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
+import CustomerPicker from "@/components/marketplace/customer/CustomerPicker.vue";
 import Banquet from "../banquet/Banquet.vue";
+import SaveBasket from "./SaveBasket.vue";
 import { mapGetters, mapActions } from "vuex";
 
 export default defineComponent({
@@ -23,19 +36,29 @@ export default defineComponent({
   components: {
     // TabSwitcher,
     Banquet,
+    CustomerPicker,
     BasketSwitcher,
+    SaveBasket,
   },
   computed: {
     ...mapGetters({
       form: 'basket/form',
       banquet: 'basket/banquet',
+      picker: 'basket/picker',
     }),
   },
   methods: {
     ...mapActions({
       loadBanquet: 'basket/loadBanquet',
       resolveCustomer: 'basket/resolveCustomer',
+      setPicker: 'basket/setPicker',
     }),
+    onCustomerClick({ customer }) {
+        this.setPicker('customers');
+    },
+    onClosePicker() {
+      this.setPicker(null);
+    },
   },
   mounted() {
     const id = this.$route.params.id;
@@ -65,6 +88,10 @@ export default defineComponent({
 }
 
 .banquet {
+  @apply p-1 w-full;
+}
+
+.picker {
   @apply p-1 w-full;
 }
 

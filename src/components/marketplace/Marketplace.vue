@@ -1,6 +1,6 @@
 <template>
   <div class="marketplace">
-    <TabSwitcher :tab="tab"/>
+    <TabSwitcher :tab="tab" class="w-full"/>
 
     <MenuSwitcher :menus="menus" :selected="selectedMenu" @switch-menu="onSwitchMenu" class="w-full"/>
     <CategorySwitcher :categories="categories" :selected="selectedCategory" @switch-category="onSwitchCategory" class="w-full"/>

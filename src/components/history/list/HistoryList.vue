@@ -35,7 +35,7 @@ export default defineComponent({
   flex-basis: 100%;
   flex-direction: column;
   flex-grow: 1;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: stretch;
 }
 </style>

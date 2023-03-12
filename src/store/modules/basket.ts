@@ -1,5 +1,5 @@
 import { authHeaders } from "@/helpers";
-import { Banquet, BanquetsApi, Customer, Restaurant, ShowBanquetResponse, StoreBanquetRequest, StoreBanquetRequestStateEnum, User } from "@/openapi";
+import { Banquet, BanquetsApi, Customer, IndexCustomerResponse, Restaurant, ShowBanquetResponse, StoreBanquetRequest, StoreBanquetRequestStateEnum, User } from "@/openapi";
 
 class BanquetForm {
   public id: number | null;
@@ -36,19 +36,20 @@ class BanquetForm {
 }
 
 class BasketState {
+  /** True, if basket should be shown in Marketplace */
+  public showing: boolean;
+  /** Picker that should be shown in Basket */
+  public picker: string | null;
   /** Banquet form in Marketplace */
   public form: BanquetForm | null;
   /** Selected banquet in Marketplace */
   public banquet: Banquet | null;
-
   /** Current banquet in Marketplace */
   public banquetResponse: ShowBanquetResponse | null;
 
-  /** True, if basket should be shown in Marketplace */
-  public showing: boolean;
-
   constructor() {
     this.form = new BanquetForm();
+    this.picker = null;
     this.banquet = null;
     this.showing = false;
   }
@@ -65,6 +66,9 @@ const getters = {
   },
   showing(state: BasketState) {
     return state.showing;
+  },
+  picker(state: BasketState) {
+    return state.picker;
   },
   title(state: BasketState) {
     return state.form.title;
@@ -111,6 +115,9 @@ const actions = {
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
   },
+  setPicker({ commit }, picker) {
+    commit('setPicker', picker);
+  },
   async loadBanquet({ dispatch, commit, rootGetters }, { id }) {
     const response = await (new BanquetsApi())
       .showBanquet({ id, include: 'creator,customer,comments' }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
@@ -146,6 +153,9 @@ const mutations = {
   },
   setShowing(state: BasketState, showing) {
     state.showing = showing;
+  },
+  setPicker(state: BasketState, picker) {
+    state.picker = picker;
   },
   setTitle(state: BasketState, value) {
     state.form.title = value;

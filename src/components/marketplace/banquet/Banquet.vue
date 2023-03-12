@@ -12,7 +12,7 @@
       <DescriptionInput class="basis-full"/>
     
       <div class="flex flex-row basis-full justify-between">
-        <Customer :customer="customer"/>
+        <Customer :customer="customer" :readonly="!user || user.customer" @customer-click="onCustomerClick"/>
         <Date :date="startAt"/>
         <Time :startAt="startAt" :endAt="endAt"/>
       </div>
@@ -36,6 +36,7 @@ import Totals from '@/components/history/banquet/Totals.vue';
 export default defineComponent({
   // eslint-disable-next-line
   name: "Banquet",
+  emits: ["customer-click"],
   props: {
     banquet: Object,
     readonly: {
@@ -54,6 +55,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      user: 'auth/user',
       state: 'basket/state',
       startAt: 'basket/startAt',
       endAt: 'basket/endAt',
@@ -69,7 +71,10 @@ export default defineComponent({
     onTitleClicked(banquet) {
       this.setBanquet(banquet);
       this.$router.push({path: '/marketplace/' + banquet.id, replace: true});
-    }
+    },
+    onCustomerClick({ customer }) {
+      this.$emit("customer-click", { customer });
+    },
   },
 });
 </script>
