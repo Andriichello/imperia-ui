@@ -5,8 +5,8 @@
       <!-- <TabSwitcher :tab="tab"/> -->
 
       <div class="banquet">
-        <Banquet @customer-click="onOpenCustomerPicker" @date-click="onOpenDatePicker"/>
-        <SaveBasket :loading="false"/>
+        <Banquet @customer-click="onOpenCustomerPicker" @date-click="onOpenDatePicker" @time-click="onOpenTimePicker"/>
+        <SaveButton :loading="false" class="pt-3"/>
       </div>
 
       <BasketSwitcher class="basket-switcher"/>
@@ -22,6 +22,12 @@
         <DatePicker @close-picker="onClosePicker" @day-click="onDayClick"/>
       </div>
     </template>
+     <template v-if="picker == 'time'">
+      <div class="picker">
+        <TimePicker @close-picker="onClosePicker" @time-select="onTimeSelect"
+          :startAt="startAt" :endAt="endAt"/>
+      </div>
+    </template>
       
   </div>
 </template>
@@ -32,8 +38,9 @@ import { defineComponent } from "vue";
 import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
 import CustomerPicker from "@/components/marketplace/customer/CustomerPicker.vue";
 import DatePicker from "@/components/marketplace/calendar/DatePicker.vue";
+import TimePicker from "@/components/marketplace/time/TimePicker.vue";
 import Banquet from "../banquet/Banquet.vue";
-import SaveBasket from "./SaveBasket.vue";
+import SaveButton from "./SaveButton.vue";
 import { mapGetters, mapActions } from "vuex";
 
 export default defineComponent({
@@ -44,14 +51,18 @@ export default defineComponent({
     Banquet,
     CustomerPicker,
     DatePicker,
+    TimePicker,
     BasketSwitcher,
-    SaveBasket,
+    SaveButton,
   },
   computed: {
     ...mapGetters({
       form: 'basket/form',
       banquet: 'basket/banquet',
       picker: 'basket/picker',
+      date: 'basket/date',
+      startAt: 'basket/startAt',
+      endAt: 'basket/endAt',
     }),
   },
   methods: {
@@ -60,6 +71,8 @@ export default defineComponent({
       resolveCustomer: 'basket/resolveCustomer',
       setPicker: 'basket/setPicker',
       setDate: 'basket/setDate',
+      setStartAt: 'basket/setStartAt',
+      setEndAt: 'basket/setEndAt',
       setCustomer: 'basket/setCustomer',
     }),
     onClosePicker() {
@@ -77,6 +90,15 @@ export default defineComponent({
     },
     onSelectCustomer({ customer }) {
       this.setCustomer(customer);
+      this.onClosePicker();
+    },
+    onOpenTimePicker() {
+      this.setPicker('time');
+    },
+    onTimeSelect({ startAt, endAt }) {
+      this.setStartAt(startAt);
+      this.setEndAt(endAt);
+      
       this.onClosePicker();
     },
   },

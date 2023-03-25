@@ -38,7 +38,7 @@ export default defineComponent({
       'setDate': 'basket/setDate',
     }),
     iconColor() {
-      return 'var(--text-color)';
+      return 'currentColor';
     },
     onDayClick({ date }) {
       this.$emit('day-click', { date });

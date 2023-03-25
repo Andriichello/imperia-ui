@@ -69,7 +69,7 @@ export default defineComponent({
       'applySearch': 'customers/applySearch',
     }),
     iconColor() {
-      return 'var(--text-color)';
+      return 'currentColor';
     },
     onLoadMoreCustomers() {
       this.loadingMore = true;
@@ -89,6 +89,8 @@ export default defineComponent({
 
 <style scoped>
 .customers {
+  @apply w-full;
+
   gap: 12px;
   display: flex;
   flex-direction: row;

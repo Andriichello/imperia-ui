@@ -144,6 +144,12 @@ const actions = {
   setDate({ commit }, value: Date | string | null) {
     commit('setDate', value);
   },
+  setStartAt({ commit }, value: Date | string | null) {
+    commit('setStartAt', value);
+  },
+  setEndAt({ commit }, value: Date | string | null) {
+    commit('setEndAt', value);
+  },
 };
 
 const mutations = {
@@ -176,6 +182,12 @@ const mutations = {
   },
   setDate(state: BasketState, value) {
     state.form.date = value;
+  },
+  setStartAt(state: BasketState, value) {
+    state.form.startAt = value;
+  },
+  setEndAt(state: BasketState, value) {
+    state.form.endAt = value;
   },
 };
 

@@ -14,7 +14,7 @@
       <div class="flex flex-row basis-full justify-between">
         <Customer :customer="customer" :readonly="!user || user.customer" @customer-click="onCustomerClick"/>
         <Date :date="date" @click="onDateClick({ date: startAt })" class="cursor-pointer"/>
-        <Time :startAt="startAt" :endAt="endAt"/>
+        <Time :startAt="startAt" :endAt="endAt"  @click="onTimeClick({ startAt, endAt })" class="cursor-pointer"/>
       </div>
 
       <Totals :totals="totals" :advance="advanceAmount" class="basis-full"/>
@@ -36,7 +36,7 @@ import Totals from '@/components/history/banquet/Totals.vue';
 export default defineComponent({
   // eslint-disable-next-line
   name: "Banquet",
-  emits: ["customer-click", "date-click"],
+  emits: ["customer-click", "date-click", "time-click"],
   props: {
     banquet: Object,
     readonly: {
@@ -78,6 +78,9 @@ export default defineComponent({
     },
     onDateClick({ date }) {
       this.$emit("date-click", { date });
+    },
+    onTimeClick({ startAt, endAt }) {
+      this.$emit("time-click", { startAt, endAt });
     },
   },
 });
