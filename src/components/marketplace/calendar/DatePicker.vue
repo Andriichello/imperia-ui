@@ -10,7 +10,7 @@
     </div>
 
     <div class="card bg-base-300 p-2">
-      <Calendar :selectedDate="date" @day-click="onDayClick"/> 
+      <Calendar :selectedDate="date" @date-select="onDateSelect"/> 
     </div>
   </div>    
 </template>
@@ -23,7 +23,7 @@ import Calendar from "@/components/marketplace/calendar/Calendar.vue";
 
 export default defineComponent({
   name: "DatePicker",
-  emits: ["close-picker", "day-click"],
+  emits: ["close-picker", "date-select"],
   components: {
     BaseIcon,
     Calendar,
@@ -40,8 +40,8 @@ export default defineComponent({
     iconColor() {
       return 'currentColor';
     },
-    onDayClick({ date }) {
-      this.$emit('day-click', { date });
+    onDateSelect({ date }) {
+      this.$emit('date-select', { date });
     },
   },
 });

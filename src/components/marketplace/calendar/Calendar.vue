@@ -26,10 +26,12 @@
       <template v-for="(row, index) in rows" :key="index">
         <Day v-for="day in row" :key="day" :day="day" 
           :highlighted="isSame(today, day, month, year)"
-          :selected="isSame(selectedDate, day, month, year)"
+          :selected="isSame(selected, day, month, year)"
           @day-click="onDayClick({day, month, year})"/>
       </template>
     </div>
+
+    <SaveButton :loading="false" @save-clicked="onSaveClick" v-if="changed"/>
   </div>
 </template>
 
@@ -39,16 +41,18 @@ import Day from "./items/Day.vue";
 import Weekday from "./items/Weekday.vue";
 import Cell from "./items/Cell.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
+import SaveButton from "@/components/marketplace/basket/SaveButton.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Calendar",
-  emits: ["day-click"],
+  emits: ["date-select"],
   components: {
     Day,
     Weekday,
     Cell,
     BaseIcon,
+    SaveButton,
   },
   props: {
     selectedDate: {
@@ -61,6 +65,7 @@ export default defineComponent({
 
     return {
       today: today,
+      selected: this.selectedDate,
       year: this.selectedDate ? this.selectedDate.getFullYear() : today.getFullYear(),
       month: this.selectedDate ? this.selectedDate.getMonth() : today.getMonth(),
       weekdays: [
@@ -113,6 +118,20 @@ export default defineComponent({
 
       return rows;
     },
+    changed() {
+      if (this.selected !== this.selectedDate) {
+        let result = false;
+        if (this.selectedDate instanceof Date) {
+          result = this.selectedDate.getFullYear() === this.selected.getFullYear() &&
+            this.selectedDate.getMonth() === this.selected.getMonth() &&
+            this.selectedDate.getDate() === this.selected.getDate();
+        }
+
+        return !result;
+      }
+
+      return false;
+    },
   },
   methods: {
     sub(str, start, end) {
@@ -152,8 +171,11 @@ export default defineComponent({
       return 'var(--text-color)';
     },
     onDayClick({day, month, year}) {
-      this.$emit('day-click', { date: new Date(year, month, day) });
-    }
+      this.selected = new Date(year, month, day);
+    },
+    onSaveClick() {
+      this.$emit('date-select', { date: this.selected });      
+    },
   },
 });
 </script>

@@ -25,19 +25,9 @@ export default defineComponent({
   },
   methods: {
      ...mapActions({
-      loadBanquet: 'basket/loadBanquet',
+      clearBasket: 'basket/clear',
     }),
   },
-  updated() {
-    const id = this.$route.params.id;
-    if (isNaN(id) || !id) {
-      return;
-    }
-
-    if (!this.banquet || this.banquet.id != id) {
-      this.loadBanquet({ id: id });
-    }
-  }
 });
 </script>
 

@@ -45,7 +45,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import BaseIcon from "../icons/BaseIcon.vue";
 import NavBarItem from "./NavBarItem.vue";
 import ThemeSwitcher from "../theme/ThemeSwitcher.vue";
@@ -58,6 +58,9 @@ export default defineComponent({
     ThemeSwitcher,
   },
   methods: {
+    ...mapActions({
+      clearBasket: 'basket/clear',
+    }),
     isSelected(page) {
       return page === this.page;
     },
@@ -66,6 +69,8 @@ export default defineComponent({
     },
     onItemClick({ page }) {
       if (this.isSelected(page)) {
+        this.clearBasket();
+        this.$router.push({path: '/' + page});
         return;
       }
 

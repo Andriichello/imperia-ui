@@ -6,7 +6,7 @@
 
       <div class="banquet">
         <Banquet @customer-click="onOpenCustomerPicker" @date-click="onOpenDatePicker" @time-click="onOpenTimePicker"/>
-        <SaveButton :loading="false" class="pt-3"/>
+        <SaveButton :loading="isCreatingBanquet || isUpdatingBanquet" class="pt-3" @save-clicked="onSaveBanquet()" v-if="isBanquetChanged"/>
       </div>
 
       <BasketSwitcher class="basket-switcher"/>
@@ -19,7 +19,7 @@
     </template>
     <template v-if="picker == 'date'">
       <div class="picker">
-        <DatePicker @close-picker="onClosePicker" @day-click="onDayClick"/>
+        <DatePicker @close-picker="onClosePicker" @date-select="onDateSelect"/>
       </div>
     </template>
      <template v-if="picker == 'time'">
@@ -42,6 +42,7 @@ import TimePicker from "@/components/marketplace/time/TimePicker.vue";
 import Banquet from "../banquet/Banquet.vue";
 import SaveButton from "./SaveButton.vue";
 import { mapGetters, mapActions } from "vuex";
+import { instanceOfShowBanquetResponse, instanceOfStoreBanquetResponse, instanceOfUpdateBanquetResponse } from "@/openapi";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -55,6 +56,13 @@ export default defineComponent({
     BasketSwitcher,
     SaveButton,
   },
+  data() {
+    return {
+      isLoadingBanquet: false,
+      isCreatingBanquet: false,
+      isUpdatingBanquet: false,
+    };
+  },
   computed: {
     ...mapGetters({
       form: 'basket/form',
@@ -63,11 +71,42 @@ export default defineComponent({
       date: 'basket/date',
       startAt: 'basket/startAt',
       endAt: 'basket/endAt',
+      isBanquetChanged: 'basket/isBanquetChanged',
+      showBanquetResponse: 'banquets/getShowResponse',
+      createBanquetResponse: 'banquets/getCreateResponse',
+      updateBanquetResponse: 'banquets/getUpdateResponse',
     }),
+  },
+  watch: {
+    showBanquetResponse(newValue) {
+      this.isLoadingBanquet = false;
+      if (instanceOfShowBanquetResponse(newValue)) {
+        this.setBanquet(newValue.data);
+      } else {
+        this.setBanquet(null);
+      }
+    },
+    createBanquetResponse(newValue) {
+      this.isUpdatingBanquet = false;
+      if (instanceOfStoreBanquetResponse(newValue)) {
+        const id = newValue.data.id;
+        this.loadBanquet({ id });
+      }
+    },
+    updateBanquetResponse(newValue) {
+      this.isUpdatingBanquet = false;
+      if (instanceOfUpdateBanquetResponse(newValue)) {
+          const id = newValue.data.id;
+        this.loadBanquet({ id });
+      }
+    },
   },
   methods: {
     ...mapActions({
-      loadBanquet: 'basket/loadBanquet',
+      loadBanquet: 'banquets/loadBanquet',
+      createBanquet: 'banquets/createBanquet',
+      updateBanquet: 'banquets/updateBanquet',
+      setBanquet: 'basket/setBanquet',
       resolveCustomer: 'basket/resolveCustomer',
       setPicker: 'basket/setPicker',
       setDate: 'basket/setDate',
@@ -81,7 +120,7 @@ export default defineComponent({
     onOpenDatePicker({ date }) {
       this.setPicker('date');
     },
-    onDayClick({ date }) {
+    onDateSelect({ date }) {
       this.setDate(date);
       this.onClosePicker();
     },
@@ -95,18 +134,41 @@ export default defineComponent({
     onOpenTimePicker() {
       this.setPicker('time');
     },
-    onTimeSelect({ startAt, endAt }) {
+    onTimeSelect({ start, end }) {
+      const date = this.date instanceof Date 
+        ? this.date : new Date(Date.now());
+
+      const startAt = new Date(date.getTime());
+      startAt.setUTCHours(start.hour);
+      startAt.setUTCMinutes(start.minute);
       this.setStartAt(startAt);
+
+      const endAt = new Date(date.getTime());
+      endAt.setUTCHours(end.hour);
+      endAt.setUTCMinutes(end.minute);
       this.setEndAt(endAt);
-      
+
       this.onClosePicker();
+    },
+    onSaveBanquet() {
+      const id = this.$route.params.id;
+      
+      if (!id && this.banquet === null) {
+        this.isCreatingBanquet = true;
+        this.createBanquet(this.form);
+      } 
+
+      if (id && this.banquet) {
+        this.isUpdatingBanquet = true;
+        this.updateBanquet({ id: id, request: this.form });
+      }
     },
   },
   mounted() {
     const id = this.$route.params.id;
 
     if (id && this.banquet == null) {
-      this.loadBanquet(id);
+      this.loadBanquet({ id });
     }
 
     this.resolveCustomer()

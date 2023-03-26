@@ -13,18 +13,18 @@
       <div class="time-card-body">
         <div class="time-card-entry">
           <span class="time-header">Start</span>
-          <Time :h="startDate ? startDate.getUTCHours() : 0" :m="startDate ? startDate.getUTCMinutes() : 0" @time-change="onStartAtChange({})"/> 
+          <Time :h="s.hour" :m="s.minute" @time-change="onStartAtChange"/> 
         </div>
 
         <span class="time-header ">-</span>
 
         <div class="time-card-entry">
           <span class="time-header">End</span>
-          <Time :h="endDate ? endDate.getUTCHours() : 0" :m="endDate ? endDate.getUTCMinutes() : 0" @time-change="onEndAtChange"/> 
+          <Time :h="e.hour" :m="e.minute" @time-change="onEndAtChange"/> 
         </div>
       </div>
       
-      <SaveButton :loading="false" class="p-0" @save-clicked="onTimeSelect()"/>
+      <SaveButton :loading="false" class="p-0" @save-clicked="onTimeSelect()" v-show="changed"/>
     </div>
   </div>    
 </template>
@@ -45,32 +45,74 @@ export default defineComponent({
   },
   props: {
     startAt: {
-      default: null
+      type: Date,
+      default: null,  
     },
     endAt: {
-      default: null
+      type: Date,
+      default: null,  
     },
   },
   data() {
+    const s = { hour: 0, minute: 0 };
+    if (this.startAt instanceof Date) {
+      s.hour = this.startAt.getUTCHours();
+      s.minute = this.startAt.getUTCMinutes();
+    }
+
+    const e = { hour: 0, minute: 0 };
+    if (this.endAt instanceof Date) {
+      e.hour = this.endAt.getUTCHours();
+      e.minute = this.endAt.getUTCMinutes();
+    }
+
     return {
-      startDate: this.startAt ? new Date(this.startAt.getTime()) : new Date(),
-      endDate: this.endAt ? new Date(this.endAt.getTime()) : new Date(),
+      s,
+      e,
     };
+  },
+  computed: {
+    changed() {
+      if (this.startAt instanceof Date) {
+        let result = this.s.hour === this.startAt.getUTCHours() 
+          && this.s.minute === this.startAt.getUTCMinutes();
+      
+        if (!result) {
+          return true;
+        }
+      } else if (this.startAt === null) {
+        return this.s.hour !== 0 || this.s.minute !== 0;
+      }
+
+      if (this.endAt instanceof Date) {
+        let result = this.e.hour === this.endAt.getUTCHours() 
+          && this.e.minute === this.endAt.getUTCMinutes();
+      
+        if (!result) {
+          return true;
+        }
+      } else if (this.endAt === null) {
+        return this.s.hour !== 0 || this.s.minute !== 0;
+      }
+
+
+      return false;
+    },
   },
   methods: {
     iconColor() {
       return 'currentColor';
     },
-    onTimeSelect() {
-      this.$emit('time-select', { startAt: this.startDate, endAt: this.endDate });
-    },
     onStartAtChange({ hour, minute }) {
-      this.startDate.setUTCHours(hour);
-      this.startDate.setUTCMinutes(minute);
+      this.s.hour = hour;
+      this.s.minute = minute;
     },
     onEndAtChange({ hour, minute }) {
-      this.endDate.setUTCHours(hour);
-      this.endDate.setUTCMinutes(minute);
+      this.e.hour = hour;
+      this.e.minute = minute;
+    },
+    onTimeSelect() {
+      this.$emit('time-select', { start: this.s, end: this.e });
     },
   },
 });

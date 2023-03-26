@@ -1,7 +1,9 @@
-import { authHeaders } from "@/helpers";
-import { Banquet, BanquetsApi, Customer, IndexCustomerResponse, Restaurant, ShowBanquetResponse, StoreBanquetRequest, StoreBanquetRequestStateEnum, User } from "@/openapi";
+import { Banquet, Customer, Restaurant, StoreBanquetRequestStateEnum, User } from "@/openapi";
 
 class BanquetForm {
+  /** Values that were set after constructor */
+  protected changes: object;
+
   public id: number | null;
   public title: string | null;
   public description: string | null;
@@ -15,6 +17,7 @@ class BanquetForm {
   public endAt: Date | string | null;
 
   constructor() {
+    this.changes = {};
     this.state = StoreBanquetRequestStateEnum.Draft; 
   }
 
@@ -35,6 +38,26 @@ class BanquetForm {
 
     return form;
   }
+
+  public getChanges() {
+    return this.changes;
+  }
+
+  public getChange(name: string, defaultValue = undefined) {
+    if (Object.prototype.hasOwnProperty.call(this.changes, name)) {
+      return this.changes[name];
+    }
+
+    return defaultValue;
+  }
+
+  public setChange(name: string, value: any) {
+    this.changes[name] = value;
+  }
+
+  public clearChange(name: string) {
+    return delete this.changes[name];
+  }
 }
 
 class BasketState {
@@ -46,8 +69,6 @@ class BasketState {
   public form: BanquetForm | null;
   /** Selected banquet in Marketplace */
   public banquet: Banquet | null;
-  /** Current banquet in Marketplace */
-  public banquetResponse: ShowBanquetResponse | null;
 
   constructor() {
     this.form = new BanquetForm();
@@ -99,38 +120,36 @@ const getters = {
   endAt(state: BasketState) {
     return state.form.endAt;
   },
+  isBanquetChanged(state: BasketState) {
+    return Object.keys(state.form.getChanges()).length > 0;
+  }
 };
 
 const actions = {
+  clear({ commit, dispatch }) {
+    commit('clear');
+    dispatch('resolveCustomer');
+  },
   setForm({ commit }, form: BanquetForm) {
     commit('setForm', form);
   },
-  resolveCustomer({ commit, state, rootGetters }) {
-    if (state.form.customer) {
+  setBanquet({ commit }, banquet: Banquet) {
+    commit('setBanquet', banquet);
+    commit('setForm', BanquetForm.fromBanquet(banquet));
+  },
+  resolveCustomer({ getters, commit, rootGetters }) {
+    if (getters['customer']) {
       return;
     }
 
     const me = rootGetters['auth/user'];
     commit('setCustomer', me.customer);
   },
-  setBanquet({ commit }, banquet: Banquet) {
-    commit('setBanquet', banquet);
-    commit('setForm', BanquetForm.fromBanquet(banquet));
-  },
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
   },
   setPicker({ commit }, picker) {
     commit('setPicker', picker);
-  },
-  async loadBanquet({ dispatch, commit, rootGetters }, { id }) {
-    const response = await (new BanquetsApi())
-      .showBanquet({ id, include: 'creator,customer,comments' }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
-      .then(response => response)
-      .catch(error => error.response);
-
-    commit('setBanquetResponse', response);
-    dispatch('setBanquet', response.data);
   },
   setTitle({ commit }, value: string | null) {
     commit('setTitle', value);
@@ -153,17 +172,16 @@ const actions = {
 };
 
 const mutations = {
+  clear(state: BasketState) {
+    state.picker = null;
+    state.banquet = null;
+    state.form = new BanquetForm();
+  },
   setForm(state: BasketState, form: BanquetForm) {
     state.form = form;
   },
   setBanquet(state: BasketState, banquet: Banquet) {
     state.banquet = banquet;
-  },
-  setBanquetResponse(state: BasketState, response) {
-    state.banquetResponse = response;
-  },
-  setToBanquet(state: BasketState, { key, value }) {
-    state.banquet[key] = value;
   },
   setShowing(state: BasketState, showing) {
     state.showing = showing;
@@ -173,21 +191,27 @@ const mutations = {
   },
   setTitle(state: BasketState, value) {
     state.form.title = value;
+    state.form.setChange('title', value);
   },
   setDescription(state: BasketState, value) {
     state.form.description = value;
+    state.form.setChange('description', value);
   },
   setCustomer(state: BasketState, value) {
     state.form.customer = value;
+    state.form.setChange('customer', value);
   },
   setDate(state: BasketState, value) {
     state.form.date = value;
+    state.form.setChange('date', value);
   },
   setStartAt(state: BasketState, value) {
     state.form.startAt = value;
+    state.form.setChange('startAt', value);
   },
   setEndAt(state: BasketState, value) {
     state.form.endAt = value;
+    state.form.setChange('endAt', value);
   },
 };
 

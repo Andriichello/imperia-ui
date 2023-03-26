@@ -6,6 +6,10 @@ export function authHeaders(token: string, type = 'bearer'): object {
     return {};
 }
 
+export function jsonHeaders(): object {
+    return { 'content-type': 'application/json' };
+}
+
 export function dateFormatted(date: Date | string | null): string | null {
     if (date === null) {
         return null;
