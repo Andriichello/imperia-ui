@@ -60,6 +60,7 @@ export default defineComponent({
   methods: {
     ...mapActions({
       clearBasket: 'basket/clear',
+      setSelectedCustomer: 'customers/setSelected',
     }),
     isSelected(page) {
       return page === this.page;
@@ -70,6 +71,7 @@ export default defineComponent({
     onItemClick({ page }) {
       if (this.isSelected(page)) {
         this.clearBasket();
+        this.setSelectedCustomer();
         this.$router.push({path: '/' + page});
         return;
       }

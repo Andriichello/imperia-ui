@@ -5,8 +5,9 @@
       <!-- <TabSwitcher :tab="tab"/> -->
 
       <div class="banquet">
-        <Banquet @customer-click="onOpenCustomerPicker" @date-click="onOpenDatePicker" @time-click="onOpenTimePicker"/>
-        <SaveButton :loading="isCreatingBanquet || isUpdatingBanquet" class="pt-3" @save-clicked="onSaveBanquet()" v-if="isBanquetChanged"/>
+        <Banquet @state-click="onOpenStatePicker" @customer-click="onOpenCustomerPicker" @date-click="onOpenDatePicker" @time-click="onOpenTimePicker"/>
+        <SaveButton :loading="isCreatingBanquet || isUpdatingBanquet" class="pt-3" @save-clicked="onSaveBanquet()" 
+        v-if="hasChanges && (title && state && customer && date && startAt && endAt)"/>
       </div>
 
       <BasketSwitcher class="basket-switcher"/>
@@ -14,7 +15,8 @@
 
     <template v-if="picker == 'customer'">
       <div class="picker">
-        <CustomerPicker @close-picker="onClosePicker" @select-customer="onSelectCustomer"/>
+        <CustomerPicker @close-picker="onClosePicker" @customer-select="onCustomerSelect"
+          :selected="customer"/>
       </div>
     </template>
     <template v-if="picker == 'date'">
@@ -28,6 +30,12 @@
           :startAt="startAt" :endAt="endAt"/>
       </div>
     </template>
+     <template v-if="picker == 'state'">
+      <div class="picker">
+        <StatePicker @close-picker="onClosePicker" @state-select="onStateSelect"
+          :selected="state" :states="availableStates"/>
+      </div>
+    </template>
       
   </div>
 </template>
@@ -39,6 +47,7 @@ import BasketSwitcher from "@/components/marketplace/basket/BasketSwitcher.vue";
 import CustomerPicker from "@/components/marketplace/customer/CustomerPicker.vue";
 import DatePicker from "@/components/marketplace/calendar/DatePicker.vue";
 import TimePicker from "@/components/marketplace/time/TimePicker.vue";
+import StatePicker from "@/components/marketplace/state/StatePicker.vue";
 import Banquet from "../banquet/Banquet.vue";
 import SaveButton from "./SaveButton.vue";
 import { mapGetters, mapActions } from "vuex";
@@ -53,6 +62,7 @@ export default defineComponent({
     CustomerPicker,
     DatePicker,
     TimePicker,
+    StatePicker,
     BasketSwitcher,
     SaveButton,
   },
@@ -66,12 +76,16 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       form: 'basket/form',
+      title: 'basket/title',
+      state: 'basket/state',
+      customer: 'basket/customer',
       banquet: 'basket/banquet',
       picker: 'basket/picker',
       date: 'basket/date',
       startAt: 'basket/startAt',
       endAt: 'basket/endAt',
-      isBanquetChanged: 'basket/isBanquetChanged',
+      availableStates: 'basket/availableStates',
+      hasChanges: 'basket/hasRealChanges',
       showBanquetResponse: 'banquets/getShowResponse',
       createBanquetResponse: 'banquets/getCreateResponse',
       updateBanquetResponse: 'banquets/getUpdateResponse',
@@ -87,10 +101,13 @@ export default defineComponent({
       }
     },
     createBanquetResponse(newValue) {
-      this.isUpdatingBanquet = false;
+      this.isCreatingBanquet = false;
       if (instanceOfStoreBanquetResponse(newValue)) {
         const id = newValue.data.id;
         this.loadBanquet({ id });
+
+        const path = this.$route.path;
+        this.$router.replace(`${path}/${id}`);
       }
     },
     updateBanquetResponse(newValue) {
@@ -113,9 +130,17 @@ export default defineComponent({
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
       setCustomer: 'basket/setCustomer',
+      setState: 'basket/setState',
     }),
     onClosePicker() {
       this.setPicker(null);
+    },
+    onOpenStatePicker({ state }) {
+        if (!this.availableStates || !this.availableStates.length) {
+        return;
+      }
+      
+      this.setPicker('state');
     },
     onOpenDatePicker({ date }) {
       this.setPicker('date');
@@ -127,12 +152,12 @@ export default defineComponent({
     onOpenCustomerPicker({ customer }) {
       this.setPicker('customer');
     },
-    onSelectCustomer({ customer }) {
-      this.setCustomer(customer);
-      this.onClosePicker();
-    },
     onOpenTimePicker() {
       this.setPicker('time');
+    },
+    onCustomerSelect({ customer }) {
+      this.setCustomer(customer);
+      this.onClosePicker();
     },
     onTimeSelect({ start, end }) {
       const date = this.date instanceof Date 
@@ -150,17 +175,21 @@ export default defineComponent({
 
       this.onClosePicker();
     },
+    onStateSelect({ state }) {
+      this.setState(state);
+      this.onClosePicker();
+    },
     onSaveBanquet() {
       const id = this.$route.params.id;
       
       if (!id && this.banquet === null) {
         this.isCreatingBanquet = true;
-        this.createBanquet(this.form);
+        this.createBanquet(this.form.asCreate());
       } 
 
       if (id && this.banquet) {
         this.isUpdatingBanquet = true;
-        this.updateBanquet({ id: id, request: this.form });
+        this.updateBanquet({ id: id, request: this.form.asUpdate() });
       }
     },
   },

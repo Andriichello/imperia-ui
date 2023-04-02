@@ -1,6 +1,14 @@
 <template>
   <div class="customer-list">
-    <CustomerListItem :customers="customers" v-for="customer in customers" :key="customer.id" :customer="customer" class="customer-list-item" @select-customer="onSelectCustomer" :selected="isSelected(customer)"/>
+    <template v-if="selected">
+      <CustomerListItem :customer="selected" class="customer-list-item" @select-customer="onSelectCustomer" @edit-customer="onEditCustomer" :selected="true"/>
+    </template>
+
+    <template v-for="customer in customers">
+      <template v-if="!isSelected(customer)">
+        <CustomerListItem :key="customer.id" :customer="customer" class="customer-list-item" @select-customer="onSelectCustomer" @edit-customer="onEditCustomer" :selected="false"/>
+      </template>
+    </template>
   </div>
 </template>
 
@@ -10,7 +18,7 @@ import CustomerListItem from "./CustomerListItem.vue";
 
 export default defineComponent({
   name: "CustomerList",
-  emits: ["select-customer"],
+  emits: ["select-customer", "edit-customer"],
   components: {
     CustomerListItem,
   },
@@ -28,6 +36,9 @@ export default defineComponent({
     },
     onSelectCustomer({ customer }) {
       this.$emit('select-customer', { customer })
+    },
+    onEditCustomer({ customer }) {
+      this.$emit('edit-customer', { customer })
     },
   },
 });

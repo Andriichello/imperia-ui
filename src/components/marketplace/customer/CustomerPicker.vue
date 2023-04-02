@@ -2,15 +2,29 @@
   <div class="customers"> 
     <div class="customers-actions">
       <button class="btn btn-ghost w-14 h-14 p-2"
-        @click="this.$emit('close-picker')">
+        @click="!creatingNew && !editingExisting ? this.$emit('close-picker') : onCloseForm()">
         <BaseIcon title="back" :color="iconColor()" :width="24" :height="24" viewBox="0 0 24 24">
           <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" :stroke="iconColor()" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </BaseIcon>
-    </button>
+      </button>
     </div>
 
-    <CustomerList :customers="customers" :selected="selected" class="customers-list" @select-customer="onSelectCustomer"/> 
-    <CustomerListMore :count="customersCount" :total="customersTotal" :loading="loadingMore" v-if="customers" @load-more="onLoadMoreCustomers"/>  
+    <div class="w-full flex justify-center mt-1 mb-1" v-if="!creatingNew && !editingExisting">
+      <NewCustomerButton @click="onNewCustomerClick"/>
+    </div>
+
+    <div class="w-full flex justify-center" v-if="creatingNew || editingExisting">
+      <CustomerForm :customer="formCustomer" class="w-full max-w-xs" @close-form="onCloseForm" @save-form="onSaveForm" @select-customer="onSelectCustomer"/>
+    </div>
+
+    <template v-if="!creatingNew && !editingExisting" >
+      <div class="w-full flex justify-center">
+        <CustomerList :customers="customers" :selected="selected" class="customers-list max-w-sm" @select-customer="onSelectCustomer" @edit-customer="onEditCustomer"/> 
+      </div>
+      <div class="w-full flex justify-center">
+        <CustomerListMore :count="customersCount" :total="customersTotal" :loading="loadingMore" v-if="customers" class="max-w-sm" @load-more="onLoadMoreCustomers"/>  
+      </div>
+    </template>
   </div>    
 </template>
 
@@ -20,31 +34,37 @@ import { mapActions, mapGetters } from "vuex";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import CustomerList from "@/components/marketplace/customer/list/CustomerList.vue";
 import CustomerListMore from "@/components/marketplace/customer/list/CustomerListMore.vue";
+import CustomerForm from "@/components/marketplace/customer/CustomerForm.vue";
+import NewCustomerButton from "@/components/marketplace/customer/NewCustomerButton.vue";
+import { instanceOfStoreCustomerResponse, instanceOfUpdateCustomerResponse } from "@/openapi";
 
 export default defineComponent({
   name: "CustomerPicker",
-  emits: ["close-picker", "select-customer"],
+  emits: ["close-picker", "customer-select"],
   components: {
     BaseIcon,
     CustomerList,
     CustomerListMore,
-  },
-  props: {
-    selectedCustomer: {
-      type: Object,
-      default: null,
-    },
+    CustomerForm,
+    NewCustomerButton,
   },
   data() {
     return {
       loadingMore: false,
+      creatingNew: false,
+      editingExisting: false,
     };
   },
   computed: {
     ...mapGetters({
       filters: 'customers/filters',
       selected: 'customers/selected',
+      formCustomer: 'customers/formCustomer',
+      basketCustomer: 'basket/customer',
       customers: 'customers/customers',
+      indexMoreResponse: 'customers/getIndexMoreResponse',
+      createResponse: 'customers/getCreateResponse',
+      updateResponse: 'customers/getUpdateResponse',
     }),
     customersCount() {
       return this.customers ? this.customers.length : 0;
@@ -59,14 +79,38 @@ export default defineComponent({
         this.loadingMore = false;
       }
     },
+    indexMoreResponse: {
+      async handler(newValue) {
+        this.loadingMore = false;
+      },
+    },
+    createResponse: {
+      async handler(newValue) {
+        if (instanceOfStoreCustomerResponse(newValue)) {
+          this.setFormCustomer(newValue.data);
+          this.prependCustomers([newValue.data]);
+        }
+      },
+    },
+    updateResponse: {
+      async handler(newValue) {
+        if (instanceOfUpdateCustomerResponse(newValue)) {
+          this.setFormCustomer(newValue.data);
+        }
+      },
+    }
   },
   methods: {
     ...mapActions({
       'setSelected': 'customers/setSelected',
+      'setFormCustomer': 'customers/setFormCustomer',
+      'prependCustomers': 'customers/prependCustomers',
       'loadCustomers': 'customers/loadCustomers',
       'loadCustomersIfMissing': 'customers/loadCustomersIfMissing',
       'loadMoreCustomers': 'customers/loadMoreCustomers',
       'applySearch': 'customers/applySearch',
+      'createCustomer': 'customers/storeCustomer',
+      'updateCustomer': 'customers/updateCustomer',
     }),
     iconColor() {
       return 'currentColor';
@@ -77,10 +121,34 @@ export default defineComponent({
     },
     onSelectCustomer({ customer }) {
       this.setSelected(customer);
-      this.$emit('select-customer', { customer })
+      this.$emit('customer-select', { customer })
+    },
+    onEditCustomer({ customer }) {
+      this.setFormCustomer(customer);
+      this.editingExisting = true;
+      this.creatingNew = false;
+    },
+    onNewCustomerClick() {
+      this.setFormCustomer(null);
+      this.creatingNew = true;
+      this.editingExisting = false;
+    },
+    onCloseForm() {
+      this.creatingNew = false;
+      this.editingExisting = false;
+    },
+    onSaveForm({ form }) {
+      if (this.creatingNew) {
+        this.createCustomer({ request: form});
+      }
+
+      if (this.editingExisting) {
+        this.updateCustomer({ id: this.formCustomer.id, request: form });
+      }
     },
   },
   mounted() {
+    this.setSelected(this.basketCustomer);
     this.loadCustomersIfMissing();
   },
 });
@@ -110,8 +178,6 @@ export default defineComponent({
 }
 
 .customers-list {
-  flex-basis: 90%;
-
   margin-left: auto;
   margin-right: auto;
 }

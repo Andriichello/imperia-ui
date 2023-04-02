@@ -335,7 +335,6 @@ export class BanquetsApi extends runtime.BaseAPI {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
             }
         }
-
         const response = await this.request({
             path: `/api/banquets`,
             method: 'POST',

@@ -1,8 +1,9 @@
-import { Banquet, Customer, Restaurant, StoreBanquetRequestStateEnum, User } from "@/openapi";
+import { Banquet, Customer, Restaurant, StoreBanquetRequest, StoreBanquetRequestStateEnum, UpdateBanquetRequest, User } from "@/openapi";
 
 class BanquetForm {
   /** Values that were set after constructor */
   protected changes: object;
+  protected banquet: Banquet | null;
 
   public id: number | null;
   public title: string | null;
@@ -16,13 +17,15 @@ class BanquetForm {
   public startAt: Date | string | null;
   public endAt: Date | string | null;
 
-  constructor() {
+  constructor(banquet: Banquet = null) {
     this.changes = {};
     this.state = StoreBanquetRequestStateEnum.Draft; 
+    
+    this.banquet = banquet;
   }
 
   public static fromBanquet(banquet: Banquet) {
-    const form = new BanquetForm();
+    const form = new BanquetForm(banquet);
 
     form.id = banquet.id;
     form.title = banquet.title;
@@ -52,11 +55,55 @@ class BanquetForm {
   }
 
   public setChange(name: string, value: any) {
-    this.changes[name] = value;
+    if (value === undefined) {
+      this.clearChange(name);
+    } else {
+      this.changes[name] = value;
+    }
   }
 
   public clearChange(name: string) {
     return delete this.changes[name];
+  }
+
+  public hasChanges() {
+    return Object.keys(this.getChanges()).length > 0;
+  }
+
+  public hasRealChanges() {
+    if (!this.banquet) {
+      return this.hasChanges();
+    }
+
+    let result = false;
+
+    Object.keys(this.getChanges())
+      .forEach(name => {
+        if (this.banquet[name] !== this.getChange(name)) {
+          result = true;
+          return;
+        }
+      });
+
+    return result;
+  }
+
+  public asCreate(): StoreBanquetRequest {
+    const request = {
+      state: this.state,
+      title: this.title,
+      description: this.description,
+      customerId: this.customer ? this.customer['id'] : null,
+      advanceAmount: this.advanceAmount,
+      startAt: this.startAt,
+      endAt: this.endAt,
+    };
+
+    return request as StoreBanquetRequest;
+  }
+
+  public asUpdate(): UpdateBanquetRequest {
+    return this.asCreate();
   }
 }
 
@@ -120,8 +167,14 @@ const getters = {
   endAt(state: BasketState) {
     return state.form.endAt;
   },
-  isBanquetChanged(state: BasketState) {
-    return Object.keys(state.form.getChanges()).length > 0;
+  availableStates(state: BasketState) {
+    return state.banquet.availableStates;
+  },
+  hasChanges(state: BasketState) {
+    return state.form.hasChanges();
+  },
+  hasRealChanges(state: BasketState) {
+    return state.form.hasRealChanges();
   }
 };
 
@@ -151,6 +204,9 @@ const actions = {
   setPicker({ commit }, picker) {
     commit('setPicker', picker);
   },
+  setState({ commit }, value: string | null) {
+    commit('setState', value);
+  },
   setTitle({ commit }, value: string | null) {
     commit('setTitle', value);
   },
@@ -160,8 +216,14 @@ const actions = {
   setCustomer({ commit }, value: Customer | null) {
     commit('setCustomer', value);
   },
-  setDate({ commit }, value: Date | string | null) {
+  setDate({ commit, state }, value: Date | string | null) {
     commit('setDate', value);
+    if (state.form?.startAt) {
+      commit('setStartAt', state.form.startAt);
+    }
+    if (state.form?.endAt) {
+      commit('setEndAt', state.form.endAt);
+    }
   },
   setStartAt({ commit }, value: Date | string | null) {
     commit('setStartAt', value);
@@ -189,6 +251,10 @@ const mutations = {
   setPicker(state: BasketState, picker) {
     state.picker = picker;
   },
+  setState(state: BasketState, value) {
+    state.form.state = value;
+    state.form.setChange('state', value);
+  },
   setTitle(state: BasketState, value) {
     state.form.title = value;
     state.form.setChange('title', value);
@@ -201,17 +267,43 @@ const mutations = {
     state.form.customer = value;
     state.form.setChange('customer', value);
   },
-  setDate(state: BasketState, value) {
+  setDate(state: BasketState, value: Date) {
     state.form.date = value;
     state.form.setChange('date', value);
   },
-  setStartAt(state: BasketState, value) {
-    state.form.startAt = value;
-    state.form.setChange('startAt', value);
+  setStartAt(state: BasketState, value: Date) {
+    const date = state.form?.date;
+
+    if (date) {
+      const startAt = new Date((date as Date).getTime());
+     
+      startAt.setHours(value.getHours());
+      startAt.setMinutes(value.getMinutes());
+      startAt.setMilliseconds(value.getMilliseconds());
+     
+      state.form.startAt = startAt;
+      state.form.setChange('startAt', startAt);
+    } else {
+      state.form.startAt = value;
+      state.form.setChange('startAt', value);
+    }
   },
-  setEndAt(state: BasketState, value) {
-    state.form.endAt = value;
-    state.form.setChange('endAt', value);
+  setEndAt(state: BasketState, value: Date) {
+    const date = state.form?.date;
+
+    if (date) {
+      const endAt = new Date((date as Date).getTime());
+     
+      endAt.setHours(value.getHours());
+      endAt.setMinutes(value.getMinutes());
+      endAt.setMilliseconds(value.getMilliseconds());
+
+      state.form.endAt = endAt;
+      state.form.setChange('endAt', endAt);
+    } else {
+      state.form.endAt = value;
+      state.form.setChange('endAt', value);
+    }
   },
 };
 

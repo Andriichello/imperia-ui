@@ -5,7 +5,7 @@
         <TitleInput/>
 
         <div class="flex flex-grow-0">
-          <State :state="state"/>
+          <State :state="state" @click="onStateClick({ state })" class="cursor-pointer"/>
         </div>
       </div>
     
@@ -36,7 +36,7 @@ import Totals from '@/components/history/banquet/Totals.vue';
 export default defineComponent({
   // eslint-disable-next-line
   name: "Banquet",
-  emits: ["customer-click", "date-click", "time-click"],
+  emits: ["state-click", "customer-click", "date-click", "time-click"],
   props: {
     banquet: Object,
     readonly: {
@@ -73,6 +73,9 @@ export default defineComponent({
       this.setBanquet(banquet);
       this.$router.push({path: '/marketplace/' + banquet.id, replace: true});
     },
+    onStateClick({ state }) {
+      this.$emit("state-click", { state });
+    },
     onCustomerClick({ customer }) {
       this.$emit("customer-click", { customer });
     },
@@ -82,6 +85,7 @@ export default defineComponent({
     onTimeClick({ startAt, endAt }) {
       this.$emit("time-click", { startAt, endAt });
     },
+    
   },
 });
 </script>
