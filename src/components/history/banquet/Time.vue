@@ -33,8 +33,8 @@ export default defineComponent({
     BaseIcon,
   },
   props: {
-    startAt: String,
-    endAt: String,
+    startAt: Date,
+    endAt: Date,
     readonly: {
       type: Boolean,
       default: false,

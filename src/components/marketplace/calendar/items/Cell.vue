@@ -1,6 +1,6 @@
 <template>
   <div class="cell">
-    <button :class="{'selected': selected, 'no-animation': noAnimation}" @click="onCellClicked()">
+    <button :class="{'no-animation': noAnimation}" @click="onCellClicked()">
       <slot/>
     </button> 
   </div>

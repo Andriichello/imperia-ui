@@ -60,10 +60,10 @@ html, body {
     --background-inv-color: var(var(--l-black));
 
     --text-color: var(--l-black);
-    --text-inv-color: var(--l-white);
+    --text-inv-color: var(--white);
     --hint-color: var(--d-gray);
     --hint-inv-color: #3e485199;
-    --label-color: var(--l-white);
+    --label-color: var(--white);
 
     --action-color: var(--orange);
     --selection-color: var(--yellow);
@@ -77,7 +77,7 @@ html, body {
     --text-inv-color: var(--d-gray);
     --hint-color: var(--l-gray);
     --hint-inv-color: #3e485199;
-    --label-color: var(--l-white);
+    --label-color: var(--white);
 
     --action-color: var(--orange);
     --selection-color: var(--yellow);
@@ -91,7 +91,7 @@ html, body {
     --text-inv-color: var(--d-gray);
     --hint-color: var(--l-gray);
     --hint-inv-color: #3e485199;
-    --label-color: var(--l-white);
+    --label-color: var(--white);
 
     --action-color: var(--orange);
     --selection-color: var(--yellow);

@@ -32,7 +32,7 @@ export default defineComponent({
     BaseIcon,
   },
   props: {
-    date: String,
+    date: Date,
     readonly: {
       type: Boolean,
       default: false,

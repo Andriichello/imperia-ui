@@ -18,6 +18,8 @@
     </div>
 
     <template v-if="!creatingNew && !editingExisting" >
+      <SearchBar :search="filters.search" @search-change="onSearchChange" class="mb-2"/>
+
       <div class="w-full flex justify-center">
         <CustomerList :customers="customers" :selected="selected" class="customers-list max-w-sm" @select-customer="onSelectCustomer" @edit-customer="onEditCustomer"/> 
       </div>
@@ -37,11 +39,13 @@ import CustomerListMore from "@/components/marketplace/customer/list/CustomerLis
 import CustomerForm from "@/components/marketplace/customer/CustomerForm.vue";
 import NewCustomerButton from "@/components/marketplace/customer/NewCustomerButton.vue";
 import { instanceOfStoreCustomerResponse, instanceOfUpdateCustomerResponse } from "@/openapi";
+import SearchBar from "@/components/common/SearchBar.vue";
 
 export default defineComponent({
   name: "CustomerPicker",
   emits: ["close-picker", "customer-select"],
   components: {
+    SearchBar,
     BaseIcon,
     CustomerList,
     CustomerListMore,
@@ -118,6 +122,9 @@ export default defineComponent({
     onLoadMoreCustomers() {
       this.loadingMore = true;
       this.loadMoreCustomers();
+    },
+    onSearchChange({ search }) {
+      this.applySearch({ search });
     },
     onSelectCustomer({ customer }) {
       this.setSelected(customer);

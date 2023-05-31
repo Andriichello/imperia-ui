@@ -1,7 +1,8 @@
 <template>
   <div class="list-more-container">
     <div class="list-more-body">
-      <span>Showing {{ count }} of {{ total }} items</span>
+      <span v-if="total === null">No such items...</span>
+      <span v-else>Showing {{ count }} of {{ total }} items</span>
       
       <div class="list-more-btn" v-if="count < total">
         <button class="btn btn-block btn-primary" :class="{ 'loading': loading }" @click="onLoadMore">Load more</button>
@@ -26,6 +27,9 @@ export default defineComponent({
       this.$emit('load-more');
     }
   },
+  updated() {
+    console.log(this.count, this.total)
+  }
 });
 </script>
 

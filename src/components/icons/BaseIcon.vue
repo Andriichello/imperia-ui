@@ -20,7 +20,7 @@ export default defineComponent({
     },
     color: {
       type: String,
-      default: "white"
+      default: "currentColor"
     },
     width: {
       default: 24

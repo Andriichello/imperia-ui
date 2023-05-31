@@ -31,7 +31,7 @@
       </template>
     </div>
 
-    <SaveButton :loading="false" @save-clicked="onSaveClick" v-if="changed"/>
+    <SaveButton :loading="false" @save-clicked="onSaveClick" v-if="!selectOnClick && changed"/>
   </div>
 </template>
 
@@ -42,6 +42,7 @@ import Weekday from "./items/Weekday.vue";
 import Cell from "./items/Cell.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import SaveButton from "@/components/marketplace/basket/SaveButton.vue";
+import {sameDay} from "@/helpers";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -58,6 +59,10 @@ export default defineComponent({
     selectedDate: {
       type: Date,
       default: null,
+    },
+    selectOnClick: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -171,7 +176,20 @@ export default defineComponent({
       return 'var(--text-color)';
     },
     onDayClick({day, month, year}) {
-      this.selected = new Date(year, month, day);
+      const date = new Date();
+
+      date.setUTCDate(day);
+      date.setUTCMonth(month);
+      date.setUTCFullYear(year);
+
+      if (this.selectOnClick) {
+        this.selected = this.selected && sameDay(this.selected, date)
+          ? null : date;
+
+        this.onSaveClick();
+      } else {
+        this.selected = date;
+      }
     },
     onSaveClick() {
       this.$emit('date-select', { date: this.selected });      

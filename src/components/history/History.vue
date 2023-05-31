@@ -1,5 +1,8 @@
 <template>
-  <div class="history"> 
+  <div class="history">
+    <Filters :states="filters.states" :from="filters.from" :until="filters.until" @state-switch="onStateSwitch" @from-select="onFromSelect" @until-select="onUntilSelect"/>
+    <SearchBar :search="filters.search" @search-change="onSearchChange" :delay="500" class="mt-2 mb-4"/>
+
     <HistoryList :banquets="banquets" class="history-list"/> 
     <HistoryListMore :count="banquetsCount" :total="banquetsTotal" :loading="loadingMore" v-if="banquets" @load-more="onLoadMoreBanquets"/>  
   </div>    
@@ -10,11 +13,15 @@ import { defineComponent } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import HistoryList from "./list/HistoryList.vue";
 import HistoryListMore from "./list/HistoryListMore.vue";
+import Filters from "@/components/history/filters/Filters.vue";
+import SearchBar from "@/components/common/SearchBar.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "History",
   components: {
+    SearchBar,
+    Filters,
     HistoryList,
     HistoryListMore,
   },
@@ -48,10 +55,25 @@ export default defineComponent({
       'loadBanquetsIfMissing': 'history/loadBanquetsIfMissing',
       'loadMoreBanquets': 'history/loadMoreBanquets',
       'applySearch': 'history/applySearch',
+      'applyStates': 'history/applyStates',
+      'applyFrom': 'history/applyFrom',
+      'applyUntil': 'history/applyUntil',
     }),
     onLoadMoreBanquets() {
       this.loadingMore = true;
       this.loadMoreBanquets();
+    },
+    onSearchChange({ search }) {
+      this.applySearch({ search })
+    },
+    onStateSwitch({ state, wasSelected }) {
+      this.applyStates({ states: wasSelected ? [] : [state] })
+    },
+    onFromSelect({ date }) {
+      this.applyFrom({ from: date })
+    },
+    onUntilSelect({ date }) {
+      this.applyUntil({ until: date })
     },
   },
 });
@@ -68,6 +90,8 @@ export default defineComponent({
   align-self: flex-start;
 
   flex-wrap: wrap;
+
+  max-width: 800px;
 }
 
 .history-list {

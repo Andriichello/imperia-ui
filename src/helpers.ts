@@ -10,6 +10,12 @@ export function jsonHeaders(): object {
     return { 'content-type': 'application/json' };
 }
 
+export function sameDay(d1: Date, d2: Date): boolean {
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+}
+
 export function dateFormatted(date: Date | string | null): string | null {
     if (date === null) {
         return null;

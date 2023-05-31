@@ -1,5 +1,5 @@
 <template>
-  <div class="marketplace-view">    
+  <div class="marketplace-view">
     <Basket v-if="showing" class="basket-component"/>
     <Marketplace v-else class="marketplace-component"/>
   </div>
@@ -48,19 +48,23 @@ export default defineComponent({
 
 .basket-component { 
   display: flex;
-  flex-direction: col;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  min-width: 100%;
-  flex-basis: 100%;
+  //min-width: 100%;
+  //flex-basis: 100%;
   
   margin-left: auto;
   margin-right: auto;
+
+  max-width: 800px;
 }
 
 .marketplace-component {
   margin-left: auto;
   margin-right: auto;
+
+  max-width: 800px;
 }
 </style>

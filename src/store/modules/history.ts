@@ -3,10 +3,23 @@ import { Banquet, BanquetsApi, IndexBanquetResponse, IndexBanquetsRequest, ShowB
 
 class HistoryFilters {
   /** Applied search query */
-  public search: string | null;
+  public search: string | null ;
+
+  /** Banquet states */
+  public states: string[];
+
+  /** Banquet starting or active from */
+  public from: Date | null;
+
+  /** Banquet ending or active until */
+  public until: Date | null;
+
 
   constructor() {
     this.search = null;
+    this.states = [];
+    this.from = null;
+    this.until = null;
   }
 }
 
@@ -48,9 +61,27 @@ const getters = {
 };
 
 const actions = {
-  async loadBanquets({ commit, rootGetters }) {
+  async loadBanquets({ commit, getters, rootGetters}) {
+    const request: IndexBanquetsRequest = {
+      include: 'creator,customer,comments',
+    };
+
+    const filters = getters.filters;
+    if (filters.states && filters.states.length > 0) {
+      request.filterState = filters.states.join(',');
+    }
+    if (filters.search && filters.search.length > 0) {
+      request.filterSearch = filters.search;
+    }
+    if (filters.from) {
+      request.filterFrom = filters.from;
+    }
+    if (filters.until) {
+      request.filterUntil = filters.until;
+    }
+
     const banquets = await (new BanquetsApi())
-      .indexBanquets({ include: 'creator,customer,comments' }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+      .indexBanquets(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
       .catch(error => error.response);
 
@@ -75,11 +106,24 @@ const actions = {
       page = response.meta.currentPage + 1;
     }
 
-    const filters: HistoryFilters = getters['filters'];
-    const request: IndexBanquetsRequest = { 
+    const request: IndexBanquetsRequest = {
       pageNumber: page,
-       include: 'creator,customer,comments'
+      include: 'creator,customer,comments',
     };
+
+    const filters = getters.filters;
+    if (filters.states && filters.states.length > 0) {
+      request.filterState = filters.states.join(',');
+    }
+    if (filters.search && filters.search.length > 0) {
+      request.filterSearch = filters.search;
+    }
+    if (filters.from) {
+      request.filterFrom = filters.from;
+    }
+    if (filters.until) {
+      request.filterUntil = filters.until;
+    }
 
     banquets = await (new BanquetsApi())
       .indexBanquets(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
@@ -91,6 +135,18 @@ const actions = {
   },
   applySearch({ commit, dispatch }, { search }) {
     commit('applySearch', { search });
+    dispatch('loadBanquets');
+  },
+  applyStates({ commit, dispatch }, { states }) {
+    commit('applyStates', { states });
+    dispatch('loadBanquets');
+  },
+  applyFrom({ commit, dispatch }, { from }) {
+    commit('applyFrom', { from });
+    dispatch('loadBanquets');
+  },
+  applyUntil({ commit, dispatch }, { until }) {
+    commit('applyUntil', { until });
     dispatch('loadBanquets');
   },
 };
@@ -110,6 +166,15 @@ const mutations = {
   },
   applySearch(state: HistoryState, { search }) {
     state.filters.search = search;
+  },
+  applyStates(state: HistoryState, { states }) {
+    state.filters.states = states;
+  },
+  applyFrom(state: HistoryState, { from }) {
+    state.filters.from = from;
+  },
+  applyUntil(state: HistoryState, { until }) {
+    state.filters.until = until;
   },
 };
 

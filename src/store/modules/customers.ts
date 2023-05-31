@@ -135,7 +135,7 @@ const getters = {
     return state.form;
   },
   filters(state: CustomersState) {
-    return state.form;
+    return state.filters;
   },
   selected(state: CustomersState) {
     return state.selected;
@@ -216,9 +216,20 @@ const actions = {
 
     dispatch('loadCustomers');
   },
-  async loadCustomers({ dispatch, commit, rootGetters }) {
+  async loadCustomers({ dispatch, commit, getters, rootGetters }) {
+    const request: IndexCustomersRequest = {
+      include: 'comments',
+    };
+
+    const filters = getters.filters;
+    console.log(filters);
+
+    if (filters.search && filters.search.length > 0) {
+      request.filterSearch = filters.search;
+    }
+
     const response = await (new CustomersApi())
-      .indexCustomers({ include: 'comments' }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+      .indexCustomers(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
       .catch(error => error.response);
 
@@ -236,11 +247,15 @@ const actions = {
       page = response.meta.currentPage + 1;
     }
 
-    const filters: CustomersFilters = getters['filters'];
-    const request: IndexCustomersRequest = { 
+    const request: IndexCustomersRequest = {
       pageNumber: page,
       include: 'comments'
     };
+
+    const filters = getters.filters;
+    if (filters.search && filters.search.length > 0) {
+      request.filterSearch = filters.search;
+    }
 
     customers = await (new CustomersApi())
       .indexCustomers(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })

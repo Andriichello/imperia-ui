@@ -14,7 +14,7 @@ export default defineComponent({
   name: "Weekday",
   props: {
     weekday: {
-      type: Number,
+      type: String,
       default: null,
     },
   },
