@@ -1,9 +1,9 @@
 <template>
   <div class="filters">
-    <div class="collapse" :class="{'collapse-arrow': !appliedCount, 'collapse-open': appliedCount}">
+    <div class="collapse collapse-arrow">
       <input type="checkbox" class="peer"/>
       <div class="collapse-title">
-        Filters
+        Filters {{ appliedCount ? ' | ' + appliedCount + ' applied' : '' }}
       </div>
       <div class="collapse-content">
         <StateFilter
@@ -12,10 +12,10 @@
             @state-switch="onStateSwitch"
         />
 
-        <div class="collapse" :class="{'collapse-arrow': !datesCount, 'collapse-open': datesCount}">
+        <div class="collapse collapse-arrow">
           <input type="checkbox" class="peer"/>
           <div class="collapse-title">
-            From & Until
+            From & Until  {{ datesCount ? ' | ' + datesCount + ' applied' : '' }}
           </div>
           <div class="collapse-content">
             <DatesFilter :from="from" :until="until" @from-select="onFromSelect" @until-select="onUntilSelect"/>

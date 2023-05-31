@@ -93,7 +93,7 @@ export default defineComponent({
 
 <style scoped>
 .banquet-card {
-  @apply card flex-wrap shadow-xl block bg-base-300;
+  @apply card flex-wrap shadow-xl block;
   min-width: 80%;
   flex-basis: 100%;
 }

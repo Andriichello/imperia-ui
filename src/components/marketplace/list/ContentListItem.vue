@@ -69,7 +69,7 @@ export default defineComponent({
 
 <style scoped>
 .list-item-container {
-  @apply card shadow-md bg-base-300 flex flex-col flex-nowrap justify-center items-center gap-3 p-2;
+  @apply card shadow-lg flex flex-col flex-nowrap justify-center items-center gap-3 p-2;
 
   --rounded-box: 0.25rem;
   --padding-card: 1rem;
@@ -85,7 +85,7 @@ export default defineComponent({
 }
 
 .list-item-img {
-  @apply rounded-box;
+  @apply rounded-box max-h-[350px];
 }
 
 .list-item-details {

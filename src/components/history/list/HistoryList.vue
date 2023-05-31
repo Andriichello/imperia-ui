@@ -22,7 +22,7 @@ export default defineComponent({
 
 <style scoped>
 .history-list {
-  @apply gap-3;
+  @apply gap-6;
 
   display: flex;
   flex-grow: 1;
