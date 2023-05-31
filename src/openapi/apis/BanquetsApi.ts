@@ -66,6 +66,7 @@ export interface IndexBanquetsRequest {
   filterState?: string;
   filterFrom?: Date;
   filterUntil?: Date;
+  sort?: string;
   pageSize?: number;
   pageNumber?: number;
   deleted?: DeletedParameter;
@@ -195,6 +196,10 @@ export class BanquetsApi extends runtime.BaseAPI {
       queryParameters["filter[until]"] = (requestParameters.filterUntil as any)
         .toISOString()
         .substr(0, 10);
+    }
+
+    if (requestParameters.sort !== undefined) {
+      queryParameters["sort"] = requestParameters.sort;
     }
 
     if (requestParameters.pageSize !== undefined) {
