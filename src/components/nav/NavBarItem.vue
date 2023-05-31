@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-ghost w-14 h-14 p-2" :class="{'selected': selected}"
+  <button class="btn btn-ghost w-14 h-14 p-0" :class="{'selected': selected}"
     @click="onClick">
     <slot class="inline-block"></slot>
   </button>

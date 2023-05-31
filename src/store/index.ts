@@ -7,6 +7,7 @@ import history from "./modules/history";
 import customers from "./modules/customers";
 import marketplace from "./modules/marketplace";
 import banquets from "./modules/banquets";
+import restaurants from "@/store/modules/restaurants";
 
 export default createStore({
   modules: {
@@ -18,5 +19,6 @@ export default createStore({
     'customers': customers,
     'banquets': banquets,
     'marketplace': marketplace,
+    'restaurants': restaurants,
   }
 });

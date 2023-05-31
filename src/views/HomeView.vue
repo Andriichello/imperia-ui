@@ -1,21 +1,39 @@
 <template>
   <div class="base-div">
-    <h2>Home</h2>
+    <RestaurantList :restaurants="restaurants" :selected="selected" @restaurant-click="onRestaurantClick"/>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import RestaurantList from "@/components/home/list/RestaurantList.vue";
+import {mapActions, mapGetters} from "vuex";
 
 export default defineComponent({
   name: "HomeView",
-  components: {},
+  components: {
+    RestaurantList,
+  },
+  computed: {
+    ...mapGetters({
+      selected: 'restaurants/selected',
+      restaurants: 'restaurants/restaurants',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      setSelected: 'restaurants/setSelected',
+    }),
+    onRestaurantClick({ restaurant }) {
+      this.setSelected(this.selected === restaurant ? null : restaurant);
+    },
+  },
 });
 </script>
 
 <style scoped>
 .base-div {
-  @apply rounded-box bg-base-300 flex-wrap;
+  @apply rounded-box flex-wrap w-full;
   
   min-width: 100px;
   min-height: 100px;

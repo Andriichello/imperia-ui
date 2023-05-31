@@ -29,6 +29,7 @@ export default defineComponent({
       setPage: 'nav/set',
       resolveAuth: 'auth/resolve',
       resolveTheme: 'theme/resolve',
+      resolveRestaurant: 'restaurants/resolve',
     }),
   },
   watch: {
@@ -46,6 +47,7 @@ export default defineComponent({
   mounted() {
     this.resolveAuth();
     this.resolveTheme();
+    this.resolveRestaurant();
   },
 });
 </script>

@@ -19,3 +19,8 @@ export class ThemeConfig {
         return this.list()[0];
     }
 }
+
+export class RestaurantConfig {
+    /** Local storage key name */
+    public static storage = 'selected-restaurant';
+}
