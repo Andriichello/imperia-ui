@@ -1,22 +1,21 @@
 <template>
-  <div class="holder"></div>
-  
-  <div class="wrapper">
-    <router-view />
-  </div>
-
-  <NavBar :page="page" class="nav"/>
+  <AuthenticatedLayout>
+    <div class="wrapper">
+      <router-view />
+    </div>
+  </AuthenticatedLayout>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import debounce from "lodash.debounce";
 import { mapGetters, mapActions } from "vuex";
-import NavBar from "./components/nav/NavBar.vue";
+import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    NavBar,
+    AuthenticatedLayout,
   },
   computed: {
     ...mapGetters({
@@ -30,7 +29,16 @@ export default defineComponent({
       resolveAuth: 'auth/resolve',
       resolveTheme: 'theme/resolve',
       resolveRestaurant: 'restaurants/resolve',
+      loadMoreItems: 'marketplace/loadMoreItems',
     }),
+    handleScroll() {
+      const full = document.documentElement.scrollHeight;
+      const scrolled = window.innerHeight + window.scrollY;
+
+      if (full <= scrolled) {
+        console.log('scrolled to bottom');
+      }
+    }
   },
   watch: {
     authorized(newValue, oldValue) {
@@ -48,12 +56,20 @@ export default defineComponent({
     this.resolveAuth();
     this.resolveTheme();
     this.resolveRestaurant();
+
+    this.debouncedHandleScroll = debounce(this.handleScroll, 250);
+    window.addEventListener('scroll', this.debouncedHandleScroll);
+  },
+  beforeUnmount () {
+    window.removeEventListener('scroll', this.debouncedHandleScroll);
   },
 });
 </script>
 
 <style scoped>
   .wrapper {
+    @apply min-w-full min-h-screen;
+
     overflow-x: auto;
     overflow-y: auto;
 
@@ -64,15 +80,6 @@ export default defineComponent({
 
     max-width: 100%;
     flex: 0 1 100%;
-  }
-
-  .holder {
-    @apply bg-green-200;
-
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 80px;
-    min-height: 100vh;
   }
 
   .nav {

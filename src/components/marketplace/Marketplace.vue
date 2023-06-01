@@ -4,7 +4,7 @@
 
     <MenuSwitcher :menus="menus" :selected="selectedMenu" @switch-menu="onSwitchMenu" class="w-full"/>
     <CategorySwitcher :categories="categories" :selected="selectedCategory" @switch-category="onSwitchCategory" class="w-full"/>
-    <ContentList type="items" :items="items" class="w-full"/> 
+    <ContentList type="items" :items="items" class="w-full"/>
     <ContentListMore :count="itemsCount" :total="itemsTotal" :loading="loadingMore" v-if="items" @load-more="onLoadMoreItems" class="w-full"/>  
     
     <BasketSwitcher class="basket-switcher"/>  

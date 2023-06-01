@@ -6,6 +6,9 @@ import './styles/main.css'
 
 const app = createApp(App);
 
+app.config.globalProperties.window = window;
+app.config.globalProperties.document = document;
+
 router.beforeEach((to, from, next) => {
     const isOpen = to.matched.some(record => !record.meta.requiresAuth);
     const isAuth = store.getters['auth/authorized'];
