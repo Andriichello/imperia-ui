@@ -1,5 +1,5 @@
 <template>
-  <div class="base-div">
+  <div class="preview">
     <History />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.base-div {
+.preview {
   @apply p-3;
 
   display: flex;

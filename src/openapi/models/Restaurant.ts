@@ -15,6 +15,12 @@
 import { exists, mapValues } from "../runtime";
 import type { Media } from "./Media";
 import { MediaFromJSON, MediaFromJSONTyped, MediaToJSON } from "./Media";
+import type { Schedule } from "./Schedule";
+import {
+  ScheduleFromJSON,
+  ScheduleFromJSONTyped,
+  ScheduleToJSON,
+} from "./Schedule";
 
 /**
  * Restaurant resource object
@@ -70,6 +76,12 @@ export interface Restaurant {
    * @memberof Restaurant
    */
   media: Array<Media>;
+  /**
+   *
+   * @type {Array<Schedule>}
+   * @memberof Restaurant
+   */
+  schedules?: Array<Schedule>;
 }
 
 /**
@@ -109,6 +121,9 @@ export function RestaurantFromJSONTyped(
     city: json["city"],
     place: json["place"],
     media: (json["media"] as Array<any>).map(MediaFromJSON),
+    schedules: !exists(json, "schedules")
+      ? undefined
+      : (json["schedules"] as Array<any>).map(ScheduleFromJSON),
   };
 }
 
@@ -128,5 +143,9 @@ export function RestaurantToJSON(value?: Restaurant | null): any {
     city: value.city,
     place: value.place,
     media: (value.media as Array<any>).map(MediaToJSON),
+    schedules:
+      value.schedules === undefined
+        ? undefined
+        : (value.schedules as Array<any>).map(ScheduleToJSON),
   };
 }

@@ -1,9 +1,5 @@
 <template>
  <div class="auth-container">
-    <div class="block">
-      <LogoIcon />
-    </div>
-
     <div class="auth-card">
       <div class="auth-card-body">
         <div class="auth-card-title">
@@ -56,13 +52,9 @@
 
 <script>
 import { defineComponent } from "vue";
-import LogoIcon from "../icons/LogoIcon.vue";
 
 export default defineComponent({
   name: "LoginForm",
-  components: {
-    LogoIcon,
-  },
   emits: ["on-login"],
   props: {
     errors: null,
@@ -107,10 +99,11 @@ export default defineComponent({
 
 <style scoped>
 .auth-container {
-  padding: 12px;
-  padding-bottom: 24px;
+  @apply w-full h-full;
 
-  flex-basis: 100%;
+  padding: 12px;
+  padding-bottom: 80px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;

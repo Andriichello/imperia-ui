@@ -86,7 +86,6 @@ class MarketplaceState {
   public filters: MarketplaceFilters;
 
   constructor() {
-    this.tab;
     this.groups = new MarketplaceGroup();
     this.filters = new MarketplaceFilters();
   }
@@ -181,7 +180,7 @@ const actions = {
 
     dispatch('loadMenus', { resource })
   },
-  async loadCategories({ commit, getters, rootGetters }, {resource}) {
+  async loadCategories({ commit, getters, rootGetters }, { resource }) {
     const categories = await (new CategoriesApi())
       .indexCategories({ filterTarget: resource }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)

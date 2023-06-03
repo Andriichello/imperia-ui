@@ -46,12 +46,14 @@ export default defineComponent({
 
 <style scoped>
 .profile {
+  @apply w-full h-full;
+
   min-width: 100px;
   min-height: 100px;
 
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   flex-grow: 1;
   flex-shrink: 1;
 }

@@ -44,12 +44,14 @@ export interface GetSchedulesRequest {
 }
 
 export interface IndexRestaurantsRequest {
+  include?: string;
   filterSlug?: string;
   filterName?: string;
 }
 
 export interface ShowRestaurantRequest {
   id: number;
+  include?: string;
 }
 
 /**
@@ -191,6 +193,10 @@ export class RestaurantsApi extends runtime.BaseAPI {
   ): Promise<runtime.ApiResponse<IndexRestaurantResponse>> {
     const queryParameters: any = {};
 
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
+
     if (requestParameters.filterSlug !== undefined) {
       queryParameters["filter[slug]"] = requestParameters.filterSlug;
     }
@@ -253,6 +259,10 @@ export class RestaurantsApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 

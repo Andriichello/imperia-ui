@@ -1,7 +1,6 @@
 import { authHeaders } from "@/helpers";
 import {IndexRestaurantResponse, Restaurant, RestaurantsApi, ShowRestaurantResponse} from "@/openapi";
-import {RestaurantConfig, ThemeConfig} from "@/configs";
-import resetAllMocks = jest.resetAllMocks;
+import {RestaurantConfig} from "@/configs";
 
 class RestaurantsState {
   /** Selected restaurant */
@@ -48,16 +47,38 @@ const actions = {
     commit('setRestaurants', restaurants);
   },
   async loadRestaurant({ commit, rootGetters }, { id }) {
+    const request = {
+      id,
+      include: 'schedules',
+    };
+
     const response = await (new RestaurantsApi())
-      .showRestaurant({ id }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+      .showRestaurant(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
       .catch(error => error.response);
 
     commit('setShowResponse', response);
   },
-  async loadRestaurants({ commit, dispatch, rootGetters }) {
+  async loadAndSelectRestaurant({ commit, rootGetters }, { id }) {
+    const request = {
+      id,
+      include: 'schedules',
+    };
+
     const response = await (new RestaurantsApi())
-        .indexRestaurants({}, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .showRestaurant(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);
+
+    commit('setShowResponse', response);
+    commit('setSelected', response.data);
+  },
+  async loadRestaurants({ commit, dispatch, rootGetters }) {
+    const request = {
+      include: 'schedules',
+    };
+    const response = await (new RestaurantsApi())
+        .indexRestaurants(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
         .then(response => response)
         .catch(error => error.response);
 

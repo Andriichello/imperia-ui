@@ -1,8 +1,8 @@
 <template>
  <div class="auth-container">
-    <div class="block">
-      <LogoIcon />
-    </div>
+<!--    <div class="block">-->
+<!--      <LogoIcon />-->
+<!--    </div>-->
 
     <div class="auth-card">
       <div class="auth-card-body">
@@ -157,8 +157,10 @@ export default defineComponent({
 
 <style scoped>
 .auth-container {
+  @apply w-full h-full;
+
   padding: 12px;
-  padding-bottom: 24px;
+  padding-bottom: 80px;
 
   flex-basis: 100%;
   display: flex;

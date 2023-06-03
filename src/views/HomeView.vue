@@ -1,5 +1,5 @@
 <template>
-  <div class="base-div">
+  <div class="preview">
     <RestaurantList :restaurants="restaurants" :selected="selected" @restaurant-click="onRestaurantClick"/>
   </div>
 </template>
@@ -32,7 +32,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.base-div {
+.preview {
   @apply rounded-box flex-wrap w-full;
   
   min-width: 100px;

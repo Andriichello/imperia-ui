@@ -5,8 +5,17 @@ import HistoryView from '../views/HistoryView.vue'
 import ProfileView from '../views/ProfileView.vue'
 import MarketplaceView from '../views/MarketplaceView.vue'
 import { createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw } from 'vue-router'
+import PreviewPage from "@/pages/PreviewPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
+  {
+    path: '/preview/:id(\\d+)?',
+    name: 'preview',
+    component: PreviewPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
   {
     path: '/login',
     name: 'login',

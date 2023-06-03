@@ -11,15 +11,18 @@ import { defineComponent } from "vue";
 import debounce from "lodash.debounce";
 import { mapGetters, mapActions } from "vuex";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
+import GuestLayout from "@/layouts/GuestLayout.vue";
 
 export default defineComponent({
   name: "App",
   components: {
+    GuestLayout,
     AuthenticatedLayout,
   },
   computed: {
     ...mapGetters({
       page: 'nav/get',
+      scrolled: 'nav/scrolled',
       authorized: 'auth/authorized',
     }),
   },
@@ -27,6 +30,7 @@ export default defineComponent({
     ...mapActions({
       setPage: 'nav/set',
       resolveAuth: 'auth/resolve',
+      setScrolled: 'nav/setScrolled',
       resolveTheme: 'theme/resolve',
       resolveRestaurant: 'restaurants/resolve',
       loadMoreItems: 'marketplace/loadMoreItems',
@@ -35,8 +39,10 @@ export default defineComponent({
       const full = document.documentElement.scrollHeight;
       const scrolled = window.innerHeight + window.scrollY;
 
-      if (full <= scrolled) {
-        console.log('scrolled to bottom');
+      if (full <= (scrolled + 1)) {
+        this.setScrolled(true);
+      } else if (this.scrolled) {
+        this.setScrolled(false);
       }
     }
   },
@@ -68,7 +74,7 @@ export default defineComponent({
 
 <style scoped>
   .wrapper {
-    @apply min-w-full min-h-screen;
+    @apply min-w-full h-full;
 
     overflow-x: auto;
     overflow-y: auto;
