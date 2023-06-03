@@ -1,22 +1,22 @@
 <template>
   <div class="preview">
-    <RestaurantList :restaurants="restaurants" :selected="selected" @restaurant-click="onRestaurantClick"/>
+    <RestaurantPicker v-if="restaurants" :items="restaurants" :selected="restaurant" @restaurant-select="onSelectRestaurant"/>
   </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
-import RestaurantList from "@/components/home/list/RestaurantList.vue";
 import {mapActions, mapGetters} from "vuex";
+import RestaurantPicker from "@/components/preview/restaurant/RestaurantPicker.vue";
 
 export default defineComponent({
   name: "HomeView",
   components: {
-    RestaurantList,
+    RestaurantPicker,
   },
   computed: {
     ...mapGetters({
-      selected: 'restaurants/selected',
+      restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
     }),
   },
@@ -24,8 +24,10 @@ export default defineComponent({
     ...mapActions({
       setSelected: 'restaurants/setSelected',
     }),
-    onRestaurantClick({ restaurant }) {
-      this.setSelected(this.selected === restaurant ? null : restaurant);
+    onSelectRestaurant({ restaurant }) {
+      this.setSelected(restaurant);
+
+      this.$router.push(`/preview`);
     },
   },
 });

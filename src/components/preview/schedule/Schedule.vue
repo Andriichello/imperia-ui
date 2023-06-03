@@ -1,5 +1,5 @@
 <template>
-  <div class="card bg-base-300/50 p-1">
+  <div class="schedule card bg-base-300/50 p-1">
     <div class="flex flex-row flex-wrap w-full gap-4">
       <template v-for="schedule in schedules" :key="schedule.id">
         <div class="flex flex-col justify-center items-center flex-1">
@@ -69,4 +69,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+@media screen and (max-width: 480px) {
+  span {
+    @apply text-xs;
+  }
+}
+
 </style>

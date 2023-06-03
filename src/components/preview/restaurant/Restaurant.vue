@@ -59,7 +59,13 @@ export default defineComponent({
   @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-3 p-5 max-w-xl bg-base-200;
 
   --rounded-box: 0.25rem;
-  --padding-card: 1rem;
+  --padding-card: 16px;
+}
+
+@media screen and (max-width: 480px) {
+  .card {
+    padding: 8px;
+  }
 }
 
 .body {

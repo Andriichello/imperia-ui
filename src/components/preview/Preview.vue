@@ -1,6 +1,6 @@
 <template>
   <div class="preview">
-    <RestaurantPicker v-if="!restaurant"
+    <RestaurantPicker v-if="restaurants && !restaurant"
       :items="restaurants"
       @restaurant-select="onRestaurantSelect"/>
 
@@ -143,6 +143,10 @@ export default defineComponent({
 
     if (!id && this.restaurant) {
       this.$router.replace(`/preview/${this.restaurant.id}`);
+
+      this.loadMenus({ resource: this.resource });
+      this.loadCategories({ resource: this.resource });
+      this.loadItems({ resource: this.resource });
     }
   },
 });

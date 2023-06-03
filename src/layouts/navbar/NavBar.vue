@@ -3,7 +3,7 @@
     <div class="flex-1">
       <div class="dropdown dropdown-bottom">
         <label tabindex="0">
-          <Item :restaurant="restaurant"/>
+          <Item :restaurant="restaurant" v-if="restaurant"/>
         </label>
         <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box">
           <li v-for="r in (restaurants ?? []).filter(i => i !== restaurant)" :key="r">

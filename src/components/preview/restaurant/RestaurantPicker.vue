@@ -1,9 +1,9 @@
 <template>
   <div class="container">
-    <span class="text-xl font-bold">Select restaurant</span>
+    <span class="text-xl font-bold" v-if="items">Select restaurant</span>
 
     <template v-for="item in items" :key="item.id">
-      <div class="btn-ghost rounded-box p-1" @click="onSelect(item)">
+      <div class="btn-ghost rounded-box p-1" :class="{'selected': item === selected}" @click="onSelect(item)">
         <Restaurant :item="item"/>
       </div>
     </template>
@@ -22,8 +22,8 @@ export default defineComponent({
     Restaurant,
   },
   props: {
-    type: String,
-    items: Restaurant,
+    items: Array,
+    selected: Restaurant,
   },
   computed: {
     title() {
@@ -94,5 +94,13 @@ export default defineComponent({
 
 .info {
   @apply flex flex-row self-stretch pt-2 pb-2;
+}
+
+.selected {
+  background-color: var(--yellow);
+}
+
+.selected:hover {
+  background-color: var(--yellow);
 }
 </style>
