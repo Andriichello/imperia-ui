@@ -9,6 +9,9 @@ COPY . /var/www/imperia-ui
 # We begin by creating a workspace where the project will recide.
 WORKDIR /var/www/imperia-ui
 
+# Create default .env file.
+COPY ./.env.example ./.env
+
 # install project dependencies
 RUN npm install
 
