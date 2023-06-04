@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-export const BASE_PATH = "http://localhost:8080".replace(/\/+$/, "");
+export const BASE_PATH = (process.env.VUE_APP_API_URL).replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
   basePath?: string; // override base path
