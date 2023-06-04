@@ -92,13 +92,9 @@
 
 <script>
 import { defineComponent } from "vue";
-import LogoIcon from "../icons/LogoIcon.vue";
 
 export default defineComponent({
   name: "RegisterForm",
-  components: {
-    LogoIcon
-  },
   emits: ["on-register"],
   props: {
     errors: null,

@@ -11,12 +11,10 @@ import { defineComponent } from "vue";
 import debounce from "lodash.debounce";
 import { mapGetters, mapActions } from "vuex";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
-import GuestLayout from "@/layouts/GuestLayout.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    GuestLayout,
     AuthenticatedLayout,
   },
   computed: {
