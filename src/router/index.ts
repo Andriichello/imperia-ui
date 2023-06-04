@@ -16,54 +16,54 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: false,
     },
   },
-  {
-    path: '/login',
-    name: 'login',
-    component: LoginView,
-    meta: {
-      requiresAuth: false,
-    },
-  },
-  {
-    path: '/register',
-    name: 'register',
-    component: RegisterView,
-    meta: {
-      requiresAuth: false,
-    },
-  },
-  {
-    path: '/home',
-    name: 'home',
-    component: HomeView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: ProfileView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
-    path: '/marketplace/:id?',
-    name: 'marketplace',
-    component: MarketplaceView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
-  {
-    path: '/history',
-    name: 'history',
-    component: HistoryView,
-    meta: {
-      requiresAuth: true,
-    },
-  },
+  // {
+  //   path: '/login',
+  //   name: 'login',
+  //   component: LoginView,
+  //   meta: {
+  //     requiresAuth: false,
+  //   },
+  // },
+  // {
+  //   path: '/register',
+  //   name: 'register',
+  //   component: RegisterView,
+  //   meta: {
+  //     requiresAuth: false,
+  //   },
+  // },
+  // {
+  //   path: '/home',
+  //   name: 'home',
+  //   component: HomeView,
+  //   meta: {
+  //     requiresAuth: true,
+  //   },
+  // },
+  // {
+  //   path: '/profile',
+  //   name: 'profile',
+  //   component: ProfileView,
+  //   meta: {
+  //     requiresAuth: true,
+  //   },
+  // },
+  // {
+  //   path: '/marketplace/:id?',
+  //   name: 'marketplace',
+  //   component: MarketplaceView,
+  //   meta: {
+  //     requiresAuth: true,
+  //   },
+  // },
+  // {
+  //   path: '/history',
+  //   name: 'history',
+  //   component: HistoryView,
+  //   meta: {
+  //     requiresAuth: true,
+  //   },
+  // },
 ]
 
 const router = createRouter({

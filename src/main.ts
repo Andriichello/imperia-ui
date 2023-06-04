@@ -17,11 +17,11 @@ router.beforeEach((to, from, next) => {
     );
 
     if (isLoginOrRegister && isAuth) {
-        next('home');
+        next('/preview');
     } else if (isOpen || isAuth) {
-        to.path === '/' ? next('home') : next();
+        to.path === '/' ? next('preview') : next();
     } else {
-        next(`/login?redirect=${to.path}`);
+        next(`/preview`);
     }
 })
 
