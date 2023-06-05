@@ -46,11 +46,6 @@ RUN npm install
 # build app for production with minification
 RUN npm run build
 
-## Remove default nginx index page
-RUN rm -rf /usr/share/nginx/html/*
-
-COPY ./dist /usr/share/nginx/html
-
 EXPOSE 80
 
 CMD ["/opt/start.sh"]
