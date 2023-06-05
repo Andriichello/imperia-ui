@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "serve-80": "vue-cli-service serve --port=80",
     "serve": "vue-cli-service serve --port=8888",
     "build": "vue-cli-service build",
     "test": "vue-cli-service test:unit",
