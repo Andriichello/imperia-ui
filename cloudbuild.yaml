@@ -14,6 +14,8 @@ steps:
       - 'AWS_ACCESS_KEY_ID=$_AWS_ACCESS_KEY_ID'
       - '--build-arg'
       - 'AWS_SECRET_ACCESS_KEY=$_AWS_SECRET_ACCESS_KEY'
+      - '--cache-from'
+      - $_AR_HOSTNAME/$PROJECT_ID/cloud-run-source-deploy/$REPO_NAME/$_SERVICE_NAME:$_ENV
     id: Build
   - name: gcr.io/cloud-builders/docker
     args:
