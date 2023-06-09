@@ -26,6 +26,14 @@ const getters = {
   selected(state: RestaurantsState) {
     return state.selected;
   },
+  restaurantId(state: RestaurantsState) {
+    if (state.selected) {
+      return state.selected.id;
+    }
+
+    const id = +localStorage.getItem(RestaurantConfig.storage);
+    return id > 0 ? id : null;
+  },
   restaurants(state: RestaurantsState) {
     return state.restaurants;
   },

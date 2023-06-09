@@ -1,5 +1,30 @@
 import { authHeaders } from "@/helpers";
-import { CategoriesApi, Category, IndexCategoriesRequest, IndexCategoryResponse, IndexMenuResponse, IndexProductResponse, IndexProductsRequest, IndexServiceResponse, IndexServicesRequest, IndexSpaceResponse, IndexSpacesRequest, IndexTicketResponse, IndexTicketsRequest, Menu, MenusApi, Product, ProductsApi, Service, ServicesApi, Space, SpacesApi, Ticket, TicketsApi } from "@/openapi";
+import {
+  CategoriesApi,
+  Category,
+  IndexCategoriesRequest,
+  IndexCategoryResponse,
+  IndexMenuResponse,
+  IndexMenusRequest,
+  IndexProductResponse,
+  IndexProductsRequest,
+  IndexServiceResponse,
+  IndexServicesRequest,
+  IndexSpaceResponse,
+  IndexSpacesRequest,
+  IndexTicketResponse,
+  IndexTicketsRequest,
+  Menu,
+  MenusApi,
+  Product,
+  ProductsApi,
+  Service,
+  ServicesApi,
+  Space,
+  SpacesApi,
+  Ticket,
+  TicketsApi
+} from "@/openapi";
 
 class ResourceGroup <I, R> {
   public menus?: Menu[] | null;
@@ -165,8 +190,15 @@ const actions = {
     dispatch('loadItemsIfMissing', { resource: tab });
   },
   async loadMenus({ commit, rootGetters }, { resource }) {
+    const request: IndexMenusRequest = {};
+
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
     const menus = await (new MenusApi())
-      .indexMenus({}, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+      .indexMenus(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
       .catch(error => error.response);
 
@@ -201,6 +233,7 @@ const actions = {
 
     if (resource === 'products') {
       const filters : ResourceFilters = getters['filters'](resource);
+      const restaurantId = rootGetters['restaurants/restaurantId'];
       const request : IndexProductsRequest = {};
 
       if (filters.menu) {
@@ -209,6 +242,9 @@ const actions = {
       if (filters.category) {
         request.filterCategories = String(filters.category.id);
       }
+      if (restaurantId) {
+        request.filterRestaurants = restaurantId;
+      }
 
       items = await (new ProductsApi())
         .indexProducts(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
@@ -216,10 +252,14 @@ const actions = {
         .catch(error => error.response);  
     } else if (resource === 'spaces') {
       const filters : ResourceFilters = getters['filters'](resource);
+      const restaurantId = rootGetters['restaurants/restaurantId'];
       const request : IndexSpacesRequest = {};
 
       if (filters.category) {
         request.filterCategories = String(filters.category.id);
+      }
+      if (restaurantId) {
+        request.filterRestaurants = restaurantId;
       }
 
       items = await (new SpacesApi())
@@ -228,10 +268,14 @@ const actions = {
         .catch(error => error.response);  
     } else if (resource === 'tickets') {
       const filters : ResourceFilters = getters['filters'](resource);
+      const restaurantId = rootGetters['restaurants/restaurantId'];
       const request : IndexTicketsRequest = {};
 
       if (filters.category) {
         request.filterCategories = String(filters.category.id);
+      }
+      if (restaurantId) {
+        request.filterRestaurants = restaurantId;
       }
 
       items = await (new TicketsApi())
@@ -240,10 +284,14 @@ const actions = {
         .catch(error => error.response);  
     } else if (resource === 'services') {
       const filters : ResourceFilters = getters['filters'](resource);
+      const restaurantId = rootGetters['restaurants/restaurantId'];
       const request : IndexServicesRequest = {};
 
       if (filters.category) {
         request.filterCategories = String(filters.category.id);
+      }
+      if (restaurantId) {
+        request.filterRestaurants = restaurantId;
       }
 
       items = await (new ServicesApi())
