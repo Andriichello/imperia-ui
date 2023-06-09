@@ -222,8 +222,6 @@ const actions = {
     };
 
     const filters = getters.filters;
-    console.log(filters);
-
     if (filters.search && filters.search.length > 0) {
       request.filterSearch = filters.search;
     }
@@ -266,8 +264,6 @@ const actions = {
     commit('appendCustomers', customers.data ?? []);
   },
   async storeCustomer({ commit, rootGetters }, { request }) {
-    console.log('storeCustomer', request);
-
     const response = await (new CustomersApi())
       .storeCustomer({ storeCustomerRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)
@@ -276,8 +272,6 @@ const actions = {
     commit('setCreateResponse', response);
   },
   async updateCustomer({ commit, rootGetters }, { id, request }) {
-    console.log('updateCustomer', id, request);
-  
     const response = await (new CustomersApi())
       .updateCustomer({ id, updateCustomerRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)

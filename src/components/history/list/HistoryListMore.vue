@@ -27,9 +27,6 @@ export default defineComponent({
       this.$emit('load-more');
     }
   },
-  updated() {
-    console.log(this.count, this.total)
-  }
 });
 </script>
 

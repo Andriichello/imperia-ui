@@ -22,7 +22,6 @@ export default defineComponent({
   watch: {
     searchVal: debounce(
       function (newVal) {
-        console.log('search-change');
         this.$emit('search-change', {search: newVal});
       }, 500
     ),

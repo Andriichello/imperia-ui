@@ -100,6 +100,21 @@ class MarketplaceFilters {
     this.products = new ResourceFilters();
     this.products.menu = null;
   }
+
+  public clear() {
+    this.spaces.search = null;
+    this.spaces.category = null;
+
+    this.tickets.search = null;
+    this.tickets.category = null;
+
+    this.services.search = null;
+    this.services.category = null;
+
+    this.products.search = null;
+    this.products.category = null;
+    this.products.menu = null;
+  }
 }
 
 class MarketplaceState {
@@ -213,8 +228,17 @@ const actions = {
     dispatch('loadMenus', { resource })
   },
   async loadCategories({ commit, getters, rootGetters }, { resource }) {
+    const request: IndexCategoriesRequest = {
+      filterTarget: resource,
+    };
+
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
     const categories = await (new CategoriesApi())
-      .indexCategories({ filterTarget: resource }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+      .indexCategories(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
       .catch(error => error.response);
 
@@ -377,6 +401,9 @@ const actions = {
     commit('setMoreItemsResponse', { response: items, resource });
     commit('appendItems', { items: items.data ?? [], resource });
   },
+  clearFilters({commit}) {
+    commit('clearFilters');
+  },
   selectMenu({ commit, dispatch }, { menu, resource }) {
     commit('selectMenu', { menu, resource });
     commit('selectCategory', { category: null, resource });
@@ -421,6 +448,9 @@ const mutations = {
   },
   setMoreItemsResponse(state: MarketplaceState, { response, resource }) {
     state.groups[resource].moreItemsResponse = response;
+  },
+  clearFilters(state: MarketplaceState) {
+    state.filters.clear();
   },
   selectMenu(state: MarketplaceState, { menu, resource }) {
     state.filters[resource].menu = menu;

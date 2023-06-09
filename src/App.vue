@@ -57,8 +57,6 @@ export default defineComponent({
     }
   },
   mounted() {
-    console.log({env: process.env})
-
     this.resolveAuth();
     this.resolveTheme();
     this.resolveRestaurant();

@@ -8,7 +8,7 @@
                   :menus="menus" :selected="selectedMenu"
                   @switch-menu="onSwitchMenu"/>
 
-    <CategorySwitcher class="max-w-full"
+    <CategorySwitcher class="max-w-full" v-if="!(!items || !items.length && !selectedCategory)"
                       :categories="categories" :selected="selectedCategory"
                       @switch-category="onSwitchCategory"/>
 
@@ -95,13 +95,14 @@ export default defineComponent({
     restaurant: {
       async handler(newVal, oldVal) {
         if (newVal !== oldVal) {
+          this.clearFilters();
+
           this.loadMenus({ resource: this.resource });
           this.loadCategories({ resource: this.resource });
           this.loadItems({ resource: this.resource });
         }
 
         const id = this.$route.params.id;
-        console.log({restaurant: newVal, id})
 
         if (newVal && id != newVal.id) {
           this.$router.replace(`/preview/${newVal.id}`);
@@ -111,6 +112,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({
+      clearFilters: 'marketplace/clearFilters',
       loadMenus: 'marketplace/loadMenus',
       loadItems: 'marketplace/loadItems',
       loadMoreItems: 'marketplace/loadMoreItems',
@@ -143,10 +145,6 @@ export default defineComponent({
 
     if (!id && this.restaurant) {
       this.$router.replace(`/preview/${this.restaurant.id}`);
-
-      this.loadMenus({ resource: this.resource });
-      this.loadCategories({ resource: this.resource });
-      this.loadItems({ resource: this.resource });
     }
   },
 });
@@ -154,7 +152,7 @@ export default defineComponent({
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 max-w-xl;
+  @apply flex flex-col w-full gap-2 max-w-xl pb-10;
 
   display: flex;
   flex-basis: 100%;
