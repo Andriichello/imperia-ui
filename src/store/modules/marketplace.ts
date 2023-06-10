@@ -171,7 +171,7 @@ const getters = {
       return response.meta.total;
     };
   },
-  filters(state: MarketplaceState) {
+  selections(state: MarketplaceState) {
     return (resource: string = null) => {
       return resource ? state.filters[resource] : state.filters;
     };

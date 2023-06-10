@@ -44,7 +44,7 @@ class HistoryState {
 const state = new HistoryState();
 
 const getters = {
-  filters(state: HistoryState) {
+  selections(state: HistoryState) {
     return state.filters;
   },
   banquets(state: HistoryState) {
