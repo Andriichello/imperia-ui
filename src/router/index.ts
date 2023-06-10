@@ -6,12 +6,21 @@ import ProfileView from '../views/ProfileView.vue'
 import MarketplaceView from '../views/MarketplaceView.vue'
 import { createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw } from 'vue-router'
 import PreviewPage from "@/pages/PreviewPage.vue";
+import PreviewMenuPage from "@/pages/PreviewMenuPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/preview/:id(\\d+)?',
+    path: '/preview/:restaurantId(\\d+)?',
     name: 'preview',
     component: PreviewPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/preview/:restaurantId(\\d+)?/menu/:menuId(\\d+)',
+    name: 'preview-menu',
+    component: PreviewMenuPage,
     meta: {
       requiresAuth: false,
     },

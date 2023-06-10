@@ -61,7 +61,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
-      filters: 'customers/filters',
+      selections: 'customers/filters',
       selected: 'customers/selected',
       formCustomer: 'customers/formCustomer',
       basketCustomer: 'basket/customer',

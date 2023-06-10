@@ -42,7 +42,6 @@ export default defineComponent({
     title() {
       return this.item.name;
     },
-
     address() {
       return this.item.place + ', ' + this.item.city +  ', ' + this.item.country;
     },

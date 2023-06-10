@@ -1,42 +1,42 @@
 <template>
   <div class="preview select-none">
-    <RestaurantPicker v-if="restaurants && !restaurant"
-      :items="restaurants"
-      @restaurant-select="onRestaurantSelect"/>
+    <template v-if="restaurant">
+      <Divider v-if="restaurant"
+               class="opacity-50"
+               title="Restaurant"/>
 
-    <MenuSwitcher class="max-w-full"
-                  :menus="menus" :selected="selectedMenu"
-                  @switch-menu="onSwitchMenu"/>
+      <Restaurant :item="restaurant"/>
 
-    <CategorySwitcher class="max-w-full" v-if="!(!items || !items.length && !selectedCategory)"
-                      :categories="categories" :selected="selectedCategory"
-                      @switch-category="onSwitchCategory"/>
+      <Divider v-if="menus"
+               class="opacity-50 pb-3"
+               title="Menus"/>
 
-    <List :items="items"/>
-    <ListMore v-if="itemsTotal !== null"
-        :count="itemsCount" :total="itemsTotal"
-        :loading="loadingMore"
-        @load-more="onLoadMoreItems"/>
+      <Menu class="w-full"
+            v-for="m in menus" :key="m.id"
+            :menu="m" @click="onMenuSelect(m)"/>
+    </template>
+
+    <template v-else-if="restaurants">
+      <RestaurantPicker :items="restaurants"
+          @restaurant-select="onRestaurantSelect"/>
+    </template>
+
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import { mapActions, mapGetters } from "vuex";
-import CategorySwitcher from "@/components/marketplace/category/CategorySwitcher.vue";
-import MenuSwitcher from "@/components/marketplace/menu/MenuSwitcher.vue";
-import List from "@/components/preview/list/List.vue";
-import ListMore from "@/components/preview/list/ListMore.vue";
+import {defineComponent} from "vue";
+import {mapActions, mapGetters} from "vuex";
 import RestaurantPicker from "@/components/preview/restaurant/RestaurantPicker.vue";
+import Divider from "@/layouts/divider/Divider.vue";
+import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
+import Menu from "@/components/preview/menu/Menu.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Preview",
   components: {
-    MenuSwitcher,
-    CategorySwitcher,
-    List,
-    ListMore,
+    Menu, Restaurant, Divider,
     RestaurantPicker,
   },
   data() {
@@ -45,64 +45,33 @@ export default defineComponent({
     };
   },
   computed: {
-    resource() {
-      return 'products';
-    },
     ...mapGetters({
       scrolled: 'nav/scrolled',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
+      menu: 'preview/menu',
+      category: 'preview/category',
+      categories: 'preview/categories',
+      menus: 'preview/menus',
+      menusResponse: 'preview/menusResponse',
+      products: 'preview/products',
+      productsResponse: 'preview/productsResponse',
+      productsMoreResponse: 'preview/productsMoreResponse',
     }),
-    menus() {
-      return this.$store.getters['marketplace/menus'](this.resource);
-    },
-    items() {
-      return this.$store.getters['marketplace/items'](this.resource);
-    },
-    itemsCount() {
-      return this.items ? this.items.length : 0;
-    },
-    itemsTotal() {
-      return this.$store.getters['marketplace/itemsTotal'](this.resource);
-    },
-    categories() {
-      return this.$store.getters['marketplace/categories'](this.resource);
-    },
-    selectedMenu() {
-      return this.$store.getters['marketplace/menu'](this.resource);
-    },
-    selectedCategory() {
-      return this.$store.getters['marketplace/category'](this.resource);
-    },
   },
   watch: {
-    items: {
+    products: {
       async handler() {
         this.loadingMore = false;
-      }
-    },
-    scrolled: {
-      async handler(newVal) {
-        if (!newVal || this.loadingMore) {
-          return;
-        }
-
-        if (this.itemsCount < this.itemsTotal) {
-          this.onLoadMoreItems()
-        }
       }
     },
     restaurant: {
       async handler(newVal, oldVal) {
         if (newVal !== oldVal) {
-          this.clearFilters();
-
-          this.loadMenus({ resource: this.resource });
-          this.loadCategories({ resource: this.resource });
-          this.loadItems({ resource: this.resource });
+          this.loadMenusIfMissing();
         }
 
-        const id = this.$route.params.id;
+        const id = this.$route.params.restaurantId;
 
         if (newVal && id != newVal.id) {
           this.$router.replace(`/preview/${newVal.id}`);
@@ -112,32 +81,23 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({
-      clearFilters: 'marketplace/clearFilters',
-      loadMenus: 'marketplace/loadMenus',
-      loadItems: 'marketplace/loadItems',
-      loadMoreItems: 'marketplace/loadMoreItems',
-      loadCategories: 'marketplace/loadCategories',
-      selectMenu: 'marketplace/selectMenu',
-      selectCategory: 'marketplace/selectCategory',
+      selectMenu: 'preview/selectMenu',
       selectRestaurant: 'restaurants/setSelected',
+      loadMenus: 'preview/loadMenus',
+      loadMenusIfMissing: 'preview/loadMenusIfMissing',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
     }),
-    onSwitchMenu(menu) {
-      this.selectMenu({ menu, resource: this.resource });
+    onMenuSelect(menu) {
+      this.selectMenu(menu);
+      this.$router.push(`/preview/${this.restaurant.id}/menu/${menu.id}`);
     },
-    onSwitchCategory(category) {
-      this.selectCategory({ category, resource: this.resource });
-    },
+
     onRestaurantSelect({restaurant}) {
       this.selectRestaurant(restaurant);
     },
-    onLoadMoreItems() {
-      this.loadingMore = true;
-      this.loadMoreItems({ resource: this.resource });
-    },
   },
   mounted() {
-    const id = this.$route.params.id;
+    const id = this.$route.params.restaurantId;
 
     if (id && (!this.restaurant || this.restaurant.id != id)) {
       this.loadAndSelectRestaurant({ id });
@@ -158,5 +118,13 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.divider:before {
+  width: 160px;
+}
+
+.divider:after {
+  width: 160px;
 }
 </style>

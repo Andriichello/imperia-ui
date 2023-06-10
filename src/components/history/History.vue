@@ -32,7 +32,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
-      filters: 'history/filters',
+      selections: 'history/filters',
       banquets: 'history/banquets',
     }),
     banquetsCount() {
