@@ -1,5 +1,5 @@
 <template>
-  <div class="preview">
+  <div class="preview select-none">
     <RestaurantPicker v-if="restaurants && !restaurant"
       :items="restaurants"
       @restaurant-select="onRestaurantSelect"/>
@@ -152,7 +152,7 @@ export default defineComponent({
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 max-w-xl pb-10;
+  @apply flex flex-col w-full gap-2 p-2 pb-10;
 
   display: flex;
   flex-basis: 100%;

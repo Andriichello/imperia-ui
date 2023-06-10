@@ -407,7 +407,13 @@ const actions = {
   selectMenu({ commit, dispatch }, { menu, resource }) {
     commit('selectMenu', { menu, resource });
     commit('selectCategory', { category: null, resource });
-    commit('setCategories', { categories: menu.categories ?? null, resource });
+
+    if (menu) {
+      commit('setCategories', { categories: menu.categories ?? null, resource });
+    } else {
+      dispatch('loadCategories', { resource });
+    }
+
     dispatch('loadItems', { resource });
   },
   applySearch({ commit, dispatch }, { search, resource }) {

@@ -2,7 +2,7 @@
   <button :class="{'selected': selected}" 
     @click="onClick">
     <div> 
-      <img :src="category.media[0].url"/>
+<!--      <img :src="category.media[0].url"/>-->
       <span>{{ category.title }}</span>
     </div>
   </button>
@@ -40,7 +40,7 @@ export default defineComponent({
   }
 
   span {
-    @apply block w-[128px] h-6 overflow-hidden text-center;
+    @apply block px-2 h-6 overflow-hidden text-center;
   }
 
   .selected {

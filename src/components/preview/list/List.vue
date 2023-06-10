@@ -1,6 +1,6 @@
 <template>
   <div class="list">
-    <div class="list-col" v-for="(column, index) in this.columns" :key="index">
+    <div class="list-col min-w-sm max-w-sm" v-for="(column, index) in this.columns" :key="index" :id="'list-' + index">
       <Product :item="item" v-for="item in column" :key="item.id"/>
     </div>
   </div>
@@ -20,9 +20,14 @@ export default defineComponent({
   components: {
     Product,
   },
+  data() {
+    return {
+      number: 2
+    };
+  },
   computed: {
     columns() {
-      return this.splitOnColumns(this.items ?? [], 2);
+      return this.splitOnColumns(this.items ?? [], this.number);
     },
   },
   methods: {
@@ -40,23 +45,18 @@ export default defineComponent({
 
 <style scoped>
 .list {
-  @apply gap-4 p-1 justify-center;
+  @apply gap-4 w-full justify-center;
 
   display: flex;
-  flex-basis: 236px;
   flex-grow: 1;
   flex-wrap: wrap;
 }
 
 .list-col {
-  @apply gap-4;
+  @apply gap-4 h-full;
 
-  flex-basis: 212px;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  flex-wrap: wrap;
-  justify-content: start;
-  align-items: stretch;
 }
 </style>

@@ -85,16 +85,4 @@ export default defineComponent({
     max-width: 100%;
     flex: 0 1 100%;
   }
-
-  .nav {
-    width: 80px;
-    height: 100vh;
-
-    position: fixed;
-    top: 0;
-    left: 0;
-
-    flex-grow: 0;
-    flex-wrap: nowrap;
-  }
 </style>

@@ -17,11 +17,7 @@ export default defineComponent({
   },
   methods: {
     onClick() {
-      if (this.selected) {
-        return;
-      }
-
-      this.$emit('switch-menu', this.menu);
+      this.$emit('switch-menu', this.selected ? null : this.menu);
     },
   },
 })

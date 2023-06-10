@@ -1,19 +1,33 @@
 <template>
-  <div class="schedule card bg-base-300/50 p-1">
-    <div class="flex flex-row flex-wrap w-full gap-4">
-      <template v-for="schedule in schedules" :key="schedule.id">
-        <div class="flex flex-col justify-center items-center flex-1">
-          <span class="text-xs font-light capitalize">{{ schedule.weekday.substr(0, 3) }}</span>
-
-          <div class="flex flex-col justify-center items-center">
-            <span class="text-sm">{{ time(schedule.begHour, schedule.begMinute) }}</span>
-            <span class="text-sm">-</span>
-            <span class="text-sm">{{ time(schedule.endHour, schedule.endMinute) }}</span>
-          </div>
+  <div class="card">
+    <div tabindex="0" class="collapse collapse-arrow">
+      <input type="checkbox" class="peer"/>
+      <div class="collapse-title">
+        <h2 class="text-md">Working schedule</h2>
+        <p class="text-sm font-light">{{ statusDescription }} ({{ timeBeforeOrUntil }})</p>
+      </div>
+      <div class="collapse-content w-full flex flex-col justify-start items-start">
+        <div class="w-full overflow-x-auto">
+          <table class="table w-full">
+            <tbody class="w-full">
+              <template v-for="(schedule, index) in schedules" :key="schedule.id">
+                <tr class="h-8">
+                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0}">
+                    <span>{{ schedule.weekday }}</span>
+                  </td>
+                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0}">
+                    <span>{{ time(schedule.begHour, schedule.begMinute) }}</span>
+                  </td>
+                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0}">
+                    <span>{{ time(schedule.endHour, schedule.endMinute) }}</span>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
         </div>
-      </template>
+      </div>
     </div>
-
   </div>
 </template>
 
@@ -35,23 +49,59 @@ export default defineComponent({
     address() {
       return this.item.place + ', ' + this.item.city +  ', ' + this.item.country;
     },
-    image() {
-      const p = this.item;
-
-      if (p.media && p.media.length) {
-        return p.media[0].url;
-      }
-
-      if (p.defaultMedia && p.defaultMedia.length) {
-        return p.defaultMedia[0].url;
-      }
-
-      return null;
-    },
     schedules() {
       return this.item.schedules;
     },
-  },
+    isOpen() {
+      const current = this.schedules[0];
+
+      const beg = new Date();
+      beg.setUTCHours(current.begHour, current.begHour, 0, 0);
+
+      const end = new Date();
+      end.setUTCHours(current.endHour, current.endHour, 0, 0);
+
+      const now = new Date();
+
+      return beg.getTime() <= now.getTime() && now.getTime() <= end.getTime();
+    },
+    statusDescription() {
+      return this.isOpen ? 'Open' : 'Closed';
+    },
+    timeBeforeOrUntil() {
+      const current = this.schedules[0];
+
+      const beg = new Date();
+      beg.setUTCHours(current.begHour, current.begHour, 0, 0);
+
+      const end = new Date();
+      end.setUTCHours(current.endHour, current.endHour, 0, 0);
+
+      const now = new Date();
+      now.setUTCHours(now.getHours(), now.getMinutes(), now.getSeconds())
+
+      if (this.isOpen) {
+        const minutes = Math.ceil(Math.abs(end - now) / (60 * 1000));
+        const hours = Math.ceil(minutes / 60);
+
+        return this.time(hours, minutes % 60) + ` until closing`;
+      } else if (beg.getTime() >= now.getTime()) {
+        const minutes = Math.ceil(Math.abs(beg - now) / (60 * 1000));
+        const hours = Math.ceil(minutes / 60);
+
+        return this.time(hours, minutes % 60) + ` hours before opening`;
+      } else {
+        const next = this.schedules[1];
+        const nextBeg = new Date();
+        beg.setUTCHours(next.begHour, next.begHour, 0, 0);
+
+        const minutes = Math.ceil(Math.abs(nextBeg - now) / (60 * 1000));
+        const hours = Math.ceil(minutes / 60);
+
+        return this.time(hours, minutes % 60) + ` hours before opening`;
+      }
+    },
+   },
   methods: {
     time(hour, minute) {
       let time = '';
@@ -69,11 +119,5 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
-@media screen and (max-width: 480px) {
-  span {
-    @apply text-xs;
-  }
-}
 
 </style>

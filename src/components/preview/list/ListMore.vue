@@ -5,7 +5,7 @@
       <span v-else>Showing {{ count }} of {{ total }} items</span>
 
       <div class="list-more-btn" v-if="count < total">
-        <button class="btn btn-block btn-primary" :class="{ 'loading': loading }" @click="onLoadMore">Load more</button>
+        <button class="btn btn-block btn-ghost" :class="{ 'loading': loading }" @click="onLoadMore">Load more</button>
       </div>
     </div>
   </div>
