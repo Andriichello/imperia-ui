@@ -35,7 +35,7 @@ export default defineComponent({
   .switcher {
     @apply flex flex-row items-center p-1 gap-3;
 
-   flex-wrap: nowrap;
+    flex-wrap: nowrap;
 
     flex: 0 1 auto;
     overflow-x: auto;

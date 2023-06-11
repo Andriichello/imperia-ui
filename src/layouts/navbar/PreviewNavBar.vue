@@ -1,7 +1,7 @@
 <template>
-  <div class="navbar bg-neutral text-neutral-content opacity-80">
+  <div class="navbar flex-col bg-neutral text-neutral-content opacity-90">
 
-    <div class="navbar flex w-full h-[68px]">
+    <div class="navbar flex w-full h-[68px]" v-if="showMainNavbar">
       <div class="flex-1 gap-2">
         <button class="btn btn-square btn-ghost" v-if="shouldShowBack" @click="onBack">
           <BaseIcon title="back" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
@@ -35,20 +35,47 @@
       </div>
     </div>
 
+<!--    <div class="divider p-0 m-0  before:bg-neutral-content  after:bg-neutral-content"></div>-->
+
+    <template v-if="menu && isMenuPage">
+<!--      <div class="divider p-0 m-0 before:bg-neutral-content after:bg-neutral-content"></div>-->
+
+      <div class="flex justify-center w-full">
+        <h2 class="text-xl font-bold">{{ menu.title }}</h2>
+      </div>
+
+      <div class="w-full flex justify-center items-center">
+        <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
+          <template v-for="c in (categories ?? [])" :key="c.id">
+            <Category :item="c"
+                      :selected="category && category.id === c.id"
+                      @category-toggle="onToggleCategory"/>
+          </template>
+        </div>
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import Item from "@/layouts/navbar/restaurant/Item.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import {mapActions, mapGetters} from "vuex";
+import Category from "@/components/preview/category/Category.vue";
 
 export default defineComponent({
   name: "PreviewNavBar",
   components: {
     Item,
     BaseIcon,
+    Category,
+  },
+  data() {
+    return {
+      lastScrollPosition: 0,
+      showMainNavbar: true,
+    };
   },
   computed: {
     ...mapGetters({
@@ -57,6 +84,9 @@ export default defineComponent({
       themes: "theme/list",
       restaurant: "restaurants/selected",
       restaurants: "restaurants/restaurants",
+      menu: "preview/selected",
+      category: "preview/category",
+      categories: "preview/categories",
     }),
     isMenuPage() {
       const name = this.$route.name;
@@ -76,10 +106,18 @@ export default defineComponent({
     ...mapActions({
       applyTheme: "theme/apply",
       selectRestaurant: "restaurants/setSelected",
+      selectCategory: "preview/selectCategory",
     }),
     onSelectRestaurant(restaurant) {
       this.selectRestaurant(restaurant);
       this.onHide();
+    },
+    onToggleCategory({category, selected}) {
+      if (selected) {
+        return;
+      }
+
+      this.selectCategory(category);
     },
     onHide() {
       const elem = document.activeElement;
@@ -95,7 +133,28 @@ export default defineComponent({
         this.$router.push(`/preview`)
       }
     },
+    onScroll() {
+      // Get the current scroll position
+      const currentScrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+      // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
+      if (currentScrollPosition < 0) {
+        return;
+      }
+
+      if (currentScrollPosition > 64) {
+        this.showMainNavbar = false;
+      } else {
+        this.showMainNavbar = true;
+      }
+    }
   },
+  mounted() {
+    window.addEventListener('scroll', this.onScroll);
+  },
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
+  }
 });
 </script>
 

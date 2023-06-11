@@ -12,13 +12,13 @@
             <tbody class="w-full">
               <template v-for="(schedule, index) in schedules" :key="schedule.id">
                 <tr class="h-8">
-                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0}">
+                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
                     <span>{{ schedule.weekday }}</span>
                   </td>
-                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0}">
+                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
                     <span>{{ time(schedule.begHour, schedule.begMinute) }}</span>
                   </td>
-                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0}">
+                  <td class="p-2" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
                     <span>{{ time(schedule.endHour, schedule.endMinute) }}</span>
                   </td>
                 </tr>
