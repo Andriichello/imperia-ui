@@ -1,50 +1,43 @@
 <template>
   <div class="preview-page">
-    <PreviewMenu v-if="menu" :menu="menu"/>
+    <PreviewRestaurant @menu-select="onSelectMenu"/>
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
-import PreviewMenu from "@/components/preview/PreviewMenu.vue";
+import PreviewRestaurant from "@/components/preview/PreviewRestaurant.vue";
 import {mapActions, mapGetters} from "vuex";
 
 export default defineComponent({
-  name: "PreviewMenuPage",
+  name: "PreviewRestaurantPage",
   components: {
-    PreviewMenu,
+    PreviewRestaurant,
   },
   computed: {
     ...mapGetters({
-      menu: 'preview/selected',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
     }),
   },
   methods: {
     ...mapActions({
-      selectMenu: "preview/selectMenu",
-      loadAndSelectMenu: "preview/loadAndSelectMenu",
-      loadMenusAndSelect: "preview/loadMenusAndSelect",
-      loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
+      loadMenusIfMissing: "preview/loadMenusIfMissing",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
+    onSelectMenu({ restaurant, menu }) {
+      console.log('select menu: ', {restaurant, menu})
+      this.$router.push(`/preview/${restaurant.id}/menu/${menu.id}`);
+    },
   },
-  async mounted() {
+  mounted() {
     const restaurantId = +this.$route.params['restaurantId'];
+
     if (restaurantId < 1) {
       this.$router.replace(`/preview`);
       return;
     }
-
-    const menuId = +this.$route.params['menuId'];
-    if (menuId < 1) {
-      this.$router.replace(`/preview/${restaurantId}`);
-      return;
-    }
-
-    console.log({restaurantId, menuId})
 
     if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
       const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
@@ -56,17 +49,7 @@ export default defineComponent({
       }
     }
 
-    if (!this.menu || (this.menu && this.menu.id !== menuId)) {
-      const target = (this.menus ?? []).find(r => r.id === menuId);
-
-      if (target) {
-        this.selectMenu(target);
-      } else {
-        this.loadMenusAndSelect({ id: menuId });
-      }
-    } else {
-      this.loadMenusIfMissing();
-    }
+    this.loadMenusIfMissing();
   },
 });
 </script>

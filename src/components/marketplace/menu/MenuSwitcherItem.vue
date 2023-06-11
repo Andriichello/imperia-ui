@@ -12,7 +12,7 @@ export default defineComponent({
   name: 'MenuSwitcherItem',
   emits: ['switch-menu'],
   props: {
-    menu: Object,
+    selected: Object,
     selected: Boolean,
   },
   methods: {

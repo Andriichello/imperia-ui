@@ -176,7 +176,7 @@ const getters = {
       return resource ? state.filters[resource] : state.filters;
     };
   },
-  menu(state, getters) {
+  selected(state, getters) {
     return (resource: string = null) => {
       return getters.filters(resource).menu;
     };
@@ -405,7 +405,7 @@ const actions = {
     commit('clearFilters');
   },
   selectMenu({ commit, dispatch }, { menu, resource }) {
-    commit('selectMenu', { menu, resource });
+    commit('selectMenu', { selected: menu, resource });
     commit('selectCategory', { category: null, resource });
 
     if (menu) {

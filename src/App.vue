@@ -1,9 +1,20 @@
 <template>
-  <AuthenticatedLayout>
-    <div class="wrapper">
-      <router-view />
-    </div>
-  </AuthenticatedLayout>
+  <template v-if="isPreview">
+    <PreviewLayout>
+      <div class="wrapper">
+        <router-view />
+      </div>
+    </PreviewLayout>
+  </template>
+
+  <template v-else>
+    <AuthenticatedLayout>
+      <div class="wrapper">
+        <router-view />
+      </div>
+    </AuthenticatedLayout>
+  </template>
+
 </template>
 
 <script lang="ts">
@@ -11,10 +22,12 @@ import { defineComponent } from "vue";
 import debounce from "lodash.debounce";
 import { mapGetters, mapActions } from "vuex";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
+import PreviewLayout from "@/layouts/PreviewLayout.vue";
 
 export default defineComponent({
   name: "App",
   components: {
+    PreviewLayout,
     AuthenticatedLayout,
   },
   computed: {
@@ -23,6 +36,9 @@ export default defineComponent({
       scrolled: 'nav/scrolled',
       authorized: 'auth/authorized',
     }),
+    isPreview() {
+      return this.$route.name && this.$route.name.startsWith('preview');
+    },
   },
   methods: { 
     ...mapActions({

@@ -94,7 +94,7 @@ export default defineComponent({
       this.loadMoreItems({ resource: this.tab });
     },
     onSwitchMenu(menu) {
-      this.selectMenu({ menu, resource: this.tab });
+      this.selectMenu({ selected: menu, resource: this.tab });
     },
     onSwitchCategory(category) {
       this.selectCategory({ category, resource: this.tab });

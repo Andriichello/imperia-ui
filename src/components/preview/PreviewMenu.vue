@@ -2,7 +2,7 @@
   <div class="preview select-none">
     <template v-if="products && categories">
       <template v-for="c in categories" :key="c.id">
-        <Divider :title="c.title"/>
+        <Divider :title="c.title" class="opacity-60"/>
         <List :items="filterByCategory(products, c)" class="mb-12"/>
       </template>
     </template>
@@ -14,6 +14,7 @@ import {defineComponent} from "vue";
 import List from "@/components/preview/list/List.vue";
 import Divider from "@/layouts/divider/Divider.vue";
 import Menu from "@/openapi/models/Menu";
+import {mapGetters} from "vuex";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -26,12 +27,10 @@ export default defineComponent({
     menu: Menu,
   },
   computed: {
-    categories() {
-      return this.menu ? this.menu.categories : [];
-    },
-    products() {
-      return this.menu ? this.menu.products : [];
-    },
+    ...mapGetters({
+      products: "preview/products",
+      categories: "preview/categories",
+    }),
   },
   methods: {
     filterByCategory(products, category) {
@@ -39,9 +38,6 @@ export default defineComponent({
         return p.categoryIds.includes(category.id);
       })
     }
-  },
-  mounted() {
-    const restaurantId = this.$route.params.restaurantId;
   },
 });
 </script>
@@ -54,13 +50,5 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
-}
-
-.divider:before {
-  width: 160px;
-}
-
-.divider:after {
-  width: 160px;
 }
 </style>

@@ -7,7 +7,7 @@ import {
   Menu,
   MenusApi,
   Product,
-  ProductsApi
+  ProductsApi, Restaurant, RestaurantsApi, ShowMenuRequest, ShowMenuResponse
 } from "@/openapi";
 import {authHeaders} from "@/helpers";
 
@@ -27,7 +27,10 @@ class PreviewState {
   public selections: PreviewSelections;
 
   public menu: Menu[] | null;
+  public showMenuResponse: ShowMenuResponse | null;
+
   public menus: Menu[] | null;
+  public menusRequest: IndexMenusRequest | null;
   public menusResponse: IndexMenuResponse | null;
 
   public products: Product[] | null;
@@ -36,6 +39,9 @@ class PreviewState {
 
   constructor() {
     this.selections = new PreviewSelections();
+
+    this.menu = null;
+    this.showMenuResponse = null;
 
     this.menus = null;
     this.menusResponse = null;
@@ -52,7 +58,7 @@ const getters = {
   selections(state: PreviewState) {
     return state.selections;
   },
-  menu(state: PreviewState) {
+  selected(state: PreviewState) {
     return state.selections.menu;
   },
   category(state: PreviewState) {
@@ -64,11 +70,17 @@ const getters = {
   menus(state: PreviewState) {
     return state.menus;
   },
+  menu(state: PreviewState) {
+    return state.menu;
+  },
+  showMenuResponse(state: PreviewState) {
+    return state.showMenuResponse;
+  },
   menusResponse(state: PreviewState) {
     return state.menusResponse;
   },
   products(state: PreviewState) {
-    return state.menu ? state.menu['products'] : [];
+    return state.selections.menu ? state.selections.menu.products : [];
   },
   productsResponse(state: PreviewState) {
     return state.productsResponse;
@@ -102,15 +114,41 @@ const actions = {
         .then(response => response)
         .catch(error => error.response);
 
+    commit('setMenusRequest', request);
     commit('setMenusResponse', response);
     commit('setMenus', response.data);
   },
-  async loadMenusIfMissing({ state, dispatch }) {
+  async loadMenusIfMissing({ state, dispatch, rootGetters }) {
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
     if (state.menusResponse) {
-      return;
+      if (state.menusRequest && state.menusRequest.filterRestaurants) {
+        if (state.menusRequest.filterRestaurants == restaurantId) {
+          return;
+        }
+      }
     }
 
     dispatch('loadMenus');
+  },
+  async loadMenusAndSelect({ dispatch, getters, commit }, { id }) {
+    await dispatch('loadMenus');
+
+    if (getters.menus) {
+      dispatch('selectMenu', getters.menus.find(m => m.id === id));
+    }
+  },
+  async loadAndSelectMenu({ dispatch, commit, rootGetters }, { id }) {
+    const request: ShowMenuRequest = { id };
+
+    const response = await (new MenusApi())
+        .showMenu(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);
+
+    commit('setShowMenuResponse', response);
+    commit('setMenu', response.data);
+    dispatch('selectMenu', response.data);
   },
   async loadProducts({ commit, rootGetters }, menu: Menu | null) {
     const request : IndexProductsRequest = {};
@@ -182,8 +220,17 @@ const mutations = {
   selectCategory(state: PreviewState, category) {
     state.selections.category = category;
   },
+  setMenu(state: PreviewState, menu) {
+    state.menu = menu;
+  },
+  setShowMenuResponse(state: PreviewState, response) {
+    state.showMenuResponse = response;
+  },
   setMenus(state: PreviewState, menus) {
     state.menus = menus;
+  },
+  setMenusRequest(state: PreviewState, request) {
+    state.menusRequest = request;
   },
   setMenusResponse(state: PreviewState, response) {
     state.menusResponse = response;

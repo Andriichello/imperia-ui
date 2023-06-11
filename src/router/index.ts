@@ -1,18 +1,21 @@
-import HomeView from '../views/HomeView.vue'
-import LoginView from '../views/LoginView.vue'
-import RegisterView from '../views/RegisterView.vue'
-import HistoryView from '../views/HistoryView.vue'
-import ProfileView from '../views/ProfileView.vue'
-import MarketplaceView from '../views/MarketplaceView.vue'
-import { createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw } from 'vue-router'
+import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 import PreviewPage from "@/pages/PreviewPage.vue";
+import PreviewRestaurantPage from "@/pages/PreviewRestaurantPage.vue";
 import PreviewMenuPage from "@/pages/PreviewMenuPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: '/preview/:restaurantId(\\d+)?',
+    path: '/preview',
     name: 'preview',
     component: PreviewPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/preview/:restaurantId(\\d+)',
+    name: 'preview-restaurant',
+    component: PreviewRestaurantPage,
     meta: {
       requiresAuth: false,
     },
@@ -25,54 +28,6 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: false,
     },
   },
-  // {
-  //   path: '/login',
-  //   name: 'login',
-  //   component: LoginView,
-  //   meta: {
-  //     requiresAuth: false,
-  //   },
-  // },
-  // {
-  //   path: '/register',
-  //   name: 'register',
-  //   component: RegisterView,
-  //   meta: {
-  //     requiresAuth: false,
-  //   },
-  // },
-  // {
-  //   path: '/home',
-  //   name: 'home',
-  //   component: HomeView,
-  //   meta: {
-  //     requiresAuth: true,
-  //   },
-  // },
-  // {
-  //   path: '/profile',
-  //   name: 'profile',
-  //   component: ProfileView,
-  //   meta: {
-  //     requiresAuth: true,
-  //   },
-  // },
-  // {
-  //   path: '/marketplace/:id?',
-  //   name: 'marketplace',
-  //   component: MarketplaceView,
-  //   meta: {
-  //     requiresAuth: true,
-  //   },
-  // },
-  // {
-  //   path: '/history',
-  //   name: 'history',
-  //   component: HistoryView,
-  //   meta: {
-  //     requiresAuth: true,
-  //   },
-  // },
 ]
 
 const router = createRouter({

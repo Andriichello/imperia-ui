@@ -7,7 +7,7 @@
 
       <Restaurant :item="restaurant"/>
 
-      <Divider v-if="menus"
+      <Divider v-if="menus && menus.length"
                class="opacity-50 pb-3"
                title="Menus"/>
 
@@ -16,45 +16,31 @@
             :menu="m" @click="onMenuSelect(m)"/>
     </template>
 
-    <template v-else-if="restaurants">
-      <RestaurantPicker :items="restaurants"
-          @restaurant-select="onRestaurantSelect"/>
-    </template>
-
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
-import RestaurantPicker from "@/components/preview/restaurant/RestaurantPicker.vue";
 import Divider from "@/layouts/divider/Divider.vue";
 import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
-  name: "Preview",
+  name: "PreviewRestaurant",
   emits: ["menu-select"],
   components: {
     Menu,
     Restaurant,
     Divider,
-    RestaurantPicker,
   },
   computed: {
     ...mapGetters({
-      scrolled: 'nav/scrolled',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
-      menu: 'preview/selected',
-      category: 'preview/category',
-      categories: 'preview/categories',
       menus: 'preview/menus',
       menusResponse: 'preview/menusResponse',
-      products: 'preview/products',
-      productsResponse: 'preview/productsResponse',
-      productsMoreResponse: 'preview/productsMoreResponse',
     }),
   },
   methods: {
@@ -67,9 +53,6 @@ export default defineComponent({
     onMenuSelect(menu) {
       this.selectMenu(menu);
       this.$emit('menu-select', {restaurant: this.restaurant, menu: menu});
-    },
-    onRestaurantSelect({restaurant}) {
-      this.selectRestaurant(restaurant);
     },
   },
 });
