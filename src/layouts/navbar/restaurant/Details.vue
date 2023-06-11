@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col flex-wrap justify-center">
-    <span class="font-bold text-md text-ellipsis overflow-hidden line-clamp-1">{{ restaurant.name }}</span>
-    <span class="font-light text-sm text-ellipsis overflow-hidden line-clamp-1">{{ restaurant.place }}</span>
+    <span class="font-bold text-md text-ellipsis overflow-hidden line-clamp-1">{{ name }}</span>
+    <span class="font-light text-sm text-ellipsis overflow-hidden line-clamp-1">{{ place }}</span>
   </div>
 </template>
 
@@ -19,19 +19,19 @@ export default defineComponent({
     },
   },
   computed: {
-    image() {
-      if (!this.restaurant || !this.restaurant.media || !this.restaurant.media.length) {
-        return null;
+    name() {
+      if (!this.restaurant || !this.restaurant.name) {
+        return 'Restaurant';
       }
 
-      return this.restaurant.media[0].url;
+      return this.restaurant.name;
     },
-    title() {
-      if (!this.restaurant || !this.restaurant.title) {
-        return null;
+    place() {
+      if (!this.restaurant || !this.restaurant.place) {
+        return 'Street, address';
       }
 
-      return this.restaurant.title;
+      return this.restaurant.place;
     },
   },
 });

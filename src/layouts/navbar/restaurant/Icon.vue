@@ -1,6 +1,6 @@
 <template>
-  <div class="flex justify-center items-center w-12 h-12 rounded bg-neutral text-neutral-content">
-      <img v-if="image" class="w-12 h-12 rounded"
+  <div class="flex justify-center items-center w-10 h-10 rounded bg-neutral text-neutral-content">
+      <img v-if="image" class="w-10 h-10 rounded"
            :alt="title" :title="title" :src="image"/>
 
       <BaseIcon v-else width="40" height="40" :title="title" view-box="0 0 64 64">

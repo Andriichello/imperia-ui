@@ -1,18 +1,38 @@
 <template>
   <div class="preview-page">
-    <Preview />
+    <PreviewRestaurants @restaurant-select="onSelectRestaurant"/>
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
-import Preview from "@/components/preview/Preview.vue";
+import {mapActions, mapGetters} from "vuex";
+import PreviewRestaurants from "@/components/preview/PreviewRestaurants.vue";
 
 export default defineComponent({
   name: "PreviewPage",
   components: {
-    Preview,
+    PreviewRestaurants,
   },
+  computed: {
+    ...mapGetters({
+      restaurant: 'restaurants/selected',
+      restaurants: 'restaurants/restaurants',
+    }),
+  },
+  methods: {
+    ...mapActions({
+      selectRestaurant: 'restaurants/setSelected'
+    }),
+    onSelectRestaurant({ restaurant }) {
+      this.selectRestaurant(restaurant);
+
+      if (restaurant) {
+        this.$router.push(`/preview/${restaurant.id}`);
+      }
+    },
+  },
+
 });
 </script>
 

@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-row gap-2 cursor-pointer btn-ghost rounded-box p-1 w-[200px]">
-    <button>
+  <div class="flex flex-row gap-2 rounded-box select-none p-1 w-[200px]">
+    <button class="max-h-full" v-if="withIcon">
       <Icon :restaurant="restaurant"/>
     </button>
 
-    <Details :restaurant="restaurant" v-if="restaurant"/>
+    <Details :restaurant="restaurant"/>
   </div>
 </template>
 
@@ -23,22 +23,10 @@ export default defineComponent({
       type: Restaurant,
       default: null,
     },
-  },
-  computed: {
-    image() {
-      if (!this.restaurant || !this.restaurant.media || !this.restaurant.media.length) {
-        return null;
-      }
-
-      return this.restaurant.media[0].url;
-    },
-    title() {
-      if (!this.restaurant || !this.restaurant.title) {
-        return null;
-      }
-
-      return this.restaurant.title;
-    },
+    withIcon: {
+      type: Boolean,
+      default: true,
+    }
   },
 });
 </script>

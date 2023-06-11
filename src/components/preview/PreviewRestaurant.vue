@@ -35,21 +35,19 @@ import Menu from "@/components/preview/menu/Menu.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: "Preview",
+  emits: ["menu-select"],
   components: {
-    Menu, Restaurant, Divider,
+    Menu,
+    Restaurant,
+    Divider,
     RestaurantPicker,
-  },
-  data() {
-    return {
-      loadingMore: false,
-    };
   },
   computed: {
     ...mapGetters({
       scrolled: 'nav/scrolled',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
-      menu: 'preview/menu',
+      menu: 'preview/selected',
       category: 'preview/category',
       categories: 'preview/categories',
       menus: 'preview/menus',
@@ -59,60 +57,27 @@ export default defineComponent({
       productsMoreResponse: 'preview/productsMoreResponse',
     }),
   },
-  watch: {
-    products: {
-      async handler() {
-        this.loadingMore = false;
-      }
-    },
-    restaurant: {
-      async handler(newVal, oldVal) {
-        if (newVal !== oldVal) {
-          this.loadMenusIfMissing();
-        }
-
-        const id = this.$route.params.restaurantId;
-
-        if (newVal && id != newVal.id) {
-          this.$router.replace(`/preview/${newVal.id}`);
-        }
-      }
-    }
-  },
   methods: {
     ...mapActions({
       selectMenu: 'preview/selectMenu',
       selectRestaurant: 'restaurants/setSelected',
-      loadMenus: 'preview/loadMenus',
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
     }),
     onMenuSelect(menu) {
       this.selectMenu(menu);
-      this.$router.push(`/preview/${this.restaurant.id}/menu/${menu.id}`);
+      this.$emit('menu-select', {restaurant: this.restaurant, menu: menu});
     },
-
     onRestaurantSelect({restaurant}) {
       this.selectRestaurant(restaurant);
     },
-  },
-  mounted() {
-    const id = this.$route.params.restaurantId;
-
-    if (id && (!this.restaurant || this.restaurant.id != id)) {
-      this.loadAndSelectRestaurant({ id });
-    }
-
-    if (!id && this.restaurant) {
-      this.$router.replace(`/preview/${this.restaurant.id}`);
-    }
   },
 });
 </script>
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 p-2 pb-10;
+  @apply flex flex-col w-full gap-2 p-2 pb-20;
 
   display: flex;
   flex-basis: 100%;
