@@ -73,6 +73,7 @@ models/PaginationMeta.ts
 models/PollNotificationsResponse.ts
 models/Product.ts
 models/ProductOrderField.ts
+models/ProductVariant.ts
 models/RegisterRequest.ts
 models/RegisterResponse.ts
 models/Restaurant.ts

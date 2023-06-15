@@ -21,6 +21,12 @@ import {
 } from "./Category";
 import type { Media } from "./Media";
 import { MediaFromJSON, MediaFromJSONTyped, MediaToJSON } from "./Media";
+import type { ProductVariant } from "./ProductVariant";
+import {
+  ProductVariantFromJSON,
+  ProductVariantFromJSONTyped,
+  ProductVariantToJSON,
+} from "./ProductVariant";
 
 /**
  * Product resource object
@@ -51,7 +57,7 @@ export interface Product {
    * @type {string}
    * @memberof Product
    */
-  description: string;
+  description: string | null;
   /**
    *
    * @type {number}
@@ -63,13 +69,25 @@ export interface Product {
    * @type {number}
    * @memberof Product
    */
-  weight: number;
+  weight: number | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Product
+   */
+  weightUnit: ProductWeightUnitEnum;
   /**
    *
    * @type {boolean}
    * @memberof Product
    */
-  archived?: boolean;
+  archived: boolean;
+  /**
+   *
+   * @type {Array<ProductVariant>}
+   * @memberof Product
+   */
+  variants: Array<ProductVariant>;
   /**
    *
    * @type {Array<Category>}
@@ -97,6 +115,19 @@ export interface Product {
 }
 
 /**
+ * @export
+ */
+export const ProductWeightUnitEnum = {
+  G: "g",
+  Kg: "kg",
+  Ml: "ml",
+  L: "l",
+  Cm: "cm",
+} as const;
+export type ProductWeightUnitEnum =
+  (typeof ProductWeightUnitEnum)[keyof typeof ProductWeightUnitEnum];
+
+/**
  * Check if a given object implements the Product interface.
  */
 export function instanceOfProduct(value: object): boolean {
@@ -107,6 +138,9 @@ export function instanceOfProduct(value: object): boolean {
   isInstance = isInstance && "description" in value;
   isInstance = isInstance && "price" in value;
   isInstance = isInstance && "weight" in value;
+  isInstance = isInstance && "weightUnit" in value;
+  isInstance = isInstance && "archived" in value;
+  isInstance = isInstance && "variants" in value;
   isInstance = isInstance && "categoryIds" in value;
   isInstance = isInstance && "media" in value;
   isInstance = isInstance && "defaultMedia" in value;
@@ -132,7 +166,9 @@ export function ProductFromJSONTyped(
     description: json["description"],
     price: json["price"],
     weight: json["weight"],
-    archived: !exists(json, "archived") ? undefined : json["archived"],
+    weightUnit: json["weight_unit"],
+    archived: json["archived"],
+    variants: (json["variants"] as Array<any>).map(ProductVariantFromJSON),
     categories: !exists(json, "categories")
       ? undefined
       : (json["categories"] as Array<any>).map(CategoryFromJSON),
@@ -156,7 +192,9 @@ export function ProductToJSON(value?: Product | null): any {
     description: value.description,
     price: value.price,
     weight: value.weight,
+    weight_unit: value.weightUnit,
     archived: value.archived,
+    variants: (value.variants as Array<any>).map(ProductVariantToJSON),
     categories:
       value.categories === undefined
         ? undefined

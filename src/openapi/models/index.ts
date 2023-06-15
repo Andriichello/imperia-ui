@@ -55,6 +55,7 @@ export * from "./PaginationMeta";
 export * from "./PollNotificationsResponse";
 export * from "./Product";
 export * from "./ProductOrderField";
+export * from "./ProductVariant";
 export * from "./RegisterRequest";
 export * from "./RegisterResponse";
 export * from "./Restaurant";
