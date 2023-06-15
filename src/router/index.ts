@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
+import {createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw} from 'vue-router'
 import PreviewPage from "@/pages/PreviewPage.vue";
 import PreviewRestaurantPage from "@/pages/PreviewRestaurantPage.vue";
 import PreviewMenuPage from "@/pages/PreviewMenuPage.vue";
@@ -31,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes
 })
 
