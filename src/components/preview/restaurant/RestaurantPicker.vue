@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <span class="text-xl font-bold" v-if="items">Select restaurant</span>
+    <span class="text-xl font-bold" v-if="items">{{ $t("preview.restaurants.select") }}</span>
 
     <template v-for="item in items" :key="item.id">
       <div class="btn-ghost rounded-box p-1" :class="{'selected': item === selected}" @click="onSelect(item)">
@@ -13,6 +13,7 @@
 <script>
 import { defineComponent } from "vue";
 import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
+import {useI18n} from "vue-i18n";
 
 export default defineComponent({
   // eslint-disable-next-line

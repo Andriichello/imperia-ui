@@ -30,6 +30,7 @@ import {
 export interface IndexCategoriesRequest {
   pageSize?: number;
   pageNumber?: number;
+  sort?: string;
   filterRestaurants?: string;
   filterTarget?: string;
 }
@@ -57,6 +58,10 @@ export class CategoriesApi extends runtime.BaseAPI {
 
     if (requestParameters.pageNumber !== undefined) {
       queryParameters["page[number]"] = requestParameters.pageNumber;
+    }
+
+    if (requestParameters.sort !== undefined) {
+      queryParameters["sort"] = requestParameters.sort;
     }
 
     if (requestParameters.filterRestaurants !== undefined) {

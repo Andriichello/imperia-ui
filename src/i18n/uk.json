@@ -1,0 +1,33 @@
+{
+  "weekday": {
+    "monday": "Понеділок",
+    "tuesday": "Вівторок",
+    "wednesday": "Середа",
+    "thursday": "Червер",
+    "friday": "П'ятниця",
+    "saturday": "Субота",
+    "sunday": "Неділя"
+  },
+  "schedule": {
+    "working_schedule": "Графік роботи",
+    "open": "Відчинено",
+    "closed": "Зачинено",
+    "T_until_closing": "{time} до закриття",
+    "T_before_opening": "{time} до відкриття"
+  },
+  "preview": {
+    "navbar": {
+      "back": "Назад",
+      "theme": "Тема",
+      "restaurant": "Заклад",
+      "street_and_address": "Вулиця, аддрес"
+    },
+    "restaurant": {
+      "menus": "Меню",
+      "restaurant": "Заклад"
+    },
+    "restaurants": {
+      "select": "Оберіть заклад"
+    }
+  }
+}

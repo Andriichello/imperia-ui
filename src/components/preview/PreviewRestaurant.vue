@@ -3,13 +3,13 @@
     <template v-if="restaurant">
       <Divider v-if="restaurant"
                class="opacity-50"
-               title="Restaurant"/>
+               :title="$t('preview.restaurant.restaurant')"/>
 
       <Restaurant :item="restaurant"/>
 
       <Divider v-if="menus && menus.length"
                class="opacity-50 pb-3"
-               title="Menus"/>
+               :title="$t('preview.restaurant.menus')"/>
 
       <Menu class="w-full"
             v-for="m in menus" :key="m.id"

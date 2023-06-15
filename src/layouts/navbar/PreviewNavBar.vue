@@ -5,7 +5,7 @@
         <div class="navbar flex w-full h-[68px]">
           <div class="flex-1 gap-2">
             <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage" @click="onBack">
-              <BaseIcon title="back" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
+              <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
                 <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
               </BaseIcon>
             </button>
@@ -16,23 +16,25 @@
           </div>
 
           <div class="flex-none gap-2 pr-2">
-            <div class="dropdown dropdown-end">
+            <button class="btn btn-square btn-ghost"
+              @click="onSwitchTheme">
+              <BaseIcon :title="$t('preview.navbar.theme')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+              </BaseIcon>
+            </button>
+<!--            <div class="dropdown dropdown-end">-->
 
-              <label tabindex="0">
-                <button class="btn btn-square btn-ghost">
-                  <BaseIcon title="theme" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
-                  </BaseIcon>
-                </button>
-              </label>
+<!--              <label tabindex="0">-->
 
-              <ul tabindex="0" class="menu menu-sm dropdown-content mt-6 p-2 shadow bg-neutral rounded-box">
-                <li v-for="t in themes" :key="t" class="justify-center items-center">
-                  <button :disabled="theme === t" @click="applyTheme(t)" class="rounded-box">{{ t }}</button>
-                </li>
-              </ul>
+<!--              </label>-->
 
-            </div>
+<!--              <ul tabindex="0" class="menu menu-sm dropdown-content mt-6 p-2 shadow bg-neutral rounded-box">-->
+<!--                <li v-for="t in themes" :key="t" class="justify-center items-center">-->
+<!--                  <button :disabled="theme === t" @click="applyTheme(t)" class="rounded-box">{{ $t('theme.' + t) }}</button>-->
+<!--                </li>-->
+<!--              </ul>-->
+
+<!--            </div>-->
           </div>
         </div>
       </div>
@@ -170,7 +172,14 @@ export default defineComponent({
       } else {
         this.showMainNavbar = true;
       }
-    }
+    },
+    onSwitchTheme() {
+      if (this.theme === this.themes[0]) {
+        this.applyTheme(this.themes[1])
+      } else {
+        this.applyTheme(this.themes[0])
+      }
+    },
   },
   mounted() {
     window.addEventListener('scroll', this.onScroll);

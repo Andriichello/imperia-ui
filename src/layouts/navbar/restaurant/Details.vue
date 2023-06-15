@@ -21,14 +21,14 @@ export default defineComponent({
   computed: {
     name() {
       if (!this.restaurant || !this.restaurant.name) {
-        return 'Restaurant';
+        return this.$t("preview.navbar.restaurant");
       }
 
       return this.restaurant.name;
     },
     place() {
       if (!this.restaurant || !this.restaurant.place) {
-        return 'Street, address';
+        return this.$t("preview.navbar.street_and_address");
       }
 
       return this.restaurant.place;

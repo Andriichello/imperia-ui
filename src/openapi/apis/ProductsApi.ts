@@ -34,6 +34,7 @@ export interface IndexProductsRequest {
   include?: string;
   pageSize?: number;
   pageNumber?: number;
+  sort?: string;
   filterTitle?: string;
   filterMenus?: string;
   filterCategories?: string;
@@ -69,6 +70,10 @@ export class ProductsApi extends runtime.BaseAPI {
 
     if (requestParameters.pageNumber !== undefined) {
       queryParameters["page[number]"] = requestParameters.pageNumber;
+    }
+
+    if (requestParameters.sort !== undefined) {
+      queryParameters["sort"] = requestParameters.sort;
     }
 
     if (requestParameters.filterTitle !== undefined) {

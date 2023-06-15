@@ -25,7 +25,14 @@ const actions = {
     commit('set', theme);
   },
   resolve({ dispatch }): void {
-    const theme = localStorage.getItem(ThemeConfig.storage);
+    console.log({matches: window.matchMedia('(prefers-color-scheme: dark)').matches});
+
+    let theme = localStorage.getItem(ThemeConfig.storage);
+
+    if (!theme) {
+      theme = window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark' : 'lofi';
+    }
 
     dispatch('apply', theme ?? ThemeConfig.default());
   }

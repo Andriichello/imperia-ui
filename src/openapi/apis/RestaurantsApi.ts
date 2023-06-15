@@ -45,6 +45,7 @@ export interface GetSchedulesRequest {
 
 export interface IndexRestaurantsRequest {
   include?: string;
+  sort?: string;
   filterSlug?: string;
   filterName?: string;
 }
@@ -195,6 +196,10 @@ export class RestaurantsApi extends runtime.BaseAPI {
 
     if (requestParameters.include !== undefined) {
       queryParameters["include"] = requestParameters.include;
+    }
+
+    if (requestParameters.sort !== undefined) {
+      queryParameters["sort"] = requestParameters.sort;
     }
 
     if (requestParameters.filterSlug !== undefined) {

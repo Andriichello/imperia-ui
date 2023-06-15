@@ -9,6 +9,7 @@
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
 import RestaurantPicker from "@/components/preview/restaurant/RestaurantPicker.vue";
+import {useI18n} from "vue-i18n";
 
 export default defineComponent({
   // eslint-disable-next-line

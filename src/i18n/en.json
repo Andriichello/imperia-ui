@@ -1,0 +1,37 @@
+{
+  "theme": {
+    "lofi": "Світла",
+    "dark": "Темна"
+  },
+  "weekday": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "schedule": {
+    "working_schedule": "Working schedule",
+    "open": "Open",
+    "closed": "Closed",
+    "T_until_closing": "{time} until closing",
+    "T_before_opening": "{time} before opening"
+  },
+  "preview": {
+    "navbar": {
+      "back": "Back",
+      "theme": "Theme",
+      "restaurant": "Restaurant",
+      "street_and_address": "Street, address"
+    },
+    "restaurant": {
+      "menus": "Menus",
+      "restaurant": "Restaurant"
+    },
+    "restaurants": {
+      "select": "Select restaurant"
+    }
+  }
+}

@@ -84,6 +84,12 @@ export interface Product {
   archived: boolean;
   /**
    *
+   * @type {number}
+   * @memberof Product
+   */
+  popularity: number | null;
+  /**
+   *
    * @type {Array<ProductVariant>}
    * @memberof Product
    */
@@ -106,12 +112,6 @@ export interface Product {
    * @memberof Product
    */
   media: Array<Media>;
-  /**
-   *
-   * @type {Array<Media>}
-   * @memberof Product
-   */
-  defaultMedia: Array<Media>;
 }
 
 /**
@@ -140,10 +140,10 @@ export function instanceOfProduct(value: object): boolean {
   isInstance = isInstance && "weight" in value;
   isInstance = isInstance && "weightUnit" in value;
   isInstance = isInstance && "archived" in value;
+  isInstance = isInstance && "popularity" in value;
   isInstance = isInstance && "variants" in value;
   isInstance = isInstance && "categoryIds" in value;
   isInstance = isInstance && "media" in value;
-  isInstance = isInstance && "defaultMedia" in value;
 
   return isInstance;
 }
@@ -168,13 +168,13 @@ export function ProductFromJSONTyped(
     weight: json["weight"],
     weightUnit: json["weight_unit"],
     archived: json["archived"],
+    popularity: json["popularity"],
     variants: (json["variants"] as Array<any>).map(ProductVariantFromJSON),
     categories: !exists(json, "categories")
       ? undefined
       : (json["categories"] as Array<any>).map(CategoryFromJSON),
     categoryIds: json["category_ids"],
     media: (json["media"] as Array<any>).map(MediaFromJSON),
-    defaultMedia: (json["default_media"] as Array<any>).map(MediaFromJSON),
   };
 }
 
@@ -194,6 +194,7 @@ export function ProductToJSON(value?: Product | null): any {
     weight: value.weight,
     weight_unit: value.weightUnit,
     archived: value.archived,
+    popularity: value.popularity,
     variants: (value.variants as Array<any>).map(ProductVariantToJSON),
     categories:
       value.categories === undefined
@@ -201,6 +202,5 @@ export function ProductToJSON(value?: Product | null): any {
         : (value.categories as Array<any>).map(CategoryToJSON),
     category_ids: value.categoryIds,
     media: (value.media as Array<any>).map(MediaToJSON),
-    default_media: (value.defaultMedia as Array<any>).map(MediaToJSON),
   };
 }

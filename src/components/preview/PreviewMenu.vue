@@ -39,6 +39,13 @@ export default defineComponent({
       products: "preview/products",
       categories: "preview/categories",
     }),
+    uncategorized() {
+      if (!this.products || !this.products.length) {
+        return null;
+      }
+
+      return this.filterByCategory(this.products, null)
+    },
   },
   watch: {
     menu: {
@@ -90,6 +97,10 @@ export default defineComponent({
     }),
     filterByCategory(products, category) {
       return products.filter(p => {
+        if (category === null) {
+          return !p.categoryIds || !p.categoryIds.length;
+        }
+
         return p.categoryIds.includes(category.id);
       })
     },
@@ -106,6 +117,10 @@ export default defineComponent({
         const screenHeight = screen.height;
 
         const divider = document.getElementById('category-' + this.category.id);
+        if (!divider) {
+          return;
+        }
+
         const list = divider.nextElementSibling;
 
         if (divider && list) {

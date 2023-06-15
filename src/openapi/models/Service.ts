@@ -51,7 +51,7 @@ export interface Service {
    * @type {string}
    * @memberof Service
    */
-  description: string;
+  description: string | null;
   /**
    *
    * @type {number}
@@ -69,7 +69,13 @@ export interface Service {
    * @type {boolean}
    * @memberof Service
    */
-  archived?: boolean;
+  archived: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof Service
+   */
+  popularity: number | null;
   /**
    *
    * @type {Array<Category>}
@@ -88,12 +94,6 @@ export interface Service {
    * @memberof Service
    */
   media: Array<Media>;
-  /**
-   *
-   * @type {Array<Media>}
-   * @memberof Service
-   */
-  defaultMedia: Array<Media>;
 }
 
 /**
@@ -107,9 +107,10 @@ export function instanceOfService(value: object): boolean {
   isInstance = isInstance && "description" in value;
   isInstance = isInstance && "oncePaidPrice" in value;
   isInstance = isInstance && "hourlyPaidPrice" in value;
+  isInstance = isInstance && "archived" in value;
+  isInstance = isInstance && "popularity" in value;
   isInstance = isInstance && "categoryIds" in value;
   isInstance = isInstance && "media" in value;
-  isInstance = isInstance && "defaultMedia" in value;
 
   return isInstance;
 }
@@ -132,13 +133,13 @@ export function ServiceFromJSONTyped(
     description: json["description"],
     oncePaidPrice: json["once_paid_price"],
     hourlyPaidPrice: json["hourly_paid_price"],
-    archived: !exists(json, "archived") ? undefined : json["archived"],
+    archived: json["archived"],
+    popularity: json["popularity"],
     categories: !exists(json, "categories")
       ? undefined
       : (json["categories"] as Array<any>).map(CategoryFromJSON),
     categoryIds: json["category_ids"],
     media: (json["media"] as Array<any>).map(MediaFromJSON),
-    defaultMedia: (json["default_media"] as Array<any>).map(MediaFromJSON),
   };
 }
 
@@ -157,12 +158,12 @@ export function ServiceToJSON(value?: Service | null): any {
     once_paid_price: value.oncePaidPrice,
     hourly_paid_price: value.hourlyPaidPrice,
     archived: value.archived,
+    popularity: value.popularity,
     categories:
       value.categories === undefined
         ? undefined
         : (value.categories as Array<any>).map(CategoryToJSON),
     category_ids: value.categoryIds,
     media: (value.media as Array<any>).map(MediaToJSON),
-    default_media: (value.defaultMedia as Array<any>).map(MediaToJSON),
   };
 }

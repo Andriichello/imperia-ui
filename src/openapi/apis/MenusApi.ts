@@ -34,6 +34,7 @@ export interface IndexMenusRequest {
   include?: string;
   pageSize?: number;
   pageNumber?: number;
+  sort?: string;
   filterRestaurants?: string;
   archived?: ArchivedParameter;
 }
@@ -66,6 +67,10 @@ export class MenusApi extends runtime.BaseAPI {
 
     if (requestParameters.pageNumber !== undefined) {
       queryParameters["page[number]"] = requestParameters.pageNumber;
+    }
+
+    if (requestParameters.sort !== undefined) {
+      queryParameters["sort"] = requestParameters.sort;
     }
 
     if (requestParameters.filterRestaurants !== undefined) {

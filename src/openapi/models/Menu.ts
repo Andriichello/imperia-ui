@@ -63,7 +63,13 @@ export interface Menu {
    * @type {boolean}
    * @memberof Menu
    */
-  archived?: boolean;
+  archived: boolean;
+  /**
+   *
+   * @type {number}
+   * @memberof Menu
+   */
+  popularity: number | null;
   /**
    *
    * @type {Array<Product>}
@@ -82,12 +88,6 @@ export interface Menu {
    * @memberof Menu
    */
   media: Array<Media>;
-  /**
-   *
-   * @type {Array<Media>}
-   * @memberof Menu
-   */
-  defaultMedia: Array<Media>;
 }
 
 /**
@@ -99,9 +99,10 @@ export function instanceOfMenu(value: object): boolean {
   isInstance = isInstance && "type" in value;
   isInstance = isInstance && "title" in value;
   isInstance = isInstance && "description" in value;
+  isInstance = isInstance && "archived" in value;
+  isInstance = isInstance && "popularity" in value;
   isInstance = isInstance && "categories" in value;
   isInstance = isInstance && "media" in value;
-  isInstance = isInstance && "defaultMedia" in value;
 
   return isInstance;
 }
@@ -122,13 +123,13 @@ export function MenuFromJSONTyped(
     type: json["type"],
     title: json["title"],
     description: json["description"],
-    archived: !exists(json, "archived") ? undefined : json["archived"],
+    archived: json["archived"],
+    popularity: json["popularity"],
     products: !exists(json, "products")
       ? undefined
       : (json["products"] as Array<any>).map(ProductFromJSON),
     categories: (json["categories"] as Array<any>).map(CategoryFromJSON),
     media: (json["media"] as Array<any>).map(MediaFromJSON),
-    defaultMedia: (json["default_media"] as Array<any>).map(MediaFromJSON),
   };
 }
 
@@ -145,12 +146,12 @@ export function MenuToJSON(value?: Menu | null): any {
     title: value.title,
     description: value.description,
     archived: value.archived,
+    popularity: value.popularity,
     products:
       value.products === undefined
         ? undefined
         : (value.products as Array<any>).map(ProductToJSON),
     categories: (value.categories as Array<any>).map(CategoryToJSON),
     media: (value.media as Array<any>).map(MediaToJSON),
-    default_media: (value.defaultMedia as Array<any>).map(MediaToJSON),
   };
 }

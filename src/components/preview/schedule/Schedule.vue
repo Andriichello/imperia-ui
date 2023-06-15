@@ -1,19 +1,19 @@
 <template>
-  <div class="card">
-    <div tabindex="0" class="collapse collapse-arrow">
+  <div>
+    <div tabindex="0" class="collapse collapse-arrow p-0">
       <input type="checkbox" class="peer"/>
       <div class="collapse-title">
-        <h2 class="text-md">Working schedule</h2>
+        <h2 class="text-md">{{ $t("schedule.working_schedule") }}</h2>
         <p class="text-sm font-light">{{ statusDescription }} ({{ timeBeforeOrUntil }})</p>
       </div>
-      <div class="collapse-content w-full flex flex-col justify-start items-start">
+      <div class="collapse-content w-full flex flex-col justify-start items-start px-2">
         <div class="w-full overflow-x-auto">
           <table class="table w-full">
             <tbody class="w-full">
               <template v-for="(schedule, index) in schedules" :key="schedule.id">
                 <tr class="h-8">
                   <td class="p-2" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
-                    <span>{{ schedule.weekday }}</span>
+                    <span>{{ $t("weekday." + schedule.weekday) }}</span>
                   </td>
                   <td class="p-2" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
                     <span>{{ time(schedule.begHour, schedule.begMinute) }}</span>
@@ -66,7 +66,7 @@ export default defineComponent({
       return beg.getTime() <= now.getTime() && now.getTime() <= end.getTime();
     },
     statusDescription() {
-      return this.isOpen ? 'Open' : 'Closed';
+      return this.isOpen ? this.$t("schedule.open") : this.$t("schedule.closed");
     },
     timeBeforeOrUntil() {
       const current = this.schedules[0];
@@ -84,12 +84,12 @@ export default defineComponent({
         const minutes = Math.ceil(Math.abs(end - now) / (60 * 1000));
         const hours = Math.ceil(minutes / 60);
 
-        return this.time(hours, minutes % 60) + ` until closing`;
+        return this.$t("schedule.T_until_closing", {time: this.time(hours, minutes % 60)});
       } else if (beg.getTime() >= now.getTime()) {
         const minutes = Math.ceil(Math.abs(beg - now) / (60 * 1000));
         const hours = Math.ceil(minutes / 60);
 
-        return this.time(hours, minutes % 60) + ` hours before opening`;
+        return this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)});
       } else {
         const next = this.schedules[1];
         const nextBeg = new Date();
@@ -98,7 +98,7 @@ export default defineComponent({
         const minutes = Math.ceil(Math.abs(nextBeg - now) / (60 * 1000));
         const hours = Math.ceil(minutes / 60);
 
-        return this.time(hours, minutes % 60) + ` hours before opening`;
+        return this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)});
       }
     },
    },

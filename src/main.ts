@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './styles/main.css'
+import loc from './i18n'
 
 const app = createApp(App);
 
@@ -29,5 +30,5 @@ router.afterEach(() => {
     store.dispatch('nav/resolve');
 });
 
-app.use(store).use(router);
+app.use(loc).use(store).use(router);
 app.mount('#app');
