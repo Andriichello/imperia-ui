@@ -15,7 +15,7 @@ RUN export LANG=C.UTF-8 \
     && add-apt-repository ppa:ondrej/php \
     && apt-get update \
     && apt-get install --yes --allow-unauthenticated --no-install-recommends \
-        nodejs npm nginx \
+        nginx \
         wget git unzip curl nano dos2unix \
         openssh-client \
         python3-pip \
@@ -24,6 +24,10 @@ RUN export LANG=C.UTF-8 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Install nodejs and setup npm
+RUN curl -sL https://deb.nodesource.com/setup_19.x | bash - \
+    && apt-get install -yq nodejs build-essential \
+    && npm install -g npm
 
 # Apply the filesystem overlay, which mainly provides scripts in /opt.
 COPY docker /
@@ -45,7 +49,7 @@ RUN aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID} \
 RUN npm install
 
 # build app for production with minification
-RUN npm run build
+RUN node -v && npm run build
 
 EXPOSE 80
 
