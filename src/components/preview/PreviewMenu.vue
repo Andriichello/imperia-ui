@@ -34,12 +34,29 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      menu: "preview/selected",
       category: "preview/category",
       products: "preview/products",
       categories: "preview/categories",
     }),
   },
   watch: {
+    menu: {
+      handler(newMenu, oldMenu) {
+        if (newMenu !== oldMenu && newMenu.products && newMenu.products.length) {
+          const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+          if (scrollPosition > 80) {
+            setTimeout(function () {
+              window.scrollTo({
+                top: 80,
+                behavior: 'smooth',
+              });
+            }, 200);
+          }
+        }
+      },
+    },
     category: {
       async handler(newCategory) {
         if (!newCategory) {
@@ -120,7 +137,7 @@ export default defineComponent({
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 p-2 pb-[200px];
+  @apply flex flex-col w-full gap-2 p-2 pb-[100px];
 
   display: flex;
   flex-basis: 100%;
