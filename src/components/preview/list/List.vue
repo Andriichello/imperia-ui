@@ -32,7 +32,7 @@ export default defineComponent({
   },
   data() {
     return {
-      number: 2,
+      number: window.innerWidth > 500 ? 2 : 1,
     }
   },
   computed: {
