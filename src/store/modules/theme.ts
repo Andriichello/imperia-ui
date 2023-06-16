@@ -25,8 +25,6 @@ const actions = {
     commit('set', theme);
   },
   resolve({ dispatch }): void {
-    console.log({matches: window.matchMedia('(prefers-color-scheme: dark)').matches});
-
     let theme = localStorage.getItem(ThemeConfig.storage);
 
     if (!theme) {

@@ -1,6 +1,7 @@
 <template>
   <div class="preview-page">
-    <PreviewRestaurant @menu-select="onSelectMenu"/>
+    <PreviewRestaurant class="max-w-2xl"
+        @menu-select="onSelectMenu"/>
   </div>
 </template>
 
@@ -27,7 +28,6 @@ export default defineComponent({
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
     onSelectMenu({ restaurant, menu }) {
-      console.log('select menu: ', {restaurant, menu})
       this.$router.push(`/preview/${restaurant.id}/menu/${menu.id}`);
     },
   },
@@ -56,7 +56,7 @@ export default defineComponent({
 
 <style scoped>
 .preview-page {
-  @apply flex flex-col w-full p-3 gap-3;
+  @apply flex flex-col w-full gap-0 pt-3;
 
   display: flex;
   flex-basis: 100%;

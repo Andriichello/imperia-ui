@@ -31,7 +31,8 @@
       "restaurant": "Restaurant"
     },
     "restaurants": {
-      "select": "Select restaurant"
+      "select": "Select restaurant",
+      "select_button": "Select"
     }
   }
 }

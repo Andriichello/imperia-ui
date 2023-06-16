@@ -1,8 +1,8 @@
 <template>
   <div class="container">
 
-    <div class="flex flex-row justify-start items-start w-full">
-      <div class="details flex flex-col justify-start items-start gap-2 grow">
+    <div class="flex flex-row justify-start w-full min-h-[80px]">
+      <div class="details flex flex-col justify-start items-start gap-1 grow">
         <span class="title">{{ title }}</span>
         <span class="address">{{ address }}</span>
       </div>
@@ -19,7 +19,23 @@
       </div>
     </div>
 
-    <Schedule :item="item" class="w-full"/>
+    <template v-if="short">
+      <div class="w-full flex">
+        <ShortSchedule class="grow"
+                       :item="item" />
+
+        <button class="btn btn-sm btn-outline" @click="this.$emit('select-restaurant', this.item)">
+          {{ $t("preview.restaurants.select_button")}}
+        </button>
+      </div>
+    </template>
+
+    <template v-else>
+      <Schedule class="w-full mt-2"
+                :item="item" />
+    </template>
+
+
   </div>
 </template>
 
@@ -28,16 +44,23 @@ import { defineComponent } from "vue";
 import Restaurant from "@/openapi/models/Restaurant";
 import Schedule from "@/components/preview/schedule/Schedule.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
+import ShortSchedule from "@/components/preview/schedule/ShortSchedule.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Restaurant",
+  emits: ["select-restaurant"],
   components: {
+    ShortSchedule,
     Schedule,
     BaseIcon,
   },
   props: {
     item: Restaurant,
+    short: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -70,7 +93,7 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-3 p-5 max-w-2xl bg-base-100;
+  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-0 p-4 bg-base-100;
 
   --rounded-box: 0.25rem;
   --padding-card: 16px;
@@ -84,13 +107,4 @@ export default defineComponent({
   @apply block text-xl text-center font-bold;
 }
 
-@media screen and (max-width: 480px) {
-  .card {
-    padding: 8px;
-  }
-
-  .details {
-    @apply px-2;
-  }
-}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="preview select-none">
-    <RestaurantPicker v-if="restaurants"
+    <RestaurantPicker v-if="restaurants" class="pb-10"
         :items="restaurants" @restaurant-select="onRestaurantSelect"/>
   </div>
 </template>
@@ -9,7 +9,6 @@
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
 import RestaurantPicker from "@/components/preview/restaurant/RestaurantPicker.vue";
-import {useI18n} from "vue-i18n";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -38,7 +37,7 @@ export default defineComponent({
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 p-2 pb-20;
+  @apply flex flex-col w-full gap-2 p-2;
 
   display: flex;
   flex-basis: 100%;

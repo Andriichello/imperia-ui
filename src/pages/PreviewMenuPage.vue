@@ -44,8 +44,6 @@ export default defineComponent({
       return;
     }
 
-    console.log({restaurantId, menuId})
-
     if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
       const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
 
@@ -73,7 +71,7 @@ export default defineComponent({
 
 <style scoped>
 .preview-page {
-  @apply flex flex-col w-full p-3 gap-3;
+  @apply flex flex-col w-full pt-3 gap-3 pb-10;
 
   display: flex;
   flex-basis: 100%;

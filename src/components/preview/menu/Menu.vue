@@ -52,7 +52,7 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-3 p-5 max-w-2xl bg-base-100;
+  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start w-full gap-3 p-4 bg-base-100;
 
   --rounded-box: 0.25rem;
   --padding-card: 16px;
@@ -60,40 +60,7 @@ export default defineComponent({
 
 @media screen and (max-width: 480px) {
   .card {
-    padding: 8px;
+    @apply p-3;
   }
-}
-
-.body {
-  @apply card-body flex-col justify-center items-center p-1;
-
-  min-height: 180px;
-  max-height: 180px;
-
-  min-width: 100%;
-}
-
-.details {
-  @apply flex flex-col grow flex-wrap items-center justify-between gap-1;
-
-  min-width: 100%;
-}
-
-.title {
-  @apply block text-xl text-center font-bold;
-}
-
-.description {
-  @apply block text-lg text-center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* number of lines to show */
-  line-clamp: 3;
-  -webkit-box-orient: vertical;
-}
-
-.info {
-  @apply flex flex-row self-stretch pt-2 pb-2;
 }
 </style>

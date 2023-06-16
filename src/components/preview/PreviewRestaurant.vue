@@ -2,18 +2,23 @@
   <div class="preview select-none">
     <template v-if="restaurant">
       <Divider v-if="restaurant"
-               class="opacity-50"
+               class="mb-1"
+               :lines="false"
                :title="$t('preview.restaurant.restaurant')"/>
 
       <Restaurant :item="restaurant"/>
 
       <Divider v-if="menus && menus.length"
-               class="opacity-50 pb-3"
+               class="mt-3 mb-1"
+               :lines="false"
                :title="$t('preview.restaurant.menus')"/>
 
-      <Menu class="w-full"
-            v-for="m in menus" :key="m.id"
-            :menu="m" @click="onMenuSelect(m)"/>
+      <div class="w-full flex flex-col justify-center items-center gap-2">
+        <Menu class="w-full"
+              v-for="m in menus" :key="m.id"
+              :menu="m" @click="onMenuSelect(m)"/>
+      </div>
+
     </template>
 
   </div>
@@ -60,19 +65,11 @@ export default defineComponent({
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 p-2 pb-20;
+  @apply flex flex-col w-full gap-0 px-2 pb-10;
 
   display: flex;
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
-}
-
-.divider:before {
-  width: 160px;
-}
-
-.divider:after {
-  width: 160px;
 }
 </style>

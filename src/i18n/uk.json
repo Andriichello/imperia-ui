@@ -27,7 +27,8 @@
       "restaurant": "Заклад"
     },
     "restaurants": {
-      "select": "Оберіть заклад"
+      "select": "Оберіть заклад",
+      "select_button": "Обрати"
     }
   }
 }

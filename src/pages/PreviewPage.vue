@@ -1,6 +1,7 @@
 <template>
   <div class="preview-page">
-    <PreviewRestaurants @restaurant-select="onSelectRestaurant"/>
+    <PreviewRestaurants class="max-w-2xl"
+        @restaurant-select="onSelectRestaurant"/>
   </div>
 </template>
 
@@ -38,7 +39,7 @@ export default defineComponent({
 
 <style scoped>
 .preview-page {
-  @apply flex flex-col w-full p-3 gap-3;
+  @apply flex flex-col items-center w-full gap-3 w-full pt-3;
 
   display: flex;
   flex-basis: 100%;

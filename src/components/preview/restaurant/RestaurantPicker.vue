@@ -1,10 +1,12 @@
 <template>
   <div class="container">
-    <span class="text-xl font-bold" v-if="items">{{ $t("preview.restaurants.select") }}</span>
+    <span class="text-xl font-bold text-center" v-if="items">
+      {{ $t("preview.restaurants.select") }}
+    </span>
 
     <template v-for="item in items" :key="item.id">
-      <div class="btn-ghost rounded-box p-1" :class="{'selected': item === selected}" @click="onSelect(item)">
-        <Restaurant :item="item"/>
+      <div :class="{'selected': item === selected}">
+        <Restaurant :item="item" :short="true" @select-restaurant="onSelect"/>
       </div>
     </template>
   </div>
@@ -13,7 +15,6 @@
 <script>
 import { defineComponent } from "vue";
 import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
-import {useI18n} from "vue-i18n";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -41,10 +42,6 @@ export default defineComponent({
         return p.media[0].url;
       }
 
-      if (p.defaultMedia && p.defaultMedia.length) {
-        return p.defaultMedia[0].url;
-      }
-
       return null;
     },
   },
@@ -58,7 +55,7 @@ export default defineComponent({
 
 <style scoped>
 .container {
-  @apply flex flex-row flex-wrap justify-center items-start gap-3 p-5 max-w-2xl;
+  @apply flex flex-col flex-wrap justify-center items-stretch gap-3;
 
   --rounded-box: 0.25rem;
   --padding-card: 1rem;

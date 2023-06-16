@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col">
 
-    <div class="navbar flex-col text-neutral-content bg-neutral" v-if="showMainNavbar">
+    <div class="w-full flex-col text-neutral-content bg-neutral" v-if="showMainNavbar">
         <div class="navbar flex w-full h-[68px]">
           <div class="flex-1 gap-2">
             <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage" @click="onBack">
@@ -40,7 +40,7 @@
       </div>
 
     <div class="w-full flex flex-col justify-center bg-base-100 shadow-md pb-1" v-if="menu && isMenuPage">
-      <div class="w-full flex justify-center items-center" v-if="menus">
+      <div class="w-full flex justify-center items-center" v-if="showMenusNavbar && menus">
         <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
           <template v-for="m in menus" :key="m.id">
             <a class="tab tab-bordered text-2xl font-bold"
@@ -52,13 +52,9 @@
         </div>
       </div>
 
-      <!--      <div class="flex justify-center w-full">-->
-      <!--        <h2 class="text-xl font-bold">{{ menu.title }}</h2>-->
-      <!--      </div>-->
-
-      <div class="w-full flex justify-center items-center">
+      <div class="w-full flex justify-center items-center" v-if="categories && categories.length">
         <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
-          <template v-for="c in (categories ?? [])" :key="c.id">
+          <template v-for="c in categories" :key="c.id">
             <Category :item="c"
                       :selected="category && category.id === c.id"
                       @category-toggle="onToggleCategory"/>
@@ -88,6 +84,7 @@ export default defineComponent({
     return {
       lastScrollPosition: 0,
       showMainNavbar: true,
+      showMenusNavbar: true,
     };
   },
   computed: {
@@ -169,8 +166,10 @@ export default defineComponent({
 
       if (currentScrollPosition > 64) {
         this.showMainNavbar = false;
+        this.showMenusNavbar = window.innerHeight >= 800;
       } else {
         this.showMainNavbar = true;
+        this.showMenusNavbar = true;
       }
     },
     onSwitchTheme() {

@@ -78,6 +78,12 @@ export interface Product {
   weightUnit: ProductWeightUnitEnum;
   /**
    *
+   * @type {string}
+   * @memberof Product
+   */
+  badge: string | null;
+  /**
+   *
    * @type {boolean}
    * @memberof Product
    */
@@ -139,6 +145,7 @@ export function instanceOfProduct(value: object): boolean {
   isInstance = isInstance && "price" in value;
   isInstance = isInstance && "weight" in value;
   isInstance = isInstance && "weightUnit" in value;
+  isInstance = isInstance && "badge" in value;
   isInstance = isInstance && "archived" in value;
   isInstance = isInstance && "popularity" in value;
   isInstance = isInstance && "variants" in value;
@@ -167,6 +174,7 @@ export function ProductFromJSONTyped(
     price: json["price"],
     weight: json["weight"],
     weightUnit: json["weight_unit"],
+    badge: json["badge"],
     archived: json["archived"],
     popularity: json["popularity"],
     variants: (json["variants"] as Array<any>).map(ProductVariantFromJSON),
@@ -193,6 +201,7 @@ export function ProductToJSON(value?: Product | null): any {
     price: value.price,
     weight: value.weight,
     weight_unit: value.weightUnit,
+    badge: value.badge,
     archived: value.archived,
     popularity: value.popularity,
     variants: (value.variants as Array<any>).map(ProductVariantToJSON),

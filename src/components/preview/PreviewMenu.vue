@@ -1,9 +1,9 @@
 <template>
-  <div class="preview select-none" :class="{'mt-[100px]': (categories && categories.length)}" id="preview-menu">
+  <div class="preview select-none w-full min-w-4xl max-w-4xl" :class="{'mt-[92px]': (categories && categories.length), 'mt-[48px]': (!categories || !categories.length)}" id="preview-menu">
     <template v-if="products && categories">
       <template v-for="c in categories" :key="c.id">
-        <Divider :title="c.title" class="opacity-60" :id="'category-' + c.id"/>
-        <List :items="filterByCategory(products, c)" class="mb-12"/>
+        <Divider :title="c.title" :id="'category-' + c.id"/>
+        <List :items="filterByCategory(products, c)"/>
       </template>
     </template>
   </div>
@@ -34,7 +34,6 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
-      menu: "preview/selected",
       category: "preview/category",
       products: "preview/products",
       categories: "preview/categories",
@@ -76,7 +75,7 @@ export default defineComponent({
           this.ignoringScroll = true;
 
           window.scrollTo({
-            top: divider.getBoundingClientRect().top + window.pageYOffset - 100,
+            top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 98 : 54),
             behavior: 'smooth'
           });
 
@@ -110,8 +109,6 @@ export default defineComponent({
       }
 
       if (this.category) {
-        console.log('onScroll');
-
         // Get the current scroll position
         const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
         const screenHeight = screen.height;
@@ -152,10 +149,9 @@ export default defineComponent({
 
 <style scoped>
 .preview {
-  @apply flex flex-col w-full gap-2 p-2 pb-[100px];
+  @apply flex flex-col gap-1 px-2;
 
   display: flex;
-  flex-basis: 100%;
   justify-content: center;
   align-items: center;
 }

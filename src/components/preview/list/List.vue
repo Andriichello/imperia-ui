@@ -1,8 +1,18 @@
 <template>
-  <div class="list">
-    <div class="list-col min-w-sm max-w-sm" v-for="(column, index) in this.columns" :key="index" :id="'list-' + index">
-      <Product :item="item" v-for="item in column" :key="item.id"/>
-    </div>
+  <div class="w-full list flex flex-wrap justify-center items-start gap-4 mb-9">
+
+    <template v-if="number === 1">
+      <div class="w-full flex flex-col gap-3">
+        <Product :item="item" v-for="item in this.items" :key="item.id"/>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="list-col flex flex-col gap-3" v-for="(column, index) in this.splitOnColumns(this.items ?? [], this.number)" :key="index" :id="'list-' + index">
+        <Product :item="item" v-for="item in column" :key="item.id"/>
+      </div>
+    </template>
+
   </div>
 </template>
 
@@ -22,8 +32,8 @@ export default defineComponent({
   },
   data() {
     return {
-      number: 2
-    };
+      number: 2,
+    }
   },
   computed: {
     columns() {
@@ -39,24 +49,29 @@ export default defineComponent({
 
       return columns;
     },
+    onResize() {
+      if (window.innerWidth > 500) {
+        this.number = 2;
+      } else {
+        this.number = 1;
+      }
+    },
+  },
+  mounted() {
+    window.addEventListener("resize", this.onResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.onResize);
   },
 });
 </script>
 
 <style scoped>
 .list {
-  @apply gap-4 w-full justify-center;
 
-  display: flex;
-  flex-grow: 1;
-  flex-wrap: wrap;
 }
 
 .list-col {
-  @apply gap-4 h-full;
-
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  flex-basis: 45%;
 }
 </style>
