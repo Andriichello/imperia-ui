@@ -92,7 +92,13 @@ export interface Schedule {
    * @type {Date}
    * @memberof Schedule
    */
-  closestDate?: Date | null;
+  closestDate: Date | null;
+  /**
+   * Hours offset from UTC, which is already applied to `closest_date`
+   * @type {number}
+   * @memberof Schedule
+   */
+  timezoneOffset: number | null;
 }
 
 /**
@@ -126,6 +132,8 @@ export function instanceOfSchedule(value: object): boolean {
   isInstance = isInstance && "begsIn" in value;
   isInstance = isInstance && "endsIn" in value;
   isInstance = isInstance && "isCrossDate" in value;
+  isInstance = isInstance && "closestDate" in value;
+  isInstance = isInstance && "timezoneOffset" in value;
 
   return isInstance;
 }
@@ -153,11 +161,9 @@ export function ScheduleFromJSONTyped(
     begsIn: json["begs_in"],
     endsIn: json["ends_in"],
     isCrossDate: json["is_cross_date"],
-    closestDate: !exists(json, "closest_date")
-      ? undefined
-      : json["closest_date"] === null
-      ? null
-      : new Date(json["closest_date"]),
+    closestDate:
+      json["closest_date"] === null ? null : new Date(json["closest_date"]),
+    timezoneOffset: json["timezone_offset"],
   };
 }
 
@@ -181,10 +187,7 @@ export function ScheduleToJSON(value?: Schedule | null): any {
     ends_in: value.endsIn,
     is_cross_date: value.isCrossDate,
     closest_date:
-      value.closestDate === undefined
-        ? undefined
-        : value.closestDate === null
-        ? null
-        : value.closestDate.toISOString(),
+      value.closestDate === null ? null : value.closestDate.toISOString(),
+    timezone_offset: value.timezoneOffset,
   };
 }

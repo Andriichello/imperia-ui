@@ -26,6 +26,9 @@ const getters = {
   selected(state: RestaurantsState) {
     return state.selected;
   },
+  timezoneOffset(state: RestaurantsState) {
+    return state.selected?.timezoneOffset;
+  },
   restaurantId(state: RestaurantsState) {
     if (state.selected) {
       return state.selected.id;

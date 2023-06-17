@@ -75,6 +75,12 @@ export interface Restaurant {
    * @type {number}
    * @memberof Restaurant
    */
+  timezoneOffset: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Restaurant
+   */
   popularity: number | null;
   /**
    *
@@ -102,6 +108,7 @@ export function instanceOfRestaurant(value: object): boolean {
   isInstance = isInstance && "country" in value;
   isInstance = isInstance && "city" in value;
   isInstance = isInstance && "place" in value;
+  isInstance = isInstance && "timezoneOffset" in value;
   isInstance = isInstance && "popularity" in value;
   isInstance = isInstance && "media" in value;
 
@@ -127,6 +134,7 @@ export function RestaurantFromJSONTyped(
     country: json["country"],
     city: json["city"],
     place: json["place"],
+    timezoneOffset: json["timezone_offset"],
     popularity: json["popularity"],
     media: (json["media"] as Array<any>).map(MediaFromJSON),
     schedules: !exists(json, "schedules")
@@ -150,6 +158,7 @@ export function RestaurantToJSON(value?: Restaurant | null): any {
     country: value.country,
     city: value.city,
     place: value.place,
+    timezone_offset: value.timezoneOffset,
     popularity: value.popularity,
     media: (value.media as Array<any>).map(MediaToJSON),
     schedules:

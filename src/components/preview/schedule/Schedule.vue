@@ -42,6 +42,7 @@
 import { defineComponent } from "vue";
 import Restaurant from "@/openapi/models/Restaurant";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
+import {DateTime} from "luxon";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -56,6 +57,9 @@ export default defineComponent({
     };
   },
   computed: {
+    DateTime() {
+      return DateTime
+    },
     title() {
       return this.item.name;
     },
@@ -65,18 +69,33 @@ export default defineComponent({
     schedules() {
       return this.item.schedules;
     },
+    scheduleBeg(schedule) {
+      return DateTime.utc()
+          .set({hours: schedule.begHour, minutes: schedule.begMinute, seconds: 0, milliseconds: 0})
+          .minus({hours: this.timezoneOffset});
+    },
+    scheduleEnd(schedule) {
+      return DateTime.utc()
+          .set({hours: schedule.begHour, minutes: schedule.begMinute, seconds: 0, milliseconds: 0})
+          .minus({hours: this.timezoneOffset});
+    },
+    timezoneOffset() {
+      return this.item.timezoneOffset ?? 0;
+    },
     isOpen() {
       const current = this.schedules[0];
 
-      const beg = new Date();
-      beg.setUTCHours(current.begHour, current.begHour, 0, 0);
+      const beg = DateTime.utc()
+          .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
+          .minus({hours: this.timezoneOffset});
 
-      const end = new Date();
-      end.setUTCHours(current.endHour, current.endHour, 0, 0);
+      const end = DateTime.utc()
+          .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
+          .minus({hours: this.timezoneOffset});
 
-      const now = new Date();
+      const now = DateTime.utc();
 
-      return beg.getTime() <= now.getTime() && now.getTime() <= end.getTime();
+      return beg.toMillis() <= now.toMillis() && now.toMillis() <= end.toMillis();
     },
     statusDescription() {
       return this.isOpen ? this.$t("schedule.open") : this.$t("schedule.closed");
@@ -84,32 +103,34 @@ export default defineComponent({
     timeBeforeOrUntil() {
       const current = this.schedules[0];
 
-      const beg = new Date();
-      beg.setUTCHours(current.begHour, current.begHour, 0, 0);
+      const beg = DateTime.utc()
+          .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
+          .minus({hours: this.timezoneOffset});
 
-      const end = new Date();
-      end.setUTCHours(current.endHour, current.endHour, 0, 0);
+      const end = DateTime.utc()
+          .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
+          .minus({hours: this.timezoneOffset});
 
-      const now = new Date();
-      now.setUTCHours(now.getHours(), now.getMinutes(), now.getSeconds())
+      const now = DateTime.utc();
 
       if (this.isOpen) {
-        const minutes = Math.ceil(Math.abs(end - now) / (60 * 1000));
-        const hours = Math.ceil(minutes / 60);
+        const minutes = Math.trunc(end.diff(now, 'minutes').values.minutes);
+        const hours = Math.trunc(minutes / 60);
 
         return this.$t("schedule.T_until_closing", {time: this.time(hours, minutes % 60)});
-      } else if (beg.getTime() >= now.getTime()) {
-        const minutes = Math.ceil(Math.abs(beg - now) / (60 * 1000));
-        const hours = Math.ceil(minutes / 60);
+      } else if (beg.toMillis() >= now.toMillis()) {
+        const minutes = Math.trunc(beg.diff(now, 'minutes').values.minutes);
+        const hours = Math.trunc(minutes / 60);
 
         return this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)});
       } else {
         const next = this.schedules[1];
-        const nextBeg = new Date();
-        beg.setUTCHours(next.begHour, next.begHour, 0, 0);
+        const nextBeg = DateTime.utc()
+            .set({hours: next.begHour, minutes: next.begMinute, seconds: 0, milliseconds: 0})
+            .minus({hours: this.timezoneOffset});
 
-        const minutes = Math.ceil(Math.abs(nextBeg - now) / (60 * 1000));
-        const hours = Math.ceil(minutes / 60);
+        const minutes = Math.trunc(nextBeg.diff(now, 'minutes').values.minutes);
+        const hours = Math.trunc(minutes / 60);
 
         return this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)});
       }

@@ -16,6 +16,14 @@ export function sameDay(d1: Date, d2: Date): boolean {
         d1.getDate() === d2.getDate();
 }
 
+export function currentTimezone() {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone;
+}
+
+export function dateTimezone(date: Date): string {
+    return date.toString().match(/([A-Z]+[+-][0-9]+.*)/)[1];
+}
+
 export function dateFormatted(date: Date | string | null): string | null {
     if (date === null) {
         return null;
