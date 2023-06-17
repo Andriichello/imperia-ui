@@ -1,6 +1,6 @@
 <template>
   <div class="card w-full bg-base-100 shadow-xl">
-    <div class="w-full max-h-[180px]" v-if="image">
+    <div class="w-full max-h-[180px] select-none" v-if="image">
       <figure class="w-full max-h-[180px] rounded-t-box" >
         <img :alt="title" :src="image"
              class="overflow-hidden"
@@ -20,7 +20,7 @@
         <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center">
           {{ title }}
         </h2>
-        <div class="badge badge-warning mt-1" v-if="badge && badge.length">{{ badge }}</div>
+        <div class="badge badge-warning mt-1 select-none" v-if="badge && badge.length">{{ badge }}</div>
       </div>
 
       <div class="flex-grow">
@@ -29,7 +29,7 @@
         </p>
       </div>
 
-      <div class="card-actions justify-end">
+      <div class="card-actions justify-end select-none">
         <div v-for="category in categories" :key="category.id"
             class="badge badge-outline badge-md">
           {{ category.title }}
@@ -40,14 +40,14 @@
         <div class="flex gap-1">
           <template v-if="variants">
             <button class="btn btn-sm normal-case rounded-none text-md px-2 py-2" v-if="weight"
-                    :class="{'btn-neutral': !variant || !variants, 'btn-outline': variant && variants}"
+                    :class="{'btn-neutral': theme!== 'dark' && (!variant || !variants), 'btn-outline': variant && variants, 'btn-selected': theme === 'dark' && (!variant || !variants)}"
                     @click="onVariantSelect(null)">
               {{ weight ?? '' }}
             </button>
 
             <template v-for="v in variants" :key="v.id">
               <button class="btn btn-sm rounded-none normal-case text-md px-2 py-2"
-                      :class="{'btn-neutral': variant && variant.id === v.id, 'btn-outline': !variant || variant.id !== v.id}"
+                      :class="{'btn-neutral': theme!== 'dark' && variant && variant.id === v.id, 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && variant && variant.id === v.id}"
                       @click="onVariantSelect(v)">
                 {{ variantWeight(v) }}
               </button>
@@ -73,6 +73,7 @@
 import { defineComponent } from "vue";
 import Product from "@/openapi/models/Product";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
+import {mapGetters} from "vuex";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -90,6 +91,9 @@ export default defineComponent({
     };
   },
   computed: {
+    ...mapGetters({
+      theme: "theme/get",
+    }),
     id() {
       return this.item.id;
     },
@@ -119,7 +123,7 @@ export default defineComponent({
       const p = this.item;
 
       return p.price === 0
-        ? 'Free' : '₴' + p.price;
+          ? 'Free' : '₴' + p.price;
     },
     weight() {
       if (!this.item || !this.item.weight) {
@@ -162,4 +166,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+img {
+  pointer-events: none
+}
+
+.btn-selected {
+  @apply btn-outline border-base-content bg-base-content text-base-100;
+}
 </style>

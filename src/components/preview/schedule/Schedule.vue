@@ -2,8 +2,8 @@
   <div>
       <div class="w-full flex flex-row justify-center items-center btn-ghost rounded px-2 py-1" @click="showTable = !showTable">
         <div class="grow flex flex-col justify-center items-start">
-          <h2 class="text-md">{{ $t("schedule.working_schedule") }}</h2>
-          <p class="text-sm font-light">{{ statusDescription }} ({{ timeBeforeOrUntil }})</p>
+          <h2 class="text-md font-bold">{{ $t("schedule.working_schedule") }}</h2>
+          <p class="text-md">{{ statusDescription }} ({{ timeBeforeOrUntil }})</p>
         </div>
 
         <button class="flex justify-center items-center w-[40px] h-[40px]">

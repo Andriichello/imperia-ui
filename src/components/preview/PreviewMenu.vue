@@ -1,8 +1,8 @@
 <template>
-  <div class="preview select-none w-full min-w-4xl max-w-4xl" :class="{'mt-[92px]': (categories && categories.length), 'mt-[48px]': (!categories || !categories.length)}" id="preview-menu">
+  <div class="preview w-full min-w-4xl max-w-4xl" :class="{'mt-[92px]': (categories && categories.length), 'mt-[48px]': (!categories || !categories.length)}" id="preview-menu">
     <template v-if="products && categories">
       <template v-for="c in categories" :key="c.id">
-        <Divider :title="c.title" :id="'category-' + c.id"/>
+        <Divider :title="c.title" :id="'category-' + c.id" :lines="true"/>
         <List :items="filterByCategory(products, c)"/>
       </template>
     </template>

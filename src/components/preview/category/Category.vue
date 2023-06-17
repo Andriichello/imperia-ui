@@ -1,6 +1,6 @@
 <template>
   <button class="btn btn-sm btn-ghost"
-          :class="{'selected': selected}"
+          :class="{'selected': selected, 'text-base-100': selected && theme === 'dark'}"
           @click="onCategoryToggle">
     {{ title }}
   </button>
@@ -9,6 +9,7 @@
 <script>
 import { defineComponent } from "vue";
 import Category from "@/openapi/models/Category";
+import {mapGetters} from "vuex";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -22,6 +23,9 @@ export default defineComponent({
     },
   },
   computed: {
+    ...mapGetters({
+      theme: "theme/get",
+    }),
     title() {
       return this.item.title;
     },
@@ -48,11 +52,10 @@ export default defineComponent({
 
 <style scoped>
 .selected {
-  background-color: var(--yellow);
-  color: var(--d-black);
+  @apply bg-[var(--yellow)];
 }
 
 .selected:hover {
-  background-color: var(--yellow);
+  @apply bg-[var(--yellow)];
 }
 </style>

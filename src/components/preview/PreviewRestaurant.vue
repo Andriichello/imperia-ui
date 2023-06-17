@@ -1,5 +1,5 @@
 <template>
-  <div class="preview select-none">
+  <div class="preview">
     <template v-if="restaurant">
       <Divider v-if="restaurant"
                class="mb-1"

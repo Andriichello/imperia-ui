@@ -123,12 +123,16 @@ export default defineComponent({
     onSelectRestaurant(restaurant) {
       this.selectRestaurant(restaurant);
       this.onHide();
+
+      window.scrollTo(0, 0);
     },
     onSelectMenu(menu) {
       this.selectMenu(menu)
 
       const restaurantId = this.$route.params['restaurantId'];
-      this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`)
+      this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
+
+      window.scrollTo(0, 0);
     },
     onToggleCategory({category, selected}) {
       if (selected) {
@@ -150,6 +154,8 @@ export default defineComponent({
       } else if (this.isRestaurantPage) {
         this.$router.push(`/preview`)
       }
+
+      window.scrollTo(0, 0);
     },
     onScroll() {
       if (!this.isMenuPage) {

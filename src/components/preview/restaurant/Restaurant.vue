@@ -1,10 +1,10 @@
 <template>
   <div class="container">
 
-    <div class="flex flex-row justify-start w-full min-h-[80px]">
+    <div class="flex flex-row justify-start w-full min-h-[80px] gap-2">
       <div class="details flex flex-col justify-start items-start gap-1 grow">
         <span class="title">{{ title }}</span>
-        <span class="address">{{ address }}</span>
+        <span class="address text-sm">{{ address }}</span>
       </div>
 
       <div class="icon">
@@ -25,7 +25,7 @@
                        :item="item" />
 
         <button class="btn btn-sm btn-outline" @click="this.$emit('select-restaurant', this.item)">
-          {{ $t("preview.restaurants.select_button")}}
+          {{ $t("preview.restaurants.select_button") }}
         </button>
       </div>
     </template>
@@ -34,8 +34,6 @@
       <Schedule class="w-full mt-2"
                 :item="item" />
     </template>
-
-
   </div>
 </template>
 
@@ -92,6 +90,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+img {
+  pointer-events: none
+}
+
 .container {
   @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-0 p-4 bg-base-100;
 
@@ -106,5 +108,4 @@ export default defineComponent({
 .title {
   @apply block text-xl text-center font-bold;
 }
-
 </style>

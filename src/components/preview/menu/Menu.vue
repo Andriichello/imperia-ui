@@ -4,7 +4,7 @@
     <div class="flex flex-row justify-between items-center w-full">
       <div class="flex flex-col justify-start items-start">
         <h2 class="text-xl font-semibold">{{ title }}</h2>
-        <p class="text-lg font-light" v-if="description && description.length">{{ description }}</p>
+        <p class="text-md font-light" v-if="description && description.length">{{ description }}</p>
       </div>
 
       <BaseIcon width="24" height="24" :title="title" view-box="0 0 24 24" style="transform: rotate(180deg);">

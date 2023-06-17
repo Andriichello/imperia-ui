@@ -1,5 +1,5 @@
 <template>
-  <div class="preview select-none">
+  <div class="preview">
     <RestaurantPicker v-if="restaurants" class="pb-10"
         :items="restaurants" @restaurant-select="onRestaurantSelect"/>
   </div>

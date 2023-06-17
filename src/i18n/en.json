@@ -1,7 +1,7 @@
 {
   "theme": {
-    "lofi": "Світла",
-    "dark": "Темна"
+    "lofi": "Light",
+    "dark": "Dark"
   },
   "weekday": {
     "monday": "Monday",

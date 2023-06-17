@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -13,6 +15,8 @@ html, body {
 
   min-width: 100vw;
   min-height: 100vh;
+
+  font-family: Poppins;
 }
 
 #app {

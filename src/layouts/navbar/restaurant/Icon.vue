@@ -44,5 +44,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
+img {
+  pointer-events: none
+}
 </style>
