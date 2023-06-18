@@ -1,40 +1,55 @@
 <template>
   <div class="w-full flex flex-col justify-center items-center gap-4">
-    <form @submit.prevent class="w-full flex flex-col justify-center items-center" v-if="showForm">
-      <div class="w-full flex flex-col items-center bg-base-100 min-h-[100px] p-2 gap-2">
+    <div class="w-full flex flex-col justify-center items-center" v-if="ip && myReviewsResponse && !myReviews?.length">
+      <button class="btn btn-sm btn-outline"
+              @click="showForm = !showForm">
+        Натисніть, щоб залишити відгук
+      </button>
+    </div>
+
+    <form @submit.prevent class="w-full flex flex-col justify-center items-center" v-if="ip && showForm && !myReviews?.length">
+      <div class="card w-full flex flex-col items-center bg-base-100 min-h-[100px] p-4 gap-2">
         <span class="text-md font-bold">
           Оцініть даний заклад
         </span>
 
-        <div class="rating rating-md gap-2 mb-2">
-          <input type="radio" id="rating-0" name="rating-9" class="rating-hidden" checked/>
-          <input type="radio" id="rating-1" name="rating-9" class="mask mask-star-2" />
-          <input type="radio" id="rating-2" name="rating-9" class="mask mask-star-2" />
-          <input type="radio" id="rating-3" name="rating-9" class="mask mask-star-2" />
-          <input type="radio" id="rating-4" name="rating-9" class="mask mask-star-2" />
-          <input type="radio" id="rating-5" name="rating-9" class="mask mask-star-2" />
+        <div class="w-full flex flex-col justify-center items-center gap-1 mb-2">
+          <div class="rating rating-md gap-2">
+            <input type="radio" id="rating-0" value="0" name="rating-9" class="rating-hidden" checked/>
+            <input type="radio" id="rating-1" value="1" name="rating-9" class="mask mask-star-2" @click="score = 1"/>
+            <input type="radio" id="rating-2" value="2" name="rating-9" class="mask mask-star-2" @click="score = 2"/>
+            <input type="radio" id="rating-3" value="3" name="rating-9" class="mask mask-star-2" @click="score = 3"/>
+            <input type="radio" id="rating-4" value="4" name="rating-9" class="mask mask-star-2" @click="score = 4"/>
+            <input type="radio" id="rating-5" value="5" name="rating-9" class="mask mask-star-2" @click="score = 5"/>
+            <input type="radio" id="rating-6" value="0" name="rating-9" class="rating-hidden"/>
+          </div>
+
+          <span class="label-text-alt text-error text-sm" v-for="error in (errors?.score ?? [])" :key="error">
+            {{ error }}
+          </span>
         </div>
 
         <div class="w-full flex flex-col justify-start gap-1">
-          <input v-model="reviewer" name="reviewer" type="text" required placeholder="Ваше ім'я..." class="input input-bordered input-md w-full"
-                 :class="{'border-error': reviewerErrors && reviewerErrors.length}"/>
+          <input v-model="reviewer" name="reviewer" type="text" placeholder="Ваше ім'я..." class="input input-bordered input-md w-full"
+                 :class="{'border-error': errors && errors.reviewer}"/>
 
-          <span class="label-text-alt text-error text-sm" v-for="error in reviewerErrors" :key="error">
+          <span class="label-text-alt text-error text-sm" v-for="error in (errors?.reviewer ?? [])" :key="error">
             {{ error }}
           </span>
         </div>
 
         <div class="w-full flex flex-col justify-start gap-1">
           <textarea v-model="description" name="description" class="w-full textarea textarea-bordered" placeholder="Ваш відгук..."
-                    :class="{'border-error': descriptionErrors && descriptionErrors.length}">
+                    :class="{'border-error': errors && errors.description}">
           </textarea>
 
-          <span class="label-text-alt text-error text-sm" v-for="error in descriptionErrors" :key="error">
+          <span class="label-text-alt text-error text-sm" v-for="error in (errors?.description ?? [])" :key="error">
             {{ error }}
           </span>
         </div>
 
-        <button class="self-end btn btn-md btn-outline">
+        <button class="self-end btn btn-md btn-outline" :class="{'loading': storingReview}"
+                @click="onSubmitReview">
           Зберегти відгук
         </button>
       </div>
@@ -70,7 +85,7 @@
             </span>
           </div>
 
-          <p class="w-full mt-2">
+          <p class="w-full mt-2" v-if="r.description && r.description.length">
             {{ r.description }}
           </p>
 
@@ -98,6 +113,8 @@ import { defineComponent } from "vue";
 import Restaurant from "@/openapi/models/Restaurant";
 import {mapActions, mapGetters} from "vuex";
 import {dateFormatted} from "../../../helpers";
+import {instanceOfStoreRestaurantReviewResponse} from "@/openapi";
+import debounce from "lodash.debounce";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -107,29 +124,83 @@ export default defineComponent({
   },
   data() {
     return {
-      showForm: false,
-      reviewer: null,
-      reviewerErrors: ['Ім\'я має бути щонайменше 2 символи'],
-      description: null,
-      descriptionErrors: ['Відгук має бути щонайменше 2 символи'],
       loadingMore: false,
+      loadingMy: false,
+      storingReview: false,
+      showForm: false,
+      score: null,
+      reviewer: null,
+      description: null,
+      errors: null,
     };
   },
   watch: {
+    ip: {
+      handler(newVal) {
+        if (this.loadingMy) {
+          return;
+        }
+
+        this.loadMyReviews({ip: newVal, restaurantId: this.$route.params['restaurantId']})
+      },
+    },
+    score: {
+      handler() {
+        if (this.errors) {
+          this.errors = this.validateReviewForm(this.reviewForm);
+        }
+      },
+    },
+    reviewer: {
+      handler() {
+        if (this.errors) {
+          this.errors = this.validateReviewForm(this.reviewForm);
+        }
+      },
+    },
+    description: {
+      handler() {
+        if (this.errors) {
+          this.errors = this.validateReviewForm(this.reviewForm);
+        }
+      },
+    },
+    myReviewsResponse: {
+      handler() {
+        this.loadingMy = false;
+      },
+    },
     reviewsMoreResponse: {
       handler() {
         this.loadingMore = false;
       },
-    }
+    },
+    reviewsCreateResponse: {
+      handler(newVal) {
+        this.storingReview = false;
+
+        if (!instanceOfStoreRestaurantReviewResponse(newVal)) {
+          console.log(newVal?.message);
+        }
+      },
+    },
   },
   computed: {
     ...mapGetters({
       ip: "auth/ip",
+      restaurant: "restaurants/selected",
       reviews: "reviews/reviews",
+      reviewsOfMine: "reviews/myReviews",
       reviewsResponse: "reviews/getIndexResponse",
+      myReviewsResponse: "reviews/getMyResponse",
       reviewsMoreResponse: "reviews/getMoreResponse",
+      reviewsCreateResponse: "reviews/getCreateResponse",
     }),
     myReviews() {
+      if (this.reviewsOfMine) {
+        return this.reviewsOfMine;
+      }
+
       if (!this.ip) {
         return [];
       }
@@ -164,17 +235,69 @@ export default defineComponent({
 
       return this.reviewsResponse.meta?.total;
     },
+    reviewForm() {
+      return {
+        ip: this.ip,
+        restaurantId: this.$route.params['restaurantId'],
+        score: this.score,
+        reviewer: this.reviewer,
+        description: this.description,
+      };
+    },
   },
   methods: {
     ...mapActions({
       setIp: "auth/ip",
       loadMoreReviews: "reviews/loadMoreReviews",
+      loadMyReviews: "reviews/loadMyReviews",
+      loadMyReviewsIfMissing: "reviews/loadMyReviewsIfMissing",
+      storeReview: "reviews/storeReview",
     }),
     dateFormatted,
     onLoadMore() {
       this.loadingMore = true;
 
       this.loadMoreReviews();
+    },
+    validateReviewForm({ip, score, reviewer, description}) {
+      const errors = {};
+
+      if (!ip) {
+        errors.ip = ['Не вдалося визначити вашу IP-адресу, тому ми не зможемо зберегти ваш відгук.'];
+      }
+
+      if (!score) {
+        errors.score = ['Виберіть оцінку'];
+      }
+
+      if (!reviewer) {
+        errors.reviewer = ['Введіть ваше ім\'я'];
+      } else {
+        if (reviewer.length < 2) {
+          errors.reviewer = ['І\'я має містити щонайменше 2 символи']
+        }
+      }
+
+      if (description) {
+        if (description.length < 5) {
+          errors.description = ['Відгук має містити щонайменше 5 символів']
+        }
+      }
+
+      if (Object.keys(errors).length > 0) {
+        return errors;
+      }
+
+      return null;
+    },
+    onSubmitReview() {
+      this.errors = this.validateReviewForm(this.reviewForm);
+
+      if (!this.errors) {
+        this.storingReview = true;
+
+        this.storeReview({request: this.reviewForm});
+      }
     },
   },
   mounted() {
@@ -183,10 +306,16 @@ export default defineComponent({
       fetch('https://api.ipify.org?format=json')
           .then(x => x.json())
           .then(({ip}) => {
+            if (ip) {
+              this.loadingMy = true;
+
+              this.loadMyReviews({ip, restaurantId: this.$route.params['restaurantId']});
+            }
+
             this.setIp(ip);
           });
     }
-  }
+  },
 });
 </script>
 

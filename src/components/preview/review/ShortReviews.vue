@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <div class="w-full flex flex-row justify-center items-center btn-ghost rounded px-2 py-1">
+    <div class="w-full flex flex-row justify-center items-center rounded px-2 py-1">
       <div class="grow flex flex-col justify-center items-start">
         <h2 class="text-md font-bold">Відгуки</h2>
         <p class="text-md" v-if="reviewsTotal !== null">

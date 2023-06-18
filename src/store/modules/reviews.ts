@@ -1,8 +1,7 @@
-import {authHeaders} from "@/helpers";
+import {authHeaders, jsonHeaders} from "@/helpers";
 import {
-  IndexProductsRequest,
   IndexRestaurantReviewsRequest,
-  Menu, ProductsApi,
+  instanceOfStoreRestaurantReviewResponse,
   RestaurantReviewsApi,
   ShowRestaurantReviewRequest
 } from "@/openapi";
@@ -18,20 +17,31 @@ class ReviewsState {
 
   public reviews: RestaurantReview[] | null;
 
+  public myReviews: RestaurantReview[] | null;
+
+
   /** Last show restaurant review response */
   public showResponse: ShowRestaurantReviewResponse | Response | null;
 
   /** Last index restaurant reviews response */
   public indexResponse: IndexRestaurantReviewResponse | Response | null;
 
+  /** Last index restaurant reviews by ip response */
+  public myResponse: IndexRestaurantReviewResponse | Response | null;
+
   /** Last index more restaurant reviews response */
   public moreResponse: IndexRestaurantReviewResponse | Response | null;
+
+  /** Last index more restaurant reviews response */
+  public createResponse: IndexRestaurantReviewResponse | Response | null;
 
   constructor() {
     this.selected = null;
     this.reviews = null;
     this.showResponse = null;
     this.indexResponse = null;
+    this.moreResponse = null;
+    this.createResponse = null;
   }
 }
 
@@ -47,13 +57,22 @@ const getters = {
   reviews(state: ReviewsState) {
     return state.reviews;
   },
+  myReviews(state: ReviewsState) {
+    return state.myReviews;
+  },
   getShowResponse(state: ReviewsState) {
     return state.showResponse;
   },
   getIndexResponse(state: ReviewsState) {
     return state.indexResponse;
   },
+  getMyResponse(state: ReviewsState) {
+    return state.myResponse;
+  },
   getMoreResponse(state: ReviewsState) {
+    return state.moreResponse;
+  },
+  getCreateResponse(state: ReviewsState) {
     return state.moreResponse;
   },
 };
@@ -68,6 +87,15 @@ const actions = {
   setReviews({ commit }, reviews: RestaurantReview[] | null) {
     commit('setReviews', reviews);
   },
+  setMyReviews({ commit }, reviews: RestaurantReview[] | null) {
+    commit('setMyReviews', reviews);
+  },
+  prependReviews({ commit }, reviews: RestaurantReview[] | null) {
+    commit('prependReviews', reviews);
+  },
+  appendReviews({ commit }, reviews: RestaurantReview[] | null) {
+    commit('appendReviews', reviews);
+  },
   async loadReview({ commit, rootGetters }, { id }) {
     const request: ShowRestaurantReviewRequest = {
       id,
@@ -80,8 +108,34 @@ const actions = {
 
     commit('setShowResponse', response);
   },
+  async loadMyReviews({ commit, dispatch, rootGetters }, { ip, restaurantId }) {
+    console.log('loading my reviews...');
+    const request: IndexRestaurantReviewsRequest = {
+      filterIp: ip,
+      pageSize: 10,
+    };
+
+    if (restaurantId) {
+      request.filterRestaurantId = restaurantId;
+    }
+
+    const response = await (new RestaurantReviewsApi())
+        .indexRestaurantReviews(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+        .then(response => response)
+        .catch(error => error.response);
+
+    commit('setMyResponse', response);
+    dispatch('setMyReviews', response.data);
+  },
+  async loadMyReviewsIfMissing({ state, dispatch }, { ip, restaurantId }) {
+    if (state.myReviews) {
+      return;
+    }
+
+    dispatch('loadMyReviews', {ip, restaurantId});
+  },
   async loadReviews({ commit, dispatch, rootGetters }) {
-    const request :IndexRestaurantReviewsRequest = {};
+    const request :IndexRestaurantReviewsRequest = {pageSize: 10};
 
     const restaurantId = rootGetters['restaurants/restaurantId'];
     if (restaurantId) {
@@ -104,7 +158,7 @@ const actions = {
     dispatch('loadReviews');
   },
   async loadMoreReviews({ state, commit, rootGetters }) {
-    const request :IndexRestaurantReviewsRequest = {pageSize: 1};
+    const request :IndexRestaurantReviewsRequest = {pageSize: 10};
 
     const restaurantId = rootGetters['restaurants/restaurantId'];
     if (restaurantId) {
@@ -125,6 +179,25 @@ const actions = {
     commit('setMoreResponse', response);
     commit('appendReviews', response.data);
   },
+  async storeReview({ commit, dispatch, rootGetters }, { request }) {
+    const response = await (new RestaurantReviewsApi())
+        .storeRestaurantReview({ storeRestaurantReviewRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+        .then(response => response)
+        .catch(error => error.response);
+
+    commit('setCreateResponse', response);
+
+    if (instanceOfStoreRestaurantReviewResponse(response)) {
+      commit('setIndexResponse', null);
+      commit('setMyResponse', null);
+      commit('setMoreResponse', null);
+      commit('setReviews', null);
+      commit('setMyReviews', null);
+
+      dispatch('loadReviews');
+      dispatch('loadMyReviews', { ip: request.ip, restaurantId: request.restaurantId});
+    }
+  },
 };
 
 const mutations = {
@@ -137,6 +210,12 @@ const mutations = {
   setReviews(state: ReviewsState, reviews: RestaurantReview[] | null) {
     state.reviews = reviews;
   },
+  setMyReviews(state: ReviewsState, reviews: RestaurantReview[] | null) {
+    state.myReviews = reviews;
+  },
+  prependReviews(state: ReviewsState, reviews: RestaurantReview[] | null) {
+    state.reviews = (reviews ?? []).concat(state.reviews ?? []);
+  },
   appendReviews(state: ReviewsState, reviews: RestaurantReview[] | null) {
     state.reviews = (state.reviews ?? []).concat(reviews);
   },
@@ -146,8 +225,14 @@ const mutations = {
   setIndexResponse(state: ReviewsState, response) {
     state.indexResponse = response;
   },
+  setMyResponse(state: ReviewsState, response) {
+    state.myResponse = response;
+  },
   setMoreResponse(state: ReviewsState, response) {
     state.moreResponse = response;
+  },
+  setCreateResponse(state: ReviewsState, response) {
+    state.createResponse = response;
   },
 };
 

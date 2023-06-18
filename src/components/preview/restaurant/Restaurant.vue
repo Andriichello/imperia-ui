@@ -31,11 +31,11 @@
     </template>
 
     <template v-else>
-      <ShortReviews class="mt-2"
-                    :item="item"
-                    @click="$emit('open-reviews', item)"/>
+<!--      <ShortReviews class="mt-2"-->
+<!--                    :item="item"-->
+<!--                    @click="$emit('open-reviews', item)"/>-->
 
-      <Schedule class="w-full"
+      <Schedule class="w-full mt-2"
                 :item="item" />
     </template>
 
@@ -55,7 +55,7 @@ export default defineComponent({
   name: "Restaurant",
   emits: ["select-restaurant", "open-reviews"],
   components: {
-    ShortReviews,
+    // ShortReviews,
     ShortSchedule,
     Schedule,
     BaseIcon,

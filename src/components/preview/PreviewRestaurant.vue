@@ -9,6 +9,10 @@
       <Restaurant :item="restaurant"
                   @open-reviews="onOpenReviews()"/>
 
+      <ShortReviews class="reviews-container mt-2"
+                    :item="restaurant"
+                    @click="onOpenReviews"/>
+
       <Divider v-if="menus && menus.length"
                class="mt-3 mb-1"
                :lines="false"
@@ -31,12 +35,14 @@ import {mapActions, mapGetters} from "vuex";
 import Divider from "@/layouts/divider/Divider.vue";
 import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
+import ShortReviews from "@/components/preview/review/ShortReviews.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewRestaurant",
   emits: ["menu-select", "open-reviews"],
   components: {
+    ShortReviews,
     Menu,
     Restaurant,
     Divider,
@@ -75,5 +81,12 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.reviews-container {
+  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-0 bg-base-100 p-2 btn-ghost;
+
+  --rounded-box: 0.25rem;
+  --padding-card: 16px;
 }
 </style>

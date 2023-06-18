@@ -20,7 +20,6 @@ export default defineComponent({
       restaurants: 'restaurants/restaurants',
     }),
   },
-
 });
 </script>
 

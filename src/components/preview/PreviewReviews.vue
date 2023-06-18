@@ -36,6 +36,7 @@ export default defineComponent({
       selectRestaurant: "restaurants/setSelected",
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       loadReviewsIfMissing: "reviews/loadReviewsIfMissing",
+      loadMyReviewsIfMissing: "reviews/loadMyReviewsIfMissing",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
   },
