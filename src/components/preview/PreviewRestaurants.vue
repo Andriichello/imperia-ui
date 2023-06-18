@@ -28,7 +28,6 @@ export default defineComponent({
       selectRestaurant: 'restaurants/setSelected',
     }),
     onRestaurantSelect({restaurant}) {
-      this.selectRestaurant(restaurant);
       this.$emit('restaurant-select', {restaurant});
     },
   },

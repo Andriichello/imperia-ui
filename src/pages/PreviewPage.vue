@@ -23,9 +23,16 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({
+      clearReviews: 'reviews/clear',
+      clearPreview: 'preview/clear',
       selectRestaurant: 'restaurants/setSelected'
     }),
     onSelectRestaurant({ restaurant }) {
+      if (!this.restaurant || this.restaurant !== restaurant) {
+        this.clearReviews();
+        this.clearPreview();
+      }
+
       this.selectRestaurant(restaurant);
 
       if (restaurant) {

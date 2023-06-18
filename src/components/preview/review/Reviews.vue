@@ -1,5 +1,12 @@
 <template>
-  <div class="w-full flex flex-col justify-center items-center gap-4">
+  <div class="w-full flex flex-col justify-center items-center gap-1">
+
+    <div class="w-full flex flex-col justify-center items-center">
+      <div class="flex flex-col justify-center items-center gap-2">
+        <span v-if="reviewsResponse && reviewsTotal === 0">На жаль, список порожній</span>
+      </div>
+    </div>
+
     <div class="w-full flex flex-col justify-center items-center" v-if="ip && myReviewsResponse && !myReviews?.length">
       <button class="btn btn-sm btn-outline"
               @click="showForm = !showForm">
@@ -94,9 +101,8 @@
     </div>
 
 
-    <div class="w-full flex flex-col justify-center items-center">
+    <div class="w-full flex flex-col justify-center items-center mt-1">
       <div class="flex flex-col justify-center items-center gap-2">
-        <span v-if="reviewsResponse && reviewsTotal === null">На жаль, список порожній</span>
         <span v-if="reviewsCount && reviewsTotal && reviewsCount !== reviewsTotal">Показано {{ reviewsCount }} з {{ reviewsTotal }} відгуків</span>
         <span v-else-if="reviewsCount && reviewsTotal && reviewsCount === reviewsTotal">Показано всі відгуки ({{ reviewsTotal }})</span>
 
@@ -114,7 +120,6 @@ import Restaurant from "@/openapi/models/Restaurant";
 import {mapActions, mapGetters} from "vuex";
 import {dateFormatted} from "../../../helpers";
 import {instanceOfStoreRestaurantReviewResponse} from "@/openapi";
-import debounce from "lodash.debounce";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -250,6 +255,7 @@ export default defineComponent({
       setIp: "auth/ip",
       loadMoreReviews: "reviews/loadMoreReviews",
       loadMyReviews: "reviews/loadMyReviews",
+      loadReviewsIfMissing: "reviews/loadReviewsIfMissing",
       loadMyReviewsIfMissing: "reviews/loadMyReviewsIfMissing",
       storeReview: "reviews/storeReview",
     }),
@@ -301,6 +307,8 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.loadReviewsIfMissing();
+
     if (!this.ip) {
       // eslint-disable-next-line vue/no-async-in-computed-properties
       fetch('https://api.ipify.org?format=json')
@@ -313,7 +321,12 @@ export default defineComponent({
             }
 
             this.setIp(ip);
+          })
+          .catch(function(e) {
+            console.log('Fetch Error :-S', e);
           });
+    } else {
+      this.loadMyReviewsIfMissing({ip: this.ip, restaurantId: this.$route.params['restaurantId']});
     }
   },
 });

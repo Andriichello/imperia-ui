@@ -91,6 +91,16 @@ const getters = {
 };
 
 const actions = {
+  clear({ commit }) {
+    commit('selectMenu', null);
+    commit('selectCategory', null);
+    commit('setMenus', null);
+    commit('setProducts', null);
+    commit('setShowMenuResponse', null);
+    commit('setMenusResponse', null);
+    commit('setProductsResponse', null);
+    commit('setMoreProductsResponse', null);
+  },
   async selectMenu({ commit, dispatch }, menu: Menu | null) {
     commit('selectMenu', menu);
 

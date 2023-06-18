@@ -37,9 +37,12 @@ class ReviewsState {
 
   constructor() {
     this.selected = null;
+    this.review = null;
     this.reviews = null;
+    this.myReviews = null;
     this.showResponse = null;
     this.indexResponse = null;
+    this.myReviews = null;
     this.moreResponse = null;
     this.createResponse = null;
   }
@@ -78,6 +81,17 @@ const getters = {
 };
 
 const actions = {
+  clear({ commit }) {
+    commit('setSelected', null);
+    commit('setReview', null);
+    commit('setMyResponse', null);
+    commit('setShowResponse', null);
+    commit('setIndexResponse', null);
+    commit('setMoreResponse', null);
+    commit('setReviews', null);
+    commit('setMyReviews', null);
+    commit('setCreateResponse', null);
+  },
   setSelected({ commit }, review: RestaurantReview | null) {
     commit('setSelected', review);
   },
@@ -109,7 +123,6 @@ const actions = {
     commit('setShowResponse', response);
   },
   async loadMyReviews({ commit, dispatch, rootGetters }, { ip, restaurantId }) {
-    console.log('loading my reviews...');
     const request: IndexRestaurantReviewsRequest = {
       filterIp: ip,
       pageSize: 10,
@@ -168,7 +181,7 @@ const actions = {
     if (!state.moreResponse) {
       request.pageNumber = 2;
     } else {
-      request.pageNumber = state.productsMoreResponse.meta.currentPage + 1;
+      request.pageNumber = state.moreResponse.meta.currentPage + 1;
     }
 
     const response = await (new RestaurantReviewsApi())
