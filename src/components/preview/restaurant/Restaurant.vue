@@ -24,16 +24,21 @@
         <ShortSchedule class="grow"
                        :item="item" />
 
-        <button class="btn btn-sm btn-outline" @click="this.$emit('select-restaurant', this.item)">
+        <button class="btn btn-sm btn-outline" @click="$emit('select-restaurant', item)">
           {{ $t("preview.restaurants.select_button") }}
         </button>
       </div>
     </template>
 
     <template v-else>
-      <Schedule class="w-full mt-2"
+      <ShortReviews class="mt-2"
+                    :item="item"
+                    @click="$emit('open-reviews', item)"/>
+
+      <Schedule class="w-full"
                 :item="item" />
     </template>
+
   </div>
 </template>
 
@@ -43,12 +48,14 @@ import Restaurant from "@/openapi/models/Restaurant";
 import Schedule from "@/components/preview/schedule/Schedule.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import ShortSchedule from "@/components/preview/schedule/ShortSchedule.vue";
+import ShortReviews from "@/components/preview/review/ShortReviews.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Restaurant",
-  emits: ["select-restaurant"],
+  emits: ["select-restaurant", "open-reviews"],
   components: {
+    ShortReviews,
     ShortSchedule,
     Schedule,
     BaseIcon,
@@ -77,10 +84,6 @@ export default defineComponent({
 
       if (p.media && p.media.length) {
         return p.media[0].url;
-      }
-
-      if (p.defaultMedia && p.defaultMedia.length) {
-        return p.defaultMedia[0].url;
       }
 
       return null;

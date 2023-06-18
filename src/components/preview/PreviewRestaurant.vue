@@ -6,7 +6,8 @@
                :lines="false"
                :title="$t('preview.restaurant.restaurant')"/>
 
-      <Restaurant :item="restaurant"/>
+      <Restaurant :item="restaurant"
+                  @open-reviews="onOpenReviews()"/>
 
       <Divider v-if="menus && menus.length"
                class="mt-3 mb-1"
@@ -34,7 +35,7 @@ import Menu from "@/components/preview/menu/Menu.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewRestaurant",
-  emits: ["menu-select"],
+  emits: ["menu-select", "open-reviews"],
   components: {
     Menu,
     Restaurant,
@@ -58,6 +59,9 @@ export default defineComponent({
     onMenuSelect(menu) {
       this.selectMenu(menu);
       this.$emit('menu-select', {restaurant: this.restaurant, menu: menu});
+    },
+    onOpenReviews() {
+      this.$emit('open-reviews', {restaurant: this.restaurant})
     },
   },
 });

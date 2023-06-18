@@ -4,13 +4,13 @@
     <div class="w-full flex-col text-neutral-content bg-neutral" v-if="showMainNavbar">
         <div class="navbar flex w-full h-[68px]">
           <div class="flex-1 gap-2">
-            <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage" @click="onBack">
+            <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage" @click="onBack">
               <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
                 <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
               </BaseIcon>
             </button>
 
-            <Item v-if="isMenuPage"
+            <Item v-if="isMenuPage || isReviewsPage"
                   :with-icon="false"
                   :restaurant="restaurant"/>
           </div>
@@ -109,6 +109,11 @@ export default defineComponent({
 
       return name && name.endsWith('-restaurant');
     },
+    isReviewsPage() {
+      const name = this.$route.name;
+
+      return name && name.endsWith('-reviews');
+    },
     shouldShowBack() {
       return this.isMenuPage;
     },
@@ -148,7 +153,7 @@ export default defineComponent({
       }
     },
     onBack() {
-      if (this.isMenuPage) {
+      if (this.isMenuPage || this.isReviewsPage) {
         const restaurantId = this.$route.params['restaurantId'];
         this.$router.push(`/preview/${restaurantId}`)
       } else if (this.isRestaurantPage) {

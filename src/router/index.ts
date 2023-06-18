@@ -2,6 +2,7 @@ import {createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw} fr
 import PreviewPage from "@/pages/PreviewPage.vue";
 import PreviewRestaurantPage from "@/pages/PreviewRestaurantPage.vue";
 import PreviewMenuPage from "@/pages/PreviewMenuPage.vue";
+import PreviewReviewsPage from "@/pages/PreviewReviewsPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -16,6 +17,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/preview/:restaurantId(\\d+)',
     name: 'preview-restaurant',
     component: PreviewRestaurantPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/preview/:restaurantId(\\d+)/reviews',
+    name: 'preview-reviews',
+    component: PreviewReviewsPage,
     meta: {
       requiresAuth: false,
     },

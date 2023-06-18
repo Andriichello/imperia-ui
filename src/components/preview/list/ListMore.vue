@@ -15,7 +15,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "ContentListMore",
+  name: "ListMore",
   props: {
     count: Number,
     total: Number,

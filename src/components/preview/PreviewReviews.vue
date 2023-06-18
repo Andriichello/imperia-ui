@@ -1,20 +1,29 @@
 <template>
-  <div class="preview-page">
-    <PreviewRestaurant class="max-w-lg"
-        @menu-select="onSelectMenu"
-        @open-reviews="onOpenReviews"/>
+  <div class="preview">
+    <template v-if="restaurant">
+      <Divider v-if="restaurant"
+               class="mb-1"
+               :lines="false"
+               title="Відгуки"/>
+
+      <Reviews :item="restaurant"/>
+
+    </template>
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
-import PreviewRestaurant from "@/components/preview/PreviewRestaurant.vue";
 import {mapActions, mapGetters} from "vuex";
+import Divider from "@/layouts/divider/Divider.vue";
+import Reviews from "@/components/preview/review/Reviews.vue";
 
 export default defineComponent({
-  name: "PreviewRestaurantPage",
+  // eslint-disable-next-line
+  name: "PreviewReviews",
   components: {
-    PreviewRestaurant,
+    Reviews,
+    Divider,
   },
   computed: {
     ...mapGetters({
@@ -29,12 +38,6 @@ export default defineComponent({
       loadReviewsIfMissing: "reviews/loadReviewsIfMissing",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
-    onSelectMenu({ restaurant, menu }) {
-      this.$router.push(`/preview/${restaurant.id}/menu/${menu.id}`);
-    },
-    onOpenReviews({ restaurant }) {
-      this.$router.push(`/preview/${restaurant.id}/reviews`);
-    },
   },
   mounted() {
     const restaurantId = +this.$route.params['restaurantId'];
@@ -55,14 +58,13 @@ export default defineComponent({
     }
 
     this.loadReviewsIfMissing();
-    this.loadMenusIfMissing();
   },
 });
 </script>
 
 <style scoped>
-.preview-page {
-  @apply flex flex-col w-full gap-0 pt-3;
+.preview {
+  @apply flex flex-col w-full gap-0 px-2 pb-10;
 
   display: flex;
   flex-basis: 100%;

@@ -3,7 +3,8 @@ import { Customer, instanceOfLoginResponse, instanceOfLogoutResponse, instanceOf
 import { AuthApi, UsersApi } from "@/openapi"
 
 interface AuthState {
-  user: User | null
+  ip: string | null,
+  user: User | null,
   token: string | null,
   me: MeResponse | Response | null,
   login: LoginResponse | Response | null,
@@ -12,6 +13,7 @@ interface AuthState {
 }
 
 const state: AuthState = {
+  ip: null,
   user: null,
   token: localStorage.getItem('access-token'),
   me: null,
@@ -21,6 +23,9 @@ const state: AuthState = {
 };
 
 const getters = {
+  ip(state: AuthState) {
+    return state.ip;
+  },
   user(state: AuthState) {
     return state.user;
   },
@@ -57,6 +62,9 @@ const getters = {
 };
 
 const actions = {
+  ip({ commit }, ip: string | null) {
+    commit('ip', ip);
+  },
   user({ commit }, user: User | null) {
     commit('user', user);
   },
@@ -128,6 +136,9 @@ const actions = {
 };
 
 const mutations = {
+  ip(state: AuthState, ip: string | null) {
+    state.ip = ip;
+  },
   user(state: AuthState, user: User | null) {
     state.user = user;
   },
