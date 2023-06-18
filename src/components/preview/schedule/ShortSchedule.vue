@@ -28,11 +28,11 @@ export default defineComponent({
 
       const beg = DateTime.utc()
           .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const end = DateTime.utc()
           .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const now = DateTime.utc();
 
@@ -46,11 +46,11 @@ export default defineComponent({
 
       const beg = DateTime.utc()
           .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const end = DateTime.utc()
           .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const now = DateTime.utc();
 
@@ -68,7 +68,7 @@ export default defineComponent({
         const next = this.schedules[1];
         const nextBeg = DateTime.utc()
             .set({hours: next.begHour, minutes: next.begMinute, seconds: 0, milliseconds: 0})
-            .minus({hours: this.timezoneOffset});
+            .minus({minutes: this.timezoneOffset});
 
         const minutes = Math.trunc(nextBeg.diff(now, 'minutes').values.minutes);
         const hours = Math.trunc(minutes / 60);

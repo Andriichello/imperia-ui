@@ -72,12 +72,12 @@ export default defineComponent({
     scheduleBeg(schedule) {
       return DateTime.utc()
           .set({hours: schedule.begHour, minutes: schedule.begMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
     },
     scheduleEnd(schedule) {
       return DateTime.utc()
           .set({hours: schedule.begHour, minutes: schedule.begMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
     },
     timezoneOffset() {
       return this.item.timezoneOffset ?? 0;
@@ -87,11 +87,11 @@ export default defineComponent({
 
       const beg = DateTime.utc()
           .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const end = DateTime.utc()
           .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const now = DateTime.utc();
 
@@ -105,11 +105,11 @@ export default defineComponent({
 
       const beg = DateTime.utc()
           .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const end = DateTime.utc()
           .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({hours: this.timezoneOffset});
+          .minus({minutes: this.timezoneOffset});
 
       const now = DateTime.utc();
 
@@ -127,7 +127,7 @@ export default defineComponent({
         const next = this.schedules[1];
         const nextBeg = DateTime.utc()
             .set({hours: next.begHour, minutes: next.begMinute, seconds: 0, milliseconds: 0})
-            .minus({hours: this.timezoneOffset});
+            .minus({minutes: this.timezoneOffset});
 
         const minutes = Math.trunc(nextBeg.diff(now, 'minutes').values.minutes);
         const hours = Math.trunc(minutes / 60);

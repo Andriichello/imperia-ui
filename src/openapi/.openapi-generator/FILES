@@ -11,6 +11,7 @@ apis/MenusApi.ts
 apis/NotificationsApi.ts
 apis/OrdersApi.ts
 apis/ProductsApi.ts
+apis/RestaurantReviewsApi.ts
 apis/RestaurantsApi.ts
 apis/ServicesApi.ts
 apis/SpacesApi.ts
@@ -53,6 +54,7 @@ models/IndexNotificationResponse.ts
 models/IndexOrderResponse.ts
 models/IndexProductResponse.ts
 models/IndexRestaurantResponse.ts
+models/IndexRestaurantReviewResponse.ts
 models/IndexServiceResponse.ts
 models/IndexSpaceReservationsResponse.ts
 models/IndexSpaceResponse.ts
@@ -77,6 +79,7 @@ models/ProductVariant.ts
 models/RegisterRequest.ts
 models/RegisterResponse.ts
 models/Restaurant.ts
+models/RestaurantReview.ts
 models/RestoreBanquetResponse.ts
 models/RestoreCustomerResponse.ts
 models/RestoreNotificationResponse.ts
@@ -98,6 +101,7 @@ models/ShowNotificationResponse.ts
 models/ShowOrderResponse.ts
 models/ShowProductResponse.ts
 models/ShowRestaurantResponse.ts
+models/ShowRestaurantReviewResponse.ts
 models/ShowServiceResponse.ts
 models/ShowSpaceResponse.ts
 models/ShowTicketResponse.ts
@@ -122,6 +126,8 @@ models/StoreOrderRequestServiceField.ts
 models/StoreOrderRequestSpaceField.ts
 models/StoreOrderRequestTicketField.ts
 models/StoreOrderResponse.ts
+models/StoreRestaurantReviewRequest.ts
+models/StoreRestaurantReviewResponse.ts
 models/SuccessResponse.ts
 models/Ticket.ts
 models/TicketOrderField.ts

@@ -12,6 +12,7 @@ export * from "./MenusApi";
 export * from "./NotificationsApi";
 export * from "./OrdersApi";
 export * from "./ProductsApi";
+export * from "./RestaurantReviewsApi";
 export * from "./RestaurantsApi";
 export * from "./ServicesApi";
 export * from "./SpacesApi";
