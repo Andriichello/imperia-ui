@@ -1,7 +1,7 @@
 <template>
     <div class="preview-layout">
+      <PreviewNavBar class="w-full"/>
       <slot />
-      <PreviewNavBar class="fixed left-0 top-0 w-full"/>
     </div>
 </template>
 
@@ -19,7 +19,7 @@ export default defineComponent({
 
 <style scoped>
 .preview-layout {
-  @apply flex flex-col w-full max-w-full bg-base-200 p-0 pt-[68px];
+  @apply flex flex-col w-full max-w-full bg-base-200 p-0;
 
   display: flex;
   flex-basis: 100%;

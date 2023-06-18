@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full list flex flex-wrap justify-center items-start gap-4 mb-9">
+  <div class="w-full list flex flex-wrap justify-center items-start gap-4 pb-2">
 
     <template v-if="number === 1">
       <div class="w-full flex flex-col gap-3">

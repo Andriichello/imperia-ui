@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col">
 
-    <div class="w-full flex-col text-neutral-content bg-neutral" v-if="showMainNavbar">
+    <div class="w-full flex-col text-neutral-content bg-neutral">
         <div class="navbar flex w-full h-[68px]">
           <div class="flex-1 gap-2">
             <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage" @click="onBack">
@@ -39,30 +39,7 @@
         </div>
       </div>
 
-    <div class="w-full flex flex-col justify-center bg-base-100 shadow-md pb-1" v-if="menu && isMenuPage">
-      <div class="w-full flex justify-center items-center" v-if="showMenusNavbar && menus">
-        <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
-          <template v-for="m in menus" :key="m.id">
-            <a class="tab tab-bordered text-2xl font-bold"
-               :class="{'tab-active': menu && menu.id === m.id}"
-               @click="onSelectMenu(m)">
-              {{ m.title }}
-            </a>
-          </template>
-        </div>
-      </div>
-
-      <div class="w-full flex justify-center items-center" v-if="categories && categories.length">
-        <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
-          <template v-for="c in categories" :key="c.id">
-            <Category :item="c"
-                      :selected="category && category.id === c.id"
-                      @category-toggle="onToggleCategory"/>
-          </template>
-        </div>
-      </div>
     </div>
-  </div>
 
 </template>
 
@@ -71,14 +48,12 @@ import {defineComponent} from "vue";
 import Item from "@/layouts/navbar/restaurant/Item.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import {mapActions, mapGetters} from "vuex";
-import Category from "@/components/preview/category/Category.vue";
 
 export default defineComponent({
   name: "PreviewNavBar",
   components: {
     Item,
     BaseIcon,
-    Category,
   },
   data() {
     return {
@@ -130,21 +105,6 @@ export default defineComponent({
       this.onHide();
 
       window.scrollTo(0, 0);
-    },
-    onSelectMenu(menu) {
-      this.selectMenu(menu)
-
-      const restaurantId = this.$route.params['restaurantId'];
-      this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
-
-      window.scrollTo(0, 0);
-    },
-    onToggleCategory({category, selected}) {
-      if (selected) {
-        return;
-      }
-
-      this.selectCategory(category);
     },
     onHide() {
       const elem = document.activeElement;

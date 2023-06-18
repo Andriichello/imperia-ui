@@ -8,13 +8,13 @@
     </div>
 
     <div class="w-full flex flex-col justify-center items-center" v-if="ip && myReviewsResponse && !myReviews?.length">
-      <button class="btn btn-sm btn-outline"
+      <button class="btn btn-sm btn-outline mb-2"
               @click="showForm = !showForm">
         Натисніть, щоб залишити відгук
       </button>
     </div>
 
-    <form @submit.prevent class="w-full flex flex-col justify-center items-center" v-if="ip && showForm && !myReviews?.length">
+    <form @submit.prevent class="w-full flex flex-col justify-center items-center mb-2" v-if="ip && showForm && !myReviews?.length">
       <div class="card w-full flex flex-col items-center bg-base-100 min-h-[100px] p-4 gap-2">
         <span class="text-md font-bold">
           Оцініть даний заклад

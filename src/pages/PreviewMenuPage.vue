@@ -71,7 +71,7 @@ export default defineComponent({
 
 <style scoped>
 .preview-page {
-  @apply flex flex-col w-full pt-3 gap-3 pb-10;
+  @apply flex flex-col w-full gap-3 pb-10;
 
   display: flex;
   flex-basis: 100%;

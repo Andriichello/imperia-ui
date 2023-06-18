@@ -2,7 +2,6 @@
   <div class="preview">
     <template v-if="restaurant">
       <Divider v-if="restaurant"
-               class="mb-1"
                :lines="false"
                title="Відгуки"/>
 

@@ -20,6 +20,9 @@ export default defineComponent({
       restaurants: 'restaurants/restaurants',
     }),
   },
+  mounted() {
+    window.scrollTo(0, 0);
+  }
 });
 </script>
 
