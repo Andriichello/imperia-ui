@@ -1,6 +1,6 @@
 <template>
   <div class="preview-page">
-    <PreviewReviews class="max-w-2xl"/>
+    <PreviewReviews class="max-w-xl"/>
   </div>
 </template>
 

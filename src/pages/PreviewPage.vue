@@ -1,6 +1,6 @@
 <template>
   <div class="preview-page">
-    <PreviewRestaurants class="max-w-2xl"
+    <PreviewRestaurants class="max-w-xl"
         @restaurant-select="onSelectRestaurant"/>
   </div>
 </template>
