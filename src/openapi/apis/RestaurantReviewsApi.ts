@@ -39,6 +39,7 @@ export interface IndexRestaurantReviewsRequest {
   sort?: string;
   filterRestaurantId?: string;
   filterIp?: string;
+  isApproved?: boolean;
 }
 
 export interface ShowRestaurantReviewRequest {
@@ -81,6 +82,10 @@ export class RestaurantReviewsApi extends runtime.BaseAPI {
 
     if (requestParameters.filterIp !== undefined) {
       queryParameters["filter[ip]"] = requestParameters.filterIp;
+    }
+
+    if (requestParameters.isApproved !== undefined) {
+      queryParameters["is_approved"] = requestParameters.isApproved;
     }
 
     const headerParameters: runtime.HTTPHeaders = {};

@@ -146,7 +146,7 @@ export default defineComponent({
           return;
         }
 
-        this.loadMyReviews({ip: newVal, restaurantId: this.$route.params['restaurantId']})
+        this.loadMyReviewsIfMissing({ip: newVal, restaurantId: this.$route.params['restaurantId']})
       },
     },
     score: {

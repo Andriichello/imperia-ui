@@ -56,8 +56,6 @@ export default defineComponent({
         this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
-
-    this.loadReviewsIfMissing();
   },
 });
 </script>
