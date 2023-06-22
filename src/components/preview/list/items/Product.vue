@@ -15,7 +15,7 @@
 <!--      </figure>-->
     </div>
 
-    <div class="card-body min-h-[168px]">
+    <div class="card-body min-h-[140px]">
       <div class="flex justify-center items-start card-title">
         <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center">
           {{ title }}
@@ -39,15 +39,15 @@
       <div class="card-actions justify-between items-end pt-2">
         <div class="flex gap-1">
           <template v-if="variants">
-            <button class="btn btn-sm normal-case rounded-none text-md px-2 py-2" v-if="weight"
-                    :class="{'btn-neutral': theme!== 'dark' && (!variant || !variants), 'btn-outline': variant && variants, 'btn-selected': theme === 'dark' && (!variant || !variants)}"
-                    @click="onVariantSelect(null)">
-              {{ weight ?? '' }}
-            </button>
+<!--            <button class="btn btn-sm normal-case rounded-none text-md px-2 py-2" v-if="weight"-->
+<!--                    :class="{'btn-neutral': theme!== 'dark' && (!variant || !variants), 'btn-outline': variant && variants, 'btn-selected': theme === 'dark' && (!variant || !variants)}"-->
+<!--                    @click="onVariantSelect(null)">-->
+<!--              {{ weight ?? '' }}-->
+<!--            </button>-->
 
             <template v-for="v in variants" :key="v.id">
               <button class="btn btn-sm rounded-none normal-case text-md px-2 py-2"
-                      :class="{'btn-neutral': theme!== 'dark' && variant && variant.id === v.id, 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && variant && variant.id === v.id}"
+                      :class="{'btn-neutral': theme !== 'dark' && ((variant && variant.id === v.id) || id === 0), 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && ((variant && variant.id === v.id) || id === 0)}"
                       @click="onVariantSelect(v)">
                 {{ variantWeight(v) }}
               </button>
@@ -137,7 +137,33 @@ export default defineComponent({
         return null;
       }
 
-      return this.item.variants;
+      const variants = [...this.item.variants];
+      const base = {
+        id: 0,
+        price: this.item.price,
+        weight: this.item.weight,
+        weightUnit: this.item.weightUnit,
+      }
+
+      variants.push(base);
+
+      const sorted = variants.sort((v1, v2) => {
+        if (v1.price < v2.price) {
+          return -1;
+        }
+        if (v1.price > v2.price) {
+          return 1;
+        }
+        return 0;
+      });
+
+
+      if (!this.variant) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.variant = sorted[0];
+      }
+
+      return sorted;
     },
     categories() {
       const ids = this.item.categoryIds ?? [];
