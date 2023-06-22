@@ -22,7 +22,10 @@
     <template v-if="short">
       <div class="w-full flex">
         <ShortSchedule class="grow"
+                       v-if="item.schedules && item.schedules.length"
                        :item="item" />
+
+        <div class="grow" v-else></div>
 
         <button class="btn btn-sm btn-outline" @click="$emit('select-restaurant', item)">
           {{ $t("preview.restaurants.select_button") }}
@@ -30,7 +33,7 @@
       </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="item.schedules && item.schedules.length">
 <!--      <ShortReviews class="mt-2"-->
 <!--                    :item="item"-->
 <!--                    @click="$emit('open-reviews', item)"/>-->
