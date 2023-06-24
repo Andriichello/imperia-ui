@@ -36,7 +36,8 @@
         </div>
       </div>
 
-      <div class="card-actions justify-between items-end pt-2">
+      <div class="card-actions
+      justify-between items-end pt-2">
         <div class="flex gap-1">
           <template v-if="variants">
 <!--            <button class="btn btn-sm normal-case rounded-none text-md px-2 py-2" v-if="weight"-->
@@ -130,7 +131,13 @@ export default defineComponent({
         return null;
       }
 
-      return this.item.weight + this.item.weightUnit;
+      let unit = this.item.weightUnit;
+
+      if (unit) {
+        unit = this.$t('unit.' + unit);
+      }
+
+      return this.item.weight + (unit ?? '');
     },
     variants() {
       if (!this.item.variants || !this.item.variants.length) {
@@ -182,7 +189,13 @@ export default defineComponent({
         return null;
       }
 
-      return v.weight + v.weightUnit;
+      let unit = v.weightUnit;
+
+      if (unit) {
+        unit = this.$t('unit.' + unit);
+      }
+
+      return v.weight + (unit ?? '');
     },
     onVariantSelect(v) {
       this.variant = v;

@@ -161,7 +161,7 @@ const actions = {
     dispatch('selectMenu', response.data);
   },
   async loadProducts({ commit, rootGetters }, menu: Menu | null) {
-    const request : IndexProductsRequest = {};
+    const request : IndexProductsRequest = {pageSize: 200};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (menu) {
@@ -185,7 +185,7 @@ const actions = {
     }
   },
   async loadMoreProducts({ state, commit, rootGetters }, menu: Menu | null) {
-    const request : IndexProductsRequest = {};
+    const request : IndexProductsRequest = {pageSize: 200};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (menu) {
@@ -197,6 +197,7 @@ const actions = {
     }
 
     if (!state.productsMoreResponse) {
+      request.pageSize = state.productsMoreResponse.meta.perPage ?? 200;
       request.pageNumber = 2;
     } else {
       request.pageNumber = state.productsMoreResponse.meta.currentPage + 1;

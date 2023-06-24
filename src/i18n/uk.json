@@ -15,6 +15,14 @@
     "T_until_closing": "{time} до закриття",
     "T_before_opening": "{time} до відкриття"
   },
+  "unit": {
+    "g": "г",
+    "kg": "кг",
+    "l": "л",
+    "ml": "мл",
+    "cm": "см",
+    "pc": "шт"
+  },
   "preview": {
     "navbar": {
       "back": "Назад",

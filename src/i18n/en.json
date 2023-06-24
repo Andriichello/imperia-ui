@@ -12,6 +12,14 @@
     "saturday": "Saturday",
     "sunday": "Sunday"
   },
+  "unit": {
+    "g": "g",
+    "kg": "kg",
+    "l": "l",
+    "ml": "ml",
+    "cm": "cm",
+    "pc": "pc"
+  },
   "schedule": {
     "working_schedule": "Working schedule",
     "open": "Open",
