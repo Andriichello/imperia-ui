@@ -30,12 +30,7 @@ const getters = {
     return state.selected?.timezoneOffset;
   },
   restaurantId(state: RestaurantsState) {
-    if (state.selected) {
-      return state.selected.id;
-    }
-
-    const id = +localStorage.getItem(RestaurantConfig.storage);
-    return id > 0 ? id : null;
+    return state.selected?.id;
   },
   restaurants(state: RestaurantsState) {
     return state.restaurants;
@@ -50,8 +45,6 @@ const getters = {
 
 const actions = {
   setSelected({ commit }, restaurant: Restaurant | null) {
-    localStorage.setItem(RestaurantConfig.storage, restaurant ? restaurant.id.toString() : null);
-
     commit('setSelected', restaurant);
   },
   setRestaurants({ commit }, restaurants: Restaurant[] | null) {
@@ -114,11 +107,6 @@ const mutations = {
   },
   setRestaurants(state: RestaurantsState, restaurants: Restaurant[] | null) {
     state.restaurants = restaurants;
-
-    if (localStorage.getItem(RestaurantConfig.storage)) {
-      const id = +localStorage.getItem(RestaurantConfig.storage);
-      state.selected = restaurants.find(r => r.id === id);
-    }
   },
   setShowResponse(state: RestaurantsState, response) {
     state.showResponse = response;

@@ -11,8 +11,7 @@
 }
 
 html, body {
-  overflow-x: hidden;
-
+  overflow-x: clip;
   min-width: 100vw;
   min-height: 100vh;
 
@@ -20,7 +19,7 @@ html, body {
 }
 
 #app {
-  overflow: hidden;
+  overflow: clip;
 
   min-width: 100vw;
   min-height: 100vh;

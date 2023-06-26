@@ -48,9 +48,9 @@ export default defineComponent({
       const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
 
       if (target) {
-        this.selectRestaurant(target);
+        await this.selectRestaurant(target);
       } else {
-        this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
 

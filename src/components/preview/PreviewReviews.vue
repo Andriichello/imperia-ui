@@ -39,7 +39,7 @@ export default defineComponent({
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
   },
-  mounted() {
+  async mounted() {
     const restaurantId = +this.$route.params['restaurantId'];
 
     if (restaurantId < 1) {
