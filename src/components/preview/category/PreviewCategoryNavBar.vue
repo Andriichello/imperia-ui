@@ -30,14 +30,25 @@ export default defineComponent({
   },
   watch: {
     category(newCategory, oldCategory) {
-      if (!newCategory || newCategory === oldCategory) {
+      if (newCategory === oldCategory) {
         return;
       }
 
-      console.log('category changed...', {newCategory, oldCategory});
+      const scroll = document.getElementById('category-buttons-scroll');
+
+      if (!newCategory) {
+        if (scroll) {
+          scroll.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'smooth',
+          });
+        }
+
+        return;
+      }
 
       const button = document.getElementById(`category-${newCategory.id}-button`);
-      const scroll = document.getElementById('category-buttons-scroll');
 
       if (button && scroll) {
         scroll.scrollTo({

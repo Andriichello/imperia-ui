@@ -3,8 +3,10 @@
     <div class="preview w-full min-w-4xl max-w-4xl" id="preview-menu">
       <template v-if="products && categories">
         <template v-for="c in categories" :key="c.id">
-          <Divider :title="c.title" :id="'category-' + c.id" :lines="true"/>
-          <List :items="filterByCategory(products, c)" class="mb-2"/>
+          <div class="w-full flex flex-col justify-start items-center gap-1" :id="`menu-category-${c.id}`">
+            <Divider :title="c.title" :id="'category-' + c.id" :lines="true"/>
+            <List :items="filterByCategory(products, c)" class="mb-2"/>
+          </div>
         </template>
       </template>
     </div>
@@ -16,6 +18,7 @@ import {defineComponent} from "vue";
 import List from "@/components/preview/list/List.vue";
 import Divider from "@/layouts/divider/Divider.vue";
 import {mapActions, mapGetters} from "vuex";
+import category from "@/components/preview/category/Category.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -28,6 +31,7 @@ export default defineComponent({
     return {
       ignoringScroll: false,
       ignoringScrollId: 0,
+      shouldNotScroll: 0,
       fixNavbar: false,
       showMenus: true,
     };
@@ -67,28 +71,29 @@ export default defineComponent({
     },
     category: {
       async handler(newCategory) {
-        if (!newCategory) {
-          return;
+        if (newCategory) {
+
+          const divider = document.getElementById('category-' + newCategory.id);
+
+          if ((this.shouldNotScroll === 0 || (Date.now() - this.shouldNotScroll) > 100) && divider) {
+            this.ignoringScroll = true;
+
+            window.scrollTo({
+              top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 98 : 54),
+              behavior: 'smooth'
+            });
+
+            const idToCheck = this.ignoringScrollId++;
+
+            setTimeout(() => {
+              if (idToCheck === (this.ignoringScrollId - 1)) {
+                this.ignoringScroll = false;
+              }
+            }, 1000)
+          }
         }
 
-        const divider = document.getElementById('category-' + newCategory.id);
-
-        if (divider) {
-          this.ignoringScroll = true;
-
-          window.scrollTo({
-            top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 98 : 54),
-            behavior: 'smooth'
-          });
-
-          const idToCheck = this.ignoringScrollId++;
-
-          setTimeout(() => {
-            if (idToCheck === (this.ignoringScrollId - 1)) {
-              this.ignoringScroll = false;
-            }
-          }, 1000)
-        }
+        this.shouldNotScroll = 0;
       },
     },
   },
@@ -109,7 +114,6 @@ export default defineComponent({
     onScroll() {
       // Get the current scroll position
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-      const screenHeight = screen.height;
 
       // Because of momentum scrolling on mobiles, we shouldn't continue if it is less than zero
       if (scrollPosition < 0) {
@@ -120,31 +124,26 @@ export default defineComponent({
         return;
       }
 
-      if (this.category) {
-        const divider = document.getElementById('category-' + this.category.id);
-        if (!divider) {
-          return;
+      const categoriesCount = this.categories.length;
+
+      for (let i = 0; i < categoriesCount; i++) {
+        const category = this.categories[i];
+        const group = document.getElementById(`menu-category-${category.id}`);
+
+        if (!group) {
+          continue;
         }
 
-        const list = divider.nextElementSibling;
+        const isTopOutOfView = group.offsetTop < scrollPosition
+        const isBottomOutOfView = (group.offsetTop + group.clientHeight - 120) < scrollPosition;
 
-        if (divider && list) {
-          let isTopOutOfView = divider.offsetTop < scrollPosition;
-          let isBottomOutOfView = (list.offsetTop + list.clientHeight - 200) < scrollPosition;
-
-          if (isTopOutOfView && isBottomOutOfView) {
-            this.selectCategory(null);
-            return;
-          }
-
-          isTopOutOfView = (divider.offsetTop + divider.parentElement.offsetTop * 2 + 200) > (scrollPosition + screenHeight);
-
-          if (isTopOutOfView) {
-            this.selectCategory(null);
-          }
+        if (!isTopOutOfView || !isBottomOutOfView) {
+          this.shouldNotScroll = Date.now();
+          this.selectCategory(category);
+          break;
         }
       }
-    }
+    },
   },
   mounted() {
     window.addEventListener('scroll', this.onScroll);
