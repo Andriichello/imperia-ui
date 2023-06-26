@@ -15,7 +15,7 @@
 <!--      </figure>-->
     </div>
 
-    <div class="card-body min-h-[140px]">
+    <div class="card-body min-h-[100px]">
       <div class="flex justify-center items-start card-title">
         <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center">
           {{ title }}
@@ -29,12 +29,12 @@
         </p>
       </div>
 
-      <div class="card-actions justify-end select-none">
-        <div v-for="category in categories" :key="category.id"
-            class="badge badge-outline badge-md">
-          {{ category.title }}
-        </div>
-      </div>
+<!--      <div class="card-actions justify-end select-none">-->
+<!--        <div v-for="category in categories" :key="category.id"-->
+<!--            class="badge badge-outline badge-md">-->
+<!--          {{ category.title }}-->
+<!--        </div>-->
+<!--      </div>-->
 
       <div class="card-actions
       justify-between items-end pt-2">
@@ -118,13 +118,13 @@ export default defineComponent({
     },
     price() {
       if (this.variant) {
-        return '₴' + this.variant.price;
+        return this.variant.price + ' ₴';
       }
 
       const p = this.item;
 
       return p.price === 0
-          ? 'Free' : '₴' + p.price;
+          ? 'Free' : p.price + ' ₴';
     },
     weight() {
       if (!this.item || !this.item.weight) {

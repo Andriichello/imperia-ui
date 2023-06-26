@@ -35,6 +35,9 @@ const getters = {
   restaurants(state: RestaurantsState) {
     return state.restaurants;
   },
+  isLoadingRestaurants(state: RestaurantsState) {
+    return !state.selected;
+  },
   getShowResponse(state: RestaurantsState) {
     return state.showResponse;
   },

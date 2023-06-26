@@ -1,5 +1,11 @@
 <template>
   <div class="preview-page">
+    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
+               v-if="loadingRestaurant || isLoadingRestaurants"/>
+
+    <Preloader :title="$t('preview.menu.loading')" class="p-2"
+               v-if="!isLoadingRestaurants && isLoadingMenus"/>
+
     <PreviewMenu v-if="menu" :menu="menu"/>
   </div>
 </template>
@@ -8,17 +14,57 @@
 import {defineComponent} from "vue";
 import PreviewMenu from "@/components/preview/PreviewMenu.vue";
 import {mapActions, mapGetters} from "vuex";
+import Preloader from "@/components/preview/loading/Preloader.vue";
 
 export default defineComponent({
   name: "PreviewMenuPage",
   components: {
+    Preloader,
     PreviewMenu,
+  },
+  data() {
+    return {
+      loadingRestaurant: false,
+    }
+  },
+  watch: {
+    showRestaurantResponse: {
+      handler() {
+        this.loadingRestaurant = false;
+      },
+    },
+    restaurant: {
+      handler(newRestaurant, oldRestaurant) {
+        // this.loadingRestaurant = false;
+
+        if (newRestaurant === oldRestaurant) {
+          return;
+        }
+
+        const menuId = +this.$route.params['menuId'];
+
+        if (!this.menu || (this.menu && this.menu.id !== menuId)) {
+          const target = (this.menus ?? []).find(r => r.id === menuId);
+
+          if (target) {
+            this.selectMenu(target);
+          } else {
+            this.loadMenusAndSelect({ id: menuId });
+          }
+        } else {
+          this.loadMenusIfMissing();
+        }
+      }
+    }
   },
   computed: {
     ...mapGetters({
       menu: 'preview/selected',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
+      showRestaurantResponse: 'restaurants/getShowResponse',
+      isLoadingMenus: "preview/isLoadingMenus",
+      isLoadingRestaurants: "restaurants/isLoadingRestaurants",
     }),
   },
   methods: {
@@ -50,20 +96,23 @@ export default defineComponent({
       if (target) {
         await this.selectRestaurant(target);
       } else {
+        this.loadingRestaurant = true;
         await this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
 
-    if (!this.menu || (this.menu && this.menu.id !== menuId)) {
-      const target = (this.menus ?? []).find(r => r.id === menuId);
+    if (this.restaurants && this.restaurant.id === restaurantId) {
+      if (!this.menu || (this.menu && this.menu.id !== menuId)) {
+        const target = (this.menus ?? []).find(r => r.id === menuId);
 
-      if (target) {
-        this.selectMenu(target);
+        if (target) {
+          this.selectMenu(target);
+        } else {
+          this.loadMenusAndSelect({ id: menuId });
+        }
       } else {
-        this.loadMenusAndSelect({ id: menuId });
+        this.loadMenusIfMissing();
       }
-    } else {
-      this.loadMenusIfMissing();
     }
   },
 });

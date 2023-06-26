@@ -35,10 +35,13 @@
       "street_and_address": "Street, address"
     },
     "restaurant": {
+      "loading": "Loading restaurant",
+      "loading_menus": "Loading menus",
       "menus": "Menus",
       "restaurant": "Restaurant"
     },
     "restaurants": {
+      "loading": "Loading restaurants",
       "select": "Select restaurant",
       "select_button": "Select"
     }

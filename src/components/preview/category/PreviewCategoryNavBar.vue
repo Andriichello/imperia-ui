@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col justify-center bg-base-100 shadow-md pb-1 mb-2" v-if="categories && categories.length">
     <div class="w-full flex justify-center items-center">
-      <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
+      <div class="max-w-full flex justify-start px-2 pt-2 gap-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
         <template v-for="c in categories" :key="c.id">
           <Category :item="c" :id="`category-${c.id}-button`"
                     :selected="category && category.id === c.id"
@@ -15,7 +15,6 @@
 <script>
 import { defineComponent } from "vue";
 import Menu from "@/openapi/models/Menu";
-import BaseIcon from "@/components/icons/BaseIcon.vue";
 import Category from "@/components/preview/category/Category.vue";
 import {mapActions, mapGetters} from "vuex";
 

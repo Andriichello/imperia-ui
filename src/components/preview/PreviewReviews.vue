@@ -1,9 +1,15 @@
 <template>
   <div class="preview">
+
     <template v-if="restaurant">
-      <Divider v-if="restaurant"
+      <Divider v-if="restaurant && !isLoadingReviews"
                :lines="false"
                title="Відгуки"/>
+
+      <template v-if="isLoadingReviews">
+        <Preloader :title="$t('preview.restaurant.loading_reviews')"
+                   class="p-2"/>
+      </template>
 
       <Reviews :item="restaurant"/>
 
@@ -16,11 +22,13 @@ import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
 import Divider from "@/layouts/divider/Divider.vue";
 import Reviews from "@/components/preview/review/Reviews.vue";
+import Preloader from "@/components/preview/loading/Preloader.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewReviews",
   components: {
+    Preloader,
     Reviews,
     Divider,
   },
@@ -28,6 +36,7 @@ export default defineComponent({
     ...mapGetters({
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
+      isLoadingReviews: 'reviews/isLoadingReviews',
     }),
   },
   methods: {

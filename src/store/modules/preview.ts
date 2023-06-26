@@ -35,6 +35,7 @@ class PreviewState {
 
   public products: Product[] | null;
   public productsResponse: IndexProductResponse;
+
   public productsMoreResponse: IndexProductResponse;
 
   constructor() {
@@ -69,6 +70,12 @@ const getters = {
   },
   menus(state: PreviewState) {
     return state.menus;
+  },
+  isLoadingMenus(state: PreviewState) {
+    return !state.menus && !state.menusResponse;
+  },
+  isLoadingProducts(state: PreviewState) {
+    return !state.products && !state.productsResponse;
   },
   menu(state: PreviewState) {
     return state.menu;
@@ -105,6 +112,8 @@ const actions = {
     commit('selectMenu', menu);
 
     if (menu && (!menu.products || !menu.products.length)) {
+      commit('setProducts', null);
+      commit('setProductsResponse', null);
       dispatch('loadProducts', menu);
     }
   },

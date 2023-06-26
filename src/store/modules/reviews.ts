@@ -63,6 +63,9 @@ const getters = {
   myReviews(state: ReviewsState) {
     return state.myReviews;
   },
+  isLoadingReviews(state: ReviewsState) {
+    return !state.reviews && !state.indexResponse;
+  },
   getShowResponse(state: ReviewsState) {
     return state.showResponse;
   },

@@ -19,7 +19,7 @@
     "@openapitools/openapi-generator-cli": "^2.5.2",
     "@vue/compiler-sfc": "^3.3.4",
     "core-js": "^3.8.3",
-    "daisyui": "^2.33.0",
+    "daisyui": "^3.1.0",
     "lodash": "^4.17.21",
     "luxon": "^3.3.0",
     "vue": "^3.2.13",
@@ -55,5 +55,20 @@
     "ts-jest": "^27.0.4",
     "typescript": "~4.5.5",
     "vue-cli-plugin-i18n": "~2.3.2"
-  }
+  },
+  "description": "## Project setup ``` npm install ```",
+  "main": ".eslintrc.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Andriichello/imperia-ui.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Andriichello/imperia-ui/issues"
+  },
+  "homepage": "https://github.com/Andriichello/imperia-ui#readme"
 }

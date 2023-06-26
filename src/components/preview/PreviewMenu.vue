@@ -1,6 +1,9 @@
 <template>
   <div class="w-full flex flex-col justify-center items-center">
     <div class="preview w-full min-w-4xl max-w-4xl" id="preview-menu">
+      <Preloader :title="$t('preview.menu.loading_products')"  class="p-2"
+                 v-if="isLoadingProducts"/>
+
       <template v-if="products && categories">
         <template v-for="c in categories" :key="c.id">
           <div class="w-full flex flex-col justify-start items-center gap-1" :id="`menu-category-${c.id}`">
@@ -18,12 +21,13 @@ import {defineComponent} from "vue";
 import List from "@/components/preview/list/List.vue";
 import Divider from "@/layouts/divider/Divider.vue";
 import {mapActions, mapGetters} from "vuex";
-import category from "@/components/preview/category/Category.vue";
+import Preloader from "@/components/preview/loading/Preloader.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewMenu",
   components: {
+    Preloader,
     Divider,
     List
   },
@@ -34,6 +38,7 @@ export default defineComponent({
       shouldNotScroll: 0,
       fixNavbar: false,
       showMenus: true,
+      loadingRestaurant: !this.selected
     };
   },
   computed: {
@@ -43,6 +48,8 @@ export default defineComponent({
       category: "preview/category",
       products: "preview/products",
       categories: "preview/categories",
+      restaurant: "preview/selected",
+      isLoadingProducts: "preview/isLoadingProducts",
     }),
     uncategorized() {
       if (!this.products || !this.products.length) {

@@ -1,5 +1,10 @@
 <template>
   <div class="preview">
+    <template v-if="isLoadingRestaurant">
+      <Preloader :title="$t('preview.restaurant.loading')"
+        class="p-2"/>
+    </template>
+
     <template v-if="restaurant">
       <Divider v-if="restaurant"
                class="mb-1"
@@ -12,6 +17,11 @@
       <ShortReviews class="reviews-container mt-2"
                     :item="restaurant"
                     @click="onOpenReviews"/>
+
+      <template v-if="isLoadingMenus">
+        <Preloader :title="$t('preview.restaurant.loading_menus')"
+                   class="mt-3 p-2"/>
+      </template>
 
       <Divider v-if="menus && menus.length"
                class="mt-3 mb-1"
@@ -36,12 +46,14 @@ import Divider from "@/layouts/divider/Divider.vue";
 import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
 import ShortReviews from "@/components/preview/review/ShortReviews.vue";
+import Preloader from "@/components/preview/loading/Preloader.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewRestaurant",
   emits: ["menu-select", "open-reviews"],
   components: {
+    Preloader,
     ShortReviews,
     Menu,
     Restaurant,
@@ -53,7 +65,15 @@ export default defineComponent({
       restaurants: 'restaurants/restaurants',
       menus: 'preview/menus',
       menusResponse: 'preview/menusResponse',
+      restaurantsResponse: 'restaurants/getIndexResponse',
+      restaurantResponse: 'restaurants/getShowResponse',
     }),
+    isLoadingRestaurant() {
+      return !this.restaurant && !this.restaurantResponse && !this.restaurantsResponse;
+    },
+    isLoadingMenus() {
+      return !this.menus && !this.menusResponse;
+    },
   },
   methods: {
     ...mapActions({

@@ -31,12 +31,20 @@
       "street_and_address": "Вулиця, аддрес"
     },
     "restaurant": {
+      "loading": "Завантаження закладу",
+      "loading_menus": "Завантаження меню",
+      "loading_reviews": "Завантаження відгуків",
       "menus": "Меню",
       "restaurant": "Заклад"
     },
     "restaurants": {
+      "loading": "Завантаження закладів",
       "select": "Оберіть заклад",
       "select_button": "Обрати"
+    },
+    "menu": {
+      "loading": "Завантаження меню",
+      "loading_products": "Завантаження страв"
     }
   }
 }
