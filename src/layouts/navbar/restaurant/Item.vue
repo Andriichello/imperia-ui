@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-row gap-2 rounded-box select-none p-1 w-[200px]">
+  <div class="flex flex-row gap-2 rounded-box select-none p-1">
     <button class="max-h-full" v-if="withIcon">
       <Icon :restaurant="restaurant"/>
     </button>

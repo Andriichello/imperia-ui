@@ -3,7 +3,7 @@
       <div class="w-full flex justify-center items-center" v-if="menus">
       <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
         <template v-for="m in menus" :key="m.id">
-          <a class="tab tab-bordered text-2xl font-bold"
+          <a class="tab tab-bordered text-lg font-bold"
              :class="{'tab-active': menu && menu.id === m.id}"
              @click="onSelectMenu(m)">
             {{ m.title }}

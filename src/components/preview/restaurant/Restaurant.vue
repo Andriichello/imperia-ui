@@ -3,7 +3,7 @@
 
     <div class="flex flex-row justify-start w-full min-h-[80px] gap-2">
       <div class="details flex flex-col justify-start items-start gap-1 grow">
-        <span class="title">{{ title }}</span>
+        <span class="font-semibold text-xl">{{ title }}</span>
         <span class="address text-sm">{{ address }}</span>
       </div>
 
@@ -20,7 +20,7 @@
     </div>
 
     <template v-if="short">
-      <div class="w-full flex">
+      <div class="w-full flex items-end">
         <ShortSchedule class="grow"
                        v-if="item.schedules && item.schedules.length"
                        :item="item" />
@@ -38,7 +38,7 @@
 <!--                    :item="item"-->
 <!--                    @click="$emit('open-reviews', item)"/>-->
 
-      <Schedule class="w-full mt-2"
+      <Schedule class="w-full"
                 :item="item" />
     </template>
 
@@ -101,7 +101,7 @@ img {
 }
 
 .container {
-  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-0 p-4 bg-base-100;
+  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-3 p-4 bg-base-100;
 
   --rounded-box: 0.25rem;
   --padding-card: 16px;

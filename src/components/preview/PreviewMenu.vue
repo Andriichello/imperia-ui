@@ -7,7 +7,7 @@
       <template v-if="products && categories">
         <template v-for="c in categories" :key="c.id">
           <div class="w-full flex flex-col justify-start items-center gap-1" :id="`menu-category-${c.id}`">
-            <Divider :title="c.title" :id="'category-' + c.id" :lines="true"/>
+            <Divider :title="c.title" :id="'category-' + c.id" :lines="false"/>
             <List :items="filterByCategory(products, c)" class="mb-2"/>
           </div>
         </template>

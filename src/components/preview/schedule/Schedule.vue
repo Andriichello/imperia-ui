@@ -1,9 +1,10 @@
 <template>
   <div>
-      <div class="w-full flex flex-row justify-center items-center btn-ghost rounded px-2 py-1" @click="showTable = !showTable">
+      <div class="w-full flex flex-row justify-center items-center rounded" @click="showTable = !showTable">
         <div class="grow flex flex-col justify-center items-start cursor-pointer">
-          <h2 class="text-md font-bold">{{ $t("schedule.working_schedule") }}</h2>
-          <p class="text-md">{{ statusDescription }} ({{ timeBeforeOrUntil }})</p>
+<!--          <h2 class="text-md font-semibold">{{ $t("schedule.working_schedule") }}</h2>-->
+          <p class="text-md font-semibold">{{ statusDescription }}</p>
+          <p class="text-sm">{{ timeBeforeOrUntil }}</p>
         </div>
 
         <button class="flex justify-center items-center w-[40px] h-[40px]">
@@ -13,7 +14,7 @@
         </button>
       </div>
 
-      <div class="w-full flex flex-col justify-start items-start px-2" v-if="showTable">
+      <div class="w-full flex flex-col justify-start items-start" v-if="showTable">
         <div class="w-full overflow-x-auto">
           <table class="table table-sm w-full">
             <tbody class="w-full">
@@ -146,15 +147,12 @@ export default defineComponent({
 
           const nextWeekdayNumber = weekdays[next.weekday];
           while (nextBeg.weekday !== nextWeekdayNumber) {
-            console.log({nextBeg: nextBeg.toString(), nextBegWeekday: nextBeg.weekday, nextWeekdayNumber});
             nextBeg = nextBeg.plus({'days': 1});
           }
         }
 
         const minutes = Math.trunc(nextBeg.diff(now, 'minutes').values.minutes);
         const hours = Math.trunc(minutes / 60);
-
-        console.log({minutes, hours});
 
         return this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)});
       }

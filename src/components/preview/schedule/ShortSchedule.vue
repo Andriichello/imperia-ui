@@ -1,7 +1,8 @@
 <template>
   <div class="w-full flex flex-col justify-center items-start">
 <!--    <h2 class="text-md font-bold">{{ $t("schedule.working_schedule") }}</h2>-->
-    <p class="text-md">{{ statusDescription }} ({{ timeBeforeOrUntil }})</p>
+    <p class="text-md font-semibold">{{ statusDescription }}</p>
+    <p class="text-sm">{{ timeBeforeOrUntil }}</p>
   </div>
 </template>
 
@@ -87,7 +88,6 @@ export default defineComponent({
 
           const nextWeekdayNumber = weekdays[next.weekday];
           while (nextBeg.weekday !== nextWeekdayNumber) {
-            console.log({nextBeg: nextBeg.toString(), nextBegWeekday: nextBeg.weekday, nextWeekdayNumber});
             nextBeg = nextBeg.plus({'days': 1});
           }
         }
