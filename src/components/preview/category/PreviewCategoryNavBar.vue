@@ -1,9 +1,9 @@
 <template>
   <div class="w-full flex flex-col justify-center bg-base-100 shadow-md pb-1 mb-2" v-if="categories && categories.length">
     <div class="w-full flex justify-center items-center">
-      <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden">
+      <div class="max-w-full flex justify-start p-1 pt-2 gap-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
         <template v-for="c in categories" :key="c.id">
-          <Category :item="c"
+          <Category :item="c" :id="`category-${c.id}-button`"
                     :selected="category && category.id === c.id"
                     @category-toggle="onToggleCategory"/>
         </template>
@@ -28,10 +28,30 @@ export default defineComponent({
   props: {
     menu: Menu,
   },
+  watch: {
+    category(newCategory, oldCategory) {
+      if (!newCategory || newCategory === oldCategory) {
+        return;
+      }
+
+      console.log('category changed...', {newCategory, oldCategory});
+
+      const button = document.getElementById(`category-${newCategory.id}-button`);
+      const scroll = document.getElementById('category-buttons-scroll');
+
+      if (button && scroll) {
+        scroll.scrollTo({
+          top: 0,
+          left: Math.max(0, button.offsetLeft - 8),
+          behavior: 'smooth',
+        });
+      }
+    },
+  },
   computed: {
     ...mapGetters({
-      category: "preview/category",
-      categories: "preview/categories",
+      category: 'preview/category',
+      categories: 'preview/categories',
     }),
   },
   methods: {
