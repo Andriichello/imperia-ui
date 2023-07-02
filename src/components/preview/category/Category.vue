@@ -1,5 +1,5 @@
 <template>
-  <button class="btn btn-sm btn-ghost"
+  <button class="btn btn-sm btn-ghost normal-case"
           :class="{'selected': selected, 'text-base-100': selected && theme === 'dark'}"
           @click="onCategoryToggle">
     {{ title }}

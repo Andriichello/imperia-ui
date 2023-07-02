@@ -44,6 +44,13 @@
       "loading": "Loading restaurants",
       "select": "Select restaurant",
       "select_button": "Select"
+    },
+    "menu": {
+      "switcher": {
+        "title": "Menus"
+      },
+      "loading": "Loading menus",
+      "loading_products": "Loading items"
     }
   }
 }

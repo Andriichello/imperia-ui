@@ -7,7 +7,9 @@ import {
   Menu,
   MenusApi,
   Product,
-  ProductsApi, Restaurant, RestaurantsApi, ShowMenuRequest, ShowMenuResponse
+  ProductsApi,
+  ShowMenuRequest,
+  ShowMenuResponse
 } from "@/openapi";
 import {authHeaders} from "@/helpers";
 
@@ -15,7 +17,6 @@ class PreviewSelections {
   public menu: Menu | null;
   public search: string | null;
   public category: Category | null;
-
   constructor() {
     this.menu = null;
     this.search = null;
@@ -28,6 +29,7 @@ class PreviewState {
 
   public menu: Menu[] | null;
   public showMenuResponse: ShowMenuResponse | null;
+  public isShowingMenusModal: boolean | null;
 
   public menus: Menu[] | null;
   public menusRequest: IndexMenusRequest | null;
@@ -43,6 +45,7 @@ class PreviewState {
 
     this.menu = null;
     this.showMenuResponse = null;
+    this.isShowingMenusModal = false;
 
     this.menus = null;
     this.menusResponse = null;
@@ -77,6 +80,9 @@ const getters = {
   isLoadingProducts(state: PreviewState) {
     return !state.products && !state.productsResponse;
   },
+  isShowingMenusModal(state: PreviewState) {
+    return state.isShowingMenusModal;
+  },
   menu(state: PreviewState) {
     return state.menu;
   },
@@ -98,7 +104,7 @@ const getters = {
 };
 
 const actions = {
-  clear({ commit }) {
+  clear({commit}) {
     commit('selectMenu', null);
     commit('selectCategory', null);
     commit('setMenus', null);
@@ -108,7 +114,7 @@ const actions = {
     commit('setProductsResponse', null);
     commit('setMoreProductsResponse', null);
   },
-  async selectMenu({ commit, dispatch }, menu: Menu | null) {
+  async selectMenu({commit, dispatch}, menu: Menu | null) {
     commit('selectMenu', menu);
 
     if (menu && (!menu.products || !menu.products.length)) {
@@ -117,10 +123,13 @@ const actions = {
       dispatch('loadProducts', menu);
     }
   },
-  selectCategory({ commit }, category: Category | null) {
+  selectCategory({commit}, category: Category | null) {
     commit('selectCategory', category);
   },
-  async loadMenus({ commit, rootGetters }) {
+  setIsShowingMenusModal({commit}, isShowing: boolean | null) {
+    commit('setIsShowingMenusModal', isShowing);
+  },
+  async loadMenus({commit, rootGetters}) {
     const request: IndexMenusRequest = {};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
@@ -129,15 +138,15 @@ const actions = {
     }
 
     const response = await (new MenusApi())
-        .indexMenus(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
-        .then(response => response)
-        .catch(error => error.response);
+      .indexMenus(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => error.response);
 
     commit('setMenusRequest', request);
     commit('setMenusResponse', response);
     commit('setMenus', response.data);
   },
-  async loadMenusIfMissing({ state, dispatch, rootGetters }) {
+  async loadMenusIfMissing({state, dispatch, rootGetters}) {
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (state.menusResponse) {
@@ -150,27 +159,27 @@ const actions = {
 
     dispatch('loadMenus');
   },
-  async loadMenusAndSelect({ dispatch, getters, commit }, { id }) {
+  async loadMenusAndSelect({dispatch, getters, commit}, {id}) {
     await dispatch('loadMenus');
 
     if (getters.menus) {
       dispatch('selectMenu', getters.menus.find(m => m.id === id));
     }
   },
-  async loadAndSelectMenu({ dispatch, commit, rootGetters }, { id }) {
-    const request: ShowMenuRequest = { id };
+  async loadAndSelectMenu({dispatch, commit, rootGetters}, {id}) {
+    const request: ShowMenuRequest = {id};
 
     const response = await (new MenusApi())
-        .showMenu(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
-        .then(response => response)
-        .catch(error => error.response);
+      .showMenu(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => error.response);
 
     commit('setShowMenuResponse', response);
     commit('setMenu', response.data);
     dispatch('selectMenu', response.data);
   },
-  async loadProducts({ commit, rootGetters }, menu: Menu | null) {
-    const request : IndexProductsRequest = {pageSize: 200};
+  async loadProducts({commit, rootGetters}, menu: Menu | null) {
+    const request: IndexProductsRequest = {pageSize: 200};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (menu) {
@@ -182,9 +191,9 @@ const actions = {
     }
 
     const response = await (new ProductsApi())
-        .indexProducts(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
-        .then(response => response)
-        .catch(error => error.response);
+      .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => error.response);
 
     commit('setProductsResponse', response);
     commit('setProducts', response.data);
@@ -193,8 +202,8 @@ const actions = {
       menu.products = response.data;
     }
   },
-  async loadMoreProducts({ state, commit, rootGetters }, menu: Menu | null) {
-    const request : IndexProductsRequest = {pageSize: 200};
+  async loadMoreProducts({state, commit, rootGetters}, menu: Menu | null) {
+    const request: IndexProductsRequest = {pageSize: 200};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (menu) {
@@ -213,9 +222,9 @@ const actions = {
     }
 
     const response = await (new ProductsApi())
-        .indexProducts(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
-        .then(response => response)
-        .catch(error => error.response);
+      .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => error.response);
 
     commit('setMoreProductsResponse', response);
     commit('appendProducts', response.data);
@@ -224,7 +233,7 @@ const actions = {
       menu.products = (menu.products ?? []).concat(response.data);
     }
   },
-  async loadProductsIfMissing({ state, dispatch }, menu: Menu | null) {
+  async loadProductsIfMissing({state, dispatch}, menu: Menu | null) {
     if (state.productsResponse) {
       return;
     }
@@ -254,6 +263,9 @@ const mutations = {
   },
   setMenusResponse(state: PreviewState, response) {
     state.menusResponse = response;
+  },
+  setIsShowingMenusModal(state: PreviewState, isShowing) {
+    state.isShowingMenusModal = isShowing;
   },
   setProducts(state: PreviewState, products) {
     state.products = products;

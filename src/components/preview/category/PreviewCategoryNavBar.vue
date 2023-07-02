@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full flex flex-col justify-center bg-base-100 shadow-md pb-1 mb-2" v-if="categories && categories.length">
+  <div class="w-full flex flex-col justify-center bg-base-100 shadow-md mb-2" v-if="categories && categories.length">
     <div class="w-full flex justify-center items-center">
       <div class="max-w-full flex justify-start gap-2 p-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
         <template v-for="c in categories" :key="c.id">

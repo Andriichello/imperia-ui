@@ -43,6 +43,9 @@
       "select_button": "Обрати"
     },
     "menu": {
+      "switcher": {
+        "title": "Список меню"
+      },
       "loading": "Завантаження меню",
       "loading_products": "Завантаження страв"
     }
