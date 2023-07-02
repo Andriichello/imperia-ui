@@ -29,7 +29,7 @@ const actions = {
 
     if (!theme) {
       theme = window.matchMedia('(prefers-color-scheme: dark)').matches
-          ? 'dark' : 'lofi';
+          ? ThemeConfig.dark() : ThemeConfig.default();
     }
 
     dispatch('apply', theme ?? ThemeConfig.default());

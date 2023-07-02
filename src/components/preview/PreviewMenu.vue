@@ -50,6 +50,7 @@ export default defineComponent({
       categories: "preview/categories",
       restaurant: "preview/selected",
       isLoadingProducts: "preview/isLoadingProducts",
+      isShowingMenusModal: "preview/isShowingMenusModal",
     }),
     uncategorized() {
       if (!this.products || !this.products.length) {
@@ -108,6 +109,7 @@ export default defineComponent({
     ...mapActions({
       selectMenu: 'preview/selectMenu',
       selectCategory: 'preview/selectCategory',
+      setIsShowingMenusModal: 'preview/setIsShowingMenusModal',
     }),
     filterByCategory(products, category) {
       return products.filter(p => {
@@ -119,6 +121,10 @@ export default defineComponent({
       })
     },
     onScroll() {
+      // if (this.setIsShowingMenusModal) {
+      //   this.setIsShowingMenusModal(false);
+      // }
+
       // Get the current scroll position
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 

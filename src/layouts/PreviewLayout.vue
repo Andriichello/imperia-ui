@@ -1,13 +1,11 @@
 <template>
-    <div class="preview-layout">
-      <PreviewNavBar class="w-full"/>
+    <div class="preview-layout overscroll-none">
+      <PreviewNavBar class="w-full" id="preview-bar"/>
 
       <template v-if="isMenuPage">
-        <PreviewMenuNavBar class="w-full" v-if="isShortScreen"/>
-
         <div class="w-full sticky top-0 z-50">
-          <PreviewMenuNavBar class="w-full"
-                             v-if="!isShortScreen"/>
+          <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
+                             v-if="!isShortScreen || pinMenus"/>
 
           <PreviewCategoryNavBar class="w-full"/>
         </div>
@@ -15,26 +13,28 @@
 
       <slot />
 
-      <div class="fixed top-0 left-0 right-0 bottom-0 w-screen h-screen bg-neutral/50 z-50 flex flex-col justify-end items-center" id="menus-modal"
+      <div class="fixed top-0 left-0 right-0 bottom-0 w-full h-[100vdh] bg-neutral/50 z-50 flex flex-col justify-end overflow-y-scroll" id="menus-modal"
         v-if="isShowingMenusModal">
-        <div class="grow w-full overscroll-none" id="menus-modal-closer" @click="setIsShowingMenusModal(false)">
+        <div class="grow w-full" id="menus-modal-shield" @click="setIsShowingMenusModal(false)">
 
         </div>
-        <div class="w-full p-2 bg-base-200 flex justify-between items-center pl-3 pr-2 shadow-sm overscroll-none">
+        <div class="w-full max-h-full p-2 bg-base-200 flex flex-col justify-start items-start">
+          <div class="w-full p-2 bg-base-200 flex justify-between items-center pl-3 pr-2 shadow-sm">
           <span class="font-semibold text-xl">
             {{ $t('preview.menu.switcher.title') }}
           </span>
 
-          <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">
-            <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">
-              <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </BaseIcon>
+            <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">
+              <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">
+                <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </BaseIcon>
+            </div>
           </div>
-        </div>
-        <div class="w-full max-h-[50%] bg-base-200 flex flex-col justify-center items-center px-2 pb-2 gap-2">
-          <template v-for="m in [...menus]" :key="m.id">
-            <Menu :menu="m" v-if="m" @click="onSelectMenu(m)"/>
-          </template>
+          <div class="w-full h-full bg-base-200 flex flex-col justify-start items-center px-2 pb-2 gap-2 overflow-y-scroll">
+            <template v-for="m in menus" :key="m.id">
+              <Menu :menu="m" v-if="m" @click="onSelectMenu(m)"/>
+            </template>
+          </div>
         </div>
       </div>
     </div>
@@ -61,6 +61,10 @@ export default defineComponent({
   data() {
     return {
       isShortScreen: window.innerHeight < 800,
+      pinMenus: true,
+      scrolledDistance: 0,
+      lastScrollPosition: null,
+      wasLastScrollUp: null,
     };
   },
   computed: {
@@ -81,6 +85,50 @@ export default defineComponent({
     onResize() {
       this.isShortScreen = window.innerHeight < 800;
     },
+    onScroll() {
+      if (this.isShowingMenusModal) {
+        this.setIsShowingMenusModal(false);
+      }
+
+      if (!this.isShortScreen) {
+        return;
+      }
+
+      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+
+      if (scrollPosition <= 68) {
+        this.pinMenus = true;
+        return;
+      }
+
+      if (this.lastScrollPosition !== null) {
+        const diff = scrollPosition - this.lastScrollPosition;
+
+        if (diff > 0) {
+          if (this.wasLastScrollUp) {
+            this.scrolledDistance = 0;
+          }
+
+          this.wasLastScrollUp = false;
+        } else {
+          if (!this.wasLastScrollUp) {
+            this.scrolledDistance = 0;
+          }
+
+          this.wasLastScrollUp = true;
+        }
+
+        this.scrolledDistance += diff;
+
+        if (this.wasLastScrollUp && this.scrolledDistance < -50) {
+          this.pinMenus = true;
+        } else if (this.scrolledDistance > 10) {
+          this.pinMenus = false
+        }
+      }
+
+      this.lastScrollPosition = scrollPosition;
+    },
     onSelectMenu(menu) {
       this.selectMenu(menu);
 
@@ -90,11 +138,20 @@ export default defineComponent({
     },
   },
   mounted() {
+    const shield = document.getElementById('menus-modal-shield');
+    if (shield) {
+      shield.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+      });
+    }
+
     window.addEventListener("resize", this.onResize);
+    window.addEventListener('scroll', this.onScroll);
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.onResize);
-  }
+    window.removeEventListener('scroll', this.onScroll);
+  },
 });
 </script>
 

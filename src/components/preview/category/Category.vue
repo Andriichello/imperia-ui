@@ -1,6 +1,6 @@
 <template>
   <button class="btn btn-sm btn-ghost normal-case"
-          :class="{'selected': selected, 'text-base-100': selected && theme === 'dark'}"
+          :class="{'selected': selected, 'text-base-100': selected && theme === ThemeConfig.dark()}"
           @click="onCategoryToggle">
     {{ title }}
   </button>
@@ -10,6 +10,7 @@
 import { defineComponent } from "vue";
 import Category from "@/openapi/models/Category";
 import {mapGetters} from "vuex";
+import {ThemeConfig} from "@/configs";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -23,6 +24,9 @@ export default defineComponent({
     },
   },
   computed: {
+    ThemeConfig() {
+      return ThemeConfig
+    },
     ...mapGetters({
       theme: "theme/get",
     }),

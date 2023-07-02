@@ -71,7 +71,7 @@ export default defineComponent({
       } else if (!newValue && newValue !== oldValue) {
          this.$router.push('/login');
       }
-    }
+    },
   },
   mounted() {
     this.resolveAuth();
