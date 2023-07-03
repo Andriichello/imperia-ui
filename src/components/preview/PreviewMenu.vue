@@ -121,10 +121,6 @@ export default defineComponent({
       })
     },
     onScroll() {
-      // if (this.setIsShowingMenusModal) {
-      //   this.setIsShowingMenusModal(false);
-      // }
-
       // Get the current scroll position
       const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
 

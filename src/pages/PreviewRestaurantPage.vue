@@ -30,6 +30,7 @@ export default defineComponent({
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
     onSelectMenu({ restaurant, menu }) {
+      window.scrollTo(0, 0)
       this.$router.push(`/preview/${restaurant.id}/menu/${menu.id}`);
     },
     onOpenReviews({ restaurant }) {

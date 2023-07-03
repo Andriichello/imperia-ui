@@ -1,5 +1,29 @@
 <template>
-    <div class="preview-layout overscroll-none">
+  <div class="preview-layout">
+    <template v-if="isShowingMenusModal">
+      <div class="w-full max-w-full h-full flex flex-col justify-start items-center gap-2 py-2 px-2">
+        <div class="w-full flex justify-between items-center gap-2 p-1">
+          <span class="font-semibold text-xl">
+            {{ $t('preview.menu.switcher.title') }}
+          </span>
+
+          <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">
+            <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">
+              <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </BaseIcon>
+          </div>
+        </div>
+
+        <div class="w-full flex flex-col justify-start items-center gap-2 overflow-y-auto">
+          <template v-for="m in menus" :key="m.id">
+            <Menu :menu="m" v-if="m" @click="onSelectMenu(m)" class="w-full"/>
+          </template>
+        </div>
+
+      </div>
+    </template>
+
+    <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
       <PreviewNavBar class="w-full" id="preview-bar"/>
 
       <template v-if="isMenuPage">
@@ -9,35 +33,14 @@
 
           <PreviewCategoryNavBar class="w-full"/>
         </div>
+
       </template>
 
       <slot />
 
-      <div class="fixed top-0 left-0 right-0 bottom-0 w-full h-[100vdh] bg-neutral/50 z-50 flex flex-col justify-end overflow-y-scroll" id="menus-modal"
-        v-if="isShowingMenusModal">
-        <div class="grow w-full" id="menus-modal-shield" @click="setIsShowingMenusModal(false)">
-
-        </div>
-        <div class="w-full max-h-full p-2 bg-base-200 flex flex-col justify-start items-start">
-          <div class="w-full p-2 bg-base-200 flex justify-between items-center pl-3 pr-2 shadow-sm">
-          <span class="font-semibold text-xl">
-            {{ $t('preview.menu.switcher.title') }}
-          </span>
-
-            <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">
-              <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">
-                <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-              </BaseIcon>
-            </div>
-          </div>
-          <div class="w-full h-full bg-base-200 flex flex-col justify-start items-center px-2 pb-2 gap-2 overflow-y-scroll">
-            <template v-for="m in menus" :key="m.id">
-              <Menu :menu="m" v-if="m" @click="onSelectMenu(m)"/>
-            </template>
-          </div>
-        </div>
-      </div>
     </div>
+
+   </div>
 </template>
 
 <script>
@@ -71,11 +74,19 @@ export default defineComponent({
     ...mapGetters({
       menu: 'preview/menu',
       menus: 'preview/menus',
+      restaurant: 'restaurants/selected',
       isShowingMenusModal: 'preview/isShowingMenusModal',
     }),
     isMenuPage() {
       return this.$route['name'] === 'preview-menu';
     },
+  },
+  watch: {
+    isShowingMenusModal(newValue) {
+      if (newValue) {
+        window.scrollTo(0, 0);
+      }
+    }
   },
   methods: {
     ...mapActions({
@@ -86,11 +97,7 @@ export default defineComponent({
       this.isShortScreen = window.innerHeight < 800;
     },
     onScroll() {
-      if (this.isShowingMenusModal) {
-        this.setIsShowingMenusModal(false);
-      }
-
-      if (!this.isShortScreen) {
+      if (this.isShowingMenusModal || !this.isShortScreen) {
         return;
       }
 
@@ -130,21 +137,16 @@ export default defineComponent({
       this.lastScrollPosition = scrollPosition;
     },
     onSelectMenu(menu) {
+      this.setIsShowingMenusModal(false);
       this.selectMenu(menu);
 
-      window.scrollTo(0, 0);
+      const restaurantId = this.$route.params['restaurantId'];
+      this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
 
-      this.setIsShowingMenusModal(false);
+      window.scrollTo(0, 0);
     },
   },
   mounted() {
-    const shield = document.getElementById('menus-modal-shield');
-    if (shield) {
-      shield.addEventListener('touchmove', function (e) {
-        e.preventDefault();
-      });
-    }
-
     window.addEventListener("resize", this.onResize);
     window.addEventListener('scroll', this.onScroll);
   },
@@ -163,13 +165,5 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
-}
-
-.on-menus {
-  @apply sticky top-[44px];
-}
-
-.under-menus {
-
 }
 </style>
