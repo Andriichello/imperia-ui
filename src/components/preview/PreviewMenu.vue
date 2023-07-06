@@ -6,10 +6,8 @@
 
       <template v-if="products && categories">
         <template v-for="c in categories" :key="c.id">
-          <div class="w-full flex flex-col justify-start items-center gap-1" :id="`menu-category-${c.id}`">
-            <Divider :title="c.title" :id="'category-' + c.id" :lines="false"/>
-            <List :items="filterByCategory(products, c)" class="mb-2"/>
-          </div>
+          <ListOfCategory :category="c" :items="filterByCategory(products, c)"
+                          :id="`menu-category-${c.id}`"/>
         </template>
       </template>
     </div>
@@ -18,18 +16,16 @@
 
 <script>
 import {defineComponent} from "vue";
-import List from "@/components/preview/list/List.vue";
-import Divider from "@/layouts/divider/Divider.vue";
 import {mapActions, mapGetters} from "vuex";
 import Preloader from "@/components/preview/loading/Preloader.vue";
+import ListOfCategory from "@/components/preview/list/ListOfCategory.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewMenu",
   components: {
+    ListOfCategory,
     Preloader,
-    Divider,
-    List
   },
   data() {
     return {

@@ -12,6 +12,8 @@
     "working_schedule": "Графік роботи",
     "open": "Відчинено",
     "closed": "Зачинено",
+    "hour_short": "год",
+    "minute_short": "хв",
     "T_until_closing": "{time} до закриття",
     "T_before_opening": "{time} до відкриття"
   },

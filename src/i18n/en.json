@@ -24,6 +24,8 @@
     "working_schedule": "Working schedule",
     "open": "Open",
     "closed": "Closed",
+    "hour_short": "h",
+    "minute_short": "m",
     "T_until_closing": "{time} until closing",
     "T_before_opening": "{time} before opening"
   },

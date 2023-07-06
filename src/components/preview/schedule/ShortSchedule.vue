@@ -59,12 +59,40 @@ export default defineComponent({
         const minutes = Math.trunc(end.diff(now, 'minutes').values.minutes);
         const hours = Math.trunc(minutes / 60);
 
-        return this.$t("schedule.T_until_closing", {time: this.time(hours, minutes % 60)});
+        let time = '';
+
+        if (hours > 0) {
+          time += hours + ' ' + this.$t('schedule.hour_short');
+        }
+
+        if (minutes % 60 > 0) {
+          if (hours > 0) {
+            time += ' ';
+          }
+
+          time += (minutes % 60) + ' ' + this.$t('schedule.minute_short');
+        }
+
+        return this.$t("schedule.T_until_closing", {time});
       } else if (beg.toMillis() >= now.toMillis()) {
         const minutes = Math.trunc(beg.diff(now, 'minutes').values.minutes);
         const hours = Math.trunc(minutes / 60);
 
-        return this.$t("schedule.T_before_opening", {time: this.time(hours, minutes % 60)});
+        let time = '';
+
+        if (hours > 0) {
+          time += hours + ' ' + this.$t('schedule.hour_short');
+        }
+
+        if (minutes % 60 > 0) {
+          if (hours > 0) {
+            time += ' ';
+          }
+
+          time += (minutes % 60) + ' ' + this.$t('schedule.minute_short');
+        }
+
+        return this.$t("schedule.T_before_opening", {time});
       } else {
         const next = this.schedules[0];
 
