@@ -29,6 +29,18 @@
     "T_until_closing": "{time} until closing",
     "T_before_opening": "{time} before opening"
   },
+  "error": {
+    "back_to_main": {
+      "title": "Back to previous"
+    },
+    "reload_page": {
+      "title": "Reload page"
+    },
+    "something_went_wrong": {
+      "title": "Oops, something went wrong...",
+      "description": "There was an error while loading data from server."
+    }
+  },
   "preview": {
     "navbar": {
       "back": "Back",

@@ -17,6 +17,18 @@
     "T_until_closing": "{time} до закриття",
     "T_before_opening": "{time} до відкриття"
   },
+  "error": {
+    "back_to_main": {
+      "title": "Повернутися назад"
+    },
+    "reload_page": {
+      "title": "Перезавантажити сторінку"
+    },
+    "something_went_wrong": {
+      "title": "Щось пішло не так...",
+      "description": "Під час завантаження даних із сервера сталася помилка."
+    }
+  },
   "unit": {
     "g": "г",
     "kg": "кг",
