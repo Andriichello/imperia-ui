@@ -139,6 +139,10 @@ export default defineComponent({
       }
 
       window.scrollTo(0, 0);
+
+      if (this.$store.getters['error/present']) {
+        this.$store.dispatch('error/clear');
+      }
     },
     onScroll() {
       if (!this.isMenuPage) {
