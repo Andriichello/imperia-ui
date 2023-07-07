@@ -129,7 +129,7 @@ const actions = {
   setIsShowingMenusModal({commit}, isShowing: boolean | null) {
     commit('setIsShowingMenusModal', isShowing);
   },
-  async loadMenus({commit, rootGetters}) {
+  async loadMenus({commit, dispatch, rootGetters}) {
     const request: IndexMenusRequest = {};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
@@ -140,7 +140,13 @@ const actions = {
     const response = await (new MenusApi())
       .indexMenus(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
       .then(response => response)
-      .catch(error => error.response);
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
 
     commit('setMenusRequest', request);
     commit('setMenusResponse', response);
@@ -172,13 +178,19 @@ const actions = {
     const response = await (new MenusApi())
       .showMenu(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
       .then(response => response)
-      .catch(error => error.response);
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
 
     commit('setShowMenuResponse', response);
     commit('setMenu', response.data);
     dispatch('selectMenu', response.data);
   },
-  async loadProducts({commit, rootGetters}, menu: Menu | null) {
+  async loadProducts({commit, dispatch, rootGetters}, menu: Menu | null) {
     const request: IndexProductsRequest = {pageSize: 200};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
@@ -193,7 +205,13 @@ const actions = {
     const response = await (new ProductsApi())
       .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
       .then(response => response)
-      .catch(error => error.response);
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
 
     commit('setProductsResponse', response);
     commit('setProducts', response.data);
@@ -202,7 +220,7 @@ const actions = {
       menu.products = response.data;
     }
   },
-  async loadMoreProducts({state, commit, rootGetters}, menu: Menu | null) {
+  async loadMoreProducts({state, dispatch, commit, rootGetters}, menu: Menu | null) {
     const request: IndexProductsRequest = {pageSize: 200};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
@@ -224,7 +242,13 @@ const actions = {
     const response = await (new ProductsApi())
       .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
       .then(response => response)
-      .catch(error => error.response);
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
 
     commit('setMoreProductsResponse', response);
     commit('appendProducts', response.data);

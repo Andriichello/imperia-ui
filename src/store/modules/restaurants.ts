@@ -53,7 +53,7 @@ const actions = {
   setRestaurants({ commit }, restaurants: Restaurant[] | null) {
     commit('setRestaurants', restaurants);
   },
-  async loadRestaurant({ commit, rootGetters }, { id }) {
+  async loadRestaurant({ commit, dispatch, rootGetters }, { id }) {
     const request = {
       id,
       include: 'schedules',
@@ -62,11 +62,14 @@ const actions = {
     const response = await (new RestaurantsApi())
       .showRestaurant(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
-      .catch(error => error.response);
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+        return error.response;
+      });
 
     commit('setShowResponse', response);
   },
-  async loadAndSelectRestaurant({ commit, rootGetters }, { id }) {
+  async loadAndSelectRestaurant({ commit, dispatch, rootGetters }, { id }) {
     const request = {
       id,
       include: 'schedules',
@@ -75,7 +78,10 @@ const actions = {
     const response = await (new RestaurantsApi())
         .showRestaurant(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => {
+          dispatch('error/setResponse', error.response, {root:true});
+          return error.response;
+        });
 
     commit('setShowResponse', response);
     commit('setSelected', response.data);
@@ -87,7 +93,10 @@ const actions = {
     const response = await (new RestaurantsApi())
         .indexRestaurants(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => {
+          dispatch('error/setResponse', error.response, {root:true});
+          return error.response;
+        });
 
     commit('setIndexResponse', response);
     dispatch('setRestaurants', response.data);

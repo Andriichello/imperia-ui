@@ -161,7 +161,13 @@ const actions = {
     const response = await (new RestaurantReviewsApi())
         .indexRestaurantReviews(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => {
+          if (error.response.status !== 404) {
+            dispatch('error/setResponse', error.response, {root:true});
+          }
+
+          return error.response;
+        });
 
     commit('setIndexResponse', response);
     dispatch('setReviews', response.data);
@@ -173,7 +179,7 @@ const actions = {
 
     dispatch('loadReviews');
   },
-  async loadMoreReviews({ state, commit, rootGetters }) {
+  async loadMoreReviews({ state, dispatch, commit, rootGetters }) {
     const request :IndexRestaurantReviewsRequest = {pageSize: 10};
 
     const restaurantId = rootGetters['restaurants/restaurantId'];
@@ -190,7 +196,13 @@ const actions = {
     const response = await (new RestaurantReviewsApi())
         .indexRestaurantReviews(request, { headers: { ...authHeaders(rootGetters['auth/token']) } })
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => {
+          if (error.response.status !== 404) {
+            dispatch('error/setResponse', error.response, {root:true});
+          }
+
+          return error.response;
+        });
 
     commit('setMoreResponse', response);
     commit('appendReviews', response.data);
@@ -199,7 +211,13 @@ const actions = {
     const response = await (new RestaurantReviewsApi())
         .storeRestaurantReview({ storeRestaurantReviewRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => {
+          if (error.response.status !== 422) {
+            dispatch('error/setResponse', error.response, {root:true});
+          }
+
+          return error.response;
+        });
 
     commit('setCreateResponse', response);
 
