@@ -10,11 +10,13 @@ import banquets from "./modules/banquets";
 import restaurants from "@/store/modules/restaurants";
 import preview from "@/store/modules/preview";
 import reviews from "@/store/modules/reviews";
+import error from "@/store/modules/error";
 
 export default createStore({
   modules: {
     'nav': nav,
     'auth': auth,
+    'error': error,
     'theme': theme,
     'basket': basket,
     'history': history,
