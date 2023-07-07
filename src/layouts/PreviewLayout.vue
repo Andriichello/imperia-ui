@@ -1,6 +1,6 @@
 <template>
   <div class="preview-layout">
-    <template v-if="isShowingMenusModal">
+    <template v-if="isShowingMenusModal && !failed">
       <div class="w-full max-w-full h-full flex flex-col justify-start items-center gap-2 py-2 px-2">
         <div class="w-full flex justify-between items-center gap-2 p-1">
           <span class="font-semibold text-xl">
@@ -26,7 +26,7 @@
     <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
       <PreviewNavBar class="w-full" id="preview-bar"/>
 
-      <template v-if="isMenuPage">
+      <template v-if="isMenuPage && !failed">
         <div class="w-full sticky top-0 z-50">
           <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
                              v-if="!isShortScreen || pinMenus"/>
@@ -36,7 +36,14 @@
 
       </template>
 
-      <slot />
+      <template v-if="failed">
+        <Error :back-to-page="isMenuPage || isRestaurantPage"
+               @on-back-to="onErrorBackTo"/>
+      </template>
+
+      <template v-else>
+        <slot />
+      </template>
 
     </div>
 
@@ -51,10 +58,12 @@ import PreviewCategoryNavBar from "@/components/preview/category/PreviewCategory
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
 import {mapActions, mapGetters} from "vuex";
+import Error from "@/components/common/Error.vue";
 
 export default defineComponent({
   name: "PreviewLayout",
   components: {
+    Error,
     Menu,
     BaseIcon,
     PreviewCategoryNavBar,
@@ -72,6 +81,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      failed: 'error/present',
       menu: 'preview/menu',
       menus: 'preview/menus',
       restaurant: 'restaurants/selected',
@@ -79,6 +89,9 @@ export default defineComponent({
     }),
     isMenuPage() {
       return this.$route['name'] === 'preview-menu';
+    },
+    isRestaurantPage() {
+      return this.$route['name'] === 'preview-restaurant';
     },
   },
   watch: {
@@ -144,6 +157,16 @@ export default defineComponent({
       this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
 
       window.scrollTo(0, 0);
+    },
+    onErrorBackTo() {
+      if (this.isMenuPage) {
+        const restaurantId = this.$route.params['restaurantId'];
+        this.$router.push(`/preview/${restaurantId}`);
+      } else if (this.isRestaurantPage) {
+        this.$router.push(`/preview`);
+      }
+
+      this.$store.dispatch('error/clear');
     },
   },
   mounted() {
