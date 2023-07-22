@@ -1,6 +1,5 @@
-import { authHeaders } from "@/helpers";
+import {authHeaders} from "@/helpers";
 import {IndexRestaurantResponse, Restaurant, RestaurantsApi, ShowRestaurantResponse} from "@/openapi";
-import {RestaurantConfig} from "@/configs";
 
 class RestaurantsState {
   /** Selected restaurant */
@@ -36,7 +35,7 @@ const getters = {
     return state.restaurants;
   },
   isLoadingRestaurants(state: RestaurantsState) {
-    return !state.selected;
+    return !state.indexResponse;
   },
   getShowResponse(state: RestaurantsState) {
     return state.showResponse;

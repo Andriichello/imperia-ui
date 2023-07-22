@@ -92,6 +92,23 @@ const getters = {
   menusResponse(state: PreviewState) {
     return state.menusResponse;
   },
+  product(state: PreviewState) {
+    return (productId: number) => {
+      let product = null;
+
+      (state.menus ?? []).forEach((m) => {
+        if (product) {
+          return;
+        }
+
+        product = (m.products ?? []).find((p) => {
+          return p.id === productId;
+        });
+      });
+
+      return product;
+    };
+  },
   products(state: PreviewState) {
     return state.selections.menu ? state.selections.menu.products : [];
   },

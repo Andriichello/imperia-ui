@@ -11,6 +11,7 @@ import restaurants from "@/store/modules/restaurants";
 import preview from "@/store/modules/preview";
 import reviews from "@/store/modules/reviews";
 import error from "@/store/modules/error";
+import order from "@/store/modules/order";
 
 export default createStore({
   modules: {
@@ -18,6 +19,7 @@ export default createStore({
     'auth': auth,
     'error': error,
     'theme': theme,
+    'order': order,
     'basket': basket,
     'history': history,
     'customers': customers,
