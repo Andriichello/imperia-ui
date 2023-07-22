@@ -67,7 +67,7 @@ export default defineComponent({
       const isRegister = this.$route.name === 'register'; 
 
       if (newValue && (isLogin || isRegister)) {
-        this.$router.push(this.$route.query.redirect ?? '/home');
+        this.$router.push(this.$route.query.redirect ?? '/place');
       } else if (!newValue && newValue !== oldValue) {
          this.$router.push('/login');
       }

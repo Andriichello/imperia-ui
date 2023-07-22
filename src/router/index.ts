@@ -1,8 +1,11 @@
-import {createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw} from 'vue-router'
+import {createRouter, createWebHistory, RouteRecordRaw} from 'vue-router'
 import PreviewPage from "@/pages/PreviewPage.vue";
 import PreviewRestaurantPage from "@/pages/PreviewRestaurantPage.vue";
 import PreviewMenuPage from "@/pages/PreviewMenuPage.vue";
 import PreviewReviewsPage from "@/pages/PreviewReviewsPage.vue";
+import HomePage from "@/pages/HomePage.vue";
+import LoginPage from "@/pages/LoginPage.vue";
+import RegisterPage from "@/pages/RegisterPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,6 +36,30 @@ const routes: Array<RouteRecordRaw> = [
     path: '/preview/:restaurantId(\\d+)?/menu/:menuId(\\d+)',
     name: 'preview-menu',
     component: PreviewMenuPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?',
+    name: 'home',
+    component: HomePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: LoginPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: RegisterPage,
     meta: {
       requiresAuth: false,
     },

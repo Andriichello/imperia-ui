@@ -13,16 +13,31 @@ app.config.globalProperties.document = document;
 router.beforeEach((to, from, next) => {
     const isOpen = to.matched.some(record => !record.meta.requiresAuth);
     const isAuth = store.getters['auth/authorized'];
+    const withToken = store.getters['auth/token'];
     const isLoginOrRegister = to.matched.some(
         record => record.name === 'login' || record.name === 'register'
     );
 
-    if (isLoginOrRegister && isAuth) {
-        next('/preview');
-    } else if (isOpen || isAuth) {
-        to.path === '/' ? next('preview') : next();
+    console.log({isOpen, isAuth, isLoginOrRegister, to, from})
+
+    if (isAuth || withToken) {
+        if (isLoginOrRegister) {
+            next('place');
+        } else {
+            to.path === '/' ? next('place') : next();
+        }
     } else {
-        next(`/preview`);
+        if (isLoginOrRegister) {
+            next();
+        } else if (isOpen) {
+            to.path === '/' ? next('preview') : next();
+        } else {
+            if (to.path.startsWith('/place')) {
+                next('login');
+            } else {
+                next('preview');
+            }
+        }
     }
 })
 
