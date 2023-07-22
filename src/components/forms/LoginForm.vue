@@ -3,7 +3,7 @@
     <div class="auth-card">
       <div class="auth-card-body">
         <div class="auth-card-title">
-          <h1>Welcome back!</h1>
+          <h1>{{ $t('login.title') }}</h1>
         </div>
 
         <div class="auth-card-divider"></div>
@@ -17,7 +17,7 @@
         <form @submit.prevent="onLogin" class="form-control w-full max-w-md">
           <div class="form-control w-full max-w-md">
             <label class="label">
-              <span class="label-text">Email</span>
+              <span class="label-text">{{ $t('login.email') }}</span>
             </label>
             <input v-model="email" name="email" type="email" required placeholder="Email..." class="input input-bordered w-full max-w-xs" :class="{ 'input-error' : emailErrors !== null }"/>
             <label class="label flex-col items-start" v-if="emailErrors">
@@ -29,7 +29,7 @@
 
           <div class="form-control w-full max-w-md">
             <label class="label flex-col items-start">
-              <span class="label-text">Password</span>
+              <span class="label-text">{{ $t('login.password') }}</span>
             </label>
             <input v-model="password" name="password" type="password" required placeholder="Password..." class="input input-bordered w-full max-w-xs" />
             <label class="label flex-col items-start" v-if="passwordErrors">
@@ -39,10 +39,10 @@
             </label>
           </div>
         
-          <router-link to="/register" class="link link-hover font-bold self-end mt-4 mb-4">Don't have an account?</router-link>
+          <router-link to="/register" class="link link-hover font-bold self-end mt-4 mb-4">{{ $t('login.register_link') }}</router-link>
 
           <div class="card-actions w-full">
-            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': loggingIn }">Log In</button>
+            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': loggingIn }">{{ $t('login.login_button') }}</button>
           </div>
         </form>
       </div>
@@ -112,7 +112,7 @@ export default defineComponent({
 }
 
 .auth-card {
-  @apply card shadow-xl block bg-base-300;
+  @apply card shadow-xl block bg-base-100;
 }
 
 .auth-card-body {

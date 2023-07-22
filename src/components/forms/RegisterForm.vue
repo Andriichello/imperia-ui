@@ -7,7 +7,7 @@
     <div class="auth-card">
       <div class="auth-card-body">
         <div class="auth-card-title">
-          <h1>First time here?</h1>
+          <h1>{{ $t('register.title') }}</h1>
         </div>
         
         <div class="auth-card-divider"></div>
@@ -21,9 +21,9 @@
         <form @submit.prevent="onRegister" class="form-control w-full max-w-md">
           <div class="form-control w-full max-w-md">
             <label class="label flex-col items-start">
-              <span class="label-text">Name</span>
+              <span class="label-text">{{ $t('register.name') }}</span>
             </label>
-            <input v-model="name" name="name" type="text" required placeholder="Name..." class="input input-bordered w-full max-w-md" />
+            <input v-model="name" name="name" type="text" required :placeholder="$t('register.name') + '...'" class="input input-bordered w-full max-w-md" />
             <label class="label flex-col items-start" v-if="nameErrors">
               <span class="label-text-alt text-error text-sm" v-for="error in nameErrors" :key="error">
                 {{ error }}
@@ -33,9 +33,9 @@
 
           <div class="form-control w-full max-w-md">
             <label class="label flex-col items-start">
-              <span class="label-text">Surname</span>
+              <span class="label-text">{{ $t('register.surname') }}</span>
             </label>
-            <input v-model="surname" name="surname" type="text" required placeholder="Surname..." class="input input-bordered w-full max-w-md" />
+            <input v-model="surname" name="surname" type="text" required :placeholder="$t('register.surname') + '...'" class="input input-bordered w-full max-w-md" />
             <label class="label flex-col items-start" v-if="surnameErrors">
               <span class="label-text-alt text-error text-sm" v-for="error in surnameErrors" :key="error">
                 {{ error }}
@@ -45,9 +45,9 @@
 
           <div class="form-control w-full max-w-md">
             <label class="label flex-col items-start">
-              <span class="label-text">Email</span>
+              <span class="label-text">{{ $t('register.email') }}</span>
             </label>
-            <input v-model="email" name="email" type="email" required placeholder="Email..." class="input input-bordered w-full max-w-md" />
+            <input v-model="email" name="email" type="email" required :placeholder="$t('register.email') + '...'" class="input input-bordered w-full max-w-md" />
             <label class="label flex-col items-start" v-if="emailErrors">
               <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">
                 {{ error }}
@@ -57,9 +57,9 @@
 
           <div class="form-control w-full max-w-md">
             <label class="label flex-col items-start">
-              <span class="label-text">Password</span>
+              <span class="label-text">{{ $t('register.password') }}</span>
             </label>
-            <input v-model="password" name="password" type="password" required placeholder="Password..." class="input input-bordered w-full max-w-md" />
+            <input v-model="password" name="password" type="password" required :placeholder="$t('register.password') + '...'" class="input input-bordered w-full max-w-md" />
             <label class="label flex-col items-start" v-if="passwordErrors">
               <span class="label-text-alt text-error text-sm" v-for="error in passwordErrors" :key="error">
                 {{ error }}
@@ -69,9 +69,9 @@
 
             <div class="form-control w-full max-w-md">
             <label class="label flex-col items-start">
-              <span class="label-text">Password Confirmation</span>
+              <span class="label-text">{{ $t('register.password_confirmation') }}</span>
             </label>
-            <input v-model="passwordConfirmation" name="passwordConfirmation" type="password" required placeholder="Password Confirmation..." class="input input-bordered w-full max-w-md" />
+            <input v-model="passwordConfirmation" name="passwordConfirmation" type="password" required :placeholder="$t('register.password_confirmation') + '...'" class="input input-bordered w-full max-w-md" />
             <label class="label flex-col items-start" v-if="passwordConfirmationErrors">
               <span class="label-text-alt text-error text-sm" v-for="error in passwordConfirmationErrors" :key="error">
                 {{ error }}
@@ -79,10 +79,10 @@
             </label>
           </div>
         
-          <router-link to="/login" class="link link-hover font-bold self-end mt-4 mb-4">Already have an account?</router-link>
+          <router-link to="/login" class="link link-hover font-bold self-end mt-4 mb-4">{{ $t('register.login_link') }}</router-link>
 
           <div class="card-actions w-full">
-            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': registering }">Register</button>
+            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': registering }">{{ $t('register.register_button') }}</button>
           </div>
         </form>
       </div>
