@@ -17,6 +17,14 @@
     "T_until_closing": "{time} до закриття",
     "T_before_opening": "{time} до відкриття"
   },
+  "unit": {
+    "g": "г",
+    "kg": "кг",
+    "l": "л",
+    "ml": "мл",
+    "cm": "см",
+    "pc": "шт"
+  },
   "error": {
     "back_to_main": {
       "title": "Повернутися назад"
@@ -29,13 +37,31 @@
       "description": "Під час завантаження даних із сервера сталася помилка."
     }
   },
-  "unit": {
-    "g": "г",
-    "kg": "кг",
-    "l": "л",
-    "ml": "мл",
-    "cm": "см",
-    "pc": "шт"
+  "login": {
+    "title": "З поверненням!",
+    "register_link": "Ще не зареєстровані?",
+    "login_button": "Ввійти",
+    "email": "Пошта",
+    "password": "Пароль"
+  },
+  "register": {
+    "title": "Вперше тут?",
+    "login_link": "Вже зареєстровані?",
+    "register_button": "Зареєструватися",
+    "name": "Ім'я",
+    "surname": "Прізвище",
+    "email": "Пошта",
+    "password": "Пароль",
+    "password_confirmation": "Підтверження Паролю"
+  },
+  "place": {
+    "navbar": {
+      "back": "Назад",
+      "theme": "Тема",
+      "profile": "Профіль",
+      "restaurant": "Заклад",
+      "street_and_address": "Вулиця, аддрес"
+    }
   },
   "preview": {
     "navbar": {
@@ -62,6 +88,9 @@
       },
       "loading": "Завантаження меню",
       "loading_products": "Завантаження страв"
+    },
+    "item": {
+      "add": "Додати"
     }
   }
 }
