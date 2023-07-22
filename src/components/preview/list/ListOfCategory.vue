@@ -30,11 +30,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.list {
-
-}
-
-.list-col {
-  flex-basis: 45%;
-}
 </style>

@@ -16,11 +16,19 @@
     </div>
 
     <div class="card-body min-h-[100px]">
-      <div class="flex justify-center items-start card-title">
-        <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center">
-          {{ title }}
-        </h2>
-        <div class="badge badge-warning mt-1 select-none" v-if="badge && badge.length">{{ badge }}</div>
+      <div class="flex justify-between items-center card-title">
+        <div class="grow flex justify-center items-start card-title">
+          <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center">
+            {{ title }}
+          </h2>
+          <div class="badge badge-warning mt-1 select-none" v-if="badge && badge.length">
+            {{ badge }}
+          </div>
+        </div>
+
+        <Counter class="self-start ml-1" v-if="authorized"
+                 @on-change="onChangeAmount"
+                 :amount="field?.amount"/>
       </div>
 
       <div class="flex-grow">
@@ -74,11 +82,13 @@
 import { defineComponent } from "vue";
 import Product from "@/openapi/models/Product";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
-import {mapGetters} from "vuex";
+import {mapActions, mapGetters} from "vuex";
+import Counter from "@/components/preview/list/items/Counter.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Product",
+  components: {Counter},
   props: {
     item: Product,
   },
@@ -94,7 +104,17 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       theme: "theme/get",
+      authorized: "auth/authorized",
     }),
+    isPreview() {
+      return (this.$route.name ?? '').startsWith('preview');
+    },
+    field() {
+      return this.$store.getters['order/product'](this.id);
+    },
+    product() {
+      return this.$store.getters['preview/product'](this.id);
+    },
     id() {
       return this.item.id;
     },
@@ -184,6 +204,10 @@ export default defineComponent({
     }
   },
   methods: {
+    ...mapActions({
+      setField: 'order/setProduct',
+      unsetField: 'order/unsetProduct',
+    }),
     variantWeight(v) {
       if (!v) {
         return null;
@@ -199,6 +223,14 @@ export default defineComponent({
     },
     onVariantSelect(v) {
       this.variant = v;
+    },
+    onChangeAmount({amount}) {
+      console.log({amount, product: this.product});
+
+      this.setField({
+        productId: this.id,
+        amount: amount
+      });
     },
   },
 });
