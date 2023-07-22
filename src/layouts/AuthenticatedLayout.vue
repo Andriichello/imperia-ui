@@ -1,6 +1,6 @@
 <template>
-    <div class="authenticated-layout">
-        <NavBar/>
+    <div class="authenticated-layout drawer drawer-open">
+        <NavBar class="z-50"/>
         <slot />
     </div>
 </template>

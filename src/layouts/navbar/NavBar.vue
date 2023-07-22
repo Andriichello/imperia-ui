@@ -1,22 +1,27 @@
 <template>
-  <div class="navbar bg-neutral text-neutral-content">
-    <div class="flex-1">
-      <div class="dropdown dropdown-bottom">
-        <label tabindex="0">
+  <div class="w-full flex flex-col justify-start items-center bg-neutral">
+
+    <div class="w-full flex flex-col justify-center items-start text-neutral-content">
+      <div class="navbar flex w-full bg-neutral text-neutral-content h-[68px]">
+        <div class="flex-1">
           <Item :restaurant="restaurant" v-if="restaurant"/>
-        </label>
-        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box">
-          <li v-for="r in (restaurants ?? []).filter(i => i !== restaurant)" :key="r">
-            <Item :restaurant="r" @click="onSelectRestaurant(r)"/>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="flex-none gap-2 pr-2">
-      <div class="dropdown dropdown-end">
-        <label tabindex="0">
-          <button class="btn btn-square btn-ghost">
-            <BaseIcon title="theme" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
+
+<!--          <div class="dropdown dropdown-bottom">-->
+<!--            <label tabindex="0">-->
+<!--              <Item :restaurant="restaurant" v-if="restaurant"/>-->
+<!--            </label>-->
+<!--            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box">-->
+<!--              <li v-for="r in (restaurants ?? []).filter(i => i !== restaurant)" :key="r">-->
+<!--                <Item :restaurant="r" @click="onSelectRestaurant(r)"/>-->
+<!--              </li>-->
+<!--            </ul>-->
+<!--          </div>-->
+        </div>
+
+        <div class="flex-none gap-2 pr-2" v-if="!authorized">
+          <button class="btn btn-square btn-ghost"
+                  @click="onSwitchTheme">
+            <BaseIcon :title="$t('preview.navbar.theme')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
               <template v-if="theme === ThemeConfig.dark()">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12 7.11628C9.3028 7.11628 7.11628 9.3028 7.11628 12C7.11628 14.6972 9.3028 16.8837 12 16.8837C14.6972 16.8837 16.8837 14.6972 16.8837 12C16.8837 9.3028 14.6972 7.11628 12 7.11628ZM5.72093 12C5.72093 8.53217 8.53217 5.72093 12 5.72093C15.4678 5.72093 18.2791 8.53217 18.2791 12C18.2791 15.4678 15.4678 18.2791 12 18.2791C8.53217 18.2791 5.72093 15.4678 5.72093 12Z" fill="currentColor"/>
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C12.3853 2 12.6977 2.31236 12.6977 2.69767V3.62791C12.6977 4.01322 12.3853 4.32558 12 4.32558C11.6147 4.32558 11.3023 4.01322 11.3023 3.62791V2.69767C11.3023 2.31236 11.6147 2 12 2Z" fill="currentColor"/>
@@ -34,38 +39,42 @@
               </template>
             </BaseIcon>
           </button>
-        </label>
-        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box">
-          <li v-for="t in themes" :key="t" class="justify-center items-center">
-            <button :disabled="theme === t" @click="applyTheme(t)" class="rounded-box">{{ t }}</button>
-          </li>
-        </ul>
-      </div>
-      <div class="dropdown dropdown-end" v-if="authorized">
-        <label tabindex="0">
-          <button class="btn btn-square btn-ghost">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-5 h-5 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-          </button>
-        </label>
-        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
-          <li>
-            <RouterLink class="justify-between" to="/preview" replace>
-              Preview
-            </RouterLink>
-          </li>
-<!--          <li>-->
-<!--            <RouterLink class="justify-between" to="/marketplace" replace>-->
-<!--              Marketplace-->
-<!--            </RouterLink>-->
-<!--          </li>-->
-          <li v-if="authorized">
-            <RouterLink class="justify-between" to="/profile" replace>
-              Profile
-            </RouterLink>
-          </li>
-        </ul>
+        </div>
+
+        <div class="dropdown dropdown-end" v-if="authorized">
+          <label tabindex="0">
+            <button class="btn btn-square btn-ghost">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </button>
+          </label>
+          <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
+<!--            <li>-->
+<!--              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"-->
+<!--                          to="/preview" replace>-->
+<!--                Preview-->
+<!--              </RouterLink>-->
+<!--            </li>-->
+            <!--          <li>-->
+            <!--            <RouterLink class="justify-between" to="/marketplace" replace>-->
+            <!--              Marketplace-->
+            <!--            </RouterLink>-->
+            <!--          </li>-->
+            <li v-if="authorized">
+              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"
+                          to="/profile" replace>
+                {{ $t('preview.navbar.profile') }}
+              </RouterLink>
+            </li>
+            <li v-if="authorized" @click="onSwitchTheme">
+              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
+                {{ $t('preview.navbar.theme') }}
+              </span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -87,6 +96,7 @@ export default defineComponent({
       return ThemeConfig
     },
     ...mapGetters({
+      user: "auth/user",
       authorized: "auth/authorized",
       theme: "theme/get",
       themes: "theme/list",
@@ -107,6 +117,13 @@ export default defineComponent({
       const elem = document.activeElement;
       if(elem){
         elem?.blur();
+      }
+    },
+    onSwitchTheme() {
+      if (this.theme === this.themes[0]) {
+        this.applyTheme(this.themes[1])
+      } else {
+        this.applyTheme(this.themes[0])
       }
     },
   },
