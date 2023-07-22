@@ -43,6 +43,12 @@ export interface User {
    * @type {number}
    * @memberof User
    */
+  restaurantId: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof User
+   */
   customerId: number | null;
   /**
    *
@@ -77,6 +83,7 @@ export function instanceOfUser(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && "id" in value;
   isInstance = isInstance && "type" in value;
+  isInstance = isInstance && "restaurantId" in value;
   isInstance = isInstance && "customerId" in value;
   isInstance = isInstance && "name" in value;
   isInstance = isInstance && "email" in value;
@@ -99,6 +106,7 @@ export function UserFromJSONTyped(
   return {
     id: json["id"],
     type: json["type"],
+    restaurantId: json["restaurant_id"],
     customerId: json["customer_id"],
     name: json["name"],
     email: json["email"],
@@ -122,6 +130,7 @@ export function UserToJSON(value?: User | null): any {
   return {
     id: value.id,
     type: value.type,
+    restaurant_id: value.restaurantId,
     customer_id: value.customerId,
     name: value.name,
     email: value.email,

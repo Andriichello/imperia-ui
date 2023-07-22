@@ -64,6 +64,7 @@ export interface GetModelMediaRequest {
 export interface IndexMediaRequest {
   pageSize?: number;
   pageNumber?: number;
+  filterSearch?: string;
   filterName?: string;
   filterExtension?: string;
   filterDisk?: string;
@@ -249,6 +250,10 @@ export class MediaApi extends runtime.BaseAPI {
 
     if (requestParameters.pageNumber !== undefined) {
       queryParameters["page[number]"] = requestParameters.pageNumber;
+    }
+
+    if (requestParameters.filterSearch !== undefined) {
+      queryParameters["filter[search]"] = requestParameters.filterSearch;
     }
 
     if (requestParameters.filterName !== undefined) {
@@ -583,7 +588,7 @@ export class MediaApi extends runtime.BaseAPI {
  */
 export const StoreMediaDiskEnum = {
   Public: "public",
-  GoogleCloud: "google-cloud",
+  Uploads: "uploads",
 } as const;
 export type StoreMediaDiskEnum =
   (typeof StoreMediaDiskEnum)[keyof typeof StoreMediaDiskEnum];
