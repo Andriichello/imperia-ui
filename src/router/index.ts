@@ -6,6 +6,8 @@ import PreviewReviewsPage from "@/pages/PreviewReviewsPage.vue";
 import HomePage from "@/pages/HomePage.vue";
 import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
+import PlaceMenuPage from "@/pages/PlaceMenuPage.vue";
+import PlaceOrderPage from "@/pages/PlaceOrderPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -33,7 +35,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/preview/:restaurantId(\\d+)?/menu/:menuId(\\d+)',
+    path: '/preview/:restaurantId(\\d+)?/menu/:menuId(\\d+)?',
     name: 'preview-menu',
     component: PreviewMenuPage,
     meta: {
@@ -44,6 +46,22 @@ const routes: Array<RouteRecordRaw> = [
     path: '/place/:restaurantId(\\d+)?',
     name: 'home',
     component: HomePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/order',
+    name: 'place-order',
+    component: PlaceOrderPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/menu/:menuId(\\d+)?',
+    name: 'place-menu',
+    component: PlaceMenuPage,
     meta: {
       requiresAuth: true,
     },

@@ -110,6 +110,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({
+      selectMenu: 'preview/selectMenu',
       selectRestaurant: 'restaurants/setSelected',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
       loadReviewsIfMissing: 'reviews/loadReviewsIfMissing',

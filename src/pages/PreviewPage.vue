@@ -1,5 +1,5 @@
 <template>
-  <div class="preview-page">
+  <div class="order-page">
     <PreviewRestaurants class="max-w-xl"
         @restaurant-select="onSelectRestaurant"/>
   </div>
@@ -45,7 +45,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.preview-page {
+.order-page {
   @apply flex flex-col items-center w-full gap-3 w-full pt-3;
 
   display: flex;

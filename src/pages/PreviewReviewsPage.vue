@@ -1,5 +1,5 @@
 <template>
-  <div class="preview-page">
+  <div class="order-page">
     <PreviewReviews class="max-w-xl"/>
   </div>
 </template>
@@ -27,7 +27,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.preview-page {
+.order-page {
   @apply flex flex-col items-center w-full gap-3 w-full pt-3;
 
   display: flex;

@@ -6,7 +6,12 @@
     <Preloader :title="$t('preview.menu.loading')" class="p-2"
                v-if="!isLoadingRestaurants && isLoadingMenus"/>
 
-    <PreviewMenu v-if="menu" :menu="menu"/>
+    <PreviewMenu v-if="menu" :menu="menu" class="pb-4"/>
+
+    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm" v-if="productsCount">
+      <OrderSwitcher class="w-full max-w-4xl"
+                     @switch-to-order="onSwitchToOrder"/>
+    </div>
   </div>
 </template>
 
@@ -15,10 +20,12 @@ import {defineComponent} from "vue";
 import PreviewMenu from "@/components/preview/PreviewMenu.vue";
 import {mapActions, mapGetters} from "vuex";
 import Preloader from "@/components/preview/loading/Preloader.vue";
+import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
 
 export default defineComponent({
   name: "PreviewMenuPage",
   components: {
+    OrderSwitcher,
     Preloader,
     PreviewMenu,
   },
@@ -65,6 +72,7 @@ export default defineComponent({
       showRestaurantResponse: 'restaurants/getShowResponse',
       isLoadingMenus: "preview/isLoadingMenus",
       isLoadingRestaurants: "restaurants/isLoadingRestaurants",
+      productsCount: 'order/productsCount',
     }),
   },
   methods: {
@@ -72,21 +80,37 @@ export default defineComponent({
       selectMenu: "preview/selectMenu",
       loadAndSelectMenu: "preview/loadAndSelectMenu",
       loadMenusAndSelect: "preview/loadMenusAndSelect",
+      loadMenusAndSelectFirst: "preview/loadMenusAndSelectFirst",
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
+    onSwitchToOrder() {
+      const restaurantId = +this.$route.params['restaurantId'];
+      this.$router.replace(`/place/${restaurantId}/order`);
+    },
   },
   async mounted() {
     const restaurantId = +this.$route.params['restaurantId'];
     if (restaurantId < 1) {
-      this.$router.replace(`/preview`);
+      this.$router.replace(`/place`);
       return;
     }
 
     const menuId = +this.$route.params['menuId'];
     if (menuId < 1) {
-      this.$router.replace(`/preview/${restaurantId}`);
+      if (this.menu) {
+        this.$router.replace(`/place/${restaurantId}/menu/${this.menu.id}`);
+      } else if (this.menus && this.menus.length > 0) {
+        this.$router.replace(`/place/${restaurantId}/menu/${this.menus[0].id}`);
+      } else {
+        await this.loadMenusAndSelectFirst();
+
+        if (this.menu) {
+          this.$router.replace(`/place/${restaurantId}/menu/${this.menu.id}`);
+        }
+      }
+
       return;
     }
 
@@ -126,5 +150,31 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.switcher {
+  @apply flex flex-row items-center;
+
+  flex-wrap: nowrap;
+
+  flex: 0 1 auto;
+  overflow-x: auto;
+
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.blurred {
+  --tw-border-opacity: 0;
+  background-color: hsl(var(--bc) / var(--tw-bg-opacity));
+  --tw-bg-opacity: 0.1;
+}
+
+.selected {
+  background-color: var(--yellow);
+}
+
+.selected:hover {
+  background-color: var(--yellow);
 }
 </style>
