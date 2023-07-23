@@ -26,7 +26,7 @@
           </div>
         </div>
 
-        <Counter class="self-start ml-1" v-if="authorized"
+        <Counter class="self-start ml-1" v-if="rerendered && !isPreview && authorized"
                  @on-change="onChangeAmount"
                  :amount="field?.amount"/>
       </div>
@@ -56,7 +56,7 @@
 
             <template v-for="v in variants" :key="v.id">
               <button class="btn btn-sm rounded-none normal-case text-md px-2 py-2"
-                      :class="{'btn-neutral': theme !== 'dark' && ((variant && variant.id === v.id) || id === 0), 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && ((variant && variant.id === v.id) || id === 0)}"
+                      :class="{'btn-neutral': theme !== 'dark' && ((variant && variant.id === v.id) || id === null), 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && ((variant && variant.id === v.id) || id === null)}"
                       @click="onVariantSelect(v)">
                 {{ variantWeight(v) }}
               </button>
@@ -81,9 +81,9 @@
 <script>
 import { defineComponent } from "vue";
 import Product from "@/openapi/models/Product";
-import BaseIcon from "@/components/icons/BaseIcon.vue";
 import {mapActions, mapGetters} from "vuex";
 import Counter from "@/components/preview/list/items/Counter.vue";
+import {priceFormatted} from "@/helpers";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -92,13 +92,11 @@ export default defineComponent({
   props: {
     item: Product,
   },
-  // components: {
-  //   BaseIcon,
-  // },
   data() {
     return {
       imageLoaded: false,
       variant: null,
+      rerendered: true,
     };
   },
   computed: {
@@ -110,7 +108,7 @@ export default defineComponent({
       return (this.$route.name ?? '').startsWith('preview');
     },
     field() {
-      return this.$store.getters['order/product'](this.id);
+      return this.$store.getters['order/product'](this.id, this.variant?.id);
     },
     product() {
       return this.$store.getters['preview/product'](this.id);
@@ -138,13 +136,10 @@ export default defineComponent({
     },
     price() {
       if (this.variant) {
-        return this.variant.price + ' ₴';
+        return priceFormatted(this.variant.price);
       }
 
-      const p = this.item;
-
-      return p.price === 0
-          ? 'Free' : p.price + ' ₴';
+      return priceFormatted(this.item.price);
     },
     weight() {
       if (!this.item || !this.item.weight) {
@@ -166,11 +161,11 @@ export default defineComponent({
 
       const variants = [...this.item.variants];
       const base = {
-        id: 0,
+        id: null,
         price: this.item.price,
         weight: this.item.weight,
         weightUnit: this.item.weightUnit,
-      }
+      };
 
       variants.push(base);
 
@@ -222,16 +217,31 @@ export default defineComponent({
       return v.weight + (unit ?? '');
     },
     onVariantSelect(v) {
+      const shouldRerender = this.variant !== v;
+
       this.variant = v;
+
+      if (shouldRerender) {
+        this.freshRender();
+      }
     },
     onChangeAmount({amount}) {
-      console.log({amount, product: this.product});
-
       this.setField({
         productId: this.id,
-        amount: amount
+        variantId: this.variant?.id,
+        amount: amount,
       });
     },
+    async freshRender() {
+      // Remove MyComponent from the DOM
+      this.rerendered = false;
+
+      // Wait for the change to get flushed to the DOM
+      await this.$nextTick();
+
+      // Add the component back in
+      this.rerendered = true;
+    }
   },
 });
 </script>
