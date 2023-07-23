@@ -62,6 +62,7 @@
     "navbar": {
       "back": "Back",
       "theme": "Theme",
+      "profile": "Profile",
       "restaurant": "Restaurant",
       "street_and_address": "Street, address"
     },
@@ -85,6 +86,14 @@
     },
     "item": {
       "add": "Add"
+    },
+    "order": {
+      "empty": "No items added",
+      "for": "for",
+      "item_singular": "item",
+      "item_plural": "items",
+      "item_plural2": "items",
+      "item_plural5": "items"
     }
   }
 }

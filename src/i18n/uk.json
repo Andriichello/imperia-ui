@@ -67,6 +67,7 @@
     "navbar": {
       "back": "Назад",
       "theme": "Тема",
+      "profile": "Профіль",
       "restaurant": "Заклад",
       "street_and_address": "Вулиця, аддрес"
     },
@@ -91,6 +92,14 @@
     },
     "item": {
       "add": "Додати"
+    },
+    "order": {
+      "empty": "Нема доданих позицій",
+      "for": "за",
+      "item_singular": "позиція",
+      "item_plural": "позиції",
+      "item_plural2": "позиції",
+      "item_plural5": "позицій"
     }
   }
 }
