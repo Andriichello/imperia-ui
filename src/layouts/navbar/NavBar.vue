@@ -3,19 +3,16 @@
 
     <div class="w-full flex flex-col justify-center items-start text-neutral-content">
       <div class="navbar flex w-full bg-neutral text-neutral-content h-[68px]">
-        <div class="flex-1">
-          <Item :restaurant="restaurant" v-if="restaurant"/>
+        <div class="flex-1 gap-2">
+          <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isOrderPage" @click="onBack">
+            <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
+              <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </BaseIcon>
+          </button>
 
-<!--          <div class="dropdown dropdown-bottom">-->
-<!--            <label tabindex="0">-->
-<!--              <Item :restaurant="restaurant" v-if="restaurant"/>-->
-<!--            </label>-->
-<!--            <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box">-->
-<!--              <li v-for="r in (restaurants ?? []).filter(i => i !== restaurant)" :key="r">-->
-<!--                <Item :restaurant="r" @click="onSelectRestaurant(r)"/>-->
-<!--              </li>-->
-<!--            </ul>-->
-<!--          </div>-->
+          <Item v-if="isMenuPage || isReviewsPage"
+                :with-icon="false"
+                :restaurant="restaurant"/>
         </div>
 
         <div class="flex-none gap-2 pr-2" v-if="!authorized">
@@ -102,7 +99,32 @@ export default defineComponent({
       themes: "theme/list",
       restaurant: "restaurants/selected",
       restaurants: "restaurants/restaurants",
+      menu: "preview/menu",
+      menus: "preview/menus",
     }),
+    isMenuPage() {
+      const name = this.$route.name;
+
+      return name && name.endsWith('-menu');
+    },
+    isRestaurantPage() {
+      const name = this.$route.name;
+
+      return name && name.endsWith('-restaurant');
+    },
+    isReviewsPage() {
+      const name = this.$route.name;
+
+      return name && name.endsWith('-reviews');
+    },
+    isOrderPage() {
+      const name = this.$route.name;
+
+      return name && name.endsWith('-order');
+    },
+    shouldShowBack() {
+      return this.isMenuPage;
+    },
   },
   methods: {
     ...mapActions({
@@ -117,6 +139,24 @@ export default defineComponent({
       const elem = document.activeElement;
       if(elem){
         elem?.blur();
+      }
+    },
+    onBack() {
+      const restaurantId = this.$route.params['restaurantId'];
+
+      if (this.isMenuPage || this.isReviewsPage) {
+        this.$router.push(`/place/${restaurantId}`)
+      } else if (this.isRestaurantPage) {
+        this.$router.push(`/place`)
+      } else if (this.isOrderPage) {
+        this.$router.push(`/place/${restaurantId}/menu`)
+      }
+
+
+      window.scrollTo(0, 0);
+
+      if (this.$store.getters['error/present']) {
+        this.$store.dispatch('error/clear');
       }
     },
     onSwitchTheme() {
