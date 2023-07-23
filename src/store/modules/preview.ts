@@ -189,6 +189,13 @@ const actions = {
       dispatch('selectMenu', getters.menus.find(m => m.id === id));
     }
   },
+  async loadMenusAndSelectFirst({dispatch, getters, commit}) {
+    await dispatch('loadMenus');
+
+    if (getters.menus) {
+      dispatch('selectMenu', getters.menus && getters.menus.length ? getters.menus[0] : null);
+    }
+  },
   async loadAndSelectMenu({dispatch, commit, rootGetters}, {id}) {
     const request: ShowMenuRequest = {id};
 

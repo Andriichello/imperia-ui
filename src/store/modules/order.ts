@@ -43,6 +43,7 @@ class OrderForm {
     products.forEach((p) => {
       const field: StoreOrderRequestProductField = {
         productId: p.productId,
+        variantId: p.variantId,
         amount: p.amount,
       };
 
@@ -52,14 +53,15 @@ class OrderForm {
     return fields;
   }
 
-  public setProduct(productId: number, amount: number | null) {
+  public setProduct(productId: number, amount: number | null, variantId: number = null) {
     const field: StoreOrderRequestProductField = {
       productId,
+      variantId,
       amount,
     };
 
     const product = this.products.find((p) => {
-      return p.productId === productId;
+      return p.productId === productId && p.variantId === variantId;
     });
 
     if (product) {
@@ -72,9 +74,9 @@ class OrderForm {
     }
   }
 
-  public unsetProduct(productId: number) {
+  public unsetProduct(productId: number, variantId: number = null) {
     this.products = this.products.filter((p) => {
-      return p.productId !== productId;
+      return p.productId !== productId || p.variantId !== variantId;
     });
   }
 
@@ -117,7 +119,7 @@ class OrderForm {
       .forEach(name => {
         if (name.startsWith('products-')) {
           const field = this.order.products.find((p) => {
-            return p.productId === +name.replace('products-', '');
+            return `${p.productId}-${p.variantId}` === name.replace('products-', '');
           });
 
           const change = this.getChange(name);
@@ -186,18 +188,21 @@ const getters = {
 
     getters.products.forEach((p) => {
       if (p.amount) {
-        count++;
+        count += p.amount;
       }
     });
 
     return count;
   },
-  product(state, getters) {
-    return (productId: number) => {
+  product(state: OrderState, getters) {
+    return (productId: number, variantId: number = null) => {
       return getters.products.find((p) => {
-        return p.productId === productId;
-      });
+        return p.productId === productId && p.variantId === variantId;
+      }) ?? null;
     };
+  },
+  total(state: OrderState) {
+    return state.form?.totals?.products ?? 0;
   },
 };
 
@@ -214,13 +219,13 @@ const actions = {
   setProducts({ commit }, products) {
     commit('setProducts', products);
   },
-  setProduct({ commit, dispatch }, {productId, amount}) {
-    commit('setProduct', {productId, amount});
+  setProduct({ commit, dispatch }, {productId, amount, variantId}) {
+    commit('setProduct', {productId, amount, variantId});
     dispatch('recalculate');
 
   },
-  unsetProduct({ commit, dispatch }, {productId}) {
-    commit('unsetProduct', {productId});
+  unsetProduct({ commit, dispatch }, {productId, variantId}) {
+    commit('unsetProduct', {productId, variantId});
     dispatch('recalculate');
   },
   recalculate({ commit, state, rootGetters }) {
@@ -238,13 +243,17 @@ const actions = {
         const product = rootGetters['preview/product'](p.productId);
 
         if (product) {
-          totals.products += product.price * p.amount;
+          const variant = (product.variants ?? []).find((v) => {
+            return v.id === p.variantId;
+          });
+
+          totals.products += (variant?.price ?? product.price) * p.amount;
         }
       }
     });
 
-    // state.form.totals = totals;
-    console.log({totals});
+    totals.all = totals.products + totals.spaces + totals.services + totals.tickets;
+    state.form.totals = totals;
   }
 };
 
@@ -262,13 +271,13 @@ const mutations = {
   setProducts(state: OrderState, products) {
     state.form.products = products;
   },
-  setProduct(state: OrderState, {productId, amount}) {
-    state.form.setProduct(productId, amount);
-    state.form.setChange(`products-${productId}`, {productId, amount});
+  setProduct(state: OrderState, {productId, amount, variantId}) {
+    state.form.setProduct(productId, amount, variantId);
+    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount, variantId});
   },
-  unsetProduct(state: OrderState, {productId}) {
-    state.form.unsetProduct(productId);
-    state.form.setChange(`products-${productId}`, {productId, amount: null});
+  unsetProduct(state: OrderState, {productId, variantId}) {
+    state.form.unsetProduct(productId, variantId);
+    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount: null, variantId});
   },
 };
 
