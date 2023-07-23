@@ -61,6 +61,12 @@ export interface ProductOrderField {
    * @type {number}
    * @memberof ProductOrderField
    */
+  variantId: number;
+  /**
+   *
+   * @type {number}
+   * @memberof ProductOrderField
+   */
   amount: number;
   /**
    *
@@ -109,6 +115,7 @@ export function instanceOfProductOrderField(value: object): boolean {
   isInstance = isInstance && "type" in value;
   isInstance = isInstance && "orderId" in value;
   isInstance = isInstance && "productId" in value;
+  isInstance = isInstance && "variantId" in value;
   isInstance = isInstance && "amount" in value;
   isInstance = isInstance && "total" in value;
   isInstance = isInstance && "discountsAmount" in value;
@@ -134,6 +141,7 @@ export function ProductOrderFieldFromJSONTyped(
     type: json["type"],
     orderId: json["order_id"],
     productId: json["product_id"],
+    variantId: json["variant_id"],
     amount: json["amount"],
     total: json["total"],
     discountsAmount: json["discounts_amount"],
@@ -160,6 +168,7 @@ export function ProductOrderFieldToJSON(value?: ProductOrderField | null): any {
     type: value.type,
     order_id: value.orderId,
     product_id: value.productId,
+    variant_id: value.variantId,
     amount: value.amount,
     total: value.total,
     discounts_amount: value.discountsAmount,

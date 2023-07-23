@@ -43,6 +43,12 @@ export interface StoreOrderRequestProductField {
    * @type {number}
    * @memberof StoreOrderRequestProductField
    */
+  variantId: number;
+  /**
+   *
+   * @type {number}
+   * @memberof StoreOrderRequestProductField
+   */
   amount: number;
   /**
    *
@@ -66,6 +72,7 @@ export function instanceOfStoreOrderRequestProductField(
 ): boolean {
   let isInstance = true;
   isInstance = isInstance && "productId" in value;
+  isInstance = isInstance && "variantId" in value;
   isInstance = isInstance && "amount" in value;
 
   return isInstance;
@@ -86,6 +93,7 @@ export function StoreOrderRequestProductFieldFromJSONTyped(
   }
   return {
     productId: json["product_id"],
+    variantId: json["variant_id"],
     amount: json["amount"],
     comments: !exists(json, "comments")
       ? undefined
@@ -107,6 +115,7 @@ export function StoreOrderRequestProductFieldToJSON(
   }
   return {
     product_id: value.productId,
+    variant_id: value.variantId,
     amount: value.amount,
     comments:
       value.comments === undefined
