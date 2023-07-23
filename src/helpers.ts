@@ -56,7 +56,11 @@ export function priceFormatted(price: number | null): string | null {
         return null;
     }
 
-    return '$' + price.toFixed(2);
+    if (Number.isInteger(price)) {
+        return price + ' ₴';
+    }
+
+    return price.toFixed(2) + ' ₴';
 }
 
 export class ResponseErrors {
