@@ -52,7 +52,7 @@ export function timeFormatted(date: Date | string | null): string | null {
 }
 
 export function priceFormatted(price: number | null): string | null {
-    if (price === null) {
+    if (price === null || price === undefined) {
         return null;
     }
 
