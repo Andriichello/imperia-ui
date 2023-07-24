@@ -73,6 +73,7 @@ export default defineComponent({
       isLoadingMenus: "preview/isLoadingMenus",
       isLoadingRestaurants: "restaurants/isLoadingRestaurants",
       productsCount: 'order/productsCount',
+      banquetId: 'order/banquetId',
     }),
   },
   methods: {
@@ -87,7 +88,12 @@ export default defineComponent({
     }),
     onSwitchToOrder() {
       const restaurantId = +this.$route.params['restaurantId'];
-      this.$router.replace(`/place/${restaurantId}/order`);
+
+      if (this.banquetId) {
+        this.$router.replace(`/place/${restaurantId}/order/${this.banquetId}`);
+      } else {
+        this.$router.replace(`/place/${restaurantId}/order`);
+      }
     },
   },
   async mounted() {
@@ -114,17 +120,6 @@ export default defineComponent({
       return;
     }
 
-    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
-      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
-
-      if (target) {
-        await this.selectRestaurant(target);
-      } else {
-        this.loadingRestaurant = true;
-        await this.loadAndSelectRestaurant({ id: restaurantId });
-      }
-    }
-
     if (this.restaurants && this.restaurant.id === restaurantId) {
       if (!this.menu || (this.menu && this.menu.id !== menuId)) {
         const target = (this.menus ?? []).find(r => r.id === menuId);
@@ -136,6 +131,17 @@ export default defineComponent({
         }
       } else {
         this.loadMenusIfMissing();
+      }
+    }
+
+    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
+      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
+
+      if (target) {
+        await this.selectRestaurant(target);
+      } else {
+        this.loadingRestaurant = true;
+        await this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
   },

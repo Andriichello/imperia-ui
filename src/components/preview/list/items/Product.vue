@@ -111,7 +111,8 @@ export default defineComponent({
       return this.$store.getters['order/product'](this.id, this.variant?.id);
     },
     product() {
-      return this.$store.getters['preview/product'](this.id);
+      return this.$store.getters['preview/product'](this.id)
+          ?? this.$store.getters['order/orderedProduct'](this.id);
     },
     id() {
       return this.item.id;
@@ -139,7 +140,7 @@ export default defineComponent({
         return priceFormatted(this.variant.price);
       }
 
-      return priceFormatted(this.item.price);
+      return priceFormatted(this.item?.price);
     },
     weight() {
       if (!this.item || !this.item.weight) {

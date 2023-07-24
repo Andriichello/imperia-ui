@@ -72,6 +72,7 @@ export default defineComponent({
       selectMenu: "preview/selectMenu",
       loadAndSelectMenu: "preview/loadAndSelectMenu",
       loadMenusAndSelect: "preview/loadMenusAndSelect",
+      loadMenusAndSelectFirst: "preview/loadMenusAndSelectFirst",
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
@@ -86,19 +87,19 @@ export default defineComponent({
 
     const menuId = +this.$route.params['menuId'];
     if (menuId < 1) {
-      this.$router.replace(`/preview/${restaurantId}`);
-      return;
-    }
-
-    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
-      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
-
-      if (target) {
-        await this.selectRestaurant(target);
+      if (this.menu) {
+        this.$router.replace(`/preview/${restaurantId}/menu/${this.menu.id}`);
+      } else if (this.menus && this.menus.length > 0) {
+        this.$router.replace(`/preview/${restaurantId}/menu/${this.menus[0].id}`);
       } else {
-        this.loadingRestaurant = true;
-        await this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadMenusAndSelectFirst();
+
+        if (this.menu) {
+          this.$router.replace(`/preview/${restaurantId}/menu/${this.menu.id}`);
+        }
       }
+
+      return;
     }
 
     if (this.restaurants && this.restaurant.id === restaurantId) {
@@ -112,6 +113,17 @@ export default defineComponent({
         }
       } else {
         this.loadMenusIfMissing();
+      }
+    }
+
+    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
+      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
+
+      if (target) {
+        await this.selectRestaurant(target);
+      } else {
+        this.loadingRestaurant = true;
+        await this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
   },

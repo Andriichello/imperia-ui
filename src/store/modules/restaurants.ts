@@ -1,5 +1,6 @@
 import {authHeaders} from "@/helpers";
 import {IndexRestaurantResponse, Restaurant, RestaurantsApi, ShowRestaurantResponse} from "@/openapi";
+import router from "@/router";
 
 class RestaurantsState {
   /** Selected restaurant */
@@ -29,7 +30,7 @@ const getters = {
     return state.selected?.timezoneOffset;
   },
   restaurantId(state: RestaurantsState) {
-    return state.selected?.id;
+    return state.selected?.id ?? router.currentRoute.value.params['restaurantId'] ?? null;
   },
   restaurants(state: RestaurantsState) {
     return state.restaurants;

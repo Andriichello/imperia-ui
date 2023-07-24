@@ -61,8 +61,8 @@ export default defineComponent({
       if (this.isNarrowScreen) {
         if (this.menus && this.menus.length > 1) {
           this.setIsShowingMenusModal(true);
+          return;
         }
-        return;
       }
 
       this.selectMenu(menu);

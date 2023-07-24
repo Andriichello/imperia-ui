@@ -51,7 +51,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/place/:restaurantId(\\d+)?/order',
+    path: '/place/:restaurantId(\\d+)?/order/:banquetId(\\d+)?',
     name: 'place-order',
     component: PlaceOrderPage,
     meta: {

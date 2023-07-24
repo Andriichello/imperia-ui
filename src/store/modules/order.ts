@@ -1,12 +1,21 @@
 import {
+  BanquetsApi,
   Comment,
+  IndexOrderResponse,
+  IndexProductsRequest,
   Order,
   OrderTotals,
+  Product,
   ProductOrderField,
+  ProductsApi,
+  ShowOrderByBanquetIdRequest,
+  ShowOrderResponse,
   StoreOrderRequest,
   StoreOrderRequestProductField,
   UpdateOrderRequest
 } from "@/openapi";
+import {authHeaders} from "@/helpers";
+import router from "@/router";
 
 class OrderForm {
   /** Values that were set after constructor */
@@ -37,7 +46,7 @@ class OrderForm {
     return form;
   }
 
-  public setProducts(products: ProductOrderField[]): StoreOrderRequestProductField[] {
+  public setProducts(products: ProductOrderField[]): void {
     const fields: StoreOrderRequestProductField[] = [];
 
     products.forEach((p) => {
@@ -50,7 +59,7 @@ class OrderForm {
       fields.push(field);
     });
 
-    return fields;
+    this.products = fields;
   }
 
   public setProduct(productId: number, amount: number | null, variantId: number = null) {
@@ -158,16 +167,28 @@ class OrderForm {
 class OrderState {
   /** True, if order should be shown on page */
   public showing: boolean;
-  /** Selected order */
+  /** Selected order's form */
   public form: OrderForm | null;
   /** Selected order */
   public order: Order | null;
+
+  /** List of ordered products */
+  public orderedProducts: Product[] | null;
+
+  /** Latest show order response */
+  public showOrderResponse: ShowOrderResponse | null;
+  /** Latest ordered products response */
+  public orderedProductsResponse: IndexOrderResponse | null;
 
   constructor() {
     this.form = new OrderForm();
 
     this.showing = false;
     this.order = null;
+    this.orderedProducts = null;
+
+    this.showOrderResponse = null;
+    this.orderedProductsResponse = null;
   }
 }
 
@@ -179,6 +200,12 @@ const getters = {
   },
   order(state: OrderState) {
     return state.order;
+  },
+  orderId(state: OrderState) {
+    return state.order?.id;
+  },
+  banquetId(state: OrderState) {
+    return state.order?.banquetId ?? router.currentRoute.value.params['banquetId'];
   },
   products(state: OrderState) {
     return state.form.products ?? [];
@@ -201,8 +228,21 @@ const getters = {
       }) ?? null;
     };
   },
+  orderedProducts(state: OrderState) {
+    return state.orderedProducts ?? [];
+  },
+  orderedProduct(state: OrderState, getters) {
+    return (productId: number) => {
+      return getters.orderedProducts.find((p) => {
+        return p.id === productId;
+      }) ?? null;
+    };
+  },
   total(state: OrderState) {
     return state.form?.totals?.products ?? 0;
+  },
+  getShowOrderResponse(state: OrderState) {
+    return state.showOrderResponse;
   },
 };
 
@@ -222,13 +262,12 @@ const actions = {
   setProduct({ commit, dispatch }, {productId, amount, variantId}) {
     commit('setProduct', {productId, amount, variantId});
     dispatch('recalculate');
-
   },
   unsetProduct({ commit, dispatch }, {productId, variantId}) {
     commit('unsetProduct', {productId, variantId});
     dispatch('recalculate');
   },
-  recalculate({ commit, state, rootGetters }) {
+  recalculate({ state, getters, rootGetters}) {
     const totals: OrderTotals = state?.order?.totals
       ?? {
         spaces: null,
@@ -238,9 +277,12 @@ const actions = {
         all: null,
       };
 
+    totals.products = 0;
+
     state.form.products.forEach((p) => {
       if (p.amount) {
-        const product = rootGetters['preview/product'](p.productId);
+        const product = getters['orderedProduct'](p.productId)
+          ?? rootGetters['preview/product'](p.productId);
 
         if (product) {
           const variant = (product.variants ?? []).find((v) => {
@@ -254,7 +296,61 @@ const actions = {
 
     totals.all = totals.products + totals.spaces + totals.services + totals.tickets;
     state.form.totals = totals;
-  }
+  },
+  async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId}) {
+    const request: ShowOrderByBanquetIdRequest = {
+      id: banquetId,
+      include: 'products',
+    };
+
+    const response = await (new BanquetsApi())
+      .showOrderByBanquetId(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+
+        return error.response;
+      });
+
+    commit('setShowOrderResponse', response);
+    commit('setOrder', response.data);
+  },
+  async loadOrderForBanquetIfMissing({dispatch}, {banquetId}) {
+    if (state.showOrderResponse) {
+      return;
+    }
+
+    dispatch('loadOrderForBanquet', { banquetId })
+  },
+  async loadProductsForOrder({dispatch, commit, rootGetters}, {order}) {
+    const ids = (order?.products ?? []).map((p) => {
+      return p.productId;
+    });
+
+    const request: IndexProductsRequest = {
+      filterIds: ids.join(','),
+      pageSize: 200,
+    };
+
+    const response = await (new ProductsApi())
+      .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+
+        return error.response;
+      });
+
+    commit('setOrderedProductsResponse', response);
+    commit('setOrderedProducts', response.data);
+  },
+  async loadProductsForOrderIfMissing({ state, dispatch }, { order }) {
+    if (state.orderedProductsResponse) {
+      return;
+    }
+
+    dispatch('loadProductsForOrder', { order })
+  },
 };
 
 const mutations = {
@@ -264,6 +360,7 @@ const mutations = {
   },
   setOrder(state: OrderState, order) {
     state.order = order;
+    state.form = OrderForm.fromOrder(order);
   },
   setShowing(state: OrderState, showing) {
     state.showing = showing;
@@ -278,6 +375,15 @@ const mutations = {
   unsetProduct(state: OrderState, {productId, variantId}) {
     state.form.unsetProduct(productId, variantId);
     state.form.setChange(`products-${productId}-${variantId}`, {productId, amount: null, variantId});
+  },
+  setOrderedProducts(state: OrderState, products) {
+    state.orderedProducts = products;
+  },
+  setShowOrderResponse(state: OrderState, response) {
+    state.showOrderResponse = response;
+  },
+  setOrderedProductsResponse(state: OrderState, response) {
+    state.orderedProductsResponse = response;
   },
 };
 

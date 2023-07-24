@@ -88,14 +88,15 @@ export default defineComponent({
       theme: "theme/get",
     }),
     item() {
-      return this.$store.getters['preview/product'](this.current.productId);
+      return this.$store.getters['order/orderedProduct'](this.current.productId)
+        ?? this.$store.getters['preview/product'](this.current.productId);
     },
     variant() {
       if (!this.current || !this.current.variantId) {
         return null;
       }
 
-      return (this.item.variants ?? []).find((v) => {
+      return (this.item?.variants ?? []).find((v) => {
         return v.id === this.current.variantId;
       });
     },
@@ -113,7 +114,7 @@ export default defineComponent({
         return priceFormatted(this.variant.price);
       }
 
-      return priceFormatted(this.item.price);
+      return priceFormatted(this.item?.price);
     },
     weight() {
       if (this.variant) {
@@ -139,7 +140,7 @@ export default defineComponent({
       return this.item.weight + (unit ?? '');
     },
     variants() {
-      if (!this.item.variants || !this.item.variants.length) {
+      if (!this.item || !this.item.variants || !this.item.variants.length) {
         return null;
       }
 
