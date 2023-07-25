@@ -1,13 +1,13 @@
 <template>
   <div class="w-full list flex flex-wrap justify-center items-start gap-4 pb-2">
     <div class="w-full flex flex-col gap-3">
-<!--      <template v-for="(group, index) in this.groups" :key="index">-->
-<!--        <Product :fields="group"/>-->
-<!--      </template>-->
-
-      <template v-for="field in reversedFields" :key="`${field.productId}-${field.variantId}`">
-        <Product :fields="[field]"/>
+      <template v-for="group in this.groups" :key="group[0].productId">
+        <Product :fields="group" :product-id="group[0].productId"/>
       </template>
+
+<!--      <template v-for="field in reversedFields" :key="`${field.productId}-${field.variantId}`">-->
+<!--        <Product :fields="[field]" :product-id="field.productId"/>-->
+<!--      </template>-->
     </div>
   </div>
 </template>

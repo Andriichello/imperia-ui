@@ -1,6 +1,18 @@
-import { authHeaders } from "@/helpers";
-import { Customer, instanceOfLoginResponse, instanceOfLogoutResponse, instanceOfMeResponse, LoginRequest, LoginResponse, LogoutResponse, MeResponse, RegisterRequest, RegisterResponse, User } from "@/openapi";
-import { AuthApi, UsersApi } from "@/openapi"
+import {authHeaders} from "@/helpers";
+import {
+  AuthApi,
+  instanceOfLoginResponse,
+  instanceOfLogoutResponse,
+  instanceOfMeResponse,
+  LoginRequest,
+  LoginResponse,
+  LogoutResponse,
+  MeResponse,
+  RegisterRequest,
+  RegisterResponse,
+  User,
+  UsersApi
+} from "@/openapi";
 
 interface AuthState {
   ip: string | null,

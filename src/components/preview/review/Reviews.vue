@@ -3,21 +3,23 @@
 
     <div class="w-full flex flex-col justify-center items-center">
       <div class="flex flex-col justify-center items-center gap-2">
-        <span v-if="reviewsResponse && reviewsTotal === 0">На жаль, список порожній</span>
+        <span v-if="reviewsResponse && reviewsTotal === 0">
+          {{ $t("reviews.unfortunately_list_is_empty") }}
+        </span>
       </div>
     </div>
 
     <div class="w-full flex flex-col justify-center items-center" v-if="ip && myReviewsResponse && !myReviews?.length">
       <button class="btn btn-sm btn-outline mb-2"
               @click="showForm = !showForm">
-        Натисніть, щоб залишити відгук
+        {{ $t("reviews.click_to_leave_review") }}
       </button>
     </div>
 
     <form @submit.prevent class="w-full flex flex-col justify-center items-center mb-2" v-if="ip && showForm && !myReviews?.length">
       <div class="card w-full flex flex-col items-center bg-base-100 min-h-[100px] p-4 gap-2">
         <span class="text-md font-bold">
-          Оцініть даний заклад
+          {{ $t("reviews.review_restaurant") }}
         </span>
 
         <div class="w-full flex flex-col justify-center items-center gap-1 mb-2">
@@ -37,7 +39,7 @@
         </div>
 
         <div class="w-full flex flex-col justify-start gap-1">
-          <input v-model="reviewer" name="reviewer" type="text" placeholder="Ваше ім'я..." class="input input-bordered input-md w-full"
+          <input v-model="reviewer" name="reviewer" type="text" :placeholder="$t('reviews.your_name') + '...'" class="input input-bordered input-md w-full"
                  :class="{'border-error': errors && errors.reviewer}"/>
 
           <span class="label-text-alt text-error text-sm" v-for="error in (errors?.reviewer ?? [])" :key="error">
@@ -46,7 +48,7 @@
         </div>
 
         <div class="w-full flex flex-col justify-start gap-1">
-          <textarea v-model="description" name="description" class="w-full textarea textarea-bordered" placeholder="Ваш відгук..."
+          <textarea v-model="description" name="description" class="w-full textarea textarea-bordered" :placeholder="$t('reviews.your_review') + '...'"
                     :class="{'border-error': errors && errors.description}">
           </textarea>
 
@@ -55,9 +57,10 @@
           </span>
         </div>
 
-        <button class="self-end btn btn-md btn-outline" :class="{'loading': storingReview}"
+        <button class="self-end btn btn-md btn-outline"
                 @click="onSubmitReview">
-          Зберегти відгук
+          {{ $t("reviews.store_review") }}
+          <span class="loading loading-spinner" v-if="storingReview"></span>
         </button>
       </div>
     </form>
@@ -65,13 +68,13 @@
     <div class="w-full flex flex-col justify-start items-start text-md gap-3">
       <template v-for="r in allReviews" :key="r.id">
         <div class="w-full card bg-base-100 max-w-full flex flex-col justify-start items-start p-3 gap-1">
-          <div class="w-full flex flex justify-between items-center gap-1">
+          <div class="w-full flex justify-between items-center gap-1">
             <span class="grow font-bold">
               {{ r.reviewer }}
            </span>
 
             <span class="badge badge-sm badge-warning font-bold" v-if="myReviews.includes(r)">
-                Ваш відгук
+                {{ $t("reviews.your_review") }}
             </span>
           </div>
 
@@ -269,24 +272,24 @@ export default defineComponent({
       const errors = {};
 
       if (!ip) {
-        errors.ip = ['Не вдалося визначити вашу IP-адресу, тому ми не зможемо зберегти ваш відгук.'];
+        errors.ip = [this.$t('reviews.errors.ip.failed_to_resolve')];
       }
 
       if (!score) {
-        errors.score = ['Виберіть оцінку'];
+        errors.score = [this.$t('reviews.select_score')];
       }
 
       if (!reviewer) {
-        errors.reviewer = ['Введіть ваше ім\'я'];
+        errors.reviewer = [this.$t('reviews.errors.name.enter')];
       } else {
         if (reviewer.length < 2) {
-          errors.reviewer = ['І\'я має містити щонайменше 2 символи']
+          errors.reviewer = [this.$t('reviews.errors.name.min2')];
         }
       }
 
       if (description) {
         if (description.length < 5) {
-          errors.description = ['Відгук має містити щонайменше 5 символів']
+          errors.description = [this.$t('reviews.errors.description.min5')];
         }
       }
 

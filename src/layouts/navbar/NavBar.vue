@@ -10,7 +10,7 @@
             </BaseIcon>
           </button>
 
-          <Item v-if="isMenuPage || isReviewsPage"
+          <Item v-if="isMenuPage || isOrderPage || isReviewsPage"
                 :with-icon="false"
                 :restaurant="restaurant"/>
         </div>
@@ -149,7 +149,13 @@ export default defineComponent({
       } else if (this.isRestaurantPage) {
         this.$router.push(`/place`)
       } else if (this.isOrderPage) {
-        this.$router.push(`/place/${restaurantId}/menu`)
+        const menuId = this.$store.getters['preview/menu']?.id;
+
+        if (menuId) {
+          this.$router.push(`/place/${restaurantId}/menu/${menuId}`);
+        } else {
+          this.$router.push(`/place/${restaurantId}/menu`);
+        }
       }
 
 

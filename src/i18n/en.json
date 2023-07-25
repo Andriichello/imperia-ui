@@ -93,7 +93,37 @@
       "item_singular": "item",
       "item_plural": "items",
       "item_plural2": "items",
-      "item_plural5": "items"
+      "item_plural5": "items",
+      "loading": "Loading order",
+      "loading_products": "Loading products",
+      "new_order": "New order",
+      "store": "Store order"
     }
+  },
+  "reviews": {
+    "unfortunately_list_is_empty": "Unfortunately the list is empty",
+    "click_to_leave_review": "Click to leave review",
+    "review_restaurant": "Review restaurant",
+    "store_review": "Store review",
+    "your_review": "Your review",
+    "your_name": "Your name",
+    "select_score": "Select score",
+    "errors": {
+      "ip": {
+        "failed_to_resolve": "Failed to resolve your IP-address, so we won't be able to store the review."
+      },
+      "name": {
+        "enter": "Enter your name",
+        "min2": "Name must be at least 2 characters"
+      },
+      "description": {
+        "min5": "Review must be at least 5 characters"
+      }
+    }
+  },
+  "banquet": {
+    "title": "Title",
+    "description": "Description",
+    "store": "Store banquet"
   }
 }

@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { defineComponent, readonly } from "vue";
+import { defineComponent } from "vue";
 import BaseIcon from '@/components/icons/BaseIcon.vue';
 
 export default defineComponent({

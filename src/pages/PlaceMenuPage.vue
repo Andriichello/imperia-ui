@@ -8,8 +8,8 @@
 
     <PreviewMenu v-if="menu" :menu="menu" class="pb-4"/>
 
-    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm" v-if="productsCount">
-      <OrderSwitcher class="w-full max-w-4xl"
+    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
+      <OrderSwitcher class="w-full max-w-4xl" :show-arrow="true"
                      @switch-to-order="onSwitchToOrder"/>
     </div>
   </div>

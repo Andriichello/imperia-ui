@@ -99,7 +99,37 @@
       "item_singular": "позиція",
       "item_plural": "позиції",
       "item_plural2": "позиції",
-      "item_plural5": "позицій"
+      "item_plural5": "позицій",
+      "loading": "Завантаження замовлення",
+      "loading_products": "Завантаження страв",
+      "new_order": "Нове замовлення",
+      "store": "Зберегти замовлення"
     }
+  },
+  "reviews": {
+    "unfortunately_list_is_empty": "На жаль, список порожній",
+    "click_to_leave_review": "Натисніть, щоб залишити відгук",
+    "review_restaurant": "Оцініть заклад",
+    "store_review": "Зберегти відгук",
+    "your_review": "Ваш відгук",
+    "your_name": "Ваше ім'я",
+    "select_score": "Виберіть оцінку",
+    "errors": {
+      "ip": {
+        "failed_to_resolve": "Не вдалося визначити вашу IP-адресу, тому ми не зможемо зберегти ваш відгук."
+      },
+      "name": {
+        "enter": "Введіть ваше ім'я",
+        "min2": "Ім'я має містити щонайменше 2 символи"
+      },
+      "description": {
+        "min5": "Відгук має містити щонайменше 5 символів"
+      }
+    }
+  },
+  "banquet": {
+    "title": "Назва банкету",
+    "description": "Опис",
+    "store": "Зберегти банкет"
   }
 }

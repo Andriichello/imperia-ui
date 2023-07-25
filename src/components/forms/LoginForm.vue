@@ -42,7 +42,10 @@
           <router-link to="/register" class="link link-hover font-bold self-end mt-4 mb-4">{{ $t('login.register_link') }}</router-link>
 
           <div class="card-actions w-full">
-            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': loggingIn }">{{ $t('login.login_button') }}</button>
+            <button type="submit" class="btn btn-block btn-primary">
+              {{ $t('login.login_button') }}
+              <span class="loading loading-spinner" v-if="loggingIn"></span>
+            </button>
           </div>
         </form>
       </div>

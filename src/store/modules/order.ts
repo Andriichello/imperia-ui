@@ -79,7 +79,7 @@ class OrderForm {
       if (!this.products) {
         this.products = [];
       }
-      this.products.push(field);
+      this.products.unshift(field);
     }
   }
 
@@ -243,6 +243,15 @@ const getters = {
   },
   getShowOrderResponse(state: OrderState) {
     return state.showOrderResponse;
+  },
+  isLoadingOrder(state: OrderState) {
+    return !state.showOrderResponse;
+  },
+  getOrderedProductsResponse(state: OrderState) {
+    return state.orderedProductsResponse;
+  },
+  isLoadingOrderedProducts(state: OrderState) {
+    return !state.orderedProductsResponse;
   },
 };
 

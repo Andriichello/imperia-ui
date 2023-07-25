@@ -1,8 +1,33 @@
 <template>
   <div class="order-page w-full">
+    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
+               v-if="loadingRestaurant || isLoadingRestaurants"/>
+
+    <Preloader :title="$t('preview.order.loading')" class="p-2"
+               v-if="orderId && (loadingOrder || isLoadingOrder)"/>
+
     <div class="flex flex-col justify-center items start gap-3 w-full min-w-xl max-w-xl">
-      <OrderSwitcher class="w-full" v-if="nonEmptyFields.length"/>
-      <List :fields="nonEmptyFields" class="w-full"/>
+      <Banquet class="w-full"/>
+
+<!--      <div class="w-full flex justify-center items-center">-->
+<!--        <button class="w-full btn btn-md btn-primary">-->
+<!--          {{ $t('banquet.store') }}-->
+<!--        </button>-->
+<!--      </div>-->
+
+      <OrderSwitcher class="w-full z-10"
+                     :show-arrow="false"/>
+
+      <Preloader :title="$t('preview.order.loading_products')" class="p-2"
+                 v-if="orderId && (loadingProducts || isLoadingOrderedProducts)"/>
+
+      <List :fields="nonEmptyFields" class="w-full" v-if="nonEmptyFields.length"/>
+
+      <div class="w-full flex justify-center items-center" v-if="nonEmptyFields.length">
+        <button class="w-full btn btn-md btn-primary">
+          {{ $t('preview.order.store') }}
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -12,27 +37,60 @@ import {defineComponent} from "vue";
 import List from "@/components/order/list/List.vue";
 import {mapActions, mapGetters} from "vuex";
 import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
+import Preloader from "@/components/preview/loading/Preloader.vue";
+import Banquet from "@/components/order/Banquet.vue";
 
 export default defineComponent({
   name: "PreviewMenuPage",
   components: {
+    Banquet,
+    Preloader,
     OrderSwitcher,
     List,
+  },
+  data() {
+    return {
+      loadingOrder: false,
+      loadingProducts: false,
+      loadingRestaurant: false,
+    }
   },
   computed: {
     ...mapGetters({
       order: 'order/order',
       fields: 'order/products',
+      orderId: 'order/orderId',
+      showOrderResponse: 'order/getShowOrderResponse',
+      isLoadingOrder: 'order/isLoadingOrder',
+      orderedProductsResponse: 'order/getOrderedProductsResponse',
+      isLoadingOrderedProducts: 'order/isLoadingOrderedProducts',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
+      isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
+      showRestaurantResponse: 'restaurants/getShowResponse',
     }),
     nonEmptyFields() {
       return this.fields.filter((f) => {
         return f.amount;
-      })
+      });
     }
   },
   watch: {
+    showOrderResponse: {
+      handler() {
+        this.loadingOrder = false;
+      },
+    },
+    orderedProductsResponse: {
+      handler() {
+        this.loadingProducts = false;
+      },
+    },
+    showRestaurantResponse: {
+      handler() {
+        this.loadingRestaurant = false;
+      },
+    },
     order(newOrder) {
       if (!newOrder) {
         return;

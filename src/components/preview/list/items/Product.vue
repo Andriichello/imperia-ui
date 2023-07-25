@@ -55,11 +55,17 @@
 <!--            </button>-->
 
             <template v-for="v in variants" :key="v.id">
-              <button class="btn btn-sm rounded-none normal-case text-md px-2 py-2"
-                      :class="{'btn-neutral': theme !== 'dark' && ((variant && variant.id === v.id) || id === null), 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && ((variant && variant.id === v.id) || id === null)}"
-                      @click="onVariantSelect(v)">
-                {{ variantWeight(v) }}
-              </button>
+              <div class="indicator">
+                <span class="indicator-item indicator-center badge badge-md bg-[var(--yellow)] text-black font-semibold z-[1]"
+                      v-if="!isPreview && (tempVar = variantField(v))?.amount">
+                  {{ tempVar?.amount }}
+                </span>
+                <button class="btn btn-sm rounded-none normal-case text-md px-2 py-2"
+                        :class="{'btn-neutral': theme !== 'dark' && ((variant && variant.id === v.id) || id === null), 'btn-outline': !variant || variant.id !== v.id, 'btn-selected': theme === 'dark' && ((variant && variant.id === v.id) || id === null)}"
+                        @click="onVariantSelect(v)">
+                  {{ variantWeight(v) }}
+                </button>
+              </div>
             </template>
           </template>
 
@@ -103,16 +109,13 @@ export default defineComponent({
     ...mapGetters({
       theme: "theme/get",
       authorized: "auth/authorized",
+      fields: "order/products",
     }),
     isPreview() {
       return (this.$route.name ?? '').startsWith('preview');
     },
     field() {
       return this.$store.getters['order/product'](this.id, this.variant?.id);
-    },
-    product() {
-      return this.$store.getters['preview/product'](this.id)
-          ?? this.$store.getters['order/orderedProduct'](this.id);
     },
     id() {
       return this.item.id;
@@ -163,6 +166,7 @@ export default defineComponent({
       const variants = [...this.item.variants];
       const base = {
         id: null,
+        productId: this.item.id,
         price: this.item.price,
         weight: this.item.weight,
         weightUnit: this.item.weightUnit,
@@ -217,6 +221,15 @@ export default defineComponent({
 
       return v.weight + (unit ?? '');
     },
+    variantField(v) {
+      if (!v) {
+        return null;
+      }
+
+      return this.fields.find((f) => {
+        return f.productId === this.id && v.id === f.variantId;
+      });
+    },
     onVariantSelect(v) {
       const shouldRerender = this.variant !== v;
 
@@ -248,6 +261,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.indicator-center {
+  --tw-translate-y: -55%;
+}
 
 img {
   pointer-events: none

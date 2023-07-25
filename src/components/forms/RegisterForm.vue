@@ -82,7 +82,10 @@
           <router-link to="/login" class="link link-hover font-bold self-end mt-4 mb-4">{{ $t('register.login_link') }}</router-link>
 
           <div class="card-actions w-full">
-            <button type="submit" class="btn btn-block btn-primary" :class="{ 'loading': registering }">{{ $t('register.register_button') }}</button>
+            <button type="submit" class="btn btn-block btn-primary">
+              {{ $t('register.register_button') }}
+              <span class="loading loading-spinner" v-if="registering"></span>
+            </button>
           </div>
         </form>
       </div>
@@ -167,7 +170,7 @@ export default defineComponent({
 }
 
 .auth-card {
-  @apply card shadow-xl block bg-base-300;
+  @apply card shadow-xl block bg-base-100;
 }
 
 .auth-card-body {

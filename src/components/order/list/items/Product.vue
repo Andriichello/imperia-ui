@@ -37,8 +37,9 @@
 
             <template v-for="v in variants" :key="v.id">
               <div class="indicator">
-                <span class="indicator-item indicator-center badge badge-md bg-[var(--yellow)] text-black font-semibold">
-                  {{ variantField(v)?.amount }}
+                <span class="indicator-item indicator-center badge badge-md bg-[var(--yellow)] text-black font-semibold z-[1]"
+                  v-if="tempVar = variantField(v)">
+                  {{ tempVar?.amount }}
                 </span>
                 <button class="btn btn-sm rounded-none normal-case text-md px-2 py-2"
                         :class="{'btn-neutral': theme !== 'dark' && (((variant && variant.id === v.id) || (!variant && v.id === null)) || id === null), 'btn-outline': (!variant && !(!variant && v.id === null)) || (variant && variant.id !== v.id), 'btn-selected': theme === 'dark' && (((variant && variant.id === v.id) || (!variant && v.id === null)) || id === null)}"
@@ -69,6 +70,7 @@ import { defineComponent } from "vue";
 import {mapActions, mapGetters} from "vuex";
 import Counter from "@/components/preview/list/items/Counter.vue";
 import {priceFormatted} from "@/helpers";
+import {throttle} from "lodash";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -76,11 +78,13 @@ export default defineComponent({
   components: {Counter},
   props: {
     fields: Array,
+    productId: Number,
   },
   data() {
     return {
       current: this.fields[0],
       rerendered: true,
+      selectedVariantId: this.fields[0]?.variantId,
     };
   },
   computed: {
@@ -88,16 +92,16 @@ export default defineComponent({
       theme: "theme/get",
     }),
     item() {
-      return this.$store.getters['order/orderedProduct'](this.current.productId)
-        ?? this.$store.getters['preview/product'](this.current.productId);
+      return this.$store.getters['order/orderedProduct'](this.productId)
+        ?? this.$store.getters['preview/product'](this.productId);
     },
     variant() {
-      if (!this.current || !this.current.variantId) {
+      if (!this.selectedVariantId) {
         return null;
       }
 
       return (this.item?.variants ?? []).find((v) => {
-        return v.id === this.current.variantId;
+        return v.id === this.selectedVariantId;
       });
     },
     id() {
@@ -117,50 +121,36 @@ export default defineComponent({
       return priceFormatted(this.item?.price);
     },
     weight() {
-      if (this.variant) {
-        let unit = this.variant.weightUnit;
-
-        if (unit) {
-          unit = this.$t('unit.' + unit);
-        }
-
-        return this.variant.weight + (unit ?? '');
-      }
-
-      if (!this.item || !this.item.weight) {
-        return null;
-      }
-
-      let unit = this.item.weightUnit;
+      let unit = this.variant
+          ? this.variant?.weightUnit : this.item?.weightUnit;
+      let weight = this.variant
+          ? this.variant?.weight : this.item?.weight;
 
       if (unit) {
         unit = this.$t('unit.' + unit);
       }
 
-      return this.item.weight + (unit ?? '');
+      return weight && unit
+          ? (weight + (unit ?? '')) : null;
     },
     variants() {
       if (!this.item || !this.item.variants || !this.item.variants.length) {
         return null;
       }
 
-      let variants = [...this.item.variants];
-      const base = {
-        id: null,
-        price: this.item.price,
-        weight: this.item.weight,
-        weightUnit: this.item.weightUnit,
-      };
+      const variants = [
+        {
+          id: null,
+          productId: this.item.id,
+          type: 'product-variants',
+          price: this.item.price,
+          weight: this.item.weight,
+          weightUnit: this.item.weightUnit,
+        },
+        ...this.item.variants
+      ];
 
-      variants.push(base);
-
-      variants = variants.filter((v) => {
-        return this.fields.find((f) => {
-          return v.id === f.variantId;
-        })
-      });
-
-      const sorted = variants.sort((v1, v2) => {
+      return variants.sort((v1, v2) => {
         if (v1.price < v2.price) {
           return -1;
         }
@@ -169,14 +159,6 @@ export default defineComponent({
         }
         return 0;
       });
-
-
-      if (!this.variant) {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.variant = sorted[0];
-      }
-
-      return sorted;
     },
   },
   methods: {
@@ -209,9 +191,15 @@ export default defineComponent({
     onVariantSelect(v) {
       const shouldRerender = this.variant !== v;
 
+      this.selectedVariantId = v.id;
+
       this.current = this.fields.find((f) => {
+        if (v.variantId === undefined) {
+          return f.variantId === v?.id;
+        }
+
         return f.variantId === v?.id;
-      });
+      }) ?? null;
 
       if (shouldRerender) {
         this.freshRender();
@@ -239,6 +227,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+
+.indicator-center {
+  --tw-translate-y: -55%;
+}
 
 img {
   pointer-events: none
