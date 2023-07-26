@@ -1,7 +1,7 @@
 <template>
   <div class="date">
     <BaseIcon :width="48" :height="48" title="date" color="currentColor"
-              class="grow-0 rounded bg-base-200 p-2.5">
+              class="grow-0 rounded bg-base-200 p-2.5 hover:bg-base-300">
       <path fill-rule="evenodd" clip-rule="evenodd" d="M20.6663 9.9043H2.84229C2.42829 9.9043 2.09229 9.5683 2.09229 9.1543C2.09229 8.7403 2.42829 8.4043 2.84229 8.4043H20.6663C21.0803 8.4043 21.4163 8.7403 21.4163 9.1543C21.4163 9.5683 21.0803 9.9043 20.6663 9.9043Z"/>
       <path fill-rule="evenodd" clip-rule="evenodd" d="M16.2013 13.8096C15.7873 13.8096 15.4473 13.4736 15.4473 13.0596C15.4473 12.6456 15.7783 12.3096 16.1923 12.3096H16.2013C16.6153 12.3096 16.9513 12.6456 16.9513 13.0596C16.9513 13.4736 16.6153 13.8096 16.2013 13.8096Z"/>
       <path fill-rule="evenodd" clip-rule="evenodd" d="M11.7638 13.8096C11.3498 13.8096 11.0098 13.4736 11.0098 13.0596C11.0098 12.6456 11.3408 12.3096 11.7548 12.3096H11.7638C12.1778 12.3096 12.5138 12.6456 12.5138 13.0596C12.5138 13.4736 12.1778 13.8096 11.7638 13.8096Z"/>
@@ -16,7 +16,7 @@
 
     <div class="date-info">
       <span class="text-md font-semibold">{{ val }}</span>
-      <span class="text-sm font-light">{{ dayOfWeek }}</span>
+<!--      <span class="text-md font-semibold">{{ dayOfWeek }}</span>-->
     </div>
   </div>
 </template>
@@ -48,9 +48,20 @@ export default defineComponent({
       return dateFormatted(this.date);
     },
     dayOfWeek() {
-      const dayOfWeek = new Date(this.date).getDay();    
-      return isNaN(dayOfWeek) ? null : 
-      ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][dayOfWeek];
+      const daysOfWeek = [
+        this.$t('weekday.sunday'),
+        this.$t('weekday.monday'),
+        this.$t('weekday.tuesday'),
+        this.$t('weekday.wednesday'),
+        this.$t('weekday.thursday'),
+        this.$t('weekday.friday'),
+        this.$t('weekday.saturday'),
+      ];
+
+      const dayOfWeek = new Date(this.date).getDay();
+
+      return isNaN(dayOfWeek)
+          ? null : daysOfWeek[dayOfWeek];
     }
   }
 });
@@ -59,7 +70,7 @@ export default defineComponent({
 
 <style scoped>
 .date {
-  @apply flex flex-wrap gap-2 justify-center items-center;
+  @apply flex flex-wrap gap-2 justify-stretch items-center;
 }
 
 .date-info {

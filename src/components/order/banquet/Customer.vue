@@ -1,7 +1,7 @@
 <template>
   <div @click="onClick" :class="{ 'customer': true, 'cursor-pointer': !readonly }">
     <BaseIcon :width="48" :height="48" title="customer" color="currentColor"
-              class="grow-0 rounded bg-base-200 p-2.5">
+              class="grow-0 rounded bg-base-200 p-2.5 hover:bg-base-300">
       <mask id="mask0_60_12019" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="4" y="14" width="16" height="8">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M4 14.4961H19.8399V21.8701H4V14.4961Z" fill="white" />
       </mask>
