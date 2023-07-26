@@ -124,6 +124,21 @@
   "banquet": {
     "title": "Title",
     "description": "Description",
-    "store": "Store banquet"
+    "store": "Store banquet",
+    "state": {
+      "placeholder": "State"
+    },
+    "time": {
+      "placeholder": "Time",
+      "start": "Start",
+      "end": "End",
+      "select": "Select",
+      "cancel": "Cancel"
+    },
+    "calendar": {
+      "placeholder": "Date",
+      "select": "Select",
+      "cancel": "Cancel"
+    }
   }
 }
