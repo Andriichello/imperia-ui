@@ -41,6 +41,13 @@ const actions = {
 
     commit('setShowResponse', response);
   },
+  async loadBanquetIfMissing({ dispatch }, { id }) {
+    if (state.showResponse) {
+      return;
+    }
+
+    dispatch('loadBanquet', { id })
+  },
   async createBanquet({ commit, rootGetters }, request: StoreBanquetRequest) {
     const response = await (new BanquetsApi())
       .storeBanquet({ storeBanquetRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })

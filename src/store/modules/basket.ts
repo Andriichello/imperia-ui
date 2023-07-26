@@ -1,4 +1,13 @@
-import { Banquet, Customer, Restaurant, StoreBanquetRequest, StoreBanquetRequestStateEnum, UpdateBanquetRequest, User } from "@/openapi";
+import {
+  Banquet, BanquetsApi,
+  Customer,
+  Restaurant, ShowBanquetResponse,
+  StoreBanquetRequest,
+  StoreBanquetRequestStateEnum, StoreBanquetResponse,
+  UpdateBanquetRequest, UpdateBanquetResponse,
+  User
+} from "@/openapi";
+import {authHeaders, jsonHeaders} from "@/helpers";
 
 class BanquetForm {
   /** Values that were set after constructor */
@@ -110,18 +119,27 @@ class BanquetForm {
 class BasketState {
   /** True, if basket should be shown in Marketplace */
   public showing: boolean;
-  /** Picker that should be shown in Basket */
-  public picker: string | null;
   /** Banquet form in Marketplace */
   public form: BanquetForm | null;
   /** Selected banquet in Marketplace */
   public banquet: Banquet | null;
 
+  /** Last show banquet response */
+  public showResponse: ShowBanquetResponse | Response | null;
+  /** Last create banquet response */
+  public createResponse: StoreBanquetResponse | Response | null;
+  /** Last update banquet response */
+  public updateResponse: UpdateBanquetResponse | Response | null;
+
   constructor() {
     this.form = new BanquetForm();
-    this.picker = null;
+
     this.banquet = null;
     this.showing = false;
+
+    this.showResponse = null;
+    this.createResponse = null;
+    this.updateResponse = null;
   }
 }
 
@@ -136,9 +154,6 @@ const getters = {
   },
   showing(state: BasketState) {
     return state.showing;
-  },
-  picker(state: BasketState) {
-    return state.picker;
   },
   title(state: BasketState) {
     return state.form.title;
@@ -175,7 +190,16 @@ const getters = {
   },
   hasRealChanges(state: BasketState) {
     return state.form.hasRealChanges();
-  }
+  },
+  getShowResponse(state: BasketState) {
+    return state.showResponse;
+  },
+  getCreateResponse(state: BasketState) {
+    return state.createResponse;
+  },
+  getUpdateResponse(state: BasketState) {
+    return state.updateResponse;
+  },
 };
 
 const actions = {
@@ -200,9 +224,6 @@ const actions = {
   },
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
-  },
-  setPicker({ commit }, picker) {
-    commit('setPicker', picker);
   },
   setState({ commit }, value: string | null) {
     commit('setState', value);
@@ -231,11 +252,43 @@ const actions = {
   setEndAt({ commit }, value: Date | string | null) {
     commit('setEndAt', value);
   },
+  async loadBanquet({ commit, rootGetters }, { id }) {
+    const response = await (new BanquetsApi())
+      .showBanquet({ id, include: 'creator,customer,comments' }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setShowResponse', response);
+    commit('setBanquet', response.data);
+  },
+  async loadBanquetIfMissing({ dispatch }, { id }) {
+    if (state.showResponse) {
+      return;
+    }
+
+    dispatch('loadBanquet', { id })
+  },
+
+  async createBanquet({ commit, rootGetters }, request: StoreBanquetRequest) {
+    const response = await (new BanquetsApi())
+      .storeBanquet({ storeBanquetRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setCreateResponse', response);
+  },
+  async updateBanquet({ commit, rootGetters }, { id, request }) {
+    const response = await (new BanquetsApi())
+      .updateBanquet({ id, updateBanquetRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setUpdateResponse', response);
+  },
 };
 
 const mutations = {
   clear(state: BasketState) {
-    state.picker = null;
     state.banquet = null;
     state.form = new BanquetForm();
   },
@@ -244,12 +297,10 @@ const mutations = {
   },
   setBanquet(state: BasketState, banquet: Banquet) {
     state.banquet = banquet;
+    state.form = BanquetForm.fromBanquet(banquet);
   },
   setShowing(state: BasketState, showing) {
     state.showing = showing;
-  },
-  setPicker(state: BasketState, picker) {
-    state.picker = picker;
   },
   setState(state: BasketState, value) {
     state.form.state = value;
@@ -304,6 +355,15 @@ const mutations = {
       state.form.endAt = value;
       state.form.setChange('endAt', value);
     }
+  },
+  setShowResponse(state: BasketState, response) {
+    state.showResponse = response;
+  },
+  setCreateResponse(state: BasketState, response) {
+    state.createResponse = response;
+  },
+  setUpdateResponse(state: BasketState, response) {
+    state.updateResponse = response;
   },
 };
 

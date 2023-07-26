@@ -52,7 +52,7 @@ class OrderForm {
     products.forEach((p) => {
       const field: StoreOrderRequestProductField = {
         productId: p.productId,
-        variantId: p.variantId,
+        variantId: p.variantId ?? null,
         amount: p.amount,
       };
 
@@ -133,10 +133,11 @@ class OrderForm {
 
           const change = this.getChange(name);
 
-          if (field.amount !== change.amount) {
+          if (field?.amount !== change?.amount) {
             result = true;
-            return;
           }
+
+          return;
         }
 
         if (this.order[name] !== this.getChange(name)) {
@@ -240,6 +241,12 @@ const getters = {
   },
   total(state: OrderState) {
     return state.form?.totals?.products ?? 0;
+  },
+  hasChanges(state: OrderState) {
+    return state.form.hasChanges();
+  },
+  hasRealChanges(state: OrderState) {
+    return state.form.hasRealChanges();
   },
   getShowOrderResponse(state: OrderState) {
     return state.showOrderResponse;
@@ -378,12 +385,16 @@ const mutations = {
     state.form.products = products;
   },
   setProduct(state: OrderState, {productId, amount, variantId}) {
+    variantId = variantId ?? null;
+
     state.form.setProduct(productId, amount, variantId);
     state.form.setChange(`products-${productId}-${variantId}`, {productId, amount, variantId});
   },
   unsetProduct(state: OrderState, {productId, variantId}) {
+    variantId = variantId ?? null;
+
     state.form.unsetProduct(productId, variantId);
-    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount: null, variantId});
+    state.form.setChange(`products-${productId}-${variantId ?? null}`, {productId, amount: null, variantId});
   },
   setOrderedProducts(state: OrderState, products) {
     state.orderedProducts = products;
