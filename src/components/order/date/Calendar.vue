@@ -8,7 +8,7 @@
       </Cell>
 
       <Cell style="grid-column: 2/5" class="w-full" :noAnimation="true">
-        <span>{{ sub(months[month], 0, 3) }}</span>
+        <span>{{ months[month] }}</span>
       </Cell>
 
       <Cell style="grid-column: 5/7" class="w-full" :noAnimation="true"> 
@@ -82,14 +82,27 @@ export default defineComponent({
       year: this.selectedDate ? this.selectedDate.getFullYear() : today.getFullYear(),
       month: this.selectedDate ? this.selectedDate.getMonth() : today.getMonth(),
       weekdays: [
-        "Monday", "Tuesday", "Wednesday",
-        "Thursday", "Friday", "Saturday", "Sunday",
+        this.$t('weekday.monday'),
+        this.$t('weekday.tuesday'),
+        this.$t('weekday.wednesday'),
+        this.$t('weekday.thursday'),
+        this.$t('weekday.friday'),
+        this.$t('weekday.saturday'),
+        this.$t('weekday.sunday'),
       ],
       months: [
-        "January", "February", "March",
-        "April", "May", "June", "July",
-        "August", "September", "October",
-        "November", "December"
+        this.$t('month.january'),
+        this.$t('month.february'),
+        this.$t('month.march'),
+        this.$t('month.april'),
+        this.$t('month.may'),
+        this.$t('month.june'),
+        this.$t('month.july'),
+        this.$t('month.august'),
+        this.$t('month.september'),
+        this.$t('month.october'),
+        this.$t('month.november'),
+        this.$t('month.december'),
       ],
     }
   },
