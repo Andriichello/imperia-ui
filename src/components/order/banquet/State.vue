@@ -43,7 +43,7 @@ export default defineComponent({
 
 <style scoped>
 .state {
-  @apply flex flex-wrap gap-2 justify-stretch items-center;
+  @apply flex flex-wrap gap-2 justify-start items-center;
 }
 
 .state-info {

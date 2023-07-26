@@ -70,7 +70,7 @@ export default defineComponent({
 
 <style scoped>
 .customer {
-  @apply flex flex-wrap gap-2 justify-center items-center;
+  @apply flex flex-wrap gap-2 justify-start items-center;
 }
 
 .customer-info {

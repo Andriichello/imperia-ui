@@ -51,6 +51,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/place/:restaurantId(\\d+)?/menu/:menuId(\\d+)?',
+    name: 'place-menu',
+    component: PlaceMenuPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: '/place/:restaurantId(\\d+)?/order/:banquetId(\\d+)?',
     name: 'place-order',
     component: PlaceOrderPage,
@@ -59,8 +67,8 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/place/:restaurantId(\\d+)?/menu/:menuId(\\d+)?',
-    name: 'place-menu',
+    path: '/place/:restaurantId(\\d+)?/order/:banquetId(\\d+)/menu/:menuId(\\d+)?',
+    name: 'place-order-menu',
     component: PlaceMenuPage,
     meta: {
       requiresAuth: true,

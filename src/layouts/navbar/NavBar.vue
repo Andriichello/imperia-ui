@@ -144,18 +144,27 @@ export default defineComponent({
     onBack() {
       const restaurantId = this.$route.params['restaurantId'];
 
-      if (this.isMenuPage || this.isReviewsPage) {
+      if (this.isReviewsPage || this.isMenuPage) {
         this.$router.push(`/place/${restaurantId}`)
       } else if (this.isRestaurantPage) {
-        this.$router.push(`/place`)
+        this.$router.push(`/place`);
       } else if (this.isOrderPage) {
         const menuId = this.$store.getters['preview/menu']?.id;
+        const banquetId = this.$route.params['banquetId'];
+
+        let path = `/place/${restaurantId}`;
+
+        if (banquetId) {
+          path += `/order/${banquetId}`;
+        }
+
+        path += `/menu`;
 
         if (menuId) {
-          this.$router.push(`/place/${restaurantId}/menu/${menuId}`);
-        } else {
-          this.$router.push(`/place/${restaurantId}/menu`);
+          path += `/${menuId}`;
         }
+
+        this.$router.push(path);
       }
 
 

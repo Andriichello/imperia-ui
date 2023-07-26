@@ -67,6 +67,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       menu: 'preview/selected',
+      order: 'order/order',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
       showRestaurantResponse: 'restaurants/getShowResponse',
@@ -85,6 +86,7 @@ export default defineComponent({
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadOrderForBanquetIfMissing: "order/loadOrderForBanquetIfMissing",
     }),
     onSwitchToOrder() {
       const restaurantId = +this.$route.params['restaurantId'];
@@ -104,16 +106,25 @@ export default defineComponent({
     }
 
     const menuId = +this.$route.params['menuId'];
+    const banquetId = this.$route.params['banquetId'];
+
     if (menuId < 1) {
+
+      let path = `/place/${restaurantId}`;
+
+      if (banquetId) {
+        path += `/order/${banquetId}`;
+      }
+
       if (this.menu) {
-        this.$router.replace(`/place/${restaurantId}/menu/${this.menu.id}`);
+        this.$router.replace(`${path}/menu/${this.menu.id}`);
       } else if (this.menus && this.menus.length > 0) {
-        this.$router.replace(`/place/${restaurantId}/menu/${this.menus[0].id}`);
+        this.$router.replace(`${path}/menu/${this.menus[0].id}`);
       } else {
         await this.loadMenusAndSelectFirst();
 
         if (this.menu) {
-          this.$router.replace(`/place/${restaurantId}/menu/${this.menu.id}`);
+          this.$router.replace(`${path}/menu/${this.menu.id}`);
         }
       }
 
@@ -143,6 +154,14 @@ export default defineComponent({
         this.loadingRestaurant = true;
         await this.loadAndSelectRestaurant({ id: restaurantId });
       }
+    }
+
+    if (banquetId) {
+      this.loadOrderForBanquetIfMissing({banquetId});
+    }
+
+    if (this.order) {
+      this.loadProductsForOrderIfMissing({order: this.order});
     }
   },
 });
