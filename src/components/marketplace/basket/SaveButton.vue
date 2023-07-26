@@ -2,7 +2,7 @@
   <div class="save-button-container">
     <div class="save-button-body">
       <div class="save-button-btn">
-        <button class="btn btn-block btn-primary" :class="{ 'loading': loading }" @click="onSaveBasket">{{ title }}</button>
+        <button class="btn btn-block btn-ghost" :class="{ 'loading': loading }" @click="onSaveBasket">{{ title }}</button>
       </div>
     </div>
   </div>

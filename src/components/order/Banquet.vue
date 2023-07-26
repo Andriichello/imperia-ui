@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center w-full gap-2">
       <div class="form-control">
         <input class="input input-sm input-ghost w-full text-xl font-semibold px-1"
-               name="title" type="text" required value="Banquet #1"
+               name="title" type="text" required :value="banquet?.title"
                :placeholder="$t('banquet.title') + '...'"/>
         <!--      <label class="label flex-col items-start" v-if="emailErrors">-->
         <!--              <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">-->
@@ -11,8 +11,6 @@
         <!--              </span>-->
         <!--      </label>-->
       </div>
-
-      <State class="h-full cursor-pointer"/>
     </div>
 
 <!--    <div class="form-control w-full">-->
@@ -26,17 +24,23 @@
 <!--      &lt;!&ndash;      </label>&ndash;&gt;-->
 <!--    </div>-->
 
-    <div class="flex flex-wrap justify-between items-end w-full gap-1 mt-2">
-      <div class="flex flex-col justify-start items-start gap-1">
-        <Date class="cursor-pointer"
-          :date="new Date()"/>
-        <Time class="cursor-pointer"
-              :start-at="new Date()" :end-at="new Date()"/>
+    <div class="flex flex-wrap justify-start items-center w-full gap-1 mt-2">
+      <div class="flex flex-col justify-start items-start gap-1 grow">
+        <Date class="cursor-pointer w-full"
+              :date="banquet?.date"
+              @click="onDateClick"/>
+
+        <Time class="cursor-pointer w-full"
+              :start-at="banquet?.startAt" :end-at="banquet?.endAt"
+              @click="onTimeClick"/>
       </div>
 
-      <div class="flex flex-col justify-start items-end gap-2">
-        <Customer class="cursor-pointer"
-                  :customer="{id: 1, name: 'John', surname: 'Doe', phone: '+380501234567'}"/>
+      <div class="flex flex-col justify-start items-start gap-1">
+        <State class="cursor-pointer w-full"
+               :state="banquet?.state"/>
+        <Customer class="cursor-pointer w-full"
+                  :customer="banquet?.customer"
+                  @click="onCustomerClick"/>
       </div>
     </div>
   </div>
@@ -52,7 +56,30 @@ import Time from "@/components/order/banquet/Time.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Banquet',
-  components: {Time, Date, Customer, State},
+  emits: ["date-click", "time-click", "customer-click"],
+  components: {
+    Time,
+    Date,
+    Customer,
+    State
+  },
+  props: {
+    banquet: {
+      type: Object,
+      default: null
+    },
+  },
+  methods: {
+    onDateClick() {
+      this.$emit('date-click');
+    },
+    onTimeClick() {
+      this.$emit('time-click');
+    },
+    onCustomerClick() {
+      this.$emit('customer-click');
+    },
+  },
 })
 </script>
 

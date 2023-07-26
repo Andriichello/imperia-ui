@@ -31,7 +31,17 @@
       </template>
     </div>
 
-    <SaveButton :loading="false" @save-clicked="onSaveClick" v-if="!selectOnClick && changed"/>
+    <div class="w-full flex justify-center items-center gap-1 mt-2">
+      <button class="btn btn-sm  grow"
+              @click="onCancelClick">
+        Cancel
+      </button>
+      <button class="btn btn-sm btn-primary grow"
+              v-if="!selectOnClick && changed"
+              @click="onSaveClick">
+        Select
+      </button>
+    </div>
   </div>
 </template>
 
@@ -41,19 +51,17 @@ import Day from "./items/Day.vue";
 import Weekday from "./items/Weekday.vue";
 import Cell from "./items/Cell.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
-import SaveButton from "@/components/marketplace/basket/SaveButton.vue";
 import {sameDay} from "@/helpers";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Calendar",
-  emits: ["date-select"],
+  emits: ["date-select", "on-select", "on-cancel"],
   components: {
     Day,
     Weekday,
     Cell,
     BaseIcon,
-    SaveButton,
   },
   props: {
     selectedDate: {
@@ -192,7 +200,10 @@ export default defineComponent({
       }
     },
     onSaveClick() {
-      this.$emit('date-select', { date: this.selected });      
+      this.$emit('on-select', { date: this.selected });
+    },
+    onCancelClick() {
+      this.$emit('on-cancel');
     },
   },
 });
