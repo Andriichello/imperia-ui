@@ -46,7 +46,7 @@ export default defineComponent({
       const noName = !this.customer || !this.customer.name;
       const noSurname = !this.customer || !this.customer.surname;
 
-      return noName && noSurname ? 'Customer'
+      return noName && noSurname ? this.$t('banquet.customer.placeholder')
           : this.customer.name + ' ' + this.customer.surname;
     },
     phone() {

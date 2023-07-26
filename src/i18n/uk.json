@@ -145,15 +145,24 @@
     "title": "Назва банкету",
     "description": "Опис",
     "store": "Зберегти банкет",
+    "loading": "Завантаження банкета",
+    "state": {
+      "placeholder": "Статус"
+    },
     "time": {
+      "placeholder": "Час",
       "start": "Початок",
       "end": "Кінець",
       "select": "Обрати",
       "cancel": "Закрити"
     },
     "calendar": {
+      "placeholder": "Дата",
       "select": "Обрати",
       "cancel": "Закрити"
+    },
+    "customer": {
+      "placeholder": "Клієнт"
     }
   }
 }

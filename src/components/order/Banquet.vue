@@ -1,9 +1,9 @@
 <template>
   <div class="banquet">
     <div class="flex justify-between items-center w-full gap-2">
-      <div class="form-control">
+      <div class="form-control w-full">
         <input class="input input-sm input-ghost w-full text-xl font-semibold px-1"
-               name="title" type="text" required :value="banquet?.title"
+               name="title" type="text" required v-model="title"
                :placeholder="$t('banquet.title') + '...'"/>
         <!--      <label class="label flex-col items-start" v-if="emailErrors">-->
         <!--              <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">-->
@@ -11,6 +11,8 @@
         <!--              </span>-->
         <!--      </label>-->
       </div>
+
+
     </div>
 
 <!--    <div class="form-control w-full">-->
@@ -56,7 +58,7 @@ import Time from "@/components/order/banquet/Time.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Banquet',
-  emits: ["date-click", "time-click", "customer-click"],
+  emits: ["date-click", "time-click", "customer-click", "title-update"],
   components: {
     Time,
     Date,
@@ -67,6 +69,16 @@ export default defineComponent({
     banquet: {
       type: Object,
       default: null
+    },
+  },
+  computed: {
+    title: {
+      get() {
+        return this.banquet?.title;
+      },
+      set(value) {
+        return this.$emit('title-update', {title: value});
+      },
     },
   },
   methods: {

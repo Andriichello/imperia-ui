@@ -8,7 +8,7 @@
     </div>
 
     <div class="time-info">
-      <span class="time-val font-semibold">{{ val(startAt) ?? 'Start' }}</span>
+      <span class="time-val font-semibold">{{ val(startAt) ?? $t('banquet.time.start') }}</span>
 <!--      <span class="time-label font-light" v-if="val(startAt)">Start</span>-->
     </div>
 
@@ -17,7 +17,7 @@
     </div>
 
     <div class="time-info">
-      <span class="time-val font-semibold">{{ val(endAt) ?? 'End' }}</span>
+      <span class="time-val font-semibold">{{ val(endAt) ?? $t('banquet.time.end') }}</span>
 <!--      <span class="time-label font-light" v-if="val(endAt)">End</span>-->
     </div>
   </div>

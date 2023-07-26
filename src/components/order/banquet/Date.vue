@@ -42,7 +42,7 @@ export default defineComponent({
   computed: {
     val() {
       if (!this.date) {
-        return 'Date';
+        return this.$t('banquet.calendar.placeholder');
       }
 
       return dateFormatted(this.date);

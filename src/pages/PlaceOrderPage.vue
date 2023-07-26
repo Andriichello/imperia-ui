@@ -7,15 +7,21 @@
                v-if="orderId && (loadingOrder || isLoadingOrder)"/>
 
     <div class="flex flex-col justify-center items-start gap-3 w-full min-w-xl max-w-xl">
+      <Preloader :title="$t('banquet.loading')" class="p-2"
+                 v-if="orderId && (isLoadingBanquet)"/>
+
       <Banquet class="w-full"
                :banquet="banquetForm"
+               @title-update="onBanquetTitleUpdate"
                @date-click="onDateClick"
                @time-click="onTimeClick"
                @customer-click="onCustomerClick"/>
 
-      <div class="w-full flex justify-center items-center" v-if="isBanquetChanged">
-        <button class="w-full btn btn-md btn-primary">
+      <div class="w-full flex justify-center items-center"
+           v-if="isBanquetChanged && validateBanquetForm()">
+        <button class="w-full btn btn-md btn-primary" @click="onStoreBanquet">
           {{ $t('banquet.store') }}
+          <span class="loading loading-spinner" v-if="isCreatingBanquet || isUpdatingBanquet"></span>
         </button>
       </div>
 
@@ -75,6 +81,12 @@ import Preloader from "@/components/preview/loading/Preloader.vue";
 import Banquet from "@/components/order/Banquet.vue";
 import Calendar from "@/components/order/date/Calendar.vue";
 import TimePicker from "@/components/order/time/TimePicker.vue";
+import router from "@/router";
+import {
+  instanceOfShowBanquetResponse,
+  instanceOfStoreBanquetResponse,
+  instanceOfUpdateBanquetResponse
+} from "@/openapi";
 
 export default defineComponent({
   name: "PreviewOrderPage",
@@ -92,6 +104,9 @@ export default defineComponent({
       loadingOrder: false,
       loadingProducts: false,
       loadingRestaurant: false,
+      isLoadingBanquet: false,
+      isCreatingBanquet: false,
+      isUpdatingBanquet: false,
     }
   },
   computed: {
@@ -99,6 +114,9 @@ export default defineComponent({
       banquet: 'basket/banquet',
       banquetForm: 'basket/form',
       isBanquetChanged: 'basket/hasRealChanges',
+      showBanquetResponse: 'basket/getShowResponse',
+      createBanquetResponse: 'basket/getCreateResponse',
+      updateBanquetResponse: 'basket/getUpdateResponse',
       order: 'order/order',
       isOrderChanged: 'order/hasRealChanges',
       fields: 'order/products',
@@ -119,6 +137,28 @@ export default defineComponent({
     }
   },
   watch: {
+    showBanquetResponse() {
+      this.isLoadingBanquet = false;
+    },
+    createBanquetResponse(newValue) {
+      this.isCreatingBanquet = false;
+
+      if (instanceOfStoreBanquetResponse(newValue)) {
+        const id = newValue.data.id;
+        this.loadBanquet({ id });
+
+        const path = this.$route.path;
+        this.$router.replace(`${path}/${id}`);
+      }
+    },
+    updateBanquetResponse(newValue) {
+      this.isUpdatingBanquet = false;
+
+      if (instanceOfUpdateBanquetResponse(newValue)) {
+        const id = newValue.data.id;
+        this.loadBanquet({ id });
+      }
+    },
     showOrderResponse: {
       handler() {
         this.loadingOrder = false;
@@ -148,9 +188,12 @@ export default defineComponent({
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
       loadBanquet: 'basket/loadBanquet',
       loadBanquetIfMissing: 'basket/loadBanquetIfMissing',
+      createBanquet: 'basket/createBanquet',
+      updateBanquet: 'basket/updateBanquet',
       loadOrderForBanquet: 'order/loadOrderForBanquet',
       loadOrderForBanquetIfMissing: 'order/loadOrderForBanquetIfMissing',
       loadProductsForOrderIfMissing: 'order/loadProductsForOrderIfMissing',
+      setTitle: 'basket/setTitle',
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
@@ -164,8 +207,10 @@ export default defineComponent({
     onCustomerClick() {
       this.modal = 'customer';
     },
+    onBanquetTitleUpdate({title}) {
+      this.setTitle(title);
+    },
     onSelectDate({date}) {
-      console.log({date});
       this.setDate(date);
 
       this.modal = null;
@@ -185,8 +230,27 @@ export default defineComponent({
       this.setEndAt(endAt);
 
       this.modal = null;
+    },
+    validateBanquetForm() {
+      return this.banquetForm?.title
+          && this.banquetForm?.state
+          && this.banquetForm?.customer
+          && this.banquetForm?.date
+          && this.banquetForm?.startAt
+          && this.banquetForm?.endAt;
+    },
+    onStoreBanquet() {
+      const banquetId = +this.$route.params['banquetId'];
 
-      console.log({startAt, endAt});
+      if (banquetId) {
+        this.isUpdatingBanquet = true;
+        this.updateBanquet({ id: banquetId, request: this.banquetForm.asUpdate() });
+      } else {
+        console.log('Creating banquet...');
+
+        this.isCreatingBanquet = true;
+        this.createBanquet(this.banquetForm.asCreate());
+      }
     },
   },
   mounted() {
