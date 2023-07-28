@@ -68,7 +68,14 @@ export default defineComponent({
       this.selectMenu(menu);
 
       const restaurantId = this.$route.params['restaurantId'];
-      this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
+
+      if (this.$route.path.includes('/preview/')) {
+        this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
+      }
+
+      if (this.$route.path.includes('/place/')) {
+        this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+      }
 
       window.scrollTo(0, 0);
     },
