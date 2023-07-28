@@ -215,7 +215,7 @@ const actions = {
     dispatch('selectMenu', response.data);
   },
   async loadProducts({commit, dispatch, rootGetters}, menu: Menu | null) {
-    const request: IndexProductsRequest = {pageSize: 200};
+    const request: IndexProductsRequest = {pageSize: 300};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (menu) {
@@ -245,7 +245,7 @@ const actions = {
     }
   },
   async loadMoreProducts({state, dispatch, commit, rootGetters}, menu: Menu | null) {
-    const request: IndexProductsRequest = {pageSize: 200};
+    const request: IndexProductsRequest = {pageSize: 300};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
     if (menu) {
