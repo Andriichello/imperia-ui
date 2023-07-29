@@ -43,30 +43,43 @@
     <div class="fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-neutral/80 backdrop-blur-sm z-50"
          v-if="modal">
 
-      <div class="grow w-full" @click="modal = null"></div>
+      <div class="grow w-full min-h-[8px]" @click="modal = null"></div>
 
-      <div class="flex justify-center items-center w-full">
-        <div class="grow h-full" @click="modal = null"></div>
+      <div class="w-full flex justify-center items-center">
+        <div class="grow h-full min-w-[8px]" @click="modal = null"></div>
 
-        <div class="flex flex-col justify-center items-center card bg-base-100 p-2 max-w-sm gap-1">
-          <div>
-            <Calendar v-if="modal === 'date'"
-                      :selected-date="banquetForm?.date"
-                      @on-select="onSelectDate"
-                      @on-cancel="modal = null"/>
-            <TimePicker v-if="modal === 'time'"
-                        class="min-w-[220px]"
-                        :start-at="banquetForm?.startAt"
-                        :end-at="banquetForm?.endAt"
-                        @on-select="onSelectTime"
-                        @on-cancel="modal = null"/>
-          </div>
+        <div class="w-full max-w-md flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+          v-if="modal === 'date'">
+          <Calendar :selected-date="banquetForm?.date"
+                    @on-select="onSelectDate"
+                    @on-cancel="modal = null"/>
         </div>
 
-        <div class="grow h-full" @click="modal = null"></div>
+        <div class="min-w-[220px] max-w-xl flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+             v-if="modal === 'time'">
+          <TimePicker v-if="modal === 'time'"
+                      class="w-[220px]"
+                      :start-at="banquetForm?.startAt"
+                      :end-at="banquetForm?.endAt"
+                      @on-select="onSelectTime"
+                      @on-cancel="modal = null"/>
+        </div>
+
+        <div class="flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+          v-if="modal === 'customer'">
+          <CustomerPicker v-if="modal === 'customer'"
+                          :style="{'width': maxModalWidth + 'px', 'height': maxModalHeight + 'px'}"
+                          :selected="banquetForm?.customer"
+                          :search="customerFilters?.search"
+                          @on-select="onSelectCustomer"
+                          @on-cancel="modal = null"/>
+        </div>
+
+
+        <div class="grow h-full min-w-[8px]" @click="modal = null"></div>
       </div>
 
-      <div class="grow w-full" @click="modal = null"></div>
+      <div class="grow w-full min-h-[8px]" @click="modal = null"></div>
     </div>
 
   </div>
@@ -78,19 +91,19 @@ import List from "@/components/order/list/List.vue";
 import {mapActions, mapGetters} from "vuex";
 import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
-import Banquet from "@/components/order/Banquet.vue";
+import Banquet from "@/components/order/banquet/Banquet.vue";
 import Calendar from "@/components/order/date/Calendar.vue";
 import TimePicker from "@/components/order/time/TimePicker.vue";
-import router from "@/router";
 import {
-  instanceOfShowBanquetResponse,
   instanceOfStoreBanquetResponse,
   instanceOfUpdateBanquetResponse
 } from "@/openapi";
+import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 
 export default defineComponent({
   name: "PreviewOrderPage",
   components: {
+    CustomerPicker,
     TimePicker,
     Calendar,
     Banquet,
@@ -99,6 +112,18 @@ export default defineComponent({
     List,
   },
   data() {
+    let maxModalWidth = Math.min(window.innerWidth / 4 * 3, 600);
+
+    if (window.innerWidth < 700) {
+      maxModalWidth = window.innerWidth - 32;
+    }
+
+    let maxModalHeight = Math.min(window.innerHeight / 3 * 2, 800);
+
+    if (window.innerHeight < 700) {
+      maxModalHeight = window.innerHeight - 32;
+    }
+
     return {
       modal: null,
       loadingOrder: false,
@@ -107,7 +132,9 @@ export default defineComponent({
       isLoadingBanquet: false,
       isCreatingBanquet: false,
       isUpdatingBanquet: false,
-    }
+      maxModalWidth,
+      maxModalHeight,
+    };
   },
   computed: {
     ...mapGetters({
@@ -129,6 +156,7 @@ export default defineComponent({
       restaurants: 'restaurants/restaurants',
       isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
       showRestaurantResponse: 'restaurants/getShowResponse',
+      customerFilters: 'customers/filters',
     }),
     nonEmptyFields() {
       return this.fields.filter((f) => {
@@ -197,7 +225,24 @@ export default defineComponent({
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
+      setCustomer: 'basket/setCustomer',
     }),
+    onResize() {
+      let maxModalWidth = Math.min(window.innerWidth / 4 * 3, 600);
+
+      if (window.innerWidth < 700) {
+        maxModalWidth = window.innerWidth - 32;
+      }
+
+      let maxModalHeight = Math.min(window.innerHeight / 4 * 3, 800);
+
+      if (window.innerHeight < 700) {
+        maxModalHeight = window.innerHeight - 32;
+      }
+
+      this.maxModalWidth = maxModalWidth;
+      this.maxModalHeight = maxModalHeight;
+    },
     onDateClick() {
       this.modal = 'date';
     },
@@ -231,6 +276,11 @@ export default defineComponent({
 
       this.modal = null;
     },
+    onSelectCustomer({customer}) {
+      this.setCustomer(customer);
+
+      this.modal = null;
+    },
     validateBanquetForm() {
       return this.banquetForm?.title
           && this.banquetForm?.state
@@ -254,6 +304,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    window.addEventListener("resize", this.onResize);
     const banquetId = this.$route.params['banquetId'];
 
     if (banquetId) {
@@ -280,8 +331,10 @@ export default defineComponent({
         this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
-  }
-
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.onResize);
+  },
 });
 </script>
 

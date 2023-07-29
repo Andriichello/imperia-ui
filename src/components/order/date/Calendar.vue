@@ -32,11 +32,11 @@
     </div>
 
     <div class="w-full flex justify-center items-center gap-1 mt-2">
-      <button class="btn btn-sm  grow"
+      <button class="btn btn-md grow"
               @click="onCancelClick">
         {{ $t('banquet.time.cancel') }}
       </button>
-      <button class="btn btn-sm btn-primary grow"
+      <button class="btn btn-md btn-primary grow"
               v-if="!selectOnClick && changed"
               @click="onSaveClick">
         {{ $t('banquet.time.select') }}

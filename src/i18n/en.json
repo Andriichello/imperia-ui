@@ -154,6 +154,11 @@
       "placeholder": "Date",
       "select": "Select",
       "cancel": "Cancel"
+    },
+    "customer": {
+      "placeholder": "Customer",
+      "select": "Select",
+      "cancel": "Cancel"
     }
   }
 }

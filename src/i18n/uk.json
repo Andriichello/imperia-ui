@@ -162,7 +162,9 @@
       "cancel": "Закрити"
     },
     "customer": {
-      "placeholder": "Клієнт"
+      "placeholder": "Клієнт",
+      "select": "Обрати",
+      "cancel": "Закрити"
     }
   }
 }

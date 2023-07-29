@@ -4,23 +4,23 @@
       <div class="time-card-body">
         <div class="time-card-entry">
           <span class="time-header">{{ $t('banquet.time.start') }}</span>
-          <Time :h="s.hour" :m="s.minute" @time-change="onStartAtChange"/> 
+          <Time :h="sHour" :m="sMinute" @time-change="onStartAtChange"/>
         </div>
 
         <span class="time-header ">-</span>
 
         <div class="time-card-entry">
           <span class="time-header">{{ $t('banquet.time.end') }}</span>
-          <Time :h="e.hour" :m="e.minute" @time-change="onEndAtChange"/> 
+          <Time :h="eHour" :m="eMinute" @time-change="onEndAtChange"/>
         </div>
       </div>
 
       <div class="w-full flex justify-center items-center gap-1 mt-2">
-        <button class="btn btn-sm grow"
+        <button class="btn btn-md grow"
                 @click="onCancelClick">
           {{ $t('banquet.calendar.cancel') }}
         </button>
-        <button class="btn btn-sm btn-primary grow"
+        <button class="btn btn-md btn-primary grow"
                 v-if="changed"
                 @click="onSelectClick">
           {{ $t('banquet.calendar.select') }}
@@ -33,6 +33,7 @@
 <script>
 import { defineComponent } from "vue";
 import Time from "@/components/marketplace/time/Time.vue";
+import {mapGetters} from "vuex";
 
 export default defineComponent({
   name: "TimePicker",
@@ -43,21 +44,21 @@ export default defineComponent({
   props: {
     startAt: {
       type: Date,
-      default: null,  
+      default: null,
     },
     endAt: {
       type: Date,
-      default: null,  
+      default: null,
     },
   },
   data() {
-    const s = { hour: 0, minute: 0 };
+    const s = {hour: null, minute: null};
     if (this.startAt instanceof Date) {
       s.hour = this.startAt.getUTCHours();
       s.minute = this.startAt.getUTCMinutes();
     }
 
-    const e = { hour: 0, minute: 0 };
+    const e = {hour: null, minute: null};
     if (this.endAt instanceof Date) {
       e.hour = this.endAt.getUTCHours();
       e.minute = this.endAt.getUTCMinutes();
@@ -69,11 +70,72 @@ export default defineComponent({
     };
   },
   computed: {
+    ...mapGetters({
+      restaurant: "restaurants/selected",
+    }),
+    sHour() {
+      if(this.s.hour === null && this.s.minute === null) {
+        if (this.restaurant && this.restaurant?.schedules[0]) {
+          const schedule = this.restaurant?.schedules[0];
+
+          return schedule.begHour;
+        }
+
+        return 0;
+      }
+
+      return this.s.hour ?? 0;
+    },
+    sMinute() {
+      if(this.s.hour === null && this.s.minute === null) {
+        if (this.restaurant && this.restaurant?.schedules[0]) {
+          const schedule = this.restaurant?.schedules[0];
+
+          return schedule.begMinute;
+        }
+
+        return 0;
+      }
+
+      return this.s.minute ?? 0;
+    },
+    eHour() {
+      if(this.s.hour === null && this.s.minute === null) {
+        if (this.restaurant && this.restaurant?.schedules[0]) {
+          const schedule = this.restaurant?.schedules[0];
+
+          if (schedule.begHour < 23) {
+            return schedule.begHour + 1;
+          }
+
+          return schedule.begHour;
+        }
+      }
+
+      return this.e.hour ?? 0;
+    },
+    eMinute() {
+      if(this.s.hour === null && this.s.minute === null) {
+        if (this.restaurant && this.restaurant?.schedules[0]) {
+          const schedule = this.restaurant?.schedules[0];
+
+          if (schedule.begMinute < schedule.endMinute) {
+            return schedule.begMinute;
+          }
+
+          return schedule.endMinute;
+        }
+
+        return 0;
+      }
+
+      return this.e.minute ?? 0;
+    },
     changed() {
       if (this.startAt instanceof Date) {
-        let result = this.s.hour === this.startAt.getUTCHours() 
-          && this.s.minute === this.startAt.getUTCMinutes();
-      
+        let result = this.s.hour === this.startAt.getUTCHours()
+            && this.s.minute === this.startAt.getUTCMinutes();
+
         if (!result) {
           return true;
         }
@@ -84,9 +146,9 @@ export default defineComponent({
       }
 
       if (this.endAt instanceof Date) {
-        let result = this.e.hour === this.endAt.getUTCHours() 
-          && this.e.minute === this.endAt.getUTCMinutes();
-      
+        let result = this.e.hour === this.endAt.getUTCHours()
+            && this.e.minute === this.endAt.getUTCMinutes();
+
         if (!result) {
           return true;
         }
@@ -116,7 +178,10 @@ export default defineComponent({
       this.$emit('on-cancel');
     },
     onSelectClick() {
-      this.$emit('on-select', { start: this.s, end: this.e });
+      this.$emit('on-select', {
+        start: {hour: this.sHour, minute: this.sMinute},
+        end: {hour: this.eHour, minute: this.eMinute}
+      });
     },
   },
 });

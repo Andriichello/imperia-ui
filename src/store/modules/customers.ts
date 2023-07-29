@@ -134,6 +134,9 @@ const getters = {
   form(state: CustomersState) {
     return state.form;
   },
+  filters(state: CustomersState) {
+    return state.filters;
+  },
   selections(state: CustomersState) {
     return state.filters;
   },
