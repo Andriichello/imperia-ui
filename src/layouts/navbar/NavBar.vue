@@ -56,15 +56,20 @@
             <!--              Marketplace-->
             <!--            </RouterLink>-->
             <!--          </li>-->
-            <li v-if="authorized">
-              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"
-                          to="/profile" replace>
-                {{ $t('preview.navbar.profile') }}
-              </RouterLink>
-            </li>
+<!--            <li v-if="authorized">-->
+<!--              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"-->
+<!--                          to="/profile" replace>-->
+<!--                {{ $t('preview.navbar.profile') }}-->
+<!--              </RouterLink>-->
+<!--            </li>-->
             <li v-if="authorized" @click="onSwitchTheme">
               <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
                 {{ $t('preview.navbar.theme') }}
+              </span>
+            </li>
+            <li v-if="authorized" @click="onLogout">
+              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
+                {{ $t('preview.navbar.logout') }}
               </span>
             </li>
           </ul>
@@ -128,6 +133,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({
+      logout: "auth/logout",
       applyTheme: "theme/apply",
       selectRestaurant: "restaurants/setSelected",
     }),
@@ -179,6 +185,13 @@ export default defineComponent({
         this.applyTheme(this.themes[1])
       } else {
         this.applyTheme(this.themes[0])
+      }
+    },
+    async onLogout() {
+      if (this.user && this.authorized) {
+        await this.logout();
+
+        this.$router.push('/login');
       }
     },
   },

@@ -60,7 +60,8 @@ export default defineComponent({
       isShowingMenusModal: 'preview/isShowingMenusModal',
     }),
     isMenuPage() {
-      return this.$route['name'] === 'place-menu';
+      return this.$route['name'] === 'place-menu'
+          || this.$route['name'] === 'place-order-menu';
     },
     isRestaurantPage() {
       return this.$route['name'] === 'place-restaurant';

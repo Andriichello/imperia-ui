@@ -4,6 +4,7 @@ import {
   IndexOrderResponse,
   IndexProductsRequest,
   Order,
+  OrdersApi,
   OrderTotals,
   Product,
   ProductOrderField,
@@ -11,10 +12,10 @@ import {
   ShowOrderByBanquetIdRequest,
   ShowOrderResponse,
   StoreOrderRequest,
-  StoreOrderRequestProductField,
-  UpdateOrderRequest
+  StoreOrderRequestProductField, StoreOrderResponse,
+  UpdateOrderRequest, UpdateOrderResponse
 } from "@/openapi";
-import {authHeaders} from "@/helpers";
+import {authHeaders, jsonHeaders} from "@/helpers";
 import router from "@/router";
 
 class OrderForm {
@@ -49,6 +50,16 @@ class OrderForm {
   public setProducts(products: ProductOrderField[]): void {
     const fields: StoreOrderRequestProductField[] = [];
 
+    products.sort((p1, p2) => {
+      if (p1.id < p2.id) {
+        return -1;
+      }
+      if (p1.id > p1.id) {
+        return 1;
+      }
+      return 0;
+    })
+
     products.forEach((p) => {
       const field: StoreOrderRequestProductField = {
         productId: p.productId,
@@ -79,7 +90,7 @@ class OrderForm {
       if (!this.products) {
         this.products = [];
       }
-      this.products.unshift(field);
+      this.products.push(field);
     }
   }
 
@@ -150,11 +161,11 @@ class OrderForm {
   }
 
   public asCreate(): StoreOrderRequest {
-
-
     const request = {
       banquetId: this.banquetId,
-      products: this.products,
+      products: (this.products ?? []).filter((f) => {
+        return f.amount;
+      }),
     };
 
     return request as StoreOrderRequest;
@@ -180,6 +191,10 @@ class OrderState {
   public showOrderResponse: ShowOrderResponse | null;
   /** Latest ordered products response */
   public orderedProductsResponse: IndexOrderResponse | null;
+  /** Latest create order response */
+  public createOrderResponse: StoreOrderResponse | null;
+  /** Latest update order response */
+  public updateOrderResponse: UpdateOrderResponse | null;
 
   constructor() {
     this.form = new OrderForm();
@@ -198,6 +213,9 @@ const state = new OrderState();
 const getters = {
   showing(state: OrderState) {
     return state.showing;
+  },
+  form(state: OrderState) {
+    return state.form;
   },
   order(state: OrderState) {
     return state.order;
@@ -259,6 +277,12 @@ const getters = {
   },
   isLoadingOrderedProducts(state: OrderState) {
     return !state.orderedProductsResponse;
+  },
+  getCreateOrderResponse(state: OrderState) {
+    return state.createOrderResponse;
+  },
+  getUpdateOrderResponse(state: OrderState) {
+    return state.updateOrderResponse;
   },
 };
 
@@ -367,6 +391,26 @@ const actions = {
 
     dispatch('loadProductsForOrder', { order })
   },
+  async createOrder({ commit, rootGetters }, request: StoreOrderRequest) {
+    const response = await (new OrdersApi())
+      .storeOrder({ storeOrderRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setCreateOrderResponse', response);
+  },
+  async updateOrder({ dispatch, commit, rootGetters }, { id, request }) {
+    const response = await (new OrdersApi())
+      .updateOrder({ id, updateOrderRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setUpdateOrderResponse', response);
+
+    if (response?.data?.banquetId) {
+      dispatch('loadOrderForBanquet', { banquetId: response.data.banquetId });
+    }
+  },
 };
 
 const mutations = {
@@ -404,6 +448,12 @@ const mutations = {
   },
   setOrderedProductsResponse(state: OrderState, response) {
     state.orderedProductsResponse = response;
+  },
+  setCreateOrderResponse(state: OrderState, response) {
+    state.createOrderResponse = response;
+  },
+  setUpdateOrderResponse(state: OrderState, response) {
+    state.updateOrderResponse = response;
   },
 };
 

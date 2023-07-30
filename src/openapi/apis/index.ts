@@ -7,6 +7,7 @@ export * from "./CommentsApi";
 export * from "./CustomersApi";
 export * from "./DiscountsApi";
 export * from "./FamilyMembersApi";
+export * from "./InvoicesApi";
 export * from "./MediaApi";
 export * from "./MenusApi";
 export * from "./NotificationsApi";

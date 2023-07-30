@@ -6,6 +6,7 @@ apis/CommentsApi.ts
 apis/CustomersApi.ts
 apis/DiscountsApi.ts
 apis/FamilyMembersApi.ts
+apis/InvoicesApi.ts
 apis/MediaApi.ts
 apis/MenusApi.ts
 apis/NotificationsApi.ts
@@ -24,6 +25,8 @@ models/AttachingComment.ts
 models/AttachingDiscount.ts
 models/AttachingMedia.ts
 models/Banquet.ts
+models/BanquetInvoiceUrlRequest.ts
+models/BanquetInvoiceUrlResponse.ts
 models/Category.ts
 models/Comment.ts
 models/Customer.ts
@@ -70,6 +73,8 @@ models/Menu.ts
 models/Notification.ts
 models/NotificationsPoll.ts
 models/Order.ts
+models/OrderInvoiceUrlRequest.ts
+models/OrderInvoiceUrlResponse.ts
 models/OrderTotals.ts
 models/PaginationMeta.ts
 models/PollNotificationsResponse.ts

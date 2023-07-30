@@ -1,10 +1,10 @@
 <template>
   <div class="order-page w-full">
     <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
-               v-if="loadingRestaurant || isLoadingRestaurants"/>
+               v-if="isLoadingRestaurant || isLoadingRestaurants"/>
 
     <Preloader :title="$t('preview.order.loading')" class="p-2"
-               v-if="orderId && (loadingOrder || isLoadingOrder)"/>
+               v-if="orderId && (isLoadingOrder || isLoadingOrder)"/>
 
     <div class="flex flex-col justify-center items-start gap-3 w-full min-w-xl max-w-xl">
       <Preloader :title="$t('banquet.loading')" class="p-2"
@@ -29,13 +29,15 @@
                      :show-arrow="false"/>
 
       <Preloader :title="$t('preview.order.loading_products')" class="p-2"
-                 v-if="orderId && (loadingProducts || isLoadingOrderedProducts)"/>
+                 v-if="orderId && (isLoadingProducts || isLoadingOrderedProducts)"/>
 
       <List :fields="nonEmptyFields" class="w-full" v-if="nonEmptyFields.length"/>
 
-      <div class="w-full flex justify-center items-center" v-if="isOrderChanged">
-        <button class="w-full btn btn-md btn-primary">
+      <div class="w-full flex justify-center items-center"
+           v-if="isOrderChanged && validateOrderForm()">
+        <button class="w-full btn btn-md btn-primary" @click="onStoreOrder">
           {{ $t('preview.order.store') }}
+          <span class="loading loading-spinner" v-if="isCreatingOrder || isUpdatingOrder"></span>
         </button>
       </div>
     </div>
@@ -126,14 +128,16 @@ export default defineComponent({
 
     return {
       modal: null,
-      loadingOrder: false,
-      loadingProducts: false,
-      loadingRestaurant: false,
+      maxModalWidth,
+      maxModalHeight,
+      isLoadingProducts: false,
+      isLoadingRestaurant: false,
       isLoadingBanquet: false,
       isCreatingBanquet: false,
       isUpdatingBanquet: false,
-      maxModalWidth,
-      maxModalHeight,
+      isLoadingOrder: false,
+      isCreatingOrder: false,
+      isUpdatingOrder: false,
     };
   },
   computed: {
@@ -145,10 +149,12 @@ export default defineComponent({
       createBanquetResponse: 'basket/getCreateResponse',
       updateBanquetResponse: 'basket/getUpdateResponse',
       order: 'order/order',
+      orderForm: 'order/form',
       isOrderChanged: 'order/hasRealChanges',
       fields: 'order/products',
       orderId: 'order/orderId',
       showOrderResponse: 'order/getShowOrderResponse',
+      updateOrderResponse: 'order/getUpdateOrderResponse',
       isLoadingOrder: 'order/isLoadingOrder',
       orderedProductsResponse: 'order/getOrderedProductsResponse',
       isLoadingOrderedProducts: 'order/isLoadingOrderedProducts',
@@ -189,17 +195,22 @@ export default defineComponent({
     },
     showOrderResponse: {
       handler() {
-        this.loadingOrder = false;
+        this.isLoadingOrder = false;
+      },
+    },
+    updateOrderResponse: {
+      handler() {
+        this.isUpdatingOrder = false;
       },
     },
     orderedProductsResponse: {
       handler() {
-        this.loadingProducts = false;
+        this.isLoadingProducts = false;
       },
     },
     showRestaurantResponse: {
       handler() {
-        this.loadingRestaurant = false;
+        this.isLoadingRestaurant = false;
       },
     },
     order(newOrder) {
@@ -221,6 +232,8 @@ export default defineComponent({
       loadOrderForBanquet: 'order/loadOrderForBanquet',
       loadOrderForBanquetIfMissing: 'order/loadOrderForBanquetIfMissing',
       loadProductsForOrderIfMissing: 'order/loadProductsForOrderIfMissing',
+      createOrder: 'order/createOrder',
+      updateOrder: 'order/updateOrder',
       setTitle: 'basket/setTitle',
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
@@ -296,10 +309,19 @@ export default defineComponent({
         this.isUpdatingBanquet = true;
         this.updateBanquet({ id: banquetId, request: this.banquetForm.asUpdate() });
       } else {
-        console.log('Creating banquet...');
-
         this.isCreatingBanquet = true;
         this.createBanquet(this.banquetForm.asCreate());
+      }
+    },
+    validateOrderForm() {
+      return this.orderForm?.banquetId
+          && this.orderForm?.products
+          && this.orderForm?.products?.length;
+    },
+    onStoreOrder() {
+      if (this.orderId) {
+        this.isUpdatingOrder = true;
+        this.updateOrder({ id: this.orderId, request: this.orderForm.asUpdate() });
       }
     },
   },
@@ -327,7 +349,7 @@ export default defineComponent({
       if (target) {
         this.selectRestaurant(target);
       } else {
-        this.loadingRestaurant = true;
+        this.isLoadingRestaurant = true;
         this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }

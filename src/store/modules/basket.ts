@@ -268,7 +268,6 @@ const actions = {
 
     dispatch('loadBanquet', { id })
   },
-
   async createBanquet({ commit, rootGetters }, request: StoreBanquetRequest) {
     const response = await (new BanquetsApi())
       .storeBanquet({ storeBanquetRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })

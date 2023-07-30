@@ -3,7 +3,7 @@
     <div class="customer-card-body h-full">
       <div class="flex justify-between items-center w-full gap-2">
         <div class="form-control w-full">
-          <input class="input input-md input-bordered w-full text-xl"
+          <input class="input input-md input-bordered w-full text-xl z-[1]"
                  name="search" type="text" required v-model="searchVal"
                  placeholder="Search..."/>
         </div>

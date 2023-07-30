@@ -82,6 +82,7 @@
       "back": "Назад",
       "theme": "Тема",
       "profile": "Профіль",
+      "logout": "Вийти",
       "restaurant": "Заклад",
       "street_and_address": "Вулиця, аддрес"
     },
@@ -146,6 +147,9 @@
     "description": "Опис",
     "store": "Зберегти банкет",
     "loading": "Завантаження банкета",
+    "more": {
+      "bill": "Чек"
+    },
     "state": {
       "placeholder": "Статус"
     },

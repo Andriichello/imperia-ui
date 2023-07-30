@@ -1,5 +1,13 @@
-import { authHeaders, jsonHeaders } from "@/helpers";
-import { BanquetsApi, ShowBanquetResponse, StoreBanquetRequest, StoreBanquetResponse, UpdateBanquetResponse } from "@/openapi";
+import {authHeaders, jsonHeaders} from "@/helpers";
+import {
+  BanquetInvoiceUrlRequest, BanquetInvoiceUrlResponse,
+  BanquetsApi,
+  InvoicesApi,
+  ShowBanquetResponse,
+  StoreBanquetRequest,
+  StoreBanquetResponse,
+  UpdateBanquetResponse
+} from "@/openapi";
 
 class BanquetsState {
   /** Last show banquet response */
@@ -11,16 +19,23 @@ class BanquetsState {
   /** Last update banquet response */
   public updateResponse: UpdateBanquetResponse | Response | null;
 
+  /** Last banquet invoice url response */
+  public pdfUrlResponse: BanquetInvoiceUrlResponse | null;
+
   constructor() {
     this.showResponse = null;
     this.createResponse = null;
     this.updateResponse = null;
+    this.pdfUrlResponse = null;
   }
 }
 
 const state = new BanquetsState();
 
 const getters = {
+  pdfUrl() {
+    return state.pdfUrlResponse?.url;
+  },
   getShowResponse(state: BanquetsState) {
     return state.showResponse;
   },
@@ -29,6 +44,9 @@ const getters = {
   },
   getUpdateResponse(state: BanquetsState) {
     return state.updateResponse;
+  },
+  getPdfUrlResponse(state: BanquetsState) {
+    return state.pdfUrlResponse;
   },
 };
 
@@ -64,6 +82,18 @@ const actions = {
 
     commit('setUpdateResponse', response);
   },
+  async loadBanquetPdfUrl({ commit, rootGetters }, { id }) {
+    const request: BanquetInvoiceUrlRequest = {
+      endpoint: "pdfThroughBanquet",
+    }
+
+    const response = await (new InvoicesApi())
+      .banquetInvoiceUrl({id, banquetInvoiceUrlRequest: request}, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setPdfUrlResponse', response);
+  },
 };
 
 const mutations = {
@@ -75,6 +105,9 @@ const mutations = {
   },
   setUpdateResponse(state: BanquetsState, response) {
     state.updateResponse = response;
+  },
+  setPdfUrlResponse(state: BanquetsState, response) {
+    state.pdfUrlResponse = response;
   },
 };
 
