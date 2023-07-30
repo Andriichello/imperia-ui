@@ -88,6 +88,12 @@ export interface Order {
   banquetId: number;
   /**
    *
+   * @type {string}
+   * @memberof Order
+   */
+  invoiceUrl?: string | null;
+  /**
+   *
    * @type {Array<SpaceOrderField>}
    * @memberof Order
    */
@@ -153,6 +159,7 @@ export function OrderFromJSONTyped(
     type: json["type"],
     totals: OrderTotalsFromJSON(json["totals"]),
     banquetId: json["banquet_id"],
+    invoiceUrl: !exists(json, "invoice_url") ? undefined : json["invoice_url"],
     spaces: !exists(json, "spaces")
       ? undefined
       : (json["spaces"] as Array<any>).map(SpaceOrderFieldFromJSON),
@@ -186,6 +193,7 @@ export function OrderToJSON(value?: Order | null): any {
     type: value.type,
     totals: OrderTotalsToJSON(value.totals),
     banquet_id: value.banquetId,
+    invoice_url: value.invoiceUrl,
     spaces:
       value.spaces === undefined
         ? undefined

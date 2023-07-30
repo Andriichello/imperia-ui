@@ -25,6 +25,7 @@ class BanquetForm {
   public date: Date | string | null;
   public startAt: Date | string | null;
   public endAt: Date | string | null;
+  public invoiceUrl: string | null;
 
   constructor(banquet: Banquet = null) {
     this.changes = {};
@@ -47,6 +48,7 @@ class BanquetForm {
     form.date = banquet.startAt;
     form.startAt = banquet.startAt;
     form.endAt = banquet.endAt;
+    form.invoiceUrl = banquet.invoiceUrl;
 
     return form;
   }

@@ -13,7 +13,7 @@
       </div>
 
       <button class="flex justify-center start-center btn btn-sm btn-ghost btn-square"
-        @click="onOpenBill" v-if="this.banquet?.id">
+        @click="onOpenBill" v-if="banquet?.invoiceUrl">
         <BaseIcon width="24" height="24" color="currentColor">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1.25 8C1.25 6.48122 2.48122 5.25 4 5.25H20C21.5188 5.25 22.75 6.48122 22.75 8V16C22.75 17.5188 21.5188 18.75 20 18.75H18C17.5858 18.75 17.25 18.4142 17.25 18C17.25 17.5858 17.5858 17.25 18 17.25H20C20.6904 17.25 21.25 16.6904 21.25 16V8C21.25 7.30964 20.6904 6.75 20 6.75H4C3.30964 6.75 2.75 7.30964 2.75 8V16C2.75 16.6904 3.30964 17.25 4 17.25H6C6.41421 17.25 6.75 17.5858 6.75 18C6.75 18.4142 6.41421 18.75 6 18.75H4C2.48122 18.75 1.25 17.5188 1.25 16V8Z"/>
           <path d="M20 9.5C20 10.3284 19.3284 11 18.5 11C17.6716 11 17 10.3284 17 9.5C17 8.67157 17.6716 8 18.5 8C19.3284 8 20 8.67157 20 9.5Z"/>
@@ -131,11 +131,11 @@ export default defineComponent({
     onCustomerClick() {
       this.$emit('customer-click');
     },
-    async onOpenBill() {
-      await this.loadPdfUrl({id: this.banquet?.id});
+    onOpenBill() {
+      // await this.loadPdfUrl({id: this.banquet?.id});
 
-      if (this.pdfUrl) {
-        window.open(this.pdfUrl, '_blank').focus();
+      if (this.banquet?.invoiceUrl) {
+        window.open(this.banquet?.invoiceUrl, '_blank').focus();
       }
     },
   },
