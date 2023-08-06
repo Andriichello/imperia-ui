@@ -161,8 +161,19 @@
     },
     "customer": {
       "placeholder": "Customer",
+      "name": "Name",
+      "surname": "Surname",
+      "phone": "Phone",
+      "email": "Email",
+      "search": "Search",
       "select": "Select",
-      "cancel": "Cancel"
+      "close": "Close",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update",
+      "edit": "Edit",
+      "unfortunately_list_is_empty": "Unfortunately the list is empty",
+      "loading": "Loading customers"
     }
   }
 }

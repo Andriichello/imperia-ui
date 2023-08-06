@@ -179,6 +179,13 @@ export default defineComponent({
 
       if (instanceOfStoreBanquetResponse(newValue)) {
         const id = newValue.data.id;
+
+        const fields = this.orderForm && !this.orderForm?.id
+          ? this.orderForm?.products : null;
+
+        console.log({form: this.orderForm, fields: fields})
+
+        this.setOrder({order: newValue.data?.order, fields});
         this.loadBanquet({ id });
 
         const path = this.$route.path;
@@ -232,6 +239,7 @@ export default defineComponent({
       loadOrderForBanquet: 'order/loadOrderForBanquet',
       loadOrderForBanquetIfMissing: 'order/loadOrderForBanquetIfMissing',
       loadProductsForOrderIfMissing: 'order/loadProductsForOrderIfMissing',
+      setOrder: 'order/setOrder',
       createOrder: 'order/createOrder',
       updateOrder: 'order/updateOrder',
       setTitle: 'basket/setTitle',
@@ -331,7 +339,7 @@ export default defineComponent({
 
     if (banquetId) {
       this.loadBanquetIfMissing({id: banquetId})
-      this.loadOrderForBanquetIfMissing({banquetId});
+      this.loadOrderForBanquetIfMissing({banquetId });
     }
 
     if (this.order) {

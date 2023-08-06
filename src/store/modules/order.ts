@@ -17,6 +17,7 @@ import {
 } from "@/openapi";
 import {authHeaders, jsonHeaders} from "@/helpers";
 import router from "@/router";
+import {forEach} from "lodash";
 
 class OrderForm {
   /** Values that were set after constructor */
@@ -38,11 +39,11 @@ class OrderForm {
   public static fromOrder(order: Order) {
     const form = new OrderForm(order);
 
-    form.id = order.id;
-    form.totals = order.totals;
-    form.banquetId = order.banquetId;
-    form.setProducts(order.products);
-    form.comments = order.comments ?? null;
+    form.id = order?.id;
+    form.totals = order?.totals;
+    form.banquetId = order?.banquetId;
+    form.setProducts(order?.products ?? []);
+    form.comments = order?.comments ?? null;
 
     return form;
   }
@@ -138,7 +139,7 @@ class OrderForm {
     Object.keys(this.getChanges())
       .forEach(name => {
         if (name.startsWith('products-')) {
-          const field = this.order.products.find((p) => {
+          const field = (this.order.products ?? []).find((p) => {
             return `${p.productId}-${p.variantId}` === name.replace('products-', '');
           });
 
@@ -290,8 +291,12 @@ const actions = {
   clear({ commit }) {
     commit('clear');
   },
-  setOrder({ commit }, order: Order) {
-    commit('setOrder', order);
+  setOrder({ commit, dispatch }, {order, fields}) {
+    commit('setOrder', {order, fields});
+
+    if (fields && fields.length) {
+      dispatch('recalculate');
+    }
   },
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
@@ -337,7 +342,7 @@ const actions = {
     totals.all = totals.products + totals.spaces + totals.services + totals.tickets;
     state.form.totals = totals;
   },
-  async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId}) {
+  async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId, fields}) {
     const request: ShowOrderByBanquetIdRequest = {
       id: banquetId,
       include: 'products',
@@ -353,14 +358,14 @@ const actions = {
       });
 
     commit('setShowOrderResponse', response);
-    commit('setOrder', response.data);
+    commit('setOrder', {order: response.data, fields});
   },
-  async loadOrderForBanquetIfMissing({dispatch}, {banquetId}) {
-    if (state.showOrderResponse) {
+  async loadOrderForBanquetIfMissing({dispatch}, {banquetId, fields}) {
+    if (state.showOrderResponse || state.order) {
       return;
     }
 
-    dispatch('loadOrderForBanquet', { banquetId })
+    dispatch('loadOrderForBanquet', { banquetId, fields })
   },
   async loadProductsForOrder({dispatch, commit, rootGetters}, {order}) {
     const ids = (order?.products ?? []).map((p) => {
@@ -418,9 +423,22 @@ const mutations = {
     state.order = null;
     state.form = new OrderForm();
   },
-  setOrder(state: OrderState, order) {
+  setOrder(state: OrderState, {order, fields}) {
     state.order = order;
     state.form = OrderForm.fromOrder(order);
+
+    if (fields && fields.length) {
+      fields.forEach((f) => {
+        const variantId = f.variantId ?? null;
+
+        state.form.setProduct(f.productId, f.amount, variantId);
+        state.form.setChange(`products-${f.productId}-${variantId}`, {
+          productId: f.productId,
+          amount: f.amount,
+          variantId: variantId
+        });
+      });
+    }
   },
   setShowing(state: OrderState, showing) {
     state.showing = showing;

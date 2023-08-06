@@ -31,6 +31,8 @@ import {
   DiscountFromJSONTyped,
   DiscountToJSON,
 } from "./Discount";
+import type { Order } from "./Order";
+import { OrderFromJSON, OrderFromJSONTyped, OrderToJSON } from "./Order";
 import type { OrderTotals } from "./OrderTotals";
 import {
   OrderTotalsFromJSON,
@@ -156,6 +158,12 @@ export interface Banquet {
   restaurantId: number | null;
   /**
    *
+   * @type {Order}
+   * @memberof Banquet
+   */
+  order?: Order;
+  /**
+   *
    * @type {User}
    * @memberof Banquet
    */
@@ -263,6 +271,7 @@ export function BanquetFromJSONTyped(
     creatorId: json["creator_id"],
     customerId: json["customer_id"],
     restaurantId: json["restaurant_id"],
+    order: !exists(json, "order") ? undefined : OrderFromJSON(json["order"]),
     creator: !exists(json, "creator")
       ? undefined
       : UserFromJSON(json["creator"]),
@@ -304,6 +313,7 @@ export function BanquetToJSON(value?: Banquet | null): any {
     creator_id: value.creatorId,
     customer_id: value.customerId,
     restaurant_id: value.restaurantId,
+    order: OrderToJSON(value.order),
     creator: UserToJSON(value.creator),
     customer: CustomerToJSON(value.customer),
     comments:

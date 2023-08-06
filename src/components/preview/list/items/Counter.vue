@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-nowrap justify-center items-center gap-2 min-h-[28px]">
     <div class="btn btn-sm btn-square btn-outline" v-if="amountVal > 0"
+         style="touch-action: manipulation;"
          @click="onChange(amountVal < 2 ? null : amountVal - 1)">
       <span class="font-bold text-lg">
         -
@@ -14,15 +15,17 @@
     </div>
 
     <div class="btn btn-sm btn-square btn-outline normal-case gap-1" v-if="amountVal === null"
+         style="touch-action: manipulation;"
          @click="onChange(1)">
       <span class="font-bold text-md">
-        <span class="font-bold text-lg">
+        <span class="font-bold text-lg" >
           +
         </span>
       </span>
     </div>
 
     <div class="btn btn-sm btn-square btn-outline" v-else
+         style="touch-action: manipulation;"
          @click="onChange(amountVal + 1)">
       <span class="font-bold text-lg">
         +

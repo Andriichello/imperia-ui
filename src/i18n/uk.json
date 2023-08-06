@@ -167,8 +167,19 @@
     },
     "customer": {
       "placeholder": "Клієнт",
+      "name": "Ім'я",
+      "surname": "Прізвище",
+      "phone": "Телефон",
+      "email": "Пошта",
+      "search": "Пошук",
       "select": "Обрати",
-      "cancel": "Закрити"
+      "close": "Закрити",
+      "cancel": "Закрити",
+      "create": "Створити",
+      "update": "Зберегти",
+      "edit": "Редагувати",
+      "unfortunately_list_is_empty": "На жаль, список порожній",
+      "loading": "Завантаження клієнтів"
     }
   }
 }

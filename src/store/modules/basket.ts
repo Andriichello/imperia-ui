@@ -1,6 +1,6 @@
 import {
   Banquet, BanquetsApi,
-  Customer,
+  Customer, instanceOfStoreBanquetResponse,
   Restaurant, ShowBanquetResponse,
   StoreBanquetRequest,
   StoreBanquetRequestStateEnum, StoreBanquetResponse,
@@ -272,7 +272,7 @@ const actions = {
   },
   async createBanquet({ commit, rootGetters }, request: StoreBanquetRequest) {
     const response = await (new BanquetsApi())
-      .storeBanquet({ storeBanquetRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .storeBanquet({ storeBanquetRequest: request, include: 'order' }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)
       .catch(error => error.response);
 
@@ -362,6 +362,10 @@ const mutations = {
   },
   setCreateResponse(state: BasketState, response) {
     state.createResponse = response;
+
+    if (instanceOfStoreBanquetResponse(response)) {
+      state.banquet = response.data;
+    }
   },
   setUpdateResponse(state: BasketState, response) {
     state.updateResponse = response;

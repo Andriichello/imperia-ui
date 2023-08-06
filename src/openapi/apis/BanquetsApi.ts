@@ -88,11 +88,13 @@ export interface ShowOrderByBanquetIdRequest {
 
 export interface StoreBanquetOperationRequest {
   storeBanquetRequest: StoreBanquetRequest;
+  include?: string;
 }
 
 export interface UpdateBanquetOperationRequest {
   id: number;
   updateBanquetRequest: UpdateBanquetRequest;
+  include?: string;
 }
 
 /**
@@ -436,7 +438,7 @@ export class BanquetsApi extends runtime.BaseAPI {
   }
 
   /**
-   * Store banquet.
+   * Store banquet. Order record will automatically be created.
    */
   async storeBanquetRaw(
     requestParameters: StoreBanquetOperationRequest,
@@ -453,6 +455,10 @@ export class BanquetsApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -483,7 +489,7 @@ export class BanquetsApi extends runtime.BaseAPI {
   }
 
   /**
-   * Store banquet.
+   * Store banquet. Order record will automatically be created.
    */
   async storeBanquet(
     requestParameters: StoreBanquetOperationRequest,
@@ -521,6 +527,10 @@ export class BanquetsApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 

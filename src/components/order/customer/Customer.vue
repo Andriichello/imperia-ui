@@ -58,7 +58,7 @@ export default defineComponent({
       this.$emit('select-customer', { customer: this.customer });
     },
     onEdit() {
-      //
+      this.$emit('edit-customer', { customer: this.customer });
     },
   }
 })

@@ -199,6 +199,12 @@ const actions = {
   setSelected({ commit }, customer: Customer) {
     commit('setSelected', customer);
   },
+  setIndexResponse({ commit }, response: IndexCustomerResponse | null) {
+    commit('setIndexResponse', response);
+  },
+  setIndexMoreResponse({ commit }, response: IndexCustomerResponse | null) {
+    commit('setIndexMoreResponse', response);
+  },
   setFormCustomer({ commit }, customer: Customer) {
     commit('setFormCustomer', customer);
     commit('setForm', customer ? CustomerForm.fromCustomer(customer) : new CustomerForm());

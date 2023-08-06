@@ -87,6 +87,8 @@ export default defineComponent({
       selectRestaurant: "restaurants/setSelected",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
       loadOrderForBanquetIfMissing: "order/loadOrderForBanquetIfMissing",
+      loadProductsForOrder: "order/loadProductsForOrder",
+      loadProductsForOrderIfMissing: "order/loadProductsForOrderIfMissing",
     }),
     onSwitchToOrder() {
       const restaurantId = +this.$route.params['restaurantId'];
