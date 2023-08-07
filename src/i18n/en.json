@@ -185,6 +185,7 @@
     }
   },
   "history": {
+    "unfortunately_list_is_empty": "Unfortunately the list is empty",
     "loading": "Loading banquets",
     "load_more": "Load more...",
     "showing_C_of_T": "Showing {count} of {total} banquets",

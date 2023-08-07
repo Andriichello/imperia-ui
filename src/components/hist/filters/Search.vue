@@ -7,8 +7,9 @@
                :placeholder="$t('banquet.customer.search') + '...'"/>
       </div>
 
-      <div class="btn btn-square btn-neutral">
-        <BaseIcon width="24" height="24" class="text-neutral-content" @click="$emit('filters-click')">
+      <div class="btn btn-square btn-neutral" :class="{'bg-[var(--yellow)]': hasFilters}"
+           @click="$emit('filters-click')">
+        <BaseIcon width="24" height="24" class="text-neutral-content" >
           <mask id="mask0_1102_7953" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
             <path fill-rule="evenodd" clip-rule="evenodd" d="M2.00049 2H21.5001V21.5007H2.00049V2Z" fill="white"/>
           </mask>
@@ -18,8 +19,9 @@
         </BaseIcon>
       </div>
 
-      <div class="btn btn-square btn-neutral">
-        <BaseIcon width="24" height="24" class="text-neutral-content" @click="$emit('search-change', {search: searchVal})">
+      <div class="btn btn-square btn-neutral"
+           @click="$emit('search-change', {search: searchVal})">
+        <BaseIcon width="24" height="24" class="text-neutral-content">
           <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
             <path d="M2 2H21.4768V21.477H2V2Z"/>
           </mask>
@@ -50,6 +52,10 @@ export default defineComponent({
     search: {
       type: String,
       default: null,
+    },
+    hasFilters: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

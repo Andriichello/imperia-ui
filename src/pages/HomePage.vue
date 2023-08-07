@@ -145,6 +145,27 @@ export default defineComponent({
       this.$router.push(`/place/${restaurant.id}/reviews`);
     },
   },
+  async mounted() {
+    const restaurantId = +this.$route.params['restaurantId'];
+
+    if (restaurantId < 1) {
+      this.$router.replace(`/preview`);
+      return;
+    }
+
+    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
+      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
+
+      if (target) {
+        await this.selectRestaurant(target);
+      } else {
+        await this.loadAndSelectRestaurant({ id: restaurantId });
+      }
+    }
+
+    this.loadReviewsIfMissing();
+    this.loadMenusIfMissing();
+  },
 });
 </script>
 

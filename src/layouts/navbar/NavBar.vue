@@ -4,7 +4,7 @@
     <div class="w-full flex flex-col justify-center items-start text-neutral-content">
       <div class="navbar flex w-full bg-neutral text-neutral-content h-[68px]">
         <div class="flex-1 gap-2">
-          <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isOrderPage" @click="onBack">
+          <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isOrderPage || isHistoryPage" @click="onBack">
             <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
               <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </BaseIcon>
@@ -122,6 +122,11 @@ export default defineComponent({
 
       return name && name.endsWith('-order');
     },
+    isHistoryPage() {
+      const name = this.$route.name;
+
+      return name && name.endsWith('-history');
+    },
     shouldShowBack() {
       return this.isMenuPage;
     },
@@ -147,7 +152,7 @@ export default defineComponent({
     onBack() {
       const restaurantId = this.$route.params['restaurantId'];
 
-      if (this.isReviewsPage || this.isMenuPage) {
+      if (this.isReviewsPage || this.isMenuPage || this.isHistoryPage) {
         this.$router.push(`/place/${restaurantId}`)
       } else if (this.isRestaurantPage) {
         this.$router.push(`/place`);

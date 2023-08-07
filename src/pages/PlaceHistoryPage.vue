@@ -9,7 +9,7 @@
     </div>
 
     <div class="w-full max-w-xl flex flex-col justify-center items-start gap-2">
-      <Search :search="filters?.search"
+      <Search :search="filters?.search" :has-filters="hasFilters"
         @filters-click="isShowingFilters = !isShowingFilters"
         @search-change="onSearchChange"/>
 
@@ -19,6 +19,16 @@
 
       <template v-if="!isSearching">
         <List :banquets="banquets"/>
+      </template>
+
+      <template v-if="indexResponse && banquetsCount === 0">
+        <div class="w-full flex flex-col justify-center items-center">
+          <div class="flex flex-col justify-center items-center gap-2">
+            <span class="text-xl font-semibold">
+              {{ $t("history.unfortunately_list_is_empty") }}
+            </span>
+          </div>
+        </div>
       </template>
 
       <div class="w-full flex flex-col justify-center items-center mt-1" v-if="!isSearching">
@@ -79,6 +89,13 @@ export default defineComponent({
     }),
     banquetsCount() {
       return this.banquets?.length;
+    },
+    hasFilters() {
+      if (!this.filters) {
+        return true;
+      }
+
+      return this.filters?.from || this.filters?.until;
     },
   },
   watch: {

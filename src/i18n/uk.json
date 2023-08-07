@@ -182,6 +182,7 @@
     }
   },
   "history": {
+    "unfortunately_list_is_empty": "На жаль, список порожній",
     "loading": "Завантаження банкетів",
     "load_more": "Завантажити ще...",
     "showing_C_of_T": "Показано {count} з {total} банкетів",
