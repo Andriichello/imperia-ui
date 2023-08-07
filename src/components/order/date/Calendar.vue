@@ -31,7 +31,7 @@
       </template>
     </div>
 
-    <div class="w-full flex justify-center items-center gap-1 mt-2">
+    <div class="w-full flex justify-center items-center gap-1 mt-2" v-if="!noButtons">
       <button class="btn btn-md grow"
               @click="onCancelClick">
         {{ $t('banquet.time.cancel') }}
@@ -72,6 +72,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    noButtons: {
+      type: Boolean,
+      default: false,
+    }
   },
   data() {
     const today = new Date();

@@ -188,6 +188,10 @@
     "loading": "Loading banquets",
     "load_more": "Load more...",
     "showing_C_of_T": "Showing {count} of {total} banquets",
-    "showing_all_C": "Showing all banquets ({count})"
+    "showing_all_C": "Showing all banquets ({count})",
+    "filters": {
+      "from": "From",
+      "until": "Until"
+    }
   }
 }

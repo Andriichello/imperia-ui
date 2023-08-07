@@ -1,7 +1,16 @@
 <template>
   <div class="history-page w-full">
+    <div class="w-full max-w-2xl flex flex-col justify-center items-start gap-2" v-if="isShowingFilters">
+      <DatesFilter class="max-w-2xl"
+                   :from="filters?.from"
+                   :until="filters?.until"
+                   @from-select="onFromChange"
+                   @until-select="onUntilChange"/>
+    </div>
+
     <div class="w-full max-w-xl flex flex-col justify-center items-start gap-2">
       <Search :search="filters?.search"
+        @filters-click="isShowingFilters = !isShowingFilters"
         @search-change="onSearchChange"/>
 
       <template v-if="!indexResponse || isSearching">
@@ -39,10 +48,12 @@ import {mapActions, mapGetters} from "vuex";
 import List from "@/components/hist/list/List.vue";
 import Search from "@/components/hist/filters/Search.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
+import DatesFilter from "@/components/hist/filters/DatesFilter.vue";
 
 export default defineComponent({
   name: "PlaceHistoryPage",
   components: {
+    DatesFilter,
     Preloader,
     Search,
     List
@@ -53,6 +64,7 @@ export default defineComponent({
       isLoadingRestaurant: false,
       isSearching: false,
       isLoadingMore: false,
+      isShowingFilters: false,
     };
   },
   computed: {
@@ -88,6 +100,8 @@ export default defineComponent({
       loadBanquetsIfMissing: 'history/loadBanquetsIfMissing',
       loadMoreBanquets: 'history/loadMoreBanquets',
       applySearch: 'history/applySearch',
+      applyFrom: 'history/applyFrom',
+      applyUntil: 'history/applyUntil',
       setIndexResponse: 'history/setBanquetsResponse',
       setIndexMoreResponse: 'history/setMoreBanquetsResponse',
     }),
@@ -98,6 +112,14 @@ export default defineComponent({
     onSearchChange({search}) {
       this.isSearching = true;
       this.applySearch({search});
+    },
+    onFromChange({ date }) {
+      this.isSearching = true;
+      this.applyFrom({from: date});
+    },
+    onUntilChange({ date }) {
+      this.isSearching = true;
+      this.applyUntil({until: date});
     },
   },
   mounted() {

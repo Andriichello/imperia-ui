@@ -4,27 +4,31 @@
     <div class="date">
       <div class="mb-2">
         <label class="label">
-          <span class="label-text">From</span>
+          <span class="label-text">{{ $t('history.filters.from') }}</span>
         </label>
-        <input v-model="fromDisplay" readonly placeholder="From..." class="input input-bordered max-w-md w-full" />
+        <input class="input input-bordered max-w-md w-full"
+               :placeholder="$t('history.filters.from') + '...'"
+               v-model="fromDisplay" readonly/>
       </div>
 
       <Calendar :selected-date="fromVal" :select-on-click="true"
                 :no-buttons="true"
-                @date-select="onStartSelect"/>
+                @on-select="onStartSelect"/>
     </div>
 
     <div class="date">
       <div class="mb-2">
         <label class="label">
-          <span class="label-text">Until</span>
+          <span class="label-text">{{ $t('history.filters.until') }}</span>
         </label>
-        <input v-model="untilDisplay" readonly placeholder="Until..." class="input input-bordered max-w-md w-full" />
+        <input class="input input-bordered max-w-md w-full"
+               :placeholder="$t('history.filters.until') + '...'"
+               v-model="untilDisplay" readonly/>
       </div>
 
       <Calendar :selected-date="untilVal" :select-on-click="true"
                 :no-buttons="true"
-                @date-select="onEndSelect"/>
+                @on-select="onEndSelect"/>
     </div>
 
   </div>
@@ -75,10 +79,14 @@ export default defineComponent({
   },
   methods: {
     onStartSelect({ date }) {
+      console.log({from: date})
+
       this.fromVal = date;
       this.$emit('from-select', { date });
     },
     onEndSelect({ date }) {
+      console.log({until: date})
+
       this.untilVal = date;
       this.$emit('until-select', { date });
     },
