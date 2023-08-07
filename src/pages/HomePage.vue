@@ -149,7 +149,7 @@ export default defineComponent({
     const restaurantId = +this.$route.params['restaurantId'];
 
     if (restaurantId < 1) {
-      this.$router.replace(`/preview`);
+      // this.$router.replace(`/preview`);
       return;
     }
 

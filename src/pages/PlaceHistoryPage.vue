@@ -21,7 +21,7 @@
         <List :banquets="banquets"/>
       </template>
 
-      <template v-if="indexResponse && banquetsCount === 0">
+      <template v-if="indexResponse && banquetsCount === 0 && !isSearching">
         <div class="w-full flex flex-col justify-center items-center">
           <div class="flex flex-col justify-center items-center gap-2">
             <span class="text-xl font-semibold">
