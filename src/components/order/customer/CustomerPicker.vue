@@ -5,7 +5,7 @@
         <div class="form-control w-full">
           <input class="input input-md input-bordered w-full text-xl z-[1]"
                  name="search" type="text" required v-model="searchVal"
-                 placeholder="Search..."/>
+                 :placeholder="$t('banquet.customer.search') + '...'"/>
         </div>
 
         <!--        <div class="btn btn-square btn-neutral">-->
@@ -25,7 +25,7 @@
       <template v-if="customers && customers.length">
         <div class="w-full grow flex flex-col justify-start items-center overflow-y-auto">
           <div class="w-full flex justify-center items-center pt-2">
-            <button class="w-full btn btn-sm btn-ghost max-w-sm"
+            <button class="w-full btn btn-sm btn-ghost max-w-xl"
                     @click="onCreateCustomer">
               + {{ $t('banquet.customer.create') }}
             </button>
@@ -36,6 +36,24 @@
                 :selected="lastSelected"
                 @select-customer="onSelectCustomer"
                 @edit-customer="onEditCustomer"/>
+
+          <div class="w-full flex flex-col justify-center items-center mt-1 mb-3">
+            <div class="w-full flex flex-col justify-center items-center gap-2">
+              <span v-if="customersCount && customersTotal && customersCount !== customersTotal">
+                {{ $t('banquet.customer.showing_C_of_T', {count: customersCount, total: customersTotal}) }}
+              </span>
+              <span v-else-if="customersCount && customersTotal && customersCount === customersTotal">
+                {{ $t('banquet.customer.showing_all_C', {count: customersCount}) }}
+              </span>
+
+              <div class="w-full list-more-btn max-w-xl" v-if="customersCount < customersTotal">
+                <button class="w-full btn btn-sm btn-ghost" @click="onLoadMore">
+                  {{ $t('banquet.customer.load_more') }}
+                  <span class="loading loading-spinner" v-if="isLoadingMore"></span>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </template>
 
@@ -141,6 +159,7 @@ export default defineComponent({
       mode: 'view',
       isCreating: false,
       isUpdating: false,
+      isLoadingMore: false,
       searchVal: this.search,
       lastSelected: this.selected,
     }
@@ -157,6 +176,9 @@ export default defineComponent({
       createResponse: 'customers/getCreateResponse',
       updateResponse: 'customers/getUpdateResponse',
     }),
+    customersCount() {
+      return this.customers?.length;
+    },
     name: {
       get() {
         return this.$store.getters['customers/name'];
@@ -199,6 +221,11 @@ export default defineComponent({
           this.applySearch({search: newVal});
         }, 500
     ),
+    indexMoreResponse: {
+      async handler(response) {
+        this.isLoadingMore = false;
+      }
+    },
     createResponse: {
       async handler(response) {
         this.isCreating = false;
@@ -209,7 +236,8 @@ export default defineComponent({
 
         await this.setIndexResponse(null);
         await this.setCustomers([]);
-        await this.loadCustomers();}
+        await this.loadCustomers();
+      }
     },
     updateResponse: {
       async handler(response) {
@@ -230,6 +258,7 @@ export default defineComponent({
       setCustomers: 'customers/setCustomers',
       loadCustomers: 'customers/loadCustomers',
       loadCustomersIfMissing: 'customers/loadCustomersIfMissing',
+      loadMoreCustomers: 'customers/loadMoreCustomers',
       applySearch: 'customers/applySearch',
       setFormCustomer: 'customers/setFormCustomer',
       storeCustomer: 'customers/storeCustomer',
@@ -277,6 +306,11 @@ export default defineComponent({
 
         this.storeCustomer({request: form});
       }
+    },
+    onLoadMore() {
+      this.isLoadingMore = true;
+
+      this.loadMoreCustomers();
     },
     onCancelClick() {
       this.$emit('on-cancel');

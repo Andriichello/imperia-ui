@@ -47,6 +47,9 @@ const getters = {
   selections(state: HistoryState) {
     return state.filters;
   },
+  filters(state: HistoryState) {
+    return state.filters;
+  },
   banquets(state: HistoryState) {
     return state.banquets;
   },
@@ -58,25 +61,41 @@ const getters = {
   
     return response.meta.total;
   },
+  getShowResponse(state: HistoryState) {
+    return state.banquetResponse;
+  },
+  getIndexResponse(state: HistoryState) {
+    return state.banquetsResponse;
+  },
+  getIndexMoreResponse(state: HistoryState) {
+    return state.moreBanquetsResponse;
+  },
 };
 
 const actions = {
   async loadBanquets({ commit, getters, rootGetters}) {
     const request: IndexBanquetsRequest = {
       include: 'creator,customer,comments',
+      pageSize: 25,
     };
 
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurantId = restaurantId;
+    }
+
     const filters = getters.filters;
-    if (filters.states && filters.states.length > 0) {
+    if (filters?.states && filters.states.length > 0) {
       request.filterState = filters.states.join(',');
     }
-    if (filters.search && filters.search.length > 0) {
+    if (filters?.search && filters.search.length > 0) {
       request.filterSearch = filters.search;
     }
-    if (filters.from) {
+    if (filters?.from) {
       request.filterFrom = filters.from;
     }
-    if (filters.until) {
+    if (filters?.until) {
       request.filterUntil = filters.until;
     }
 
@@ -108,20 +127,27 @@ const actions = {
 
     const request: IndexBanquetsRequest = {
       pageNumber: page,
+      pageSize: 25,
       include: 'creator,customer,comments',
     };
 
-    const filters = getters.filters;
-    if (filters.states && filters.states.length > 0) {
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurantId = restaurantId;
+    }
+
+    const filters = getters['filters'];
+    if (filters?.states && filters.states.length > 0) {
       request.filterState = filters.states.join(',');
     }
-    if (filters.search && filters.search.length > 0) {
+    if (filters?.search && filters.search.length > 0) {
       request.filterSearch = filters.search;
     }
-    if (filters.from) {
+    if (filters?.from) {
       request.filterFrom = filters.from;
     }
-    if (filters.until) {
+    if (filters?.until) {
       request.filterUntil = filters.until;
     }
 
@@ -148,6 +174,12 @@ const actions = {
   applyUntil({ commit, dispatch }, { until }) {
     commit('applyUntil', { until });
     dispatch('loadBanquets');
+  },
+  setBanquetsResponse({ commit }, { response }) {
+    commit('setBanquetsResponse', { response });
+  },
+  setMoreBanquetsResponse({ commit }, { response }) {
+    commit('setMoreBanquetsResponse', { response });
   },
 };
 

@@ -103,7 +103,7 @@ import {
 import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 
 export default defineComponent({
-  name: "PreviewOrderPage",
+  name: "PlaceOrderPage",
   components: {
     CustomerPicker,
     TimePicker,

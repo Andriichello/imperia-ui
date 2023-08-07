@@ -23,7 +23,7 @@ import Preloader from "@/components/preview/loading/Preloader.vue";
 import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
 
 export default defineComponent({
-  name: "PreviewMenuPage",
+  name: "PlaceMenuPage",
   components: {
     OrderSwitcher,
     Preloader,

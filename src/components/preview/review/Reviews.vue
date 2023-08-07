@@ -106,11 +106,17 @@
 
     <div class="w-full flex flex-col justify-center items-center mt-1">
       <div class="flex flex-col justify-center items-center gap-2">
-        <span v-if="reviewsCount && reviewsTotal && reviewsCount !== reviewsTotal">Показано {{ reviewsCount }} з {{ reviewsTotal }} відгуків</span>
-        <span v-else-if="reviewsCount && reviewsTotal && reviewsCount === reviewsTotal">Показано всі відгуки ({{ reviewsTotal }})</span>
+        <span v-if="reviewsCount && reviewsTotal && reviewsCount !== reviewsTotal">
+          {{ $t('reviews.showing_C_of_T', {count: reviewsCount, total: reviewsTotal}) }}
+        </span>
+        <span v-else-if="reviewsCount && reviewsTotal && reviewsCount === reviewsTotal">
+          {{ $t('reviews.showing_all_C', {count: reviewsCount}) }}
+        </span>
 
         <div class="list-more-btn" v-if="reviewsCount < reviewsTotal">
-          <button class="btn btn-block btn-ghost" :class="{ 'loading': loadingMore }" @click="onLoadMore">Завантажити ще...</button>
+          <button class="btn btn-block btn-ghost" :class="{ 'loading': loadingMore }" @click="onLoadMore">
+            {{ $t('reviews.load_more') }}
+          </button>
         </div>
       </div>
     </div>

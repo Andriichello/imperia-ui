@@ -78,6 +78,8 @@
       "theme": "Theme",
       "profile": "Profile",
       "logout": "Logout",
+      "history": "History",
+      "new_order": "New order",
       "restaurant": "Restaurant",
       "street_and_address": "Street, address"
     },
@@ -123,6 +125,9 @@
     "your_review": "Your review",
     "your_name": "Your name",
     "select_score": "Select score",
+    "load_more": "Load more...",
+    "showing_C_of_T": "Showing {count} of {total} reviews",
+    "showing_all_C": "Showing all reviews ({count})",
     "errors": {
       "ip": {
         "failed_to_resolve": "Failed to resolve your IP-address, so we won't be able to store the review."
@@ -173,7 +178,16 @@
       "update": "Update",
       "edit": "Edit",
       "unfortunately_list_is_empty": "Unfortunately the list is empty",
-      "loading": "Loading customers"
+      "loading": "Loading customers",
+      "load_more": "Load more...",
+      "showing_C_of_T": "Showing {count} of {total} customers",
+      "showing_all_C": "Showing all customers ({count})"
     }
+  },
+  "history": {
+    "loading": "Loading banquets",
+    "load_more": "Load more...",
+    "showing_C_of_T": "Showing {count} of {total} banquets",
+    "showing_all_C": "Showing all banquets ({count})"
   }
 }

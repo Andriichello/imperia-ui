@@ -45,23 +45,17 @@
             </button>
           </label>
           <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
-<!--            <li>-->
-<!--              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"-->
-<!--                          to="/preview" replace>-->
-<!--                Preview-->
-<!--              </RouterLink>-->
-<!--            </li>-->
-            <!--          <li>-->
-            <!--            <RouterLink class="justify-between" to="/marketplace" replace>-->
-            <!--              Marketplace-->
-            <!--            </RouterLink>-->
-            <!--          </li>-->
-<!--            <li v-if="authorized">-->
-<!--              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"-->
-<!--                          to="/profile" replace>-->
-<!--                {{ $t('preview.navbar.profile') }}-->
-<!--              </RouterLink>-->
-<!--            </li>-->
+            <li v-if="authorized">
+              <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"
+                          :to="`/place/${restaurantId}/history`" replace>
+                {{ $t('preview.navbar.history') }}
+              </RouterLink>
+            </li>
+            <li v-if="authorized" @click="onNewOrder">
+              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
+                {{ $t('preview.navbar.new_order') }}
+              </span>
+            </li>
             <li v-if="authorized" @click="onSwitchTheme">
               <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
                 {{ $t('preview.navbar.theme') }}
@@ -102,6 +96,7 @@ export default defineComponent({
       authorized: "auth/authorized",
       theme: "theme/get",
       themes: "theme/list",
+      restaurantId: "restaurants/restaurantId",
       restaurant: "restaurants/selected",
       restaurants: "restaurants/restaurants",
       menu: "preview/menu",
@@ -136,6 +131,8 @@ export default defineComponent({
       logout: "auth/logout",
       applyTheme: "theme/apply",
       selectRestaurant: "restaurants/setSelected",
+      clearOrder: "order/clear",
+      clearBanquet: "basket/clear",
     }),
     onSelectRestaurant(restaurant) {
       this.selectRestaurant(restaurant);
@@ -179,6 +176,15 @@ export default defineComponent({
       if (this.$store.getters['error/present']) {
         this.$store.dispatch('error/clear');
       }
+
+      this.onHide();
+    },
+    onNewOrder() {
+      this.clearOrder();
+      this.clearBanquet();
+
+      this.$router.push(`/place/${this.restaurantId}/order`);
+      this.onHide();
     },
     onSwitchTheme() {
       if (this.theme === this.themes[0]) {
@@ -186,6 +192,7 @@ export default defineComponent({
       } else {
         this.applyTheme(this.themes[0])
       }
+      this.onHide();
     },
     async onLogout() {
       if (this.user && this.authorized) {
@@ -193,6 +200,8 @@ export default defineComponent({
 
         this.$router.push('/login');
       }
+
+      this.onHide();
     },
   },
 });

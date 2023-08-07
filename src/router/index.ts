@@ -8,6 +8,7 @@ import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
 import PlaceMenuPage from "@/pages/PlaceMenuPage.vue";
 import PlaceOrderPage from "@/pages/PlaceOrderPage.vue";
+import PlaceHistoryPage from "@/pages/PlaceHistoryPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -46,6 +47,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/place/:restaurantId(\\d+)?',
     name: 'home',
     component: HomePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/history',
+    name: 'place-history',
+    component: PlaceHistoryPage,
     meta: {
       requiresAuth: true,
     },

@@ -219,7 +219,7 @@ const actions = {
     commit('appendCustomers', customers);
   },
   async loadCustomersIfMissing({ state, dispatch }) {
-    if (state.customersResponse) {
+    if (state.indexResponse) {
       return;
     }
 
@@ -241,6 +241,7 @@ const actions = {
       .catch(error => error.response);
 
     commit('setIndexResponse', response);
+    commit('setIndexMoreResponse', null);
     dispatch('setCustomers', response.data);
   },
   async loadMoreCustomers({ state, commit, getters, rootGetters }) {
@@ -256,7 +257,7 @@ const actions = {
 
     const request: IndexCustomersRequest = {
       pageNumber: page,
-      include: 'comments'
+      include: 'comments',
     };
 
     const filters = getters.filters;
