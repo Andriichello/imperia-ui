@@ -55,10 +55,10 @@
 <script>
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
-import List from "@/components/hist/list/List.vue";
-import Search from "@/components/hist/filters/Search.vue";
+import List from "@/components/history/list/List.vue";
+import Search from "@/components/history/filters/Search.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
-import DatesFilter from "@/components/hist/filters/DatesFilter.vue";
+import DatesFilter from "@/components/history/filters/DatesFilter.vue";
 
 export default defineComponent({
   name: "PlaceHistoryPage",

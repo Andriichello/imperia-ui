@@ -60,7 +60,7 @@ const actions = {
     commit('setShowResponse', response);
   },
   async loadBanquetIfMissing({ dispatch }, { id }) {
-    if (state.showResponse) {
+    if (state.showResponse && (state.showResponse['data']['id'] ?? null) === id) {
       return;
     }
 

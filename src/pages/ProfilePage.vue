@@ -10,7 +10,7 @@ import { mapActions, mapGetters } from "vuex";
 import ProfileForm from "../components/forms/ProfileForm.vue";
 
 export default defineComponent({
-  name: "ProfileView",
+  name: "ProfilePage",
   components: {
     ProfileForm
   },

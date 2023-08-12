@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full list flex flex-wrap justify-center items-start gap-2 py-2">
+  <div class="w-full list flex flex-wrap justify-center items-start gap-2 py-2" id="customer-list-container">
     <div class="w-full flex flex-row justify-center items-start gap-3">
       <template v-if="number === 1">
         <div class="w-full max-w-sm flex flex-col gap-3">
@@ -43,7 +43,7 @@ export default defineComponent({
   },
   data() {
     return {
-      number: window.innerWidth > 700 ? 2 : 1,
+      number: window.innerWidth > 580 ? 2 : 1,
     }
   },
   computed: {
@@ -83,7 +83,7 @@ export default defineComponent({
       this.$emit('edit-customer', {customer});
     },
     onResize() {
-      if (window.innerWidth > 500) {
+      if (window.innerWidth > 580) {
         this.number = 2;
       } else {
         this.number = 1;

@@ -136,7 +136,7 @@
 import { defineComponent } from "vue";
 import { mapGetters, mapActions } from "vuex";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
-import TabSwitcherItem from "../tab/TabSwitcherItem.vue";
+import TabSwitcherItem from "./TabSwitcherItem.vue";
 
 export default defineComponent({
   name: "TabSwitcher",

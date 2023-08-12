@@ -4,7 +4,7 @@
                v-if="isLoadingRestaurant || isLoadingRestaurants"/>
 
     <Preloader :title="$t('preview.order.loading')" class="p-2"
-               v-if="orderId && (isLoadingOrder || isLoadingOrder)"/>
+               v-if="orderId && (isLoadingOrder)"/>
 
     <div class="flex flex-col justify-center items-start gap-3 w-full min-w-xl max-w-xl">
       <Preloader :title="$t('banquet.loading')" class="p-2"
@@ -116,13 +116,13 @@ export default defineComponent({
   data() {
     let maxModalWidth = Math.min(window.innerWidth / 4 * 3, 600);
 
-    if (window.innerWidth < 700) {
+    if (window.innerWidth < 800) {
       maxModalWidth = window.innerWidth - 32;
     }
 
     let maxModalHeight = Math.min(window.innerHeight / 3 * 2, 800);
 
-    if (window.innerHeight < 700) {
+    if (window.innerHeight < 800) {
       maxModalHeight = window.innerHeight - 32;
     }
 
@@ -155,7 +155,6 @@ export default defineComponent({
       orderId: 'order/orderId',
       showOrderResponse: 'order/getShowOrderResponse',
       updateOrderResponse: 'order/getUpdateOrderResponse',
-      isLoadingOrder: 'order/isLoadingOrder',
       orderedProductsResponse: 'order/getOrderedProductsResponse',
       isLoadingOrderedProducts: 'order/isLoadingOrderedProducts',
       restaurant: 'restaurants/selected',
@@ -251,13 +250,13 @@ export default defineComponent({
     onResize() {
       let maxModalWidth = Math.min(window.innerWidth / 4 * 3, 600);
 
-      if (window.innerWidth < 700) {
+      if (window.innerWidth < 800) {
         maxModalWidth = window.innerWidth - 32;
       }
 
       let maxModalHeight = Math.min(window.innerHeight / 4 * 3, 800);
 
-      if (window.innerHeight < 700) {
+      if (window.innerHeight < 800) {
         maxModalHeight = window.innerHeight - 32;
       }
 

@@ -3,7 +3,8 @@
     <div class="flex justify-between items-center w-full gap-2">
       <div class="form-control">
         <RouterLink :to="`/place/${banquet.restaurantId}/order/${banquet.id}`"
-            class="text-xl font-semibold px-1">
+            class="text-xl font-semibold px-1"
+            @click="onLinkClick">
           {{ banquet?.title }}
         </RouterLink>
       </div>
@@ -81,6 +82,8 @@ export default defineComponent({
   methods: {
     ...mapActions({
       loadPdfUrl: "banquets/loadBanquetPdfUrl",
+      clearOrder: "order/clear",
+      clearBanquet: "basket/clear",
     }),
     onDateClick() {
       this.$emit('date-click');

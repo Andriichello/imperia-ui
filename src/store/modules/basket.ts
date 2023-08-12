@@ -264,7 +264,7 @@ const actions = {
     commit('setBanquet', response.data);
   },
   async loadBanquetIfMissing({ dispatch }, { id }) {
-    if (state.showResponse) {
+    if (state.showResponse && (state.showResponse['data']['id'] ?? null) === id) {
       return;
     }
 

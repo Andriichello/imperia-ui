@@ -33,7 +33,7 @@ import BaseIcon from "@/components/icons/BaseIcon.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: "Time",
-  emits: ["on-change"],
+  emits: ["time-change"],
   components: {
     BaseIcon,
   },
@@ -55,10 +55,10 @@ export default defineComponent({
   },
   watch: {
     hourVal: function(newVal, oldVal) {
-      this.$emit('on-change', { hour: this.hourVal, minute: this.minuteVal });
+      this.$emit('time-change', { hour: this.hourVal, minute: this.minuteVal });
     },
     minuteVal: function(newVal, oldVal) {
-      this.$emit('on-change', { hour: this.hourVal, minute: this.minuteVal });
+      this.$emit('time-change', { hour: this.hourVal, minute: this.minuteVal });
     },
   },
   computed: {
@@ -197,7 +197,7 @@ input[type="number"] {
 }
 
 .hour, .minute {
-  @apply flex flex-col justify-center items-center;
+  @apply flex flex-col justify-center items-center text-2xl;
 }
 
 .hour-up, .minute-up {
@@ -205,6 +205,6 @@ input[type="number"] {
 }
 
 .hour-up, .hour-down, .minute-up, .minute-down {
-  @apply w-6 h-6 p-1 btn-ghost rounded-md;
+  @apply w-8 h-8 p-1.5 btn-ghost rounded-md;
 }
 </style>

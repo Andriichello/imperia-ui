@@ -32,7 +32,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Time from "@/components/marketplace/time/Time.vue";
+import Time from "@/components/order/time/Time.vue";
 import {mapGetters} from "vuex";
 
 export default defineComponent({
@@ -167,10 +167,12 @@ export default defineComponent({
       return 'currentColor';
     },
     onStartAtChange({ hour, minute }) {
+      console.log('onStartAtChange...');
       this.s.hour = hour;
       this.s.minute = minute;
     },
     onEndAtChange({ hour, minute }) {
+      console.log('onEndAtChange...');
       this.e.hour = hour;
       this.e.minute = minute;
     },

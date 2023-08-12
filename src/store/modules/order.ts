@@ -297,6 +297,11 @@ const actions = {
     if (fields && fields.length) {
       dispatch('recalculate');
     }
+
+    commit('setOrderedProducts', []);
+    commit('setOrderedProductsResponse', null);
+
+    dispatch('loadProductsForOrderIfMissing');
   },
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
@@ -360,9 +365,11 @@ const actions = {
     commit('setShowOrderResponse', response);
     commit('setOrder', {order: response.data, fields});
   },
-  async loadOrderForBanquetIfMissing({dispatch}, {banquetId, fields}) {
+  async loadOrderForBanquetIfMissing({dispatch, commit}, {banquetId, fields}) {
     if (state.showOrderResponse || state.order) {
-      return;
+      if (state.showOrderResponse['data']['banquetId'] === banquetId) {
+        return;
+      }
     }
 
     dispatch('loadOrderForBanquet', { banquetId, fields })

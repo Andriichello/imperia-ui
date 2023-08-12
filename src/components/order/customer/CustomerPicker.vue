@@ -23,7 +23,7 @@
       </div>
 
       <template v-if="customers && customers.length">
-        <div class="w-full grow flex flex-col justify-start items-center overflow-y-auto">
+        <div class="w-full grow flex flex-col justify-start items-center overflow-y-auto" id="customers-list">
           <div class="w-full flex justify-center items-center pt-2">
             <button class="w-full btn btn-sm btn-ghost max-w-xl"
                     @click="onCreateCustomer">
@@ -31,7 +31,7 @@
             </button>
           </div>
 
-          <List class="pb-3" id="customers-list"
+          <List class="pb-3"
                 :customers="customers"
                 :selected="lastSelected"
                 @select-customer="onSelectCustomer"
@@ -271,6 +271,7 @@ export default defineComponent({
           && this.selected.id === customer.id;
     },
     onSelectCustomer({customer}) {
+      console.log('onSelectCustomer');
       this.lastSelected = customer;
 
       const list = document.getElementById('customers-list');
