@@ -144,6 +144,7 @@
   "banquet": {
     "title": "Title",
     "description": "Description",
+    "create": "Create banquet",
     "store": "Store banquet",
     "loading": "Loading banquet",
     "more": {
@@ -181,7 +182,31 @@
       "loading": "Loading customers",
       "load_more": "Load more...",
       "showing_C_of_T": "Showing {count} of {total} customers",
-      "showing_all_C": "Showing all customers ({count})"
+      "showing_all_C": "Showing all customers ({count})",
+      "errors": {
+        "required": {
+          "name": "Name is required.",
+          "surname": "Surname is required.",
+          "phone": "Phone is required.",
+          "email": "Email is required."
+        },
+        "min": {
+          "name": "Name must be at least 2 characters.",
+          "surname": "Surname must be at least 2 characters.",
+          "phone": "Phone must be at least 10 digits."
+        }
+      }
+    },
+    "errors": {
+      "required": {
+        "title": "Title is required.",
+        "date": "Date is required.",
+        "time": "Start and end is required.",
+        "customer": "Customer is required."
+      },
+      "min": {
+        "title": "Title must be at least 2 characters."
+      }
     }
   },
   "history": {

@@ -167,12 +167,10 @@ export default defineComponent({
       return 'currentColor';
     },
     onStartAtChange({ hour, minute }) {
-      console.log('onStartAtChange...');
       this.s.hour = hour;
       this.s.minute = minute;
     },
     onEndAtChange({ hour, minute }) {
-      console.log('onEndAtChange...');
       this.e.hour = hour;
       this.e.minute = minute;
     },

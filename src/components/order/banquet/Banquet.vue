@@ -3,13 +3,14 @@
     <div class="flex justify-between items-center w-full gap-2">
       <div class="form-control w-full">
         <input class="input input-sm input-ghost w-full text-xl font-semibold px-1"
+               :class="{ 'input-error' : titleErrors !== null }"
                name="title" type="text" required v-model="title"
                :placeholder="$t('banquet.title') + '...'"/>
-        <!--      <label class="label flex-col items-start" v-if="emailErrors">-->
-        <!--              <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">-->
-        <!--                {{ error }}-->
-        <!--              </span>-->
-        <!--      </label>-->
+          <label class="label flex-col items-start" v-if="titleErrors">
+            <span class="label-text-alt text-error text-sm" v-for="error in titleErrors" :key="error">
+              {{ error }}
+            </span>
+          </label>
       </div>
 
       <button class="flex justify-center start-center btn btn-sm btn-ghost btn-square"
@@ -51,22 +52,25 @@
 <!--      &lt;!&ndash;      </label>&ndash;&gt;-->
 <!--    </div>-->
 
-    <div class="flex flex-wrap justify-start items-center w-full gap-1 mt-2">
+    <div class="flex flex-wrap justify-start items-start w-full gap-1 mt-2">
       <div class="flex flex-col justify-start items-start gap-1 grow">
         <Date class="cursor-pointer w-full"
               :date="banquet?.date"
+              :errors="dateErrors"
               @click="onDateClick"/>
 
         <Time class="cursor-pointer w-full"
               :start-at="banquet?.startAt" :end-at="banquet?.endAt"
+              :errors="timeErrors"
               @click="onTimeClick"/>
       </div>
 
       <div class="flex flex-col justify-start items-start gap-1">
-        <State class="cursor-pointer w-full"
-               :state="banquet?.state"/>
+<!--        <State class="cursor-pointer w-full"-->
+<!--               :state="banquet?.state"/>-->
         <Customer class="cursor-pointer w-full"
                   :customer="banquet?.customer"
+                  :errors="customerErrors"
                   @click="onCustomerClick"/>
       </div>
     </div>
@@ -92,12 +96,16 @@ export default defineComponent({
     Time,
     Date,
     Customer,
-    State
+    // State
   },
   props: {
     banquet: {
       type: Object,
       default: null
+    },
+    errors: {
+      type: Object,
+      default: null,
     },
   },
   computed: {
@@ -116,6 +124,31 @@ export default defineComponent({
       set(value) {
         return this.$emit('title-update', {title: value});
       },
+    },
+    titleErrors() {
+      return this.errors?.title ?? null;
+    },
+    dateErrors() {
+      return this.errors?.date ?? null;
+    },
+    timeErrors() {
+      const startErrors = this.errors?.startAt ?? null;
+      const endErrors = this.errors?.startAt ?? null;
+
+      const errors = [];
+
+      if (startErrors && startErrors.length) {
+        errors.push(...startErrors);
+      }
+
+      if (endErrors && endErrors.length) {
+        errors.push(...endErrors);
+      }
+
+      return errors.length ? [...new Set(errors)] : null;
+    },
+    customerErrors() {
+      return this.errors?.customer ?? null;
     },
   },
   methods: {

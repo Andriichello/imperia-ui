@@ -12,15 +12,16 @@
 
       <Banquet class="w-full"
                :banquet="banquetForm"
+               :errors="banquetErrors"
                @title-update="onBanquetTitleUpdate"
                @date-click="onDateClick"
                @time-click="onTimeClick"
                @customer-click="onCustomerClick"/>
 
       <div class="w-full flex justify-center items-center"
-           v-if="isBanquetChanged && validateBanquetForm()">
+           v-if="isBanquetChanged && !Object.keys(banquetErrors).length">
         <button class="w-full btn btn-md btn-primary" @click="onStoreBanquet">
-          {{ $t('banquet.store') }}
+          {{ +this.$route.params['banquetId'] ? $t('banquet.store') : $t('banquet.create') }}
           <span class="loading loading-spinner" v-if="isCreatingBanquet || isUpdatingBanquet"></span>
         </button>
       </div>
@@ -138,11 +139,14 @@ export default defineComponent({
       isLoadingOrder: false,
       isCreatingOrder: false,
       isUpdatingOrder: false,
+      wasStoreClicked: false,
+      banquetErrors: {},
     };
   },
   computed: {
     ...mapGetters({
       banquet: 'basket/banquet',
+      banquetId: 'order/banquetId',
       banquetForm: 'basket/form',
       isBanquetChanged: 'basket/hasRealChanges',
       showBanquetResponse: 'basket/getShowResponse',
@@ -170,6 +174,11 @@ export default defineComponent({
     }
   },
   watch: {
+    banquet(newValue) {
+      if (!newValue) {
+        this.wasStoreClicked = false;
+      }
+    },
     showBanquetResponse() {
       this.isLoadingBanquet = false;
     },
@@ -181,8 +190,6 @@ export default defineComponent({
 
         const fields = this.orderForm && !this.orderForm?.id
           ? this.orderForm?.products : null;
-
-        console.log({form: this.orderForm, fields: fields})
 
         this.setOrder({order: newValue.data?.order, fields});
         this.loadBanquet({ id });
@@ -274,11 +281,19 @@ export default defineComponent({
     },
     onBanquetTitleUpdate({title}) {
       this.setTitle(title);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
     },
     onSelectDate({date}) {
       this.setDate(date);
 
       this.modal = null;
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
     },
     onSelectTime({start, end}) {
       const date = this.date instanceof Date
@@ -302,14 +317,54 @@ export default defineComponent({
       this.setEndAt(endAt);
 
       this.modal = null;
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
     },
     onSelectCustomer({customer}) {
       this.setCustomer(customer);
 
       this.modal = null;
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
     },
     validateBanquetForm() {
-      return this.banquetForm?.title
+      const errors = {};
+
+      const title = this.banquetForm?.title;
+      if (!title) {
+        errors.title = [this.$t('banquet.errors.required.title')];
+      } else if (title.trim().length < 2) {
+        errors.title = [this.$t('banquet.errors.min.title')];
+      }
+
+      const customer = this.banquetForm?.customer;
+      if (!customer) {
+        errors.customer = [this.$t('banquet.errors.required.customer')];
+      }
+
+      const date = this.banquetForm?.date;
+      if (!date) {
+        errors.date = [this.$t('banquet.errors.required.date')];
+      }
+
+      const startAt = this.banquetForm?.startAt;
+      if (!startAt) {
+        errors.startAt = [this.$t('banquet.errors.required.time')];
+      }
+
+      const endAt = this.banquetForm?.startAt;
+      if (!endAt) {
+        errors.endAt = [this.$t('banquet.errors.required.time')];
+      }
+
+      this.banquetErrors = errors;
+
+      return !Object.keys(errors).length
+          && this.banquetForm?.title
           && this.banquetForm?.state
           && this.banquetForm?.customer
           && this.banquetForm?.date
@@ -317,14 +372,19 @@ export default defineComponent({
           && this.banquetForm?.endAt;
     },
     onStoreBanquet() {
+      this.wasStoreClicked = true;
+      if (!this.validateBanquetForm() !== false) {
+        return;
+      }
+
       const banquetId = +this.$route.params['banquetId'];
 
       if (banquetId) {
-        // this.isUpdatingBanquet = true;
-        // this.updateBanquet({ id: banquetId, request: this.banquetForm.asUpdate() });
+        this.isUpdatingBanquet = true;
+        this.updateBanquet({ id: banquetId, request: this.banquetForm.asUpdate() });
       } else {
-        // this.isCreatingBanquet = true;
-        // this.createBanquet(this.banquetForm.asCreate());
+        this.isCreatingBanquet = true;
+        this.createBanquet(this.banquetForm.asCreate());
       }
     },
     validateOrderForm() {
@@ -341,7 +401,7 @@ export default defineComponent({
   },
   mounted() {
     window.addEventListener("resize", this.onResize);
-    const banquetId = this.$route.params['banquetId'];
+    const banquetId = +this.$route.params['banquetId'];
 
     if (banquetId) {
       this.loadBanquetIfMissing({id: banquetId})

@@ -90,28 +90,56 @@
           <label class="label">
             <span class="label-text text-md">{{ $t('banquet.customer.name') }}</span>
           </label>
-          <input v-model="name" type="text" :placeholder="$t('banquet.customer.name') + '...'" class="input input-md input-bordered w-full" />
+          <input v-model="name" type="text" :placeholder="$t('banquet.customer.name') + '...'"
+                 class="input input-md input-bordered w-full"
+                 :class="{ 'input-error' : errors.name }"/>
+          <label class="label flex-col items-start" v-if="errors.name">
+            <span class="label-text-alt text-error text-sm" v-for="error in errors.name" :key="error">
+              {{ error }}
+            </span>
+          </label>
         </div>
 
         <div class="form-control w-full">
           <label class="label">
             <span class="label-text text-md">{{ $t('banquet.customer.surname') }}</span>
           </label>
-          <input v-model="surname" type="text" :placeholder="$t('banquet.customer.surname') + '...'" class="input input-md input-bordered w-full" />
+          <input v-model="surname" type="text" :placeholder="$t('banquet.customer.surname') + '...'"
+                 class="input input-md input-bordered w-full"
+                 :class="{ 'input-error' : errors.surname }"/>
+          <label class="label flex-col items-start" v-if="errors.surname">
+            <span class="label-text-alt text-error text-sm" v-for="error in errors.surname" :key="error">
+              {{ error }}
+            </span>
+          </label>
         </div>
 
         <div class="form-control w-full">
           <label class="label">
             <span class="label-text text-md">{{ $t('banquet.customer.phone') }}</span>
           </label>
-          <input v-model="phone" type="tel" :placeholder="$t('banquet.customer.phone') + '...'" class="input input-md input-bordered w-full" />
+          <input v-model="phone" type="tel" :placeholder="$t('banquet.customer.phone') + '...'"
+                 class="input input-md input-bordered w-full"
+                 :class="{ 'input-error' : errors.phone }"/>
+          <label class="label flex-col items-start" v-if="errors.phone">
+            <span class="label-text-alt text-error text-sm" v-for="error in errors.phone" :key="error">
+              {{ error }}
+            </span>
+          </label>
         </div>
 
         <div class="form-control w-full">
           <label class="label">
             <span class="label-text text-md">{{ $t('banquet.customer.email') }}</span>
           </label>
-          <input v-model="email" type="email" :placeholder="$t('banquet.customer.email') + '...'" class="input input-md input-bordered w-full" />
+          <input v-model="email" type="email" :placeholder="$t('banquet.customer.email') + '...'"
+                 class="input input-md input-bordered w-full"
+                 :class="{ 'input-error' : errors.email }"/>
+          <label class="label flex-col items-start" v-if="errors.email">
+            <span class="label-text-alt text-error text-sm" v-for="error in errors.email" :key="error">
+              {{ error }}
+            </span>
+          </label>
         </div>
       </div>
 
@@ -120,7 +148,7 @@
           {{ $t('banquet.customer.close') }}
         </button>
 
-        <button class="grow btn btn-md btn-primary pl-5 pr-5" v-if="hasChanges && (name && surname && phone && email)" @click="onSaveForm">
+        <button class="grow btn btn-md btn-primary pl-5 pr-5" v-if="hasChanges" @click="onSaveForm">
           {{ formCustomer ? $t('banquet.customer.update') : $t('banquet.customer.create') }}
           <span class="loading loading-spinner" v-if="isCreating || isUpdating"></span>
         </button>
@@ -162,6 +190,8 @@ export default defineComponent({
       isLoadingMore: false,
       searchVal: this.search,
       lastSelected: this.selected,
+      wasStoreClicked: false,
+      errors: {},
     }
   },
   computed: {
@@ -184,7 +214,11 @@ export default defineComponent({
         return this.$store.getters['customers/name'];
       },
       set(value) {
-        return this.$store.commit('customers/setName', value);
+        this.$store.commit('customers/setName', value);
+
+        if (this.wasStoreClicked) {
+          this.validateForm();
+        }
       },
     },
     surname: {
@@ -192,7 +226,11 @@ export default defineComponent({
         return this.$store.getters['customers/surname'];
       },
       set(value) {
-        return this.$store.commit('customers/setSurname', value);
+        this.$store.commit('customers/setSurname', value);
+
+        if (this.wasStoreClicked) {
+          this.validateForm();
+        }
       },
     },
     phone: {
@@ -200,7 +238,11 @@ export default defineComponent({
         return this.$store.getters['customers/phone'];
       },
       set(value) {
-        return this.$store.commit('customers/setPhone', value);
+        this.$store.commit('customers/setPhone', value);
+
+        if (this.wasStoreClicked) {
+          this.validateForm();
+        }
       },
     },
     email: {
@@ -208,7 +250,11 @@ export default defineComponent({
         return this.$store.getters['customers/email'];
       },
       set(value) {
-        return this.$store.commit('customers/setEmail', value);
+        this.$store.commit('customers/setEmail', value);
+
+        if (this.wasStoreClicked) {
+          this.validateForm();
+        }
       }
     },
     changed() {
@@ -271,7 +317,6 @@ export default defineComponent({
           && this.selected.id === customer.id;
     },
     onSelectCustomer({customer}) {
-      console.log('onSelectCustomer');
       this.lastSelected = customer;
 
       const list = document.getElementById('customers-list');
@@ -293,7 +338,43 @@ export default defineComponent({
     onCloseCustomer() {
       this.mode = 'view';
     },
+    validateForm() {
+      const errors = {};
+
+      const name = this.form.name;
+      if (!name) {
+        errors.name = [this.$t('banquet.customer.errors.required.name')];
+      } else if (name.trim().length < 2) {
+        errors.name = [this.$t('banquet.customer.errors.min.name')];
+      }
+
+      const surname = this.form.surname;
+      if (!surname) {
+        errors.surname = [this.$t('banquet.customer.errors.required.surname')];
+      } else if (surname.trim().length < 2) {
+        errors.surname = [this.$t('banquet.customer.errors.min.surname')];
+      }
+
+      const phone = this.form.phone;
+      if (!phone) {
+        errors.phone = [this.$t('banquet.customer.errors.required.phone')];
+      } else if (phone.trim().length < 10) {
+        errors.phone = [this.$t('banquet.customer.errors.min.phone')];
+      }
+
+      this.errors = errors;
+
+      return !Object.keys(errors).length
+          && this.form.name
+          && this.form.surname
+          && this.form.phone;
+    },
     onSaveForm() {
+      this.wasStoreClicked = true;
+      if (!this.validateForm()) {
+        return;
+      }
+
       let form = null;
 
       if (this.formCustomer) {

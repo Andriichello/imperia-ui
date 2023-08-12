@@ -79,14 +79,10 @@ export default defineComponent({
   },
   methods: {
     onStartSelect({ date }) {
-      console.log({from: date})
-
       this.fromVal = date;
       this.$emit('from-select', { date });
     },
     onEndSelect({ date }) {
-      console.log({until: date})
-
       this.untilVal = date;
       this.$emit('until-select', { date });
     },

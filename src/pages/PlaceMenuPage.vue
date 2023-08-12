@@ -108,7 +108,7 @@ export default defineComponent({
     }
 
     const menuId = +this.$route.params['menuId'];
-    const banquetId = this.$route.params['banquetId'];
+    const banquetId = +this.$route.params['banquetId'];
 
     if (menuId < 1) {
 

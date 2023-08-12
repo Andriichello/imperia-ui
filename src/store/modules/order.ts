@@ -225,7 +225,7 @@ const getters = {
     return state.order?.id;
   },
   banquetId(state: OrderState) {
-    return state.order?.banquetId ?? router.currentRoute.value.params['banquetId'];
+    return Number.parseInt(state.order?.banquetId ?? router.currentRoute.value.params['banquetId']);
   },
   products(state: OrderState) {
     return state.form.products ?? [];
@@ -258,6 +258,26 @@ const getters = {
       }) ?? null;
     };
   },
+  isMissingOrderedProducts(state: OrderState, getters, rootGetters) {
+    if (!state.order) {
+      return false;
+    }
+
+    if (!state.order.products || !state.order.products.length) {
+      return false;
+    }
+
+    let isMissing = false;
+
+    (state.order.products ?? []).forEach((f) => {
+      if (!getters['orderedProduct'](f.productId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    return isMissing;
+  },
   total(state: OrderState) {
     return state.form?.totals?.products ?? 0;
   },
@@ -277,7 +297,7 @@ const getters = {
     return state.orderedProductsResponse;
   },
   isLoadingOrderedProducts(state: OrderState) {
-    return !state.orderedProductsResponse;
+    return !state.orderedProductsResponse && !state.orderedProducts;
   },
   getCreateOrderResponse(state: OrderState) {
     return state.createOrderResponse;
@@ -298,10 +318,7 @@ const actions = {
       dispatch('recalculate');
     }
 
-    commit('setOrderedProducts', []);
-    commit('setOrderedProductsResponse', null);
-
-    dispatch('loadProductsForOrderIfMissing');
+    dispatch('loadProductsForOrderIfMissing', {order});
   },
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
@@ -375,9 +392,18 @@ const actions = {
     dispatch('loadOrderForBanquet', { banquetId, fields })
   },
   async loadProductsForOrder({dispatch, commit, rootGetters}, {order}) {
-    const ids = (order?.products ?? []).map((p) => {
+    const original = (order?.products ?? []).map((p) => {
       return p.productId;
     });
+
+    const ids = [...new Set(original)];
+
+    if (!ids.length) {
+      commit('setOrderedProductsResponse', null);
+      commit('setOrderedProducts', []);
+
+      return;
+    }
 
     const request: IndexProductsRequest = {
       filterIds: ids.join(','),
@@ -396,12 +422,33 @@ const actions = {
     commit('setOrderedProductsResponse', response);
     commit('setOrderedProducts', response.data);
   },
-  async loadProductsForOrderIfMissing({ state, dispatch }, { order }) {
-    if (state.orderedProductsResponse) {
+  async loadProductsForOrderIfMissing({ state, commit, dispatch, getters, rootGetters }, { order }) {
+    if (state.orderedProductsResponse && !getters['isMissingOrderedProducts']) {
       return;
     }
 
-    dispatch('loadProductsForOrder', { order })
+    if (!state.order || !state.order.products || !state.order.products.length) {
+      commit('setOrderedProductsResponse', null);
+      commit('setOrderedProducts', []);
+
+      return;
+    }
+
+    let isMissing = false;
+
+    (state.order.products ?? []).forEach((f) => {
+      if (!rootGetters['preview/product'](f.productId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    if (isMissing) {
+      dispatch('loadProductsForOrder', { order });
+    } else {
+      commit('setOrderedProductsResponse', null);
+      commit('setOrderedProducts', []);
+    }
   },
   async createOrder({ commit, rootGetters }, request: StoreOrderRequest) {
     const response = await (new OrdersApi())
