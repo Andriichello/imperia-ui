@@ -19,6 +19,16 @@
                @customer-click="onCustomerClick"/>
 
       <div class="w-full flex justify-center items-center"
+           v-for="errorsGroup in (Object.keys(createBanquetErrors?.errors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in createBanquetErrors.errors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
+      <div class="w-full flex justify-center items-center"
            v-if="isBanquetChanged && !Object.keys(banquetErrors).length">
         <button class="w-full btn btn-md btn-primary" @click="onStoreBanquet">
           {{ +this.$route.params['banquetId'] ? $t('banquet.store') : $t('banquet.create') }}
@@ -102,6 +112,7 @@ import {
   instanceOfUpdateBanquetResponse
 } from "@/openapi";
 import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
+import {ResponseErrors} from "@/helpers";
 
 export default defineComponent({
   name: "PlaceOrderPage",
@@ -141,6 +152,8 @@ export default defineComponent({
       isUpdatingOrder: false,
       wasStoreClicked: false,
       banquetErrors: {},
+      createBanquetErrors: {},
+      updateBanquetErrors: {},
     };
   },
   computed: {
@@ -182,8 +195,12 @@ export default defineComponent({
     showBanquetResponse() {
       this.isLoadingBanquet = false;
     },
-    createBanquetResponse(newValue) {
+    async createBanquetResponse(newValue) {
       this.isCreatingBanquet = false;
+      this.createBanquetErrors = newValue
+          ? await ResponseErrors.from(newValue) : {};
+
+      console.log(Object.keys(this.createBanquetErrors?.errors ?? {}));
 
       if (instanceOfStoreBanquetResponse(newValue)) {
         const id = newValue.data.id;
@@ -198,8 +215,10 @@ export default defineComponent({
         this.$router.replace(`${path}/${id}`);
       }
     },
-    updateBanquetResponse(newValue) {
+    async updateBanquetResponse(newValue) {
       this.isUpdatingBanquet = false;
+      this.updateBanquetErrors = newValue
+          ? await ResponseErrors.from(newValue) : {};
 
       if (instanceOfUpdateBanquetResponse(newValue)) {
         const id = newValue.data.id;
@@ -254,6 +273,11 @@ export default defineComponent({
       setEndAt: 'basket/setEndAt',
       setCustomer: 'basket/setCustomer',
     }),
+    onKeyDown(e) {
+      if (this.modal && e.key === 'Escape') {
+        this.modal = null;
+      }
+    },
     onResize() {
       let maxModalWidth = Math.min(window.innerWidth / 4 * 3, 600);
 
@@ -305,15 +329,21 @@ export default defineComponent({
       this.setStartAt(startAt);
 
       const endAt = new Date(date.getTime());
+      endAt.setUTCHours(end.hour);
+      endAt.setUTCMinutes(end.minute);
+
+      console.log('before: ', endAt);
 
       if (start.hour > end.hour) {
+        console.log('isMore 1');
         endAt.setDate(endAt.getDate() + 1);
       } else if (start.hour === end.hour && start.minute > end.minute) {
+        console.log('isMore 2');
         endAt.setDate(endAt.getDate() + 1);
       }
 
-      endAt.setUTCHours(end.hour);
-      endAt.setUTCMinutes(end.minute);
+      console.log('after: ', endAt);
+
       this.setEndAt(endAt);
 
       this.modal = null;
@@ -400,6 +430,7 @@ export default defineComponent({
     },
   },
   mounted() {
+    document.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("resize", this.onResize);
     const banquetId = +this.$route.params['banquetId'];
 

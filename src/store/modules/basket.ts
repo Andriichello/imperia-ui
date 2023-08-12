@@ -322,40 +322,47 @@ const mutations = {
   setDate(state: BasketState, value: Date) {
     state.form.date = value;
     state.form.setChange('date', value);
+
+    const startAt = state.form?.startAt;
+    const endAt = state.form?.endAt;
+
+    let diff = 0;
+    if (startAt) {
+      value.setHours(startAt.getHours());
+      value.setMinutes(startAt.getMinutes());
+      value.setMilliseconds(startAt.getMilliseconds());
+
+      diff = startAt - value;
+    } else if (endAt) {
+      value.setHours(endAt.getHours());
+      value.setMinutes(endAt.getMinutes());
+      value.setMilliseconds(endAt.getMilliseconds());
+
+      diff = endAt - value;
+    }
+
+    if (diff) {
+      if (startAt) {
+        startAt.setTime(startAt.getTime() - diff);
+
+        state.form.startAt = startAt;
+        state.form.setChange('startAt', startAt);
+      }
+      if (endAt) {
+        endAt.setTime(endAt.getTime() - diff);
+
+        state.form.endAt = endAt;
+        state.form.setChange('endAt', endAt);
+      }
+    }
   },
   setStartAt(state: BasketState, value: Date) {
-    const date = state.form?.date;
-
-    if (date) {
-      const startAt = new Date((date as Date).getTime());
-     
-      startAt.setHours(value.getHours());
-      startAt.setMinutes(value.getMinutes());
-      startAt.setMilliseconds(value.getMilliseconds());
-     
-      state.form.startAt = startAt;
-      state.form.setChange('startAt', startAt);
-    } else {
-      state.form.startAt = value;
-      state.form.setChange('startAt', value);
-    }
+    state.form.startAt = value;
+    state.form.setChange('startAt', value);
   },
   setEndAt(state: BasketState, value: Date) {
-    const date = state.form?.date;
-
-    if (date) {
-      const endAt = new Date((date as Date).getTime());
-     
-      endAt.setHours(value.getHours());
-      endAt.setMinutes(value.getMinutes());
-      endAt.setMilliseconds(value.getMilliseconds());
-
-      state.form.endAt = endAt;
-      state.form.setChange('endAt', endAt);
-    } else {
-      state.form.endAt = value;
-      state.form.setChange('endAt', value);
-    }
+    state.form.endAt = value;
+    state.form.setChange('endAt', value);
   },
   setShowResponse(state: BasketState, response) {
     state.showResponse = response;
