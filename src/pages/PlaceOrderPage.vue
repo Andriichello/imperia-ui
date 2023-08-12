@@ -291,6 +291,13 @@ export default defineComponent({
       this.setStartAt(startAt);
 
       const endAt = new Date(date.getTime());
+
+      if (start.hour > end.hour) {
+        endAt.setDate(endAt.getDate() + 1);
+      } else if (start.hour === end.hour && start.minute > end.minute) {
+        endAt.setDate(endAt.getDate() + 1);
+      }
+
       endAt.setUTCHours(end.hour);
       endAt.setUTCMinutes(end.minute);
       this.setEndAt(endAt);
@@ -314,11 +321,11 @@ export default defineComponent({
       const banquetId = +this.$route.params['banquetId'];
 
       if (banquetId) {
-        this.isUpdatingBanquet = true;
-        this.updateBanquet({ id: banquetId, request: this.banquetForm.asUpdate() });
+        // this.isUpdatingBanquet = true;
+        // this.updateBanquet({ id: banquetId, request: this.banquetForm.asUpdate() });
       } else {
-        this.isCreatingBanquet = true;
-        this.createBanquet(this.banquetForm.asCreate());
+        // this.isCreatingBanquet = true;
+        // this.createBanquet(this.banquetForm.asCreate());
       }
     },
     validateOrderForm() {

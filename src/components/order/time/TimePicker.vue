@@ -100,7 +100,7 @@ export default defineComponent({
       return this.s.minute ?? 0;
     },
     eHour() {
-      if(this.s.hour === null && this.s.minute === null) {
+      if(this.e.hour === null && this.e.minute === null) {
         if (this.restaurant && this.restaurant?.schedules[0]) {
           const schedule = this.restaurant?.schedules[0];
 
@@ -115,7 +115,7 @@ export default defineComponent({
       return this.e.hour ?? 0;
     },
     eMinute() {
-      if(this.s.hour === null && this.s.minute === null) {
+      if(this.e.hour === null && this.e.minute === null) {
         if (this.restaurant && this.restaurant?.schedules[0]) {
           const schedule = this.restaurant?.schedules[0];
 
@@ -141,7 +141,7 @@ export default defineComponent({
         }
       } else if (this.startAt === null) {
         if (this.s.hour !== 0 || this.s.minute !== 0) {
-          return true
+          return true;
         }
       }
 
@@ -154,7 +154,7 @@ export default defineComponent({
         }
       } else if (this.endAt === null) {
         if (this.e.hour !== 0 || this.e.minute !== 0) {
-          return true
+          return true;
         }
       }
 
