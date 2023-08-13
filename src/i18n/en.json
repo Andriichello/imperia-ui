@@ -147,6 +147,9 @@
     "create": "Create banquet",
     "store": "Store banquet",
     "loading": "Loading banquet",
+    "comment": "Comment",
+    "comments": "Comments",
+    "create_comment": "Create comment",
     "more": {
       "bill": "Bill"
     },

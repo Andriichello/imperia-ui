@@ -49,6 +49,16 @@
       <OrderSwitcher class="w-full z-10"
                      :show-arrow="false"/>
 
+      <div class="w-full flex justify-center items-center">
+        <button class="w-full btn btn-sm btn-ghost max-w-xl"
+                @click="onCreateComment">
+          + {{ $t('banquet.create_comment') }}
+        </button>
+      </div>
+
+      <CommentList :comments="comments" class="w-full px-2" v-if="comments.length"
+        @on-update="onUpdateComment"/>
+
       <Preloader :title="$t('preview.order.loading_products')" class="p-2"
                  v-if="orderId && (isLoadingProducts || isLoadingOrderedProducts)"/>
 
@@ -123,10 +133,12 @@ import {
 } from "@/openapi";
 import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 import {ResponseErrors} from "@/helpers";
+import CommentList from "@/components/order/comment/CommentList.vue";
 
 export default defineComponent({
   name: "PlaceOrderPage",
   components: {
+    CommentList,
     CustomerPicker,
     TimePicker,
     Calendar,
@@ -177,6 +189,7 @@ export default defineComponent({
       updateBanquetResponse: 'basket/getUpdateResponse',
       order: 'order/order',
       orderForm: 'order/form',
+      comments: 'order/comments',
       isOrderChanged: 'order/hasRealChanges',
       fields: 'order/products',
       orderId: 'order/orderId',
@@ -280,6 +293,8 @@ export default defineComponent({
       setOrder: 'order/setOrder',
       createOrder: 'order/createOrder',
       updateOrder: 'order/updateOrder',
+      addComment: 'order/addComment',
+      updateComment: 'order/updateComment',
       setTitle: 'basket/setTitle',
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
@@ -345,17 +360,11 @@ export default defineComponent({
       endAt.setUTCHours(end.hour);
       endAt.setUTCMinutes(end.minute);
 
-      console.log('before: ', endAt);
-
       if (start.hour > end.hour) {
-        console.log('isMore 1');
         endAt.setDate(endAt.getDate() + 1);
       } else if (start.hour === end.hour && start.minute > end.minute) {
-        console.log('isMore 2');
         endAt.setDate(endAt.getDate() + 1);
       }
-
-      console.log('after: ', endAt);
 
       this.setEndAt(endAt);
 
@@ -433,13 +442,23 @@ export default defineComponent({
     validateOrderForm() {
       return this.orderForm?.banquetId
           && this.orderForm?.products
-          && this.orderForm?.products?.length;
+          && (this.orderForm?.products?.length || this.orderForm?.comments?.length);
     },
     onStoreOrder() {
       if (this.orderId) {
         this.isUpdatingOrder = true;
         this.updateOrder({ id: this.orderId, request: this.orderForm.asUpdate() });
       }
+    },
+    onCreateComment() {
+      if (this.comments?.length > 0 && !this.comments[0]?.text?.length) {
+        return;
+      }
+
+      this.addComment({text: null});
+    },
+    onUpdateComment({comment, index}) {
+      this.updateComment({comment, index});
     },
   },
   mounted() {

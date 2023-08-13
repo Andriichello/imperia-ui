@@ -28,12 +28,13 @@ class OrderForm {
   public totals: OrderTotals | null;
   public banquetId: number | null;
   public products: StoreOrderRequestProductField[];
-  public comments: Comment[];
+  public comments: Comment[] | object[];
 
   constructor(order: Order = null) {
     this.changes = {};
     this.order = order;
     this.products = [];
+    this.comments = [];
   }
 
   public static fromOrder(order: Order) {
@@ -43,7 +44,7 @@ class OrderForm {
     form.totals = order?.totals;
     form.banquetId = order?.banquetId;
     form.setProducts(order?.products ?? []);
-    form.comments = order?.comments ?? null;
+    form.comments = order?.comments ?? [];
 
     return form;
   }
@@ -138,6 +139,11 @@ class OrderForm {
 
     Object.keys(this.getChanges())
       .forEach(name => {
+        if (name === 'comments') {
+          result = true;
+          return;
+        }
+
         if (name.startsWith('products-')) {
           const field = (this.order.products ?? []).find((p) => {
             return `${p.productId}-${p.variantId}` === name.replace('products-', '');
@@ -162,11 +168,20 @@ class OrderForm {
   }
 
   public asCreate(): StoreOrderRequest {
+    const comments = [];
+
+    (this.comments ?? []).forEach((c) => {
+      if (c['text'] && c['text'].length) {
+        comments.push(c);
+      }
+    });
+
     const request = {
       banquetId: this.banquetId,
       products: (this.products ?? []).filter((f) => {
         return f.amount;
       }),
+      comments,
     };
 
     return request as StoreOrderRequest;
@@ -229,6 +244,9 @@ const getters = {
     const value = state.order?.banquetId;
 
     return value ?? param;
+  },
+  comments(state: OrderState) {
+    return state.form.comments ?? [];
   },
   products(state: OrderState) {
     return state.form.products ?? [];
@@ -337,6 +355,12 @@ const actions = {
     commit('unsetProduct', {productId, variantId});
     dispatch('recalculate');
   },
+  addComment({ commit }, {text}) {
+    commit('addComment', {text});
+  },
+  updateComment({ commit }, {comment, index}) {
+    commit('updateComment', {comment, index});
+  },
   recalculate({ state, getters, rootGetters}) {
     const totals: OrderTotals = state?.order?.totals
       ?? {
@@ -370,7 +394,7 @@ const actions = {
   async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId, fields}) {
     const request: ShowOrderByBanquetIdRequest = {
       id: banquetId,
-      include: 'products',
+      include: 'comments,products',
     };
 
     const response = await (new BanquetsApi())
@@ -514,6 +538,17 @@ const mutations = {
 
     state.form.unsetProduct(productId, variantId);
     state.form.setChange(`products-${productId}-${variantId ?? null}`, {productId, amount: null, variantId});
+  },
+  addComment(state: OrderState, comment) {
+    const comments = [...state.form.comments];
+    comments.push(comment);
+
+    state.form.comments = comments;
+    state.form.setChange(`comments`, comments);
+  },
+  updateComment(state: OrderState, {comment, index}) {
+    state.form.comments[index]['text'] = comment.text;
+    state.form.setChange(`comments`, state.form.comments);
   },
   setOrderedProducts(state: OrderState, products) {
     state.orderedProducts = products;
