@@ -225,7 +225,10 @@ const getters = {
     return state.order?.id;
   },
   banquetId(state: OrderState) {
-    return Number.parseInt(state.order?.banquetId ?? router.currentRoute.value.params['banquetId']);
+    const param = +router.currentRoute.value.params['banquetId'];
+    const value = state.order?.banquetId;
+
+    return value ?? param;
   },
   products(state: OrderState) {
     return state.form.products ?? [];

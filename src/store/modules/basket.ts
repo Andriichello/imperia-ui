@@ -319,12 +319,14 @@ const mutations = {
     state.form.customer = value;
     state.form.setChange('customer', value);
   },
-  setDate(state: BasketState, value: Date) {
+  setDate(state: BasketState, value) {
     state.form.date = value;
     state.form.setChange('date', value);
 
-    const startAt = state.form?.startAt;
-    const endAt = state.form?.endAt;
+    value = value ?? Date.now();
+
+    const startAt = state.form?.startAt as Date|any;
+    const endAt = state.form?.endAt  as Date|any;
 
     let diff = 0;
     if (startAt) {

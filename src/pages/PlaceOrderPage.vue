@@ -320,8 +320,8 @@ export default defineComponent({
       }
     },
     onSelectTime({start, end}) {
-      const date = this.date instanceof Date
-          ? this.date : new Date(Date.now());
+      const date = this.banquetForm?.date instanceof Date
+          ? this.banquetForm?.date : new Date(Date.now());
 
       const startAt = new Date(date.getTime());
       startAt.setUTCHours(start.hour);
