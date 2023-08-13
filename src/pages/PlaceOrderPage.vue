@@ -29,6 +29,16 @@
       </div>
 
       <div class="w-full flex justify-center items-center"
+           v-for="errorsGroup in (Object.keys(updateBanquetErrors?.errors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in updateBanquetErrors.errors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
+      <div class="w-full flex justify-center items-center"
            v-if="isBanquetChanged && !Object.keys(banquetErrors).length">
         <button class="w-full btn btn-md btn-primary" @click="onStoreBanquet">
           {{ +this.$route.params['banquetId'] ? $t('banquet.store') : $t('banquet.create') }}
@@ -191,6 +201,9 @@ export default defineComponent({
       if (!newValue) {
         this.wasStoreClicked = false;
       }
+
+      this.createBanquetErrors = {};
+      this.updateBanquetErrors = {};
     },
     showBanquetResponse() {
       this.isLoadingBanquet = false;

@@ -188,13 +188,16 @@
           "name": "Name is required.",
           "surname": "Surname is required.",
           "phone": "Phone is required.",
-          "email": "Email is required."
+          "email": "Email is required.",
+          "phone_or_email": "Phone or email is required."
         },
         "min": {
           "name": "Name must be at least 2 characters.",
           "surname": "Surname must be at least 2 characters.",
           "phone": "Phone must be at least 10 digits."
-        }
+        },
+        "email_rules": "Email must contain {sign} and must not contain spaces.",
+        "phone_rules": "Phone must start with + and be at least 10 characters."
       }
     },
     "errors": {

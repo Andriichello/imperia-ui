@@ -143,6 +143,26 @@
         </div>
       </div>
 
+      <div class="w-full flex justify-center items-center pb-2"
+           v-for="errorsGroup in (Object.keys(createErrors?.errors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in createErrors.errors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
+      <div class="w-full flex justify-center items-center pb-2"
+           v-for="errorsGroup in (Object.keys(updateErrors?.errors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in updateErrors.errors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
       <div class="w-full flex justify-between items-center gap-2">
         <button class="grow btn btn-md pl-5 pr-5" @click="onCloseCustomer">
           {{ $t('banquet.customer.close') }}
@@ -164,6 +184,7 @@ import {mapActions, mapGetters} from "vuex";
 import debounce from "lodash/debounce";
 import Preloader from "@/components/preview/loading/Preloader.vue";
 import {instanceOfStoreCustomerResponse, instanceOfUpdateCustomerResponse} from "@/openapi";
+import {ResponseErrors} from "@/helpers";
 
 export default defineComponent({
   name: "CustomerPicker",
@@ -192,6 +213,8 @@ export default defineComponent({
       lastSelected: this.selected,
       wasStoreClicked: false,
       errors: {},
+      createErrors: {},
+      updateErrors: {},
     }
   },
   computed: {
@@ -275,6 +298,8 @@ export default defineComponent({
     createResponse: {
       async handler(response) {
         this.isCreating = false;
+        this.createErrors = response
+            ? await ResponseErrors.from(response) : {};
 
         if (instanceOfStoreCustomerResponse(response)) {
           await this.setFormCustomer(response.data);
@@ -288,6 +313,8 @@ export default defineComponent({
     updateResponse: {
       async handler(response) {
         this.isUpdating = false;
+        this.updateErrors = response
+            ? await ResponseErrors.from(response) : {};
 
         if (instanceOfUpdateCustomerResponse(response)) {
           await this.setFormCustomer(response.data);
@@ -337,6 +364,9 @@ export default defineComponent({
     },
     onCloseCustomer() {
       this.mode = 'view';
+
+      this.createErrors = {};
+      this.updateErrors = {};
     },
     validateForm() {
       const errors = {};
@@ -356,10 +386,18 @@ export default defineComponent({
       }
 
       const phone = this.form.phone;
-      if (!phone) {
-        errors.phone = [this.$t('banquet.customer.errors.required.phone')];
-      } else if (phone.trim().length < 10) {
-        errors.phone = [this.$t('banquet.customer.errors.min.phone')];
+      if (phone && (!phone.startsWith('+') || phone.trim().length < 10)) {
+        errors.phone = [this.$t('banquet.customer.errors.phone_rules')];
+      }
+
+      const email = this.form.email;
+      if (email && (!email.includes('@') || email.trim().startsWith('@') || email.trim().endsWith('@') || email.trim().includes(' '))) {
+        errors.email = [this.$t('banquet.customer.errors.email_rules', {sign: '@'})];
+      }
+
+      if (!email && !phone) {
+        errors.phone = [this.$t('banquet.customer.errors.required.phone_or_email')];
+        errors.email = [this.$t('banquet.customer.errors.required.phone_or_email')];
       }
 
       this.errors = errors;
