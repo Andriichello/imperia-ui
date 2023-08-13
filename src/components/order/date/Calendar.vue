@@ -27,6 +27,7 @@
         <Day v-for="day in row" :key="day" :day="day" 
           :highlighted="isSame(today, day, month, year)"
           :selected="isSame(selected, day, month, year)"
+          :disabled="isDisabled(day, month, year)"
           @day-click="onDayClick({day, month, year})"/>
       </template>
     </div>
@@ -75,6 +76,10 @@ export default defineComponent({
     noButtons: {
       type: Boolean,
       default: false,
+    },
+    options: {
+      type: Object,
+      default: null,
     }
   },
   data() {
@@ -148,6 +153,12 @@ export default defineComponent({
 
       return rows;
     },
+    disableBefore() {
+      return this.options?.disableBefore;
+    },
+    disableAfter() {
+      return this.options?.disableAfter;
+    },
     changed() {
       if (this.selected !== this.selectedDate) {
         let result = false;
@@ -176,6 +187,23 @@ export default defineComponent({
         && date.getDate() === day
         && date.getMonth() === month 
         && date.getFullYear() === year; 
+    },
+    isDisabled(day, month, year) {
+      const current = new Date(year, month, day);
+
+      if (this.disableBefore && this.disableBefore.getTime() > current.getTime()) {
+        if (!this.isSame(this.disableBefore, day, month, year)) {
+          return true;
+        }
+      }
+
+      if (this.disableAfter && this.disableAfter.getTime() < current.getTime()) {
+        if (!this.isSame(this.disableAfter, day, month, year)) {
+          return true;
+        }
+      }
+
+      return false;
     },
     onPrev() {
       if (this.month === 0) {

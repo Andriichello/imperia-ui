@@ -60,6 +60,10 @@ html, body {
     --hint-color: hsl(var(--bc) / 0.3);
   }
 
+  [data-theme="lofi"] button:disabled {
+    background-color: hsl(var(--bc) / 0.03);
+  }
+
   [data-theme="lofi"] .text-error {
     color: var(--red);
   }

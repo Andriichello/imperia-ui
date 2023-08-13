@@ -492,6 +492,7 @@ export default defineComponent({
     }
   },
   beforeUnmount() {
+    document.removeEventListener("keydown", this.onKeyDown);
     window.removeEventListener("resize", this.onResize);
   },
 });

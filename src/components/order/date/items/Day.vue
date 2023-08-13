@@ -1,7 +1,7 @@
 <template>
   <div class="day">
     <button :class="{'selected': selected, 'highlighted': !selected && highlighted}" v-if="day !== null"
-      @click="onDayClick()">
+            :disabled="disabled" @click="onDayClick()">
       <span :style="{'color': textColor()}">{{ day }}</span>
     </button> 
   </div>
@@ -24,9 +24,13 @@ export default defineComponent({
       default: false,
     },
     highlighted: {
-    type: Boolean,
+      type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    }
   },
   methods: {
     textColor() {

@@ -5,7 +5,9 @@
                    :from="filters?.from"
                    :until="filters?.until"
                    @from-select="onFromChange"
-                   @until-select="onUntilChange"/>
+                   @from-clicked="onSetModal('from')"
+                   @until-select="onUntilChange"
+                   @until-clicked="onSetModal('until')"/>
     </div>
 
     <div class="w-full max-w-xl flex flex-col justify-center items-start gap-2">
@@ -49,6 +51,37 @@
         </div>
       </div>
     </div>
+
+    <div class="fixed top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-neutral/80 backdrop-blur-sm z-50"
+         v-if="modal">
+
+      <div class="grow w-full min-h-[8px]" @click="modal = null"></div>
+
+      <div class="w-full flex justify-center items-center">
+        <div class="grow h-full min-w-[8px]" @click="modal = null"></div>
+
+        <div class="w-full max-w-md flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+             v-if="modal === 'from'">
+          <Calendar :selected-date="filters?.from" :select-on-click="true"
+                    :no-buttons="true"
+                    :options="{disableAfter: filters?.until}"
+                    @on-select="onFromChange"/>
+        </div>
+
+        <div class="w-full max-w-md flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+             v-if="modal === 'until'">
+          <Calendar :selected-date="filters?.until" :select-on-click="true"
+                    :no-buttons="true"
+                    :options="{disableBefore: filters?.from}"
+                    @on-select="onUntilChange"/>
+        </div>
+
+        <div class="grow h-full min-w-[8px]" @click="modal = null"></div>
+      </div>
+
+      <div class="grow w-full min-h-[8px]" @click="modal = null"></div>
+
+    </div>
   </div>
 </template>
 
@@ -59,10 +92,14 @@ import List from "@/components/history/list/List.vue";
 import Search from "@/components/history/filters/Search.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
 import DatesFilter from "@/components/history/filters/DatesFilter.vue";
+import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
+import Calendar from "@/components/order/date/Calendar.vue";
+import TimePicker from "@/components/order/time/TimePicker.vue";
 
 export default defineComponent({
   name: "PlaceHistoryPage",
   components: {
+    Calendar,
     DatesFilter,
     Preloader,
     Search,
@@ -70,6 +107,7 @@ export default defineComponent({
   },
   data() {
     return {
+      modal: null,
       isUpdatingOrder: false,
       isLoadingRestaurant: false,
       isSearching: false,
@@ -133,13 +171,27 @@ export default defineComponent({
     onFromChange({ date }) {
       this.isSearching = true;
       this.applyFrom({from: date});
+
+      this.modal = null;
     },
     onUntilChange({ date }) {
       this.isSearching = true;
       this.applyUntil({until: date});
+
+      this.modal = null;
+    },
+    onSetModal(modal) {
+      this.modal = modal;
+    },
+    onKeyDown(e) {
+      if (this.modal && e.key === 'Escape') {
+        this.modal = null;
+      }
     },
   },
   mounted() {
+    document.addEventListener('keydown', this.onKeyDown);
+
     const restaurantId = +this.$route.params['restaurantId'];
     if (restaurantId < 0) {
       return;
@@ -157,6 +209,9 @@ export default defineComponent({
     }
 
     this.loadBanquetsIfMissing();
+  },
+  beforeUnmount() {
+    document.removeEventListener('keydown', this.onKeyDown);
   },
 });
 </script>
