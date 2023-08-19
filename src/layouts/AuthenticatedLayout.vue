@@ -1,6 +1,31 @@
 <template>
   <div class="authenticated-layout drawer drawer-open">
-    <NavBar class="z-50"/>
+    <template v-if="isShowingMenusModal && !failed">
+      <div class="w-full max-w-full h-full flex flex-col justify-start items-center gap-2 py-2 px-2">
+        <div class="w-full flex justify-between items-center gap-2 p-1">
+          <span class="font-semibold text-xl">
+            {{ $t('preview.menu.switcher.title') }}
+          </span>
+
+          <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">
+            <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">
+              <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </BaseIcon>
+          </div>
+        </div>
+
+        <div class="w-full flex flex-col justify-start items-center gap-2 overflow-y-auto">
+          <template v-for="m in menus" :key="m.id">
+            <Menu :menu="m" v-if="m" @click="onSelectMenu(m)" class="w-full"/>
+          </template>
+        </div>
+
+      </div>
+    </template>
+
+    <template v-else>
+      <NavBar class="z-50"/>
+    </template>
 
     <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
       <template v-if="isMenuPage && !failed">
@@ -33,10 +58,13 @@ import PreviewMenuNavBar from "@/components/preview/menu/PreviewMenuNavBar.vue";
 import PreviewCategoryNavBar from "@/components/preview/category/PreviewCategoryNavBar.vue";
 import Error from "@/components/common/Error.vue";
 import {mapActions, mapGetters} from "vuex";
+import Menu from "@/components/preview/menu/Menu.vue";
+import BaseIcon from "@/components/icons/BaseIcon.vue";
 
 export default defineComponent({
   name: "AuthenticatedLayout",
   components: {
+    BaseIcon, Menu,
     Error,
     PreviewCategoryNavBar,
     PreviewMenuNavBar,
