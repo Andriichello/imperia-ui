@@ -22,15 +22,15 @@
         <!--        </div>-->
       </div>
 
+      <div class="w-full flex justify-center items-center pt-2">
+        <button class="w-full btn btn-sm btn-ghost max-w-xl"
+                @click="onCreateCustomer">
+          + {{ $t('banquet.customer.create') }}
+        </button>
+      </div>
+
       <template v-if="customers && customers.length">
         <div class="w-full grow flex flex-col justify-start items-center overflow-y-auto" id="customers-list">
-          <div class="w-full flex justify-center items-center pt-2">
-            <button class="w-full btn btn-sm btn-ghost max-w-xl"
-                    @click="onCreateCustomer">
-              + {{ $t('banquet.customer.create') }}
-            </button>
-          </div>
-
           <List class="pb-3"
                 :customers="customers"
                 :selected="lastSelected"
