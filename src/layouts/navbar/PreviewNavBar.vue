@@ -11,7 +11,7 @@
           </button>
 
           <Item v-if="isMenuPage || isReviewsPage"
-                :with-icon="false"
+                :with-icon="true"
                 :restaurant="restaurant"/>
         </div>
 

@@ -10,8 +10,8 @@
             </BaseIcon>
           </button>
 
-          <Item v-if="isMenuPage || isOrderPage || isReviewsPage"
-                :with-icon="false"
+          <Item v-if="isMenuPage || isOrderPage || isReviewsPage || isHistoryPage"
+                :with-icon="true"
                 :restaurant="restaurant"/>
         </div>
 
