@@ -94,6 +94,9 @@ export default defineComponent({
     onCustomerClick() {
       this.$emit('customer-click');
     },
+    onLinkClick() {
+      //
+    },
     onOpenBill() {
       // await this.loadPdfUrl({id: this.banquet?.id});
 

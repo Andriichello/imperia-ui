@@ -229,6 +229,7 @@
     "showing_C_of_T": "Showing {count} of {total} banquets",
     "showing_all_C": "Showing all banquets ({count})",
     "filters": {
+      "state": "State",
       "from": "From",
       "until": "Until"
     }

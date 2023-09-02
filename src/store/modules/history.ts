@@ -14,7 +14,6 @@ class HistoryFilters {
   /** Banquet ending or active until */
   public until: Date | null;
 
-
   constructor() {
     this.search = null;
     this.states = [];

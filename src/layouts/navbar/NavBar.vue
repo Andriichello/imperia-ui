@@ -144,8 +144,6 @@ export default defineComponent({
   },
   watch: {
     me(newMe) {
-      console.log(newMe);
-
       if (!newMe) {
         return;
       }

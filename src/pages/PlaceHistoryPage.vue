@@ -10,6 +10,14 @@
                    @until-clicked="onSetModal('until')"/>
     </div>
 
+    <div class="w-full max-w-2xl flex flex-col justify-center items-start gap-2" v-if="isShowingFilters">
+      <StatesFilter class="max-w-2xl"
+                   :states="['draft', 'new', 'accepted', 'rejected', 'processing', 'completed', 'cancelled']"
+                   :selected="filters?.states && filters?.states.length ? filters?.states[0] : null"
+                   @state-select="onStateChanged"
+                   @state-clicked="onStateClicked"/>
+    </div>
+
     <div class="w-full max-w-xl flex flex-col justify-center items-start gap-2">
       <Search :search="filters?.search" :has-filters="hasFilters"
         @filters-click="isShowingFilters = !isShowingFilters"
@@ -92,13 +100,13 @@ import List from "@/components/history/list/List.vue";
 import Search from "@/components/history/filters/Search.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
 import DatesFilter from "@/components/history/filters/DatesFilter.vue";
-import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 import Calendar from "@/components/order/date/Calendar.vue";
-import TimePicker from "@/components/order/time/TimePicker.vue";
+import StatesFilter from "@/components/history/filters/StatesFilter.vue";
 
 export default defineComponent({
   name: "PlaceHistoryPage",
   components: {
+    StatesFilter,
     Calendar,
     DatesFilter,
     Preloader,
@@ -133,7 +141,7 @@ export default defineComponent({
         return true;
       }
 
-      return this.filters?.from || this.filters?.until;
+      return this.filters?.from || this.filters?.until || (this.filters?.states && this.filters?.states.length);
     },
   },
   watch: {
@@ -157,6 +165,7 @@ export default defineComponent({
       applySearch: 'history/applySearch',
       applyFrom: 'history/applyFrom',
       applyUntil: 'history/applyUntil',
+      applyStates: 'history/applyStates',
       setIndexResponse: 'history/setBanquetsResponse',
       setIndexMoreResponse: 'history/setMoreBanquetsResponse',
     }),
@@ -179,6 +188,19 @@ export default defineComponent({
       this.applyUntil({until: date});
 
       this.modal = null;
+    },
+    onStateChanged({state}) {
+      const selected = this.filters?.states && this.filters?.states.length
+          ? this.filters?.states[0] : null;
+
+      if (selected === state) {
+        this.applyStates({states: []});
+      } else {
+        this.applyStates({states: [state]});
+      }
+    },
+    onStateClicked({state}) {
+      // this.applyStates([state]);
     },
     onSetModal(modal) {
       this.modal = modal;

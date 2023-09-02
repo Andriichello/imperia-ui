@@ -226,6 +226,7 @@
     "showing_C_of_T": "Показано {count} з {total} банкетів",
     "showing_all_C": "Показано всі банкети ({count})",
     "filters": {
+      "state": "Статус",
       "from": "Від",
       "until": "По"
     }
