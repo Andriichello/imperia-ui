@@ -153,6 +153,18 @@
     "more": {
       "bill": "Bill"
     },
+    "bill": {
+      "title": "Bill",
+      "print": "Print",
+      "cancel": "Cancel",
+      "restaurant_and_client_info": "Restaurant and client info",
+      "comments": "Comments",
+      "menus": "Menus",
+      "sections": "Sections",
+      "tickets": "Tickets",
+      "services": "Services",
+      "spaces": "Spaces"
+    },
     "state": {
       "placeholder": "State",
       "draft": "Draft",

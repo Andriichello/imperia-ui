@@ -148,7 +148,19 @@
     "comments": "Коментарі",
     "create_comment": "Додати коментар",
     "more": {
-      "bill": "Чек"
+      "bill": "Рахунок"
+    },
+    "bill": {
+      "title": "Рахунок",
+      "print": "Роздрукувати",
+      "cancel": "Закрити",
+      "restaurant_and_client_info": "Дані закладу та клієнта",
+      "comments": "Коментарі",
+      "menus": "Меню",
+      "sections": "Секції",
+      "tickets": "Квитки",
+      "services": "Сервіси",
+      "spaces": "Столи/кімнати"
     },
     "state": {
       "placeholder": "Статус",

@@ -17,7 +17,8 @@
                @date-click="onDateClick"
                @time-click="onTimeClick"
                @customer-click="onCustomerClick"
-               @state-click="onStateClick"/>
+               @state-click="onStateClick"
+               @bill-click="onBillClick"/>
 
       <div class="w-full flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(createBanquetErrors?.errors ?? {}))"
@@ -118,6 +119,15 @@
                           @on-cancel="modal = null"/>
         </div>
 
+        <div class="flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+             v-if="modal === 'bill'">
+          <BillPicker v-if="modal === 'bill'"
+                      :style="{'height': Math.min(300 + (menus ?? []).length * 40, maxModalHeight) + 'px'}"
+                      :menus="menus ?? []"
+                      @on-select="onSelectBill"
+                      @on-cancel="modal = null"/>
+        </div>
+
 
         <div class="grow h-full min-w-[8px]" @click="modal = null"></div>
       </div>
@@ -145,10 +155,12 @@ import {
 import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 import {ResponseErrors} from "@/helpers";
 import CommentList from "@/components/order/comment/CommentList.vue";
+import BillPicker from "@/components/order/bill/BillPicker.vue";
 
 export default defineComponent({
   name: "PlaceOrderPage",
   components: {
+    BillPicker,
     CommentList,
     CustomerPicker,
     TimePicker,
@@ -192,6 +204,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      menus: 'preview/menus',
       banquet: 'basket/banquet',
       banquetId: 'order/banquetId',
       banquetForm: 'basket/form',
@@ -293,6 +306,7 @@ export default defineComponent({
   },
   methods: {
     ...mapActions({
+      loadMenusIfMissing: 'preview/loadMenusIfMissing',
       selectRestaurant: 'restaurants/setSelected',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
       loadBanquet: 'basket/loadBanquet',
@@ -346,6 +360,11 @@ export default defineComponent({
     },
     onStateClick() {
       this.modal = 'state';
+    },
+    onBillClick() {
+      this.modal = 'bill';
+
+      this.loadMenusIfMissing();
     },
     onBanquetTitleUpdate({title}) {
       this.setTitle(title);
@@ -407,6 +426,11 @@ export default defineComponent({
       if (this.wasStoreClicked) {
         this.validateBanquetForm();
       }
+    },
+    onSelectBill({options}) {
+      console.log('onSelectBill: ', options);
+
+      this.modal = null;
     },
     validateBanquetForm() {
       const errors = {};

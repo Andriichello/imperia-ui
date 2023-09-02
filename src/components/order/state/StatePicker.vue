@@ -26,7 +26,7 @@ import { defineComponent } from "vue";
 import StateList from "@/components/order/state/StateList.vue";
 
 export default defineComponent({
-  name: "TimePicker",
+  name: "StatePicker",
   emits: ["on-select", "on-cancel"],
   components: {
     StateList,
