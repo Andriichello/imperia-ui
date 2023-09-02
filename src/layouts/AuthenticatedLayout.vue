@@ -39,7 +39,7 @@
       </template>
 
       <template v-if="failed">
-        <Error :back-to-page="isMenuPage || isRestaurantPage"
+        <Error :back-to-page="isMenuPage || isRestaurantPage || isHomePage"
                @on-back-to="onErrorBackTo"/>
       </template>
 
@@ -87,6 +87,9 @@ export default defineComponent({
       restaurant: 'restaurants/selected',
       isShowingMenusModal: 'preview/isShowingMenusModal',
     }),
+    isHomePage() {
+      return this.$route['name'] === 'home';
+    },
     isMenuPage() {
       return this.$route['name'] === 'place-menu'
           || this.$route['name'] === 'place-order-menu';
@@ -160,11 +163,25 @@ export default defineComponent({
       window.scrollTo(0, 0);
     },
     onErrorBackTo() {
-      if (this.isMenuPage) {
+      if (this.isHomePage) {
+        this.$router.replace(`/place`);
+        setTimeout(
+            function () {
+              document.location.reload();
+            },
+            200
+        );
+      } else if (this.isMenuPage) {
         const restaurantId = this.$route.params['restaurantId'];
         this.$router.push(`/place/${restaurantId}`);
       } else if (this.isRestaurantPage) {
-        this.$router.push(`/place`);
+        this.$router.replace(`/place`);
+        setTimeout(
+            function () {
+              document.location.reload();
+            },
+            200
+        );
       }
 
       this.$store.dispatch('error/clear');

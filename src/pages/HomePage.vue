@@ -20,9 +20,9 @@
         <Restaurant :item="restaurant"
                     @open-reviews="onOpenReviews({restaurant})"/>
 
-        <ShortReviews class="reviews-container mt-2"
-                      :item="restaurant"
-                      @click="onOpenReviews({restaurant})"/>
+<!--        <ShortReviews class="reviews-container mt-2"-->
+<!--                      :item="restaurant"-->
+<!--                      @click="onOpenReviews({restaurant})"/>-->
 
         <template v-if="isLoadingMenus">
           <Preloader :title="$t('preview.restaurant.loading_menus')"
@@ -62,12 +62,13 @@ export default defineComponent({
     Error,
     Divider,
     Preloader,
-    ShortReviews,
+    // ShortReviews,
     Menu,
     Restaurant
   },
   computed: {
     ...mapGetters({
+      me: 'auth/me',
       user: 'auth/user',
       reviews: 'reviews/reviews',
       restaurant: 'restaurants/selected',

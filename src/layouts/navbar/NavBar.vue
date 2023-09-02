@@ -47,22 +47,22 @@
           <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
             <li v-if="authorized">
               <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"
-                          :to="`/place/${restaurantId}/history`" replace>
+                          :to="`/place/${restaurantId}/history`" replace @click="onHide">
                 {{ $t('preview.navbar.history') }}
               </RouterLink>
             </li>
             <li v-if="authorized" @click="onNewOrder">
-              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
+              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}" @click="onHide">
                 {{ $t('preview.navbar.new_order') }}
               </span>
             </li>
             <li v-if="authorized" @click="onSwitchTheme">
-              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
+              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}" @click="onHide">
                 {{ $t('preview.navbar.theme') }}
               </span>
             </li>
             <li v-if="authorized" @click="onLogout">
-              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}">
+              <span :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}" @click="onHide">
                 {{ $t('preview.navbar.logout') }}
               </span>
             </li>
@@ -92,6 +92,7 @@ export default defineComponent({
       return ThemeConfig
     },
     ...mapGetters({
+      me: "auth/me",
       user: "auth/user",
       authorized: "auth/authorized",
       theme: "theme/get",
@@ -102,6 +103,16 @@ export default defineComponent({
       menu: "preview/menu",
       menus: "preview/menus",
     }),
+    isPlacePage() {
+      const name = this.$route.name;
+
+      return name && (name.startsWith('place') || name === 'home');
+    },
+    isHomePage() {
+      const name = this.$route.name;
+
+      return name && name === 'home';
+    },
     isMenuPage() {
       const name = this.$route.name;
 
@@ -129,6 +140,25 @@ export default defineComponent({
     },
     shouldShowBack() {
       return this.isMenuPage;
+    },
+  },
+  watch: {
+    me(newMe) {
+      console.log(newMe);
+
+      if (!newMe) {
+        return;
+      }
+
+      if (this.isHomePage || this.isHistoryPage || this.isOrderPage || this.isRestaurantPage || this.isReviewsPage) {
+        if (!this.isPlacePage) {
+          return;
+        }
+
+        if (newMe.status === 401) {
+          this.$router.push(`/login`);
+        }
+      }
     },
   },
   methods: {
