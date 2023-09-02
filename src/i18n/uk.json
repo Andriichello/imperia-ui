@@ -151,7 +151,14 @@
       "bill": "Чек"
     },
     "state": {
-      "placeholder": "Статус"
+      "placeholder": "Статус",
+      "draft": "Чорновик",
+      "new": "Новий",
+      "accepted": "Прийнято",
+      "rejected": "Відмовлено",
+      "cancelled": "Відмінений",
+      "processing": "Опрацьовується",
+      "completed": "Завершений"
     },
     "time": {
       "placeholder": "Час",

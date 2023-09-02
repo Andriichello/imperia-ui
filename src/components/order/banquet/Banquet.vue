@@ -66,8 +66,9 @@
       </div>
 
       <div class="flex flex-col justify-start items-start gap-1">
-<!--        <State class="cursor-pointer w-full"-->
-<!--               :state="banquet?.state"/>-->
+        <State class="cursor-pointer w-full"
+               :state="banquet?.state"
+               @click="onStateClick"/>
         <Customer class="cursor-pointer w-full"
                   :customer="banquet?.customer"
                   :errors="customerErrors"
@@ -90,13 +91,13 @@ import {ThemeConfig} from "@/configs";
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Banquet',
-  emits: ["date-click", "time-click", "customer-click", "title-update"],
+  emits: ["date-click", "time-click", "customer-click", "state-click", "title-update"],
   components: {
     BaseIcon,
     Time,
     Date,
     Customer,
-    // State
+    State
   },
   props: {
     banquet: {
@@ -163,6 +164,9 @@ export default defineComponent({
     },
     onCustomerClick() {
       this.$emit('customer-click');
+    },
+    onStateClick() {
+      this.$emit('state-click');
     },
     onOpenBill() {
       // await this.loadPdfUrl({id: this.banquet?.id});

@@ -154,7 +154,14 @@
       "bill": "Bill"
     },
     "state": {
-      "placeholder": "State"
+      "placeholder": "State",
+      "draft": "Draft",
+      "new": "New",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "cancelled": "Cancelled",
+      "processing": "Processing",
+      "completed": "Completed"
     },
     "time": {
       "placeholder": "Time",

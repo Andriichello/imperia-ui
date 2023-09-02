@@ -14,7 +14,7 @@
 
     <div class="state-info">
       <span class="text-md font-semibold text-center text-current">
-        {{ state ?? $t('banquet.state.placeholder') }}
+        {{ $t(`banquet.state.${state}`) ?? $t('banquet.state.placeholder') }}
       </span>
     </div>
   </div>

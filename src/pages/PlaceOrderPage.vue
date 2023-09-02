@@ -16,7 +16,8 @@
                @title-update="onBanquetTitleUpdate"
                @date-click="onDateClick"
                @time-click="onTimeClick"
-               @customer-click="onCustomerClick"/>
+               @customer-click="onCustomerClick"
+               @state-click="onStateClick"/>
 
       <div class="w-full flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(createBanquetErrors?.errors ?? {}))"
@@ -108,6 +109,15 @@
                           @on-cancel="modal = null"/>
         </div>
 
+        <div class="flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
+             v-if="modal === 'state'">
+          <StatePicker v-if="modal === 'state'"
+                          :states="banquet?.availableStates"
+                          :selected="banquetForm?.state"
+                          @on-select="onSelectState"
+                          @on-cancel="modal = null"/>
+        </div>
+
 
         <div class="grow h-full min-w-[8px]" @click="modal = null"></div>
       </div>
@@ -127,6 +137,7 @@ import Preloader from "@/components/preview/loading/Preloader.vue";
 import Banquet from "@/components/order/banquet/Banquet.vue";
 import Calendar from "@/components/order/date/Calendar.vue";
 import TimePicker from "@/components/order/time/TimePicker.vue";
+import StatePicker from "@/components/order/state/StatePicker.vue";
 import {
   instanceOfStoreBanquetResponse,
   instanceOfUpdateBanquetResponse
@@ -141,6 +152,7 @@ export default defineComponent({
     CommentList,
     CustomerPicker,
     TimePicker,
+    StatePicker,
     Calendar,
     Banquet,
     Preloader,
@@ -300,6 +312,7 @@ export default defineComponent({
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
       setCustomer: 'basket/setCustomer',
+      setState: 'basket/setState',
     }),
     onKeyDown(e) {
       if (this.modal && e.key === 'Escape') {
@@ -330,6 +343,9 @@ export default defineComponent({
     },
     onCustomerClick() {
       this.modal = 'customer';
+    },
+    onStateClick() {
+      this.modal = 'state';
     },
     onBanquetTitleUpdate({title}) {
       this.setTitle(title);
@@ -376,6 +392,15 @@ export default defineComponent({
     },
     onSelectCustomer({customer}) {
       this.setCustomer(customer);
+
+      this.modal = null;
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onSelectState({state}) {
+      this.setState(state);
 
       this.modal = null;
 
