@@ -133,7 +133,7 @@ export default defineComponent({
       return;
     }
 
-    if (this.restaurants && this.restaurant.id === restaurantId) {
+    if (this.restaurants && this.restaurant?.id === restaurantId) {
       if (!this.menu || (this.menu && this.menu.id !== menuId)) {
         const target = (this.menus ?? []).find(r => r.id === menuId);
 
