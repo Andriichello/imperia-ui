@@ -1,6 +1,6 @@
 <template>
   <div class="states">
-    <div class="w-full flex flex-col justify-center shadow-md mb-2">
+    <div class="w-full flex flex-col justify-center mb-2">
       <div class="w-full flex justify-center items-center">
         <div class="max-w-full flex justify-start gap-2 p-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
           <div v-for="state in states" :key="state"
