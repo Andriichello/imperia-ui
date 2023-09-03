@@ -9,28 +9,28 @@
         <div class="flex flex-col justify-center items-start gap-1">
           <div class="form-control">
             <label class="label cursor-pointer">
-              <input type="checkbox" checked="checked" class="checkbox checkbox-sm checkbox-primary" />
+              <input type="checkbox" v-model="showInfoVal" class="checkbox checkbox-sm checkbox-primary" />
               <span class="label-text pl-2">{{ $t('banquet.bill.restaurant_and_client_info') }}</span>
             </label>
           </div>
 
           <div class="form-control">
             <label class="label cursor-pointer">
-              <input type="checkbox" checked="checked" class="checkbox checkbox-sm checkbox-primary" />
+              <input type="checkbox" v-model="showCommentsVal" class="checkbox checkbox-sm checkbox-primary" />
               <span class="label-text pl-2">{{ $t('banquet.bill.comments') }}</span>
             </label>
           </div>
 
           <div class="form-control">
             <label class="label cursor-pointer">
-              <input type="checkbox" checked="checked" class="checkbox checkbox-sm checkbox-primary" />
+              <input type="checkbox" v-model="showTicketsVal" class="checkbox checkbox-sm checkbox-primary" />
               <span class="label-text pl-2">{{ $t('banquet.bill.tickets') }}</span>
             </label>
           </div>
 
           <div class="form-control">
             <label class="label cursor-pointer">
-              <input type="checkbox" checked="checked" class="checkbox checkbox-sm checkbox-primary" />
+              <input type="checkbox" v-model="showMenusVal" class="checkbox checkbox-sm checkbox-primary" />
               <span class="label-text pl-2">{{ $t('banquet.bill.menus') }}</span>
             </label>
           </div>
@@ -43,7 +43,7 @@
             <template v-for="menu in menus" :key="menu?.id">
               <div class="form-control">
                 <label class="label cursor-pointer">
-                  <input type="checkbox" checked="checked" class="checkbox checkbox-sm checkbox-primary" />
+                  <input :id="menu?.id" type="checkbox" :checked="!this.excludedMenus.includes(menu?.id)" class="checkbox checkbox-sm checkbox-primary" @change="onChange" />
                   <span class="label-text pl-2">{{ menu?.title }}</span>
                 </label>
               </div>
@@ -73,27 +73,108 @@ export default defineComponent({
   name: "BillPicker",
   emits: ["on-select", "on-cancel"],
   props: {
+    showInfo: {
+      type: Boolean,
+      default: true,
+    },
+    showComments: {
+      type: Boolean,
+      default: true,
+    },
+    showTickets: {
+      type: Boolean,
+      default: true,
+    },
+    showServices: {
+      type: Boolean,
+      default: true,
+    },
+    showSpaces: {
+      type: Boolean,
+      default: true,
+    },
+    showMenus: {
+      type: Boolean,
+      default: true,
+    },
     menus: {
       type: Array,
     },
   },
   data() {
     return {
-      menusVal: this.menus,
+      excludedMenus: [],
+      showInfoVal: this.showInfo,
+      showCommentsVal: this.showComments,
+      showTicketsVal: this.showTickets,
+      showSpacesVal: this.showSpaces,
+      showServicesVal: this.showServices,
+      showMenusVal: this.showMenus,
     }
   },
   methods: {
     iconColor() {
       return 'currentColor';
     },
-    onChangeState({ state }) {
-      this.stateVal = state;
+    onChange(event) {
+      const id = event.target.id;
+      const checked = event.target.checked;
+
+      if (checked) {
+        this.excludedMenus = this.excludedMenus.filter((m) => {
+          return m?.id !== id;
+        });
+      } else {
+        if (!this.excludedMenus.includes(id)) {
+          this.excludedMenus.push(parseInt(id));
+        }
+      }
+
+      console.log(id, checked, this.excludedMenus);
     },
     onCancelClick() {
       this.$emit('on-cancel');
     },
     onSelectClick() {
-      this.$emit('on-select', {menus: this.menusVal});
+      const sections = [];
+      let allSections = this.showInfoVal
+          && this.showCommentsVal
+          && this.showTicketsVal
+          && this.showSpacesVal
+          && this.showServicesVal
+          && this.showMenusVal;
+
+      if (this.showInfoVal) {
+        sections.push('info');
+      }
+      if (this.showCommentsVal) {
+        sections.push('comments');
+      }
+
+      if (this.showTicketsVal) {
+        sections.push('tickets');
+      }
+      if (this.showSpacesVal) {
+        sections.push('spaces');
+      }
+      if (this.showServicesVal) {
+        sections.push('services');
+      }
+
+
+      if (this.showMenusVal) {
+        sections.push('menus');
+      }
+
+      const menus = this.menus
+          .filter(m => !this.excludedMenus.includes(m?.id))
+          .map(m => m?.id);
+      let allMenus = !this.excludedMenus.length;
+
+      this.$emit('on-select', {
+        menus: allMenus ? null : menus,
+        sections: allSections ? null : sections,
+      });
     },
   },
 });

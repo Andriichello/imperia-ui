@@ -122,7 +122,7 @@
         <div class="flex flex-col justify-center items-center card bg-base-100 p-2 gap-1"
              v-if="modal === 'bill'">
           <BillPicker v-if="modal === 'bill'"
-                      :style="{'height': Math.min(300 + (menus ?? []).length * 40, maxModalHeight) + 'px'}"
+                      :style="{'height': Math.min(380 + (menus ?? []).length * 40, maxModalHeight) + 'px'}"
                       :menus="menus ?? []"
                       @on-select="onSelectBill"
                       @on-cancel="modal = null"/>
@@ -361,7 +361,7 @@ export default defineComponent({
     onStateClick() {
       this.modal = 'state';
     },
-    onBillClick() {
+    onBillClick({banquet, url}) {
       this.modal = 'bill';
 
       this.loadMenusIfMissing();
@@ -427,10 +427,23 @@ export default defineComponent({
         this.validateBanquetForm();
       }
     },
-    onSelectBill({options}) {
-      console.log('onSelectBill: ', options);
-
+    onSelectBill({menus, sections}) {
       this.modal = null;
+
+      let url = this.banquet?.invoiceUrl;
+
+      if (!url) {
+        return;
+      }
+
+      if (menus) {
+        url += '&menus=' + menus.join(',');
+      }
+      if (sections) {
+        url += '&sections=' + sections.join(',')
+      }
+
+      window.open(url, '_blank').focus();
     },
     validateBanquetForm() {
       const errors = {};
