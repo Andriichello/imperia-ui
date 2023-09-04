@@ -40,14 +40,14 @@
 
         <div class="dropdown dropdown-end" v-if="authorized">
           <label tabindex="0">
-            <button class="btn btn-square btn-ghost">
+            <button class="btn btn-square btn-ghost" @click="onDropdownClick">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
           </label>
           <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
             <li v-if="authorized">
               <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"
-                          :to="`/place/${restaurantId}/history`" replace @click="onHide">
+                          :to="`/place/${restaurantId}/history`" replace >
                 {{ $t('preview.navbar.history') }}
               </RouterLink>
             </li>
@@ -86,6 +86,11 @@ export default defineComponent({
   components: {
     Item,
     BaseIcon,
+  },
+  data() {
+    return {
+      isShowingDropdown: false,
+    }
   },
   computed: {
     ThemeConfig() {
@@ -176,6 +181,13 @@ export default defineComponent({
       if(elem){
         elem?.blur();
       }
+    },
+    onDropdownClick() {
+      if (this.isShowingDropdown) {
+        this.onHide();
+      }
+
+      this.isShowingDropdown = !this.isShowingDropdown;
     },
     onBack() {
       const restaurantId = this.$route.params['restaurantId'];
