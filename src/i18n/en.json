@@ -167,12 +167,10 @@
     },
     "state": {
       "placeholder": "State",
-      "draft": "Draft",
       "new": "New",
-      "accepted": "Accepted",
-      "rejected": "Rejected",
+      "confirmed": "Confirmed",
+      "postponed": "Postponed",
       "cancelled": "Cancelled",
-      "processing": "Processing",
       "completed": "Completed"
     },
     "time": {

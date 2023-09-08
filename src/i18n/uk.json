@@ -164,12 +164,10 @@
     },
     "state": {
       "placeholder": "Статус",
-      "draft": "Чорновик",
       "new": "Новий",
-      "accepted": "Прийнято",
-      "rejected": "Відмовлено",
+      "confirmed": "Підтверджений",
+      "postponed": "Відкладений",
       "cancelled": "Відмінений",
-      "processing": "Опрацьовується",
       "completed": "Завершений"
     },
     "time": {

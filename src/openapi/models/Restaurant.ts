@@ -75,6 +75,36 @@ export interface Restaurant {
    * @type {string}
    * @memberof Restaurant
    */
+  fullAddress?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Restaurant
+   */
+  phone: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Restaurant
+   */
+  email: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Restaurant
+   */
+  location: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Restaurant
+   */
+  website: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Restaurant
+   */
   timezone: string;
   /**
    * Selected timezone offset in minutes.
@@ -114,6 +144,10 @@ export function instanceOfRestaurant(value: object): boolean {
   isInstance = isInstance && "country" in value;
   isInstance = isInstance && "city" in value;
   isInstance = isInstance && "place" in value;
+  isInstance = isInstance && "phone" in value;
+  isInstance = isInstance && "email" in value;
+  isInstance = isInstance && "location" in value;
+  isInstance = isInstance && "website" in value;
   isInstance = isInstance && "timezone" in value;
   isInstance = isInstance && "timezoneOffset" in value;
   isInstance = isInstance && "popularity" in value;
@@ -141,6 +175,13 @@ export function RestaurantFromJSONTyped(
     country: json["country"],
     city: json["city"],
     place: json["place"],
+    fullAddress: !exists(json, "full_address")
+      ? undefined
+      : json["full_address"],
+    phone: json["phone"],
+    email: json["email"],
+    location: json["location"],
+    website: json["website"],
     timezone: json["timezone"],
     timezoneOffset: json["timezone_offset"],
     popularity: json["popularity"],
@@ -166,6 +207,11 @@ export function RestaurantToJSON(value?: Restaurant | null): any {
     country: value.country,
     city: value.city,
     place: value.place,
+    full_address: value.fullAddress,
+    phone: value.phone,
+    email: value.email,
+    location: value.location,
+    website: value.website,
     timezone: value.timezone,
     timezone_offset: value.timezoneOffset,
     popularity: value.popularity,

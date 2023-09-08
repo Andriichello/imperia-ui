@@ -12,7 +12,7 @@
 
     <div class="w-full max-w-2xl flex flex-col justify-center items-start gap-2" v-if="isShowingFilters">
       <StatesFilter class="max-w-2xl"
-                   :states="['draft', 'new', 'accepted', 'rejected', 'processing', 'completed', 'cancelled']"
+                   :states="['new', 'confirmed', 'postponed', 'cancelled', 'completed']"
                    :selected="filters?.states && filters?.states.length ? filters?.states[0] : null"
                    @state-select="onStateChanged"
                    @state-clicked="onStateClicked"/>

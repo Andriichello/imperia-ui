@@ -80,6 +80,7 @@ export * from "./ShowCommentResponse";
 export * from "./ShowCustomerResponse";
 export * from "./ShowDiscountResponse";
 export * from "./ShowFamilyMemberResponse";
+export * from "./ShowInvoiceRequest";
 export * from "./ShowMediaResponse";
 export * from "./ShowMenuResponse";
 export * from "./ShowNotificationResponse";

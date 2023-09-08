@@ -46,7 +46,7 @@ export interface UpdateBanquetRequest {
   description?: string;
   /**
    * Banquet state available changes depends on current state.
-   *     All states: `draft`, `new`, `processing`, `completed`, `cancelled`.
+   *            All states: `new`, `confirmed`, `postponed`, `cancelled`, `completed`.
    * @type {string}
    * @memberof UpdateBanquetRequest
    */

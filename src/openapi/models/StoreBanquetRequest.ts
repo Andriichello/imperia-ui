@@ -110,7 +110,6 @@ export interface StoreBanquetRequest {
  * @export
  */
 export const StoreBanquetRequestStateEnum = {
-  Draft: "draft",
   New: "new",
 } as const;
 export type StoreBanquetRequestStateEnum =

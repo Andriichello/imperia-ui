@@ -23,7 +23,7 @@ export default defineComponent({
   props: {
     state: {
       type: String,
-      default: 'draft',
+      default: 'new',
     },
     selected: {
       type: Boolean,

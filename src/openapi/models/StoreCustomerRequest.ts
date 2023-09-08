@@ -14,7 +14,8 @@
 
 import { exists, mapValues } from "../runtime";
 /**
- * Store customer request
+ * Store customer request. `email` or `phone`
+ *            must be specified.
  * @export
  * @interface StoreCustomerRequest
  */
@@ -36,7 +37,7 @@ export interface StoreCustomerRequest {
    * @type {string}
    * @memberof StoreCustomerRequest
    */
-  email: string;
+  email: string | null;
   /**
    * Phone number may start with a plus and must contain only digits 0-9.
    * @type {string}

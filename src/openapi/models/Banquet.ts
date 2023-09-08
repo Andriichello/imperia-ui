@@ -192,11 +192,11 @@ export interface Banquet {
  * @export
  */
 export const BanquetStateEnum = {
-  Draft: "draft",
   New: "new",
-  Processing: "processing",
-  Completed: "completed",
+  Confirmed: "confirmed",
+  Postponed: "postponed",
   Cancelled: "cancelled",
+  Completed: "completed",
 } as const;
 export type BanquetStateEnum =
   (typeof BanquetStateEnum)[keyof typeof BanquetStateEnum];

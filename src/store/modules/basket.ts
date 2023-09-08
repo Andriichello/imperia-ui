@@ -29,7 +29,7 @@ class BanquetForm {
 
   constructor(banquet: Banquet = null) {
     this.changes = {};
-    this.state = StoreBanquetRequestStateEnum.Draft; 
+    this.state = StoreBanquetRequestStateEnum.New;
     
     this.banquet = banquet;
   }
