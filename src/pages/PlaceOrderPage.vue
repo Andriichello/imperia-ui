@@ -251,8 +251,6 @@ export default defineComponent({
       this.createBanquetErrors = newValue
           ? await ResponseErrors.from(newValue) : {};
 
-      console.log(Object.keys(this.createBanquetErrors?.errors ?? {}));
-
       if (instanceOfStoreBanquetResponse(newValue)) {
         const id = newValue.data.id;
 

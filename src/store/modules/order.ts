@@ -411,7 +411,11 @@ const actions = {
   },
   async loadOrderForBanquetIfMissing({dispatch, commit}, {banquetId, fields}) {
     if (state.showOrderResponse || state.order) {
-      if (state.showOrderResponse['data']['banquetId'] === banquetId) {
+      if (state.showOrderResponse['data'] && state.showOrderResponse['data']['banquetId'] === banquetId) {
+        return;
+      }
+
+      if (state.order && state.order.banquetId === banquetId) {
         return;
       }
     }

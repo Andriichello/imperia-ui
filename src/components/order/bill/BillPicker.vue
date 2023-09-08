@@ -129,8 +129,6 @@ export default defineComponent({
           this.excludedMenus.push(parseInt(id));
         }
       }
-
-      console.log(id, checked, this.excludedMenus);
     },
     onCancelClick() {
       this.$emit('on-cancel');
