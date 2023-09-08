@@ -25,6 +25,12 @@ import {
   FamilyMemberFromJSONTyped,
   FamilyMemberToJSON,
 } from "./FamilyMember";
+import type { Restaurant } from "./Restaurant";
+import {
+  RestaurantFromJSON,
+  RestaurantFromJSONTyped,
+  RestaurantToJSON,
+} from "./Restaurant";
 
 /**
  * Customer resource object
@@ -38,6 +44,12 @@ export interface Customer {
    * @memberof Customer
    */
   id: number;
+  /**
+   *
+   * @type {number}
+   * @memberof Customer
+   */
+  restaurantId: number | null;
   /**
    *
    * @type {string}
@@ -76,6 +88,12 @@ export interface Customer {
   birthdate: Date | null;
   /**
    *
+   * @type {Restaurant}
+   * @memberof Customer
+   */
+  restaurant?: Restaurant;
+  /**
+   *
    * @type {Array<FamilyMember>}
    * @memberof Customer
    */
@@ -94,6 +112,7 @@ export interface Customer {
 export function instanceOfCustomer(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && "id" in value;
+  isInstance = isInstance && "restaurantId" in value;
   isInstance = isInstance && "type" in value;
   isInstance = isInstance && "name" in value;
   isInstance = isInstance && "surname" in value;
@@ -117,12 +136,16 @@ export function CustomerFromJSONTyped(
   }
   return {
     id: json["id"],
+    restaurantId: json["restaurant_id"],
     type: json["type"],
     name: json["name"],
     surname: json["surname"],
     phone: json["phone"],
     email: json["email"],
     birthdate: json["birthdate"] === null ? null : new Date(json["birthdate"]),
+    restaurant: !exists(json, "restaurant")
+      ? undefined
+      : RestaurantFromJSON(json["restaurant"]),
     familyMembers: !exists(json, "family_members")
       ? undefined
       : (json["family_members"] as Array<any>).map(FamilyMemberFromJSON),
@@ -141,6 +164,7 @@ export function CustomerToJSON(value?: Customer | null): any {
   }
   return {
     id: value.id,
+    restaurant_id: value.restaurantId,
     type: value.type,
     name: value.name,
     surname: value.surname,
@@ -150,6 +174,7 @@ export function CustomerToJSON(value?: Customer | null): any {
       value.birthdate === null
         ? null
         : value.birthdate.toISOString().substr(0, 10),
+    restaurant: RestaurantToJSON(value.restaurant),
     family_members:
       value.familyMembers === undefined
         ? undefined

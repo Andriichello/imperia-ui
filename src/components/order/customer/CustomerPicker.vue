@@ -219,6 +219,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      restaurantId: 'restaurants/restaurantId',
       form: 'customers/form',
       customers: 'customers/customers',
       formCustomer: 'customers/formCustomer',
@@ -419,10 +420,18 @@ export default defineComponent({
         this.isUpdating = true;
         form = this.form.asUpdate();
 
+        if (!form.restaurantId) {
+          form.restaurantId = this.restaurantId
+        }
+
         this.updateCustomer({id: this.formCustomer.id, request: form});
       } else {
         this.isCreating = true;
         form = this.form.asCreate();
+
+        if (!form.restaurantId) {
+          form.restaurantId = this.restaurantId
+        }
 
         this.storeCustomer({request: form});
       }

@@ -22,6 +22,12 @@ import { exists, mapValues } from "../runtime";
 export interface StoreCustomerRequest {
   /**
    *
+   * @type {number}
+   * @memberof StoreCustomerRequest
+   */
+  restaurantId: number | null;
+  /**
+   *
    * @type {string}
    * @memberof StoreCustomerRequest
    */
@@ -57,6 +63,7 @@ export interface StoreCustomerRequest {
  */
 export function instanceOfStoreCustomerRequest(value: object): boolean {
   let isInstance = true;
+  isInstance = isInstance && "restaurantId" in value;
   isInstance = isInstance && "name" in value;
   isInstance = isInstance && "surname" in value;
   isInstance = isInstance && "email" in value;
@@ -78,6 +85,7 @@ export function StoreCustomerRequestFromJSONTyped(
     return json;
   }
   return {
+    restaurantId: json["restaurant_id"],
     name: json["name"],
     surname: json["surname"],
     email: json["email"],
@@ -96,6 +104,7 @@ export function StoreCustomerRequestToJSON(
     return null;
   }
   return {
+    restaurant_id: value.restaurantId,
     name: value.name,
     surname: value.surname,
     email: value.email,

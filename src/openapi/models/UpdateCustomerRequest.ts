@@ -21,6 +21,12 @@ import { exists, mapValues } from "../runtime";
 export interface UpdateCustomerRequest {
   /**
    *
+   * @type {number}
+   * @memberof UpdateCustomerRequest
+   */
+  restaurantId?: number | null;
+  /**
+   *
    * @type {string}
    * @memberof UpdateCustomerRequest
    */
@@ -74,6 +80,9 @@ export function UpdateCustomerRequestFromJSONTyped(
     return json;
   }
   return {
+    restaurantId: !exists(json, "restaurant_id")
+      ? undefined
+      : json["restaurant_id"],
     name: !exists(json, "name") ? undefined : json["name"],
     surname: !exists(json, "surname") ? undefined : json["surname"],
     email: !exists(json, "email") ? undefined : json["email"],
@@ -94,6 +103,7 @@ export function UpdateCustomerRequestToJSON(
     return null;
   }
   return {
+    restaurant_id: value.restaurantId,
     name: value.name,
     surname: value.surname,
     email: value.email,
