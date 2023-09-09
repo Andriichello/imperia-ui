@@ -20,6 +20,14 @@
                @state-click="onStateClick"
                @bill-click="onBillClick"/>
 
+      <BanquetAdditional class="w-full"
+               :banquet="banquetForm"
+               :errors="banquetErrors"
+               @advance-amount-update="onBanquetAdvanceAmountUpdate"
+               @advance-amount-payment-method-update="onBanquetAdvanceAmountPaymentMethodUpdate"
+               @is-birthday-club-update="onBanquetIsBirthdayClubUpdate"
+               @actual-total-update="onBanquetActualTotalUpdate"/>
+
       <div class="w-full flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(createBanquetErrors?.errors ?? {}))"
            :key="errorsGroup">
@@ -156,10 +164,12 @@ import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 import {ResponseErrors} from "@/helpers";
 import CommentList from "@/components/order/comment/CommentList.vue";
 import BillPicker from "@/components/order/bill/BillPicker.vue";
+import BanquetAdditional from "@/components/order/banquet/BanquetAdditional.vue";
 
 export default defineComponent({
   name: "PlaceOrderPage",
   components: {
+    BanquetAdditional,
     BillPicker,
     CommentList,
     CustomerPicker,
@@ -320,6 +330,10 @@ export default defineComponent({
       addComment: 'order/addComment',
       updateComment: 'order/updateComment',
       setTitle: 'basket/setTitle',
+      setAdvanceAmount: 'basket/setAdvanceAmount',
+      setAdvanceAmountPaymentMethod: 'basket/setAdvanceAmountPaymentMethod',
+      setIsBirthdayClub: 'basket/setIsBirthdayClub',
+      setActualTotal: 'basket/setActualTotal',
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
@@ -366,6 +380,34 @@ export default defineComponent({
     },
     onBanquetTitleUpdate({title}) {
       this.setTitle(title);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetAdvanceAmountUpdate({advanceAmount}) {
+      this.setAdvanceAmount(advanceAmount);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetAdvanceAmountPaymentMethodUpdate({advanceAmountPaymentMethod}) {
+      this.setAdvanceAmountPaymentMethod(advanceAmountPaymentMethod);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetIsBirthdayClubUpdate({isBirthdayClub}) {
+      this.setIsBirthdayClub(isBirthdayClub);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetActualTotalUpdate({actualTotal}) {
+      this.setActualTotal(actualTotal);
 
       if (this.wasStoreClicked) {
         this.validateBanquetForm();
@@ -448,7 +490,7 @@ export default defineComponent({
 
       const title = this.banquetForm?.title;
       if (!title) {
-        errors.title = [this.$t('banquet.errors.required.title')];
+        // errors.title = [this.$t('banquet.errors.required.title')];
       } else if (title.trim().length < 2) {
         errors.title = [this.$t('banquet.errors.min.title')];
       }
@@ -476,7 +518,6 @@ export default defineComponent({
       this.banquetErrors = errors;
 
       return !Object.keys(errors).length
-          && this.banquetForm?.title
           && this.banquetForm?.state
           && this.banquetForm?.customer
           && this.banquetForm?.date

@@ -22,9 +22,12 @@ class BanquetForm {
   public customer: number | Customer | null;
   public restaurant: number | Restaurant | null;
   public advanceAmount: number | null;
+  public advanceAmountPaymentMethod: string | null;
   public date: Date | string | null;
   public startAt: Date | string | null;
   public endAt: Date | string | null;
+  public isBirthdayClub: boolean | null;
+  public actualTotal: number | null;
   public invoiceUrl: string | null;
 
   constructor(banquet: Banquet = null) {
@@ -45,9 +48,12 @@ class BanquetForm {
     form.customer = banquet.customer;
     form.restaurant = banquet.restaurantId;
     form.advanceAmount = banquet.advanceAmount;
+    form.advanceAmountPaymentMethod = banquet.advanceAmountPaymentMethod;
     form.date = banquet.startAt;
     form.startAt = banquet.startAt;
     form.endAt = banquet.endAt;
+    form.isBirthdayClub = banquet.isBirthdayClub;
+    form.actualTotal = banquet.actualTotal;
     form.invoiceUrl = banquet.invoiceUrl;
 
     return form;
@@ -106,8 +112,11 @@ class BanquetForm {
       description: this.description,
       customerId: this.customer ? this.customer['id'] : null,
       advanceAmount: this.advanceAmount,
+      advanceAmountPaymentMethod: this.advanceAmountPaymentMethod,
       startAt: this.startAt,
       endAt: this.endAt,
+      isBirthdayClub: this.isBirthdayClub,
+      actualTotal: this.actualTotal,
     };
 
     return request as StoreBanquetRequest;
@@ -233,6 +242,18 @@ const actions = {
   setTitle({ commit }, value: string | null) {
     commit('setTitle', value);
   },
+  setActualTotal({ commit }, value: number | null) {
+    commit('setActualTotal', value);
+  },
+  setAdvanceAmount({ commit }, value: number | null) {
+    commit('setAdvanceAmount', value);
+  },
+  setAdvanceAmountPaymentMethod({ commit }, value: string | null) {
+    commit('setAdvanceAmountPaymentMethod', value);
+  },
+  setIsBirthdayClub({ commit }, value: boolean | null) {
+    commit('setIsBirthdayClub', value);
+  },
   setDescription({ commit }, value: string | null) {
     commit('setDescription', value);
   },
@@ -310,6 +331,22 @@ const mutations = {
   setTitle(state: BasketState, value) {
     state.form.title = value;
     state.form.setChange('title', value);
+  },
+  setActualTotal(state: BasketState, value) {
+    state.form.actualTotal = value;
+    state.form.setChange('actualTotal', value);
+  },
+  setAdvanceAmount(state: BasketState, value) {
+    state.form.advanceAmount = value;
+    state.form.setChange('advanceAmount', value);
+  },
+  setAdvanceAmountPaymentMethod(state: BasketState, value) {
+    state.form.advanceAmountPaymentMethod = value;
+    state.form.setChange('advanceAmountPaymentMethod', value);
+  },
+  setIsBirthdayClub(state: BasketState, value) {
+    state.form.isBirthdayClub = value;
+    state.form.setChange('isBirthdayClub', value);
   },
   setDescription(state: BasketState, value) {
     state.form.description = value;

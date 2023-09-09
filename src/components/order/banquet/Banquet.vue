@@ -91,7 +91,14 @@ import {ThemeConfig} from "@/configs";
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Banquet',
-  emits: ["date-click", "time-click", "customer-click", "state-click", "title-update", "bill-click"],
+  emits: [
+    "date-click",
+    "time-click",
+    "customer-click",
+    "state-click",
+    "title-update",
+    "bill-click"
+  ],
   components: {
     BaseIcon,
     Time,

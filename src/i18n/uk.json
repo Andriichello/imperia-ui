@@ -140,6 +140,11 @@
   },
   "banquet": {
     "title": "Назва банкету",
+    "price_amount": "Сума",
+    "actual_total": "Фактична вартість",
+    "advance_amount": "Завдаток",
+    "advance_amount_payment_method": "Спосіб оплати завдатку",
+    "birthday_club": "Birthday club",
     "description": "Опис",
     "create": "Створити банкет",
     "store": "Зберегти банкет",
@@ -149,6 +154,10 @@
     "create_comment": "Додати коментар",
     "more": {
       "bill": "Рахунок"
+    },
+    "payment_method": {
+      "card": "Картка",
+      "cash": "Готівка"
     },
     "bill": {
       "title": "Рахунок",

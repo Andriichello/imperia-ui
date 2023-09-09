@@ -122,6 +122,24 @@ export interface Banquet {
   advanceAmount: number;
   /**
    *
+   * @type {string}
+   * @memberof Banquet
+   */
+  advanceAmountPaymentMethod: string | null;
+  /**
+   *
+   * @type {number}
+   * @memberof Banquet
+   */
+  actualTotal: number | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof Banquet
+   */
+  isBirthdayClub: boolean | null;
+  /**
+   *
    * @type {OrderTotals}
    * @memberof Banquet
    */
@@ -231,6 +249,9 @@ export function instanceOfBanquet(value: object): boolean {
   isInstance = isInstance && "endAt" in value;
   isInstance = isInstance && "paidAt" in value;
   isInstance = isInstance && "advanceAmount" in value;
+  isInstance = isInstance && "advanceAmountPaymentMethod" in value;
+  isInstance = isInstance && "actualTotal" in value;
+  isInstance = isInstance && "isBirthdayClub" in value;
   isInstance = isInstance && "totals" in value;
   isInstance = isInstance && "invoiceUrl" in value;
   isInstance = isInstance && "orderId" in value;
@@ -265,6 +286,9 @@ export function BanquetFromJSONTyped(
     endAt: new Date(json["end_at"]),
     paidAt: json["paid_at"] === null ? null : new Date(json["paid_at"]),
     advanceAmount: json["advance_amount"],
+    advanceAmountPaymentMethod: json["advance_amount_payment_method"],
+    actualTotal: json["actual_total"],
+    isBirthdayClub: json["is_birthday_club"],
     totals: OrderTotalsFromJSON(json["totals"]),
     invoiceUrl: json["invoice_url"],
     orderId: json["order_id"],
@@ -307,6 +331,9 @@ export function BanquetToJSON(value?: Banquet | null): any {
     end_at: value.endAt.toISOString(),
     paid_at: value.paidAt === null ? null : value.paidAt.toISOString(),
     advance_amount: value.advanceAmount,
+    advance_amount_payment_method: value.advanceAmountPaymentMethod,
+    actual_total: value.actualTotal,
+    is_birthday_club: value.isBirthdayClub,
     totals: OrderTotalsToJSON(value.totals),
     invoice_url: value.invoiceUrl,
     order_id: value.orderId,

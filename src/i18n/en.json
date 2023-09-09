@@ -143,6 +143,11 @@
   },
   "banquet": {
     "title": "Title",
+    "price_amount": "Amount",
+    "actual_total": "Actual total",
+    "advance_amount": "Advance amount",
+    "advance_amount_payment_method": "Advance amount payment method",
+    "birthday_club": "Birthday club",
     "description": "Description",
     "create": "Create banquet",
     "store": "Store banquet",
@@ -152,6 +157,10 @@
     "create_comment": "Create comment",
     "more": {
       "bill": "Bill"
+    },
+    "payment_method": {
+      "card": "Card",
+      "cash": "Cash"
     },
     "bill": {
       "title": "Bill",
