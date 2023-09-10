@@ -94,6 +94,30 @@ export interface UpdateBanquetRequest {
    */
   isBirthdayClub?: boolean | null;
   /**
+   *
+   * @type {number}
+   * @memberof UpdateBanquetRequest
+   */
+  childrenAmount?: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof UpdateBanquetRequest
+   */
+  childTicketPrice?: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof UpdateBanquetRequest
+   */
+  adultsAmount?: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof UpdateBanquetRequest
+   */
+  adultTicketPrice?: number | null;
+  /**
    * Date and time of when banquet should start.
    * @type {Date}
    * @memberof UpdateBanquetRequest
@@ -176,6 +200,18 @@ export function UpdateBanquetRequestFromJSONTyped(
     isBirthdayClub: !exists(json, "is_birthday_club")
       ? undefined
       : json["is_birthday_club"],
+    childrenAmount: !exists(json, "children_amount")
+      ? undefined
+      : json["children_amount"],
+    childTicketPrice: !exists(json, "child_ticket_price")
+      ? undefined
+      : json["child_ticket_price"],
+    adultsAmount: !exists(json, "adults_amount")
+      ? undefined
+      : json["adults_amount"],
+    adultTicketPrice: !exists(json, "adult_ticket_price")
+      ? undefined
+      : json["adult_ticket_price"],
     startAt: !exists(json, "start_at") ? undefined : new Date(json["start_at"]),
     endAt: !exists(json, "end_at") ? undefined : new Date(json["end_at"]),
     paidAt: !exists(json, "paid_at")
@@ -212,6 +248,10 @@ export function UpdateBanquetRequestToJSON(
     actual_total: value.actualTotal,
     advance_amount_payment_method: value.advanceAmountPaymentMethod,
     is_birthday_club: value.isBirthdayClub,
+    children_amount: value.childrenAmount,
+    child_ticket_price: value.childTicketPrice,
+    adults_amount: value.adultsAmount,
+    adult_ticket_price: value.adultTicketPrice,
     start_at:
       value.startAt === undefined ? undefined : value.startAt.toISOString(),
     end_at: value.endAt === undefined ? undefined : value.endAt.toISOString(),

@@ -93,6 +93,30 @@ export interface StoreBanquetRequest {
    */
   isBirthdayClub?: boolean | null;
   /**
+   *
+   * @type {number}
+   * @memberof StoreBanquetRequest
+   */
+  childrenAmount?: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof StoreBanquetRequest
+   */
+  childTicketPrice?: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof StoreBanquetRequest
+   */
+  adultsAmount?: number | null;
+  /**
+   *
+   * @type {number}
+   * @memberof StoreBanquetRequest
+   */
+  adultTicketPrice?: number | null;
+  /**
    * Date and time of when banquet should start.
    * @type {Date}
    * @memberof StoreBanquetRequest
@@ -190,6 +214,18 @@ export function StoreBanquetRequestFromJSONTyped(
     isBirthdayClub: !exists(json, "is_birthday_club")
       ? undefined
       : json["is_birthday_club"],
+    childrenAmount: !exists(json, "children_amount")
+      ? undefined
+      : json["children_amount"],
+    childTicketPrice: !exists(json, "child_ticket_price")
+      ? undefined
+      : json["child_ticket_price"],
+    adultsAmount: !exists(json, "adults_amount")
+      ? undefined
+      : json["adults_amount"],
+    adultTicketPrice: !exists(json, "adult_ticket_price")
+      ? undefined
+      : json["adult_ticket_price"],
     startAt: new Date(json["start_at"]),
     endAt: new Date(json["end_at"]),
     paidAt: !exists(json, "paid_at")
@@ -226,6 +262,10 @@ export function StoreBanquetRequestToJSON(
     actual_total: value.actualTotal,
     advance_amount_payment_method: value.advanceAmountPaymentMethod,
     is_birthday_club: value.isBirthdayClub,
+    children_amount: value.childrenAmount,
+    child_ticket_price: value.childTicketPrice,
+    adults_amount: value.adultsAmount,
+    adult_ticket_price: value.adultTicketPrice,
     start_at: value.startAt.toISOString(),
     end_at: value.endAt.toISOString(),
     paid_at:

@@ -20,13 +20,25 @@
                @state-click="onStateClick"
                @bill-click="onBillClick"/>
 
-      <BanquetAdditional class="w-full"
-               :banquet="banquetForm"
-               :errors="banquetErrors"
-               @advance-amount-update="onBanquetAdvanceAmountUpdate"
-               @advance-amount-payment-method-update="onBanquetAdvanceAmountPaymentMethodUpdate"
-               @is-birthday-club-update="onBanquetIsBirthdayClubUpdate"
-               @actual-total-update="onBanquetActualTotalUpdate"/>
+
+      <details tabindex="0" class="collapse collapse-arrow border border-base-content">
+        <summary class="collapse-title text-lg font-medium">
+          {{ $t('banquet.more_details') }}
+        </summary>
+        <div class="collapse-content">
+          <BanquetAdditional class="w-full"
+                             :banquet="banquetForm"
+                             :errors="banquetErrors"
+                             @advance-amount-update="onBanquetAdvanceAmountUpdate"
+                             @advance-amount-payment-method-update="onBanquetAdvanceAmountPaymentMethodUpdate"
+                             @is-birthday-club-update="onBanquetIsBirthdayClubUpdate"
+                             @actual-total-update="onBanquetActualTotalUpdate"
+                             @adults-amount-update="onBanquetAdultsAmountUpdate"
+                             @adult-ticket-price-update="onBanquetAdultTicketPriceUpdate"
+                             @children-amount-update="onBanquetChildrenAmountUpdate"
+                             @child-ticket-price-update="onBanquetChildTicketPriceUpdate"/>
+        </div>
+      </details>
 
       <div class="w-full flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(createBanquetErrors?.errors ?? {}))"
@@ -334,6 +346,10 @@ export default defineComponent({
       setAdvanceAmountPaymentMethod: 'basket/setAdvanceAmountPaymentMethod',
       setIsBirthdayClub: 'basket/setIsBirthdayClub',
       setActualTotal: 'basket/setActualTotal',
+      setAdultsAmount: 'basket/setAdultsAmount',
+      setAdultTicketPrice: 'basket/setAdultTicketPrice',
+      setChildrenAmount: 'basket/setChildrenAmount',
+      setChildTicketPrice: 'basket/setChildTicketPrice',
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
@@ -408,6 +424,34 @@ export default defineComponent({
     },
     onBanquetActualTotalUpdate({actualTotal}) {
       this.setActualTotal(actualTotal);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetAdultsAmountUpdate({adultsAmount}) {
+      this.setAdultsAmount(adultsAmount);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetAdultTicketPriceUpdate({adultTicketPrice}) {
+      this.setAdultTicketPrice(adultTicketPrice);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetChildrenAmountUpdate({childrenAmount}) {
+      this.setChildrenAmount(childrenAmount);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetChildTicketPriceUpdate({childTicketPrice}) {
+      this.setChildTicketPrice(childTicketPrice);
 
       if (this.wasStoreClicked) {
         this.validateBanquetForm();

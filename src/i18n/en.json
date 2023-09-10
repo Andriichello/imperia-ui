@@ -148,6 +148,10 @@
     "advance_amount": "Advance amount",
     "advance_amount_payment_method": "Advance amount payment method",
     "birthday_club": "Birthday club",
+    "adults_amount": "Adults amount",
+    "adult_ticket_price": "Adult ticket price",
+    "children_amount": "Children amount",
+    "child_ticket_price": "Children ticket price",
     "description": "Description",
     "create": "Create banquet",
     "store": "Store banquet",
@@ -155,6 +159,7 @@
     "comment": "Comment",
     "comments": "Comments",
     "create_comment": "Create comment",
+    "more_details": "More details",
     "more": {
       "bill": "Bill"
     },

@@ -23,6 +23,10 @@ class BanquetForm {
   public restaurant: number | Restaurant | null;
   public advanceAmount: number | null;
   public advanceAmountPaymentMethod: string | null;
+  public adultsAmount: number | null;
+  public adultTicketPrice: number | null;
+  public childrenAmount: number | null;
+  public childTicketPrice: number | null;
   public date: Date | string | null;
   public startAt: Date | string | null;
   public endAt: Date | string | null;
@@ -49,6 +53,10 @@ class BanquetForm {
     form.restaurant = banquet.restaurantId;
     form.advanceAmount = banquet.advanceAmount;
     form.advanceAmountPaymentMethod = banquet.advanceAmountPaymentMethod;
+    form.adultsAmount = banquet.adultsAmount;
+    form.adultTicketPrice = banquet.adultTicketPrice;
+    form.childrenAmount = banquet.childrenAmount;
+    form.childTicketPrice = banquet.childTicketPrice;
     form.date = banquet.startAt;
     form.startAt = banquet.startAt;
     form.endAt = banquet.endAt;
@@ -117,6 +125,10 @@ class BanquetForm {
       endAt: this.endAt,
       isBirthdayClub: this.isBirthdayClub,
       actualTotal: this.actualTotal,
+      adultsAmount: this.adultsAmount,
+      adultTicketPrice: this.adultTicketPrice,
+      childrenAmount: this.childrenAmount,
+      childTicketPrice: this.childTicketPrice,
     };
 
     return request as StoreBanquetRequest;
@@ -254,6 +266,18 @@ const actions = {
   setIsBirthdayClub({ commit }, value: boolean | null) {
     commit('setIsBirthdayClub', value);
   },
+  setAdultsAmount({ commit }, value: number | null) {
+    commit('setAdultsAmount', value);
+  },
+  setAdultTicketPrice({ commit }, value: number | null) {
+    commit('setAdultTicketPrice', value);
+  },
+  setChildrenAmount({ commit }, value: number | null) {
+    commit('setChildrenAmount', value);
+  },
+  setChildTicketPrice({ commit }, value: number | null) {
+    commit('setChildTicketPrice', value);
+  },
   setDescription({ commit }, value: string | null) {
     commit('setDescription', value);
   },
@@ -347,6 +371,22 @@ const mutations = {
   setIsBirthdayClub(state: BasketState, value) {
     state.form.isBirthdayClub = value;
     state.form.setChange('isBirthdayClub', value);
+  },
+  setAdultsAmount(state: BasketState, value) {
+    state.form.adultsAmount = value;
+    state.form.setChange('adultsAmount', value);
+  },
+  setAdultTicketPrice(state: BasketState, value) {
+    state.form.adultTicketPrice = value;
+    state.form.setChange('adultTicketPrice', value);
+  },
+  setChildrenAmount(state: BasketState, value) {
+    state.form.childrenAmount = value;
+    state.form.setChange('childrenAmount', value);
+  },
+  setChildTicketPrice(state: BasketState, value) {
+    state.form.childTicketPrice = value;
+    state.form.setChange('childTicketPrice', value);
   },
   setDescription(state: BasketState, value) {
     state.form.description = value;
