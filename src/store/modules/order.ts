@@ -1,4 +1,5 @@
 import {
+  AttachingComment,
   BanquetsApi,
   Comment,
   IndexOrderResponse,
@@ -67,6 +68,7 @@ class OrderForm {
         productId: p.productId,
         variantId: p.variantId ?? null,
         amount: p.amount,
+        comments: p.comments,
       };
 
       fields.push(field);
@@ -75,11 +77,12 @@ class OrderForm {
     this.products = fields;
   }
 
-  public setProduct(productId: number, amount: number | null, variantId: number = null) {
+  public setProduct(productId: number, amount: number | null, variantId: number = null, comments: AttachingComment[] = []) {
     const field: StoreOrderRequestProductField = {
       productId,
       variantId,
       amount,
+      comments,
     };
 
     const product = this.products.find((p) => {
@@ -88,6 +91,7 @@ class OrderForm {
 
     if (product) {
       product.amount = field.amount;
+      product.comments = field.comments;
     } else {
       if (!this.products) {
         this.products = [];
@@ -155,6 +159,10 @@ class OrderForm {
             result = true;
           }
 
+          if (field?.comments !== change?.comments) {
+            result = true;
+          }
+
           return;
         }
 
@@ -176,11 +184,23 @@ class OrderForm {
       }
     });
 
+    const products = (this.products ?? [])
+      .filter((f) => {
+        return f.amount;
+      })
+      .map((f) => {
+        const comments = (f?.comments ?? [])
+          .filter((c) => c?.text?.length);
+
+        return {
+          ...f,
+          comments
+        }
+      });
+
     const request = {
       banquetId: this.banquetId,
-      products: (this.products ?? []).filter((f) => {
-        return f.amount;
-      }),
+      products,
       comments,
     };
 
@@ -386,8 +406,8 @@ const actions = {
   setProducts({ commit }, products) {
     commit('setProducts', products);
   },
-  setProduct({ commit, dispatch }, {productId, amount, variantId}) {
-    commit('setProduct', {productId, amount, variantId});
+  setProduct({ commit, dispatch }, {productId, amount, variantId, comments}) {
+    commit('setProduct', {productId, amount, variantId, comments});
     dispatch('recalculate');
   },
   unsetProduct({ commit, dispatch }, {productId, variantId}) {
@@ -433,7 +453,7 @@ const actions = {
   async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId, fields}) {
     const request: ShowOrderByBanquetIdRequest = {
       id: banquetId,
-      include: 'comments,products',
+      include: 'comments,products,products.comments',
     };
 
     commit('setIsLoadingShowResponse', true);
@@ -564,7 +584,7 @@ const mutations = {
       fields.forEach((f) => {
         const variantId = f.variantId ?? null;
 
-        state.form.setProduct(f.productId, f.amount, variantId);
+        state.form.setProduct(f.productId, f.amount, variantId, f.comments);
         state.form.setChange(`products-${f.productId}-${variantId}`, {
           productId: f.productId,
           amount: f.amount,
@@ -579,11 +599,11 @@ const mutations = {
   setProducts(state: OrderState, products) {
     state.form.products = products;
   },
-  setProduct(state: OrderState, {productId, amount, variantId}) {
+  setProduct(state: OrderState, {productId, amount, variantId, comments}) {
     variantId = variantId ?? null;
 
-    state.form.setProduct(productId, amount, variantId);
-    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount, variantId});
+    state.form.setProduct(productId, amount, variantId, comments);
+    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount, variantId, comments});
   },
   unsetProduct(state: OrderState, {productId, variantId}) {
     variantId = variantId ?? null;
