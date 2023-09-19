@@ -7,7 +7,7 @@ import {
   UpdateBanquetRequest, UpdateBanquetResponse,
   User
 } from "@/openapi";
-import {authHeaders, jsonHeaders} from "@/helpers";
+import {authHeaders, jsonHeaders, ResponseErrors} from "@/helpers";
 
 class BanquetForm {
   /** Values that were set after constructor */
@@ -119,7 +119,7 @@ class BanquetForm {
       title: this.title,
       description: this.description,
       customerId: this.customer ? this.customer['id'] : null,
-      advanceAmount: this.advanceAmount,
+      advanceAmount: this.advanceAmount ?? 0,
       advanceAmountPaymentMethod: this.advanceAmountPaymentMethod,
       startAt: this.startAt,
       endAt: this.endAt,
@@ -154,6 +154,13 @@ class BasketState {
   /** Last update banquet response */
   public updateResponse: UpdateBanquetResponse | Response | null;
 
+  /** Determines if show banquet response is now loading */
+  public isLoadingShowResponse: boolean | null;
+  /** Determines if create banquet response is now loading */
+  public isLoadingCreateResponse: boolean | null;
+  /** Determines if update banquet response is now loading */
+  public isLoadingUpdateResponse: boolean | null;
+
   constructor() {
     this.form = new BanquetForm();
 
@@ -163,6 +170,10 @@ class BasketState {
     this.showResponse = null;
     this.createResponse = null;
     this.updateResponse = null;
+
+    this.isLoadingShowResponse = null;
+    this.isLoadingCreateResponse = null;
+    this.isLoadingUpdateResponse = null;
   }
 }
 
@@ -196,6 +207,27 @@ const getters = {
   advanceAmount(state: BasketState) {
     return state.form.advanceAmount;
   },
+  advanceAmountPaymentMethod(state: BasketState) {
+    return state.form.advanceAmountPaymentMethod;
+  },
+  actualTotal(state: BasketState) {
+    return state.form.actualTotal;
+  },
+  isBirthdayClub(state: BasketState) {
+    return state.form.isBirthdayClub;
+  },
+  childrenAmount(state: BasketState) {
+    return state.form.childrenAmount;
+  },
+  childTicketPrice(state: BasketState) {
+    return state.form.childTicketPrice;
+  },
+  adultsAmount(state: BasketState) {
+    return state.form.adultsAmount;
+  },
+  adultTicketPrice(state: BasketState) {
+    return state.form.adultTicketPrice;
+  },
   date(state: BasketState) {
     return state.form.date;
   },
@@ -222,6 +254,15 @@ const getters = {
   },
   getUpdateResponse(state: BasketState) {
     return state.updateResponse;
+  },
+  isLoadingShowResponse(state: BasketState) {
+    return state.isLoadingShowResponse;
+  },
+  isLoadingCreateResponse(state: BasketState) {
+    return state.isLoadingCreateResponse;
+  },
+  isLoadingUpdateResponse(state: BasketState) {
+    return state.isLoadingUpdateResponse;
   },
 };
 
@@ -300,6 +341,8 @@ const actions = {
     commit('setEndAt', value);
   },
   async loadBanquet({ commit, rootGetters }, { id }) {
+    commit('setIsLoadingShowResponse', true);
+
     const response = await (new BanquetsApi())
       .showBanquet({ id, include: 'creator,customer,comments' }, { headers: { ...authHeaders(rootGetters['auth/token']) } })
       .then(response => response)
@@ -307,6 +350,7 @@ const actions = {
 
     commit('setShowResponse', response);
     commit('setBanquet', response.data);
+    commit('setIsLoadingShowResponse', false);
   },
   async loadBanquetIfMissing({ dispatch }, { id }) {
     if (state.showResponse && (state.showResponse['data']['id'] ?? null) === id) {
@@ -316,20 +360,26 @@ const actions = {
     dispatch('loadBanquet', { id })
   },
   async createBanquet({ commit, rootGetters }, request: StoreBanquetRequest) {
+    commit('setIsLoadingCreateResponse', true);
+
     const response = await (new BanquetsApi())
       .storeBanquet({ storeBanquetRequest: request, include: 'order' }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)
       .catch(error => error.response);
 
     commit('setCreateResponse', response);
+    commit('setIsLoadingCreateResponse', false);
   },
   async updateBanquet({ commit, rootGetters }, { id, request }) {
+    commit('setIsLoadingUpdateResponse', true);
+
     const response = await (new BanquetsApi())
       .updateBanquet({ id, updateBanquetRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)
       .catch(error => error.response);
 
     commit('setUpdateResponse', response);
+    commit('setIsLoadingUpdateResponse', false);
   },
 };
 
@@ -455,6 +505,15 @@ const mutations = {
   },
   setUpdateResponse(state: BasketState, response) {
     state.updateResponse = response;
+  },
+  setIsLoadingShowResponse(state: BasketState, isLoading) {
+    state.isLoadingShowResponse = isLoading;
+  },
+  setIsLoadingCreateResponse(state: BasketState, isLoading) {
+    state.isLoadingCreateResponse = isLoading;
+  },
+  setIsLoadingUpdateResponse(state: BasketState, isLoading) {
+    state.isLoadingUpdateResponse = isLoading;
   },
 };
 

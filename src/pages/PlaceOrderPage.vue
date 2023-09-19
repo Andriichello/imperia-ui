@@ -40,7 +40,7 @@
         </div>
       </details>
 
-      <div class="w-full flex justify-center items-center"
+      <div class="w-full max-w-xl flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(createBanquetErrors?.errors ?? {}))"
            :key="errorsGroup">
         <span class="label-text-alt text-error text-sm"
@@ -50,7 +50,7 @@
         </span>
       </div>
 
-      <div class="w-full flex justify-center items-center"
+      <div class="w-full max-w-xl flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(updateBanquetErrors?.errors ?? {}))"
            :key="errorsGroup">
         <span class="label-text-alt text-error text-sm"
@@ -60,7 +60,7 @@
         </span>
       </div>
 
-      <div class="w-full flex justify-center items-center"
+      <div class="w-full max-w-xl flex justify-center items-center"
            v-if="isBanquetChanged && !Object.keys(banquetErrors).length">
         <button class="w-full btn btn-md btn-primary" @click="onStoreBanquet">
           {{ +this.$route.params['banquetId'] ? $t('banquet.store') : $t('banquet.create') }}
@@ -69,6 +69,9 @@
       </div>
 
       <OrderSwitcher class="w-full z-10"
+                     @click="onOrderSwitcherClick"
+                     :loading-banquet="isLoadingBanquet"
+                     :loading-order="isLoadingOrder"
                      :show-arrow="false"/>
 
       <div class="w-full flex justify-center items-center">
@@ -393,6 +396,25 @@ export default defineComponent({
       this.modal = 'bill';
 
       this.loadMenusIfMissing();
+    },
+    onOrderSwitcherClick() {
+      const menuId = this.$store.getters['preview/menu']?.id;
+      const banquetId = this.$route.params['banquetId'];
+      const restaurantId = this.$route.params['restaurantId'];
+
+      let path = `/place/${restaurantId}`;
+
+      if (banquetId) {
+        path += `/order/${banquetId}`;
+      }
+
+      path += `/menu`;
+
+      if (menuId) {
+        path += `/${menuId}`;
+      }
+
+      this.$router.push(path);
     },
     onBanquetTitleUpdate({title}) {
       this.setTitle(title);

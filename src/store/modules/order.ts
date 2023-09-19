@@ -12,7 +12,7 @@ import {
   ShowOrderByBanquetIdRequest,
   ShowOrderResponse,
   StoreOrderRequest,
-  StoreOrderRequestProductField, StoreOrderResponse,
+  StoreOrderRequestProductField, StoreOrderRequestTicketField, StoreOrderResponse,
   UpdateOrderRequest, UpdateOrderResponse
 } from "@/openapi";
 import {authHeaders, jsonHeaders} from "@/helpers";
@@ -212,6 +212,13 @@ class OrderState {
   /** Latest update order response */
   public updateOrderResponse: UpdateOrderResponse | null;
 
+  /** Determines if show order response is now loading */
+  public isLoadingShowResponse: boolean | null;
+  /** Determines if create order response is now loading */
+  public isLoadingCreateResponse: boolean | null;
+  /** Determines if update order response is now loading */
+  public isLoadingUpdateResponse: boolean | null;
+
   constructor() {
     this.form = new OrderForm();
 
@@ -220,7 +227,13 @@ class OrderState {
     this.orderedProducts = null;
 
     this.showOrderResponse = null;
+    this.createOrderResponse = null;
+    this.updateOrderResponse = null;
     this.orderedProductsResponse = null;
+
+    this.isLoadingShowResponse = null;
+    this.isLoadingCreateResponse = null;
+    this.isLoadingUpdateResponse = null;
   }
 }
 
@@ -250,6 +263,10 @@ const getters = {
   },
   products(state: OrderState) {
     return state.form.products ?? [];
+  },
+  ticketsCount(state: OrderState, rootGetters) {
+    return (rootGetters['basket/adultsAmount'] ?? 0)
+      + (rootGetters['basket/childrenAmount'] ?? 0);
   },
   productsCount(state: OrderState, getters) {
     let count = 0;
@@ -299,7 +316,20 @@ const getters = {
 
     return isMissing;
   },
-  total(state: OrderState) {
+  allTotal(state: OrderState) {
+    return state.form?.totals?.all ?? 0;
+  },
+  ticketsTotal(state: OrderState, rootGetters) {
+    let total = 0;
+
+    total += (rootGetters['basket/adultsAmount'] ?? 0)
+      * (rootGetters['basket/adultTicketPrice'] ?? 0);
+    total += (rootGetters['basket/childrenAmount'] ?? 0)
+      * (rootGetters['basket/childTicketPrice'] ?? 0);
+
+    return total;
+  },
+  productsTotal(state: OrderState) {
     return state.form?.totals?.products ?? 0;
   },
   hasChanges(state: OrderState) {
@@ -325,6 +355,15 @@ const getters = {
   },
   getUpdateOrderResponse(state: OrderState) {
     return state.updateOrderResponse;
+  },
+  isLoadingShowResponse(state: OrderState) {
+    return state.isLoadingShowResponse;
+  },
+  isLoadingCreateResponse(state: OrderState) {
+    return state.isLoadingCreateResponse;
+  },
+  isLoadingUpdateResponse(state: OrderState) {
+    return state.isLoadingUpdateResponse;
   },
 };
 
@@ -361,7 +400,7 @@ const actions = {
   updateComment({ commit }, {comment, index}) {
     commit('updateComment', {comment, index});
   },
-  recalculate({ state, getters, rootGetters}) {
+  recalculate({state, getters, rootGetters}) {
     const totals: OrderTotals = state?.order?.totals
       ?? {
         spaces: null,
@@ -397,6 +436,8 @@ const actions = {
       include: 'comments,products',
     };
 
+    commit('setIsLoadingShowResponse', true);
+
     const response = await (new BanquetsApi())
       .showOrderByBanquetId(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
       .then(response => response)
@@ -408,6 +449,7 @@ const actions = {
 
     commit('setShowOrderResponse', response);
     commit('setOrder', {order: response.data, fields});
+    commit('setIsLoadingShowResponse', false);
   },
   async loadOrderForBanquetIfMissing({dispatch, commit}, {banquetId, fields}) {
     if (state.showOrderResponse || state.order) {
@@ -482,20 +524,26 @@ const actions = {
     }
   },
   async createOrder({ commit, rootGetters }, request: StoreOrderRequest) {
+    commit('setIsLoadingCreateResponse', true);
+
     const response = await (new OrdersApi())
       .storeOrder({ storeOrderRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)
       .catch(error => error.response);
 
     commit('setCreateOrderResponse', response);
+    commit('setIsLoadingCreateResponse', false);
   },
   async updateOrder({ dispatch, commit, rootGetters }, { id, request }) {
+    commit('setIsLoadingUpdateResponse', true);
+
     const response = await (new OrdersApi())
       .updateOrder({ id, updateOrderRequest: request }, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
       .then(response => response)
       .catch(error => error.response);
 
     commit('setUpdateOrderResponse', response);
+    commit('setIsLoadingUpdateResponse', false);
 
     if (response?.data?.banquetId) {
       dispatch('loadOrderForBanquet', { banquetId: response.data.banquetId });
@@ -568,6 +616,15 @@ const mutations = {
   },
   setUpdateOrderResponse(state: OrderState, response) {
     state.updateOrderResponse = response;
+  },
+  setIsLoadingShowResponse(state: OrderState, isLoading) {
+    state.isLoadingShowResponse = isLoading;
+  },
+  setIsLoadingCreateResponse(state: OrderState, isLoading) {
+    state.isLoadingCreateResponse = isLoading;
+  },
+  setIsLoadingUpdateResponse(state: OrderState, isLoading) {
+    state.isLoadingUpdateResponse = isLoading;
   },
 };
 

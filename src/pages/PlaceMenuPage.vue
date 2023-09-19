@@ -9,7 +9,9 @@
     <PreviewMenu v-if="menu" :menu="menu" class="pb-4"/>
 
     <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
-      <OrderSwitcher class="w-full max-w-4xl" :show-arrow="true"
+      <OrderSwitcher class="w-full max-w-4xl"
+                     :show-arrow="true"
+                     :loading-banquet="isLoadingBanquet"
                      @switch-to-order="onSwitchToOrder"/>
     </div>
   </div>
@@ -73,6 +75,7 @@ export default defineComponent({
       showRestaurantResponse: 'restaurants/getShowResponse',
       isLoadingMenus: "preview/isLoadingMenus",
       isLoadingRestaurants: "restaurants/isLoadingRestaurants",
+      isLoadingBanquet: "basket/isLoadingShowResponse",
       productsCount: 'order/productsCount',
       banquetId: 'order/banquetId',
     }),
@@ -86,6 +89,7 @@ export default defineComponent({
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadBanquetIfMissing: "basket/loadBanquetIfMissing",
       loadOrderForBanquetIfMissing: "order/loadOrderForBanquetIfMissing",
       loadProductsForOrder: "order/loadProductsForOrder",
       loadProductsForOrderIfMissing: "order/loadProductsForOrderIfMissing",
@@ -159,10 +163,12 @@ export default defineComponent({
     }
 
     if (banquetId) {
+      this.loadBanquetIfMissing({id: banquetId});
       this.loadOrderForBanquetIfMissing({banquetId});
     }
 
     if (this.order) {
+      this.loadBanquetIfMissing({id: this.order.banquetId});
       this.loadProductsForOrderIfMissing({order: this.order});
     }
   },

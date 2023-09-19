@@ -64,6 +64,8 @@ export function priceFormatted(price: number | null): string | null {
 }
 
 export class ResponseErrors {
+    public status?: number;
+    public statusText?: string | null;
     public message?: string;
     public errors?: string[] | object;
 
@@ -84,12 +86,24 @@ export class ResponseErrors {
         try {
             const result = new ResponseErrors()
 
+            if (response.status) {
+                result.status = response.status;
+            }
+            if (response.statusText) {
+                result.statusText = response.statusText;
+            }
+
             const json = await response.json();
             if (json.message) {
                 result.message = json.message;
             }
             if (json.errors) {
                 result.errors = json.errors;
+            }
+            if (result.errors === undefined && (result.status < 200 || result.status > 299)) {
+                result.errors = {
+                    base: [json.message ?? result.statusText ?? 'Error occurred'],
+                };
             }
 
             return result;
