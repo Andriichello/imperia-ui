@@ -257,7 +257,7 @@ export default defineComponent({
       });
     },
     onAddComment(comment = {text: ''}) {
-      const comments = [comment, ...(this.comments ?? [])];
+      const comments = [...(this.comments ?? []), comment];
 
       this.setField({
         productId: this.id,

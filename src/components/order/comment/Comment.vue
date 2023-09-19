@@ -1,6 +1,6 @@
 <template>
   <div class="w-full flex justify-center items-center">
-    <div class="form-control w-full flex flex-row justify-start items-start gap-1.5">
+    <div class="form-control w-full flex flex-row justify-start items-start gap-2">
       <div class="flex justify-center start-center mt-1.5">
         <BaseIcon title="comment" :color="commentVal?.length > 0 ? 'currentColor' : 'var(--hint-color)'" :width="24" :height="24" viewBox="0 0 24 24">
           <g id="comment">
@@ -24,7 +24,7 @@
       <textarea class="textarea textarea-ghost textarea-xs w-full text-[16px] font-semibold px-1 bg-transparent"
                 style="min-height: 2rem;"
                 maxlength="255"
-                rows="1"
+                rows="2"
                 name="comment" type="text" v-model="commentVal"
                 :placeholder="$t('banquet.comment') + '...'"/>
     </div>
