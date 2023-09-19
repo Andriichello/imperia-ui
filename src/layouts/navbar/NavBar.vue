@@ -38,13 +38,13 @@
           </button>
         </div>
 
-        <div class="dropdown dropdown-end" v-if="authorized">
+        <div class="dropdown dropdown-end" v-if="authorized" @focusin="onDropdownFocusIn" @focusout="onDropdownFocusOut">
           <label tabindex="0">
             <button class="btn btn-square btn-ghost" @click="onDropdownClick">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
             </button>
           </label>
-          <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52">
+          <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 p-2 shadow bg-neutral rounded-box w-52" id="navbar-menu-dropdown-list">
             <li v-if="authorized">
               <RouterLink :class="{'hover:bg-base-100/25': theme !== ThemeConfig.dark(), 'hover:text-base-100': theme !== ThemeConfig.dark()}"
                           :to="`/place/${restaurantId}/history`" replace >
@@ -90,6 +90,7 @@ export default defineComponent({
   data() {
     return {
       isShowingDropdown: false,
+      previousIsShowingDropdown: false,
     }
   },
   computed: {
@@ -182,12 +183,23 @@ export default defineComponent({
         elem?.blur();
       }
     },
+    onDropdownFocusIn() {
+      this.isShowingDropdown = true;
+    },
+    onDropdownFocusOut() {
+      this.isShowingDropdown = false;
+    },
     onDropdownClick() {
-      if (this.isShowingDropdown) {
-        this.onHide();
-      }
+      const list = document.getElementById('navbar-menu-dropdown-list');
 
+      this.previousIsShowingDropdown = this.isShowingDropdown;
       this.isShowingDropdown = !this.isShowingDropdown;
+
+      if (this.isShowingDropdown && !this.previousIsShowingDropdown) {
+        if (!list.hidden) {
+          this.onHide();
+        }
+      }
     },
     onBack() {
       const restaurantId = this.$route.params['restaurantId'];
