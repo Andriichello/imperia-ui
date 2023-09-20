@@ -269,7 +269,7 @@ export default defineComponent({
       const comments = [...(this.comments ?? [])];
       comments[index].text = comment.text;
 
-      if (comments && comments.length > 2) {
+      if (comments && comments.length > 1) {
         let empties = 0;
 
         comments.forEach((c) => {
