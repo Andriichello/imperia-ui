@@ -256,19 +256,35 @@ export default defineComponent({
         comments: this.comments
       });
     },
-    onAddComment(comment = {text: ''}) {
-      const comments = [...(this.comments ?? []), comment];
+    onAddComment() {
+      if (this.comments && this.comments.length) {
+        if (!this.comments[this.comments.length - 1].text.trim().length) {
+          return;
+        }
+      }
 
-      this.setField({
-        productId: this.id,
-        variantId: this.variant?.id,
-        amount: this.current?.amount,
-        comments: comments
-      });
+      this.current.comments.push({text: ''});
     },
     onUpdateComment({comment, index}) {
       const comments = [...(this.comments ?? [])];
       comments[index].text = comment.text;
+
+      if (comments && comments.length > 2) {
+        let empties = 0;
+
+        comments.forEach((c) => {
+          if (c.text.trim().length) {
+            empties = 0;
+          } else {
+            empties++;
+          }
+        });
+
+        while (empties > 1) {
+          comments.pop();
+          empties--;
+        }
+      }
 
       this.setField({
         productId: this.id,
