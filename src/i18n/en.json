@@ -146,6 +146,7 @@
     }
   },
   "banquet": {
+    "banquet": "Banquet",
     "title": "Title",
     "price_amount": "Amount",
     "actual_total": "Actual total",

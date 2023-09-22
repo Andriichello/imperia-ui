@@ -5,7 +5,7 @@
         <RouterLink :to="`/place/${banquet.restaurantId}/order/${banquet.id}`"
             class="text-xl font-semibold px-1"
             @click="onLinkClick">
-          {{ banquet?.title }}
+          {{ banquet?.title && banquet?.title.trim().length ? banquet?.title : $t('banquet.banquet') }}
         </RouterLink>
       </div>
 

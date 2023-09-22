@@ -102,6 +102,7 @@ import Preloader from "@/components/preview/loading/Preloader.vue";
 import DatesFilter from "@/components/history/filters/DatesFilter.vue";
 import Calendar from "@/components/order/date/Calendar.vue";
 import StatesFilter from "@/components/history/filters/StatesFilter.vue";
+import {throttle} from "lodash";
 
 export default defineComponent({
   name: "PlaceHistoryPage",
@@ -228,6 +229,10 @@ export default defineComponent({
         this.isLoadingRestaurant = true;
         this.loadAndSelectRestaurant({ id: restaurantId });
       }
+    }
+
+    if (this.indexResponse && this.banquets) {
+        this.loadBanquets()
     }
 
     this.loadBanquetsIfMissing();

@@ -143,6 +143,7 @@
     }
   },
   "banquet": {
+    "banquet": "Банкет",
     "title": "Назва банкету",
     "price_amount": "Сума",
     "actual_total": "Фактична вартість",
