@@ -117,17 +117,16 @@ export default defineComponent({
       return 'currentColor';
     },
     onChange(event) {
-      const id = event.target.id;
+      const id = parseInt(event.target.id);
       const checked = event.target.checked;
 
+      const filtered = this.excludedMenus
+          .filter((mId) => mId !== id);
+
       if (checked) {
-        this.excludedMenus = this.excludedMenus.filter((m) => {
-          return m?.id !== id;
-        });
+        this.excludedMenus = filtered;
       } else {
-        if (!this.excludedMenus.includes(id)) {
-          this.excludedMenus.push(parseInt(id));
-        }
+        this.excludedMenus = [...filtered, id];
       }
     },
     onCancelClick() {
