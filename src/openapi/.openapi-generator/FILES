@@ -27,6 +27,7 @@ models/AttachingMedia.ts
 models/Banquet.ts
 models/BanquetInvoiceUrlRequest.ts
 models/BanquetInvoiceUrlResponse.ts
+models/BanquetMultipleInvoiceUrlResponse.ts
 models/Category.ts
 models/Comment.ts
 models/Customer.ts
@@ -70,11 +71,13 @@ models/LogoutResponse.ts
 models/MeResponse.ts
 models/Media.ts
 models/Menu.ts
+models/MultipleInvoiceUrlRequest.ts
 models/Notification.ts
 models/NotificationsPoll.ts
 models/Order.ts
 models/OrderInvoiceUrlRequest.ts
 models/OrderInvoiceUrlResponse.ts
+models/OrderMultipleInvoiceUrlResponse.ts
 models/OrderTotals.ts
 models/PaginationMeta.ts
 models/PollNotificationsResponse.ts
@@ -103,6 +106,7 @@ models/ShowFamilyMemberResponse.ts
 models/ShowInvoiceRequest.ts
 models/ShowMediaResponse.ts
 models/ShowMenuResponse.ts
+models/ShowMultipleInvoiceRequest.ts
 models/ShowNotificationResponse.ts
 models/ShowOrderResponse.ts
 models/ShowProductResponse.ts

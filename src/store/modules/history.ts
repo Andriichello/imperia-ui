@@ -1,5 +1,14 @@
-import { authHeaders } from "@/helpers";
-import { Banquet, BanquetsApi, IndexBanquetResponse, IndexBanquetsRequest, ShowBanquetResponse } from "@/openapi";
+import {authHeaders, jsonHeaders} from "@/helpers";
+import {
+  Banquet,
+  BanquetMultipleInvoiceUrlResponse,
+  BanquetsApi,
+  IndexBanquetResponse,
+  IndexBanquetsRequest,
+  InvoicesApi,
+  MultipleInvoiceUrlRequest,
+  ShowBanquetResponse
+} from "@/openapi";
 
 class HistoryFilters {
   /** Applied search query */
@@ -31,6 +40,7 @@ class HistoryState {
   public banquetResponse: ShowBanquetResponse | null;
   public banquetsResponse: IndexBanquetResponse | null;
   public moreBanquetsResponse: IndexBanquetResponse | null;
+  public pdfUrlResponse: BanquetMultipleInvoiceUrlResponse | null;
 
   constructor() {
     this.mode = null;
@@ -41,6 +51,7 @@ class HistoryState {
     this.banquetResponse = null;
     this.banquetsResponse = null;
     this.moreBanquetsResponse = null;
+    this.pdfUrlResponse = null;
   }
 }
 
@@ -79,6 +90,9 @@ const getters = {
   getIndexMoreResponse(state: HistoryState) {
     return state.moreBanquetsResponse;
   },
+  getPdfUrlResponse(state: HistoryState) {
+    return state.pdfUrlResponse;
+  },
 };
 
 const actions = {
@@ -86,7 +100,6 @@ const actions = {
     commit('setMode', { mode });
   },
   setSelected({ commit }, { selected }) {
-    console.log('setSelected', selected)
     commit('setSelected', { selected });
   },
   async loadBanquets({ commit, getters, rootGetters}) {
@@ -175,6 +188,19 @@ const actions = {
     commit('setMoreBanquetsResponse', { response: banquets });
     commit('appendBanquets', { banquets: banquets.data ?? [] });
   },
+  async loadBanquetsPdfUrl({ commit, rootGetters }, { ids }) {
+    const request: MultipleInvoiceUrlRequest = {
+      ids: ids.join(','),
+      endpoint: "pdfMultiple",
+    }
+
+    const response = await (new InvoicesApi())
+      .banquetMultipleInvoiceUrl({multipleInvoiceUrlRequest: request}, { headers: { ...authHeaders(rootGetters['auth/token']), ...jsonHeaders() } })
+      .then(response => response)
+      .catch(error => error.response);
+
+    commit('setPdfUrlResponse', { response });
+  },
   applySearch({ commit, dispatch }, { search }) {
     commit('applySearch', { search });
     dispatch('loadBanquets');
@@ -217,6 +243,9 @@ const mutations = {
   },
   appendBanquets(state: HistoryState, { banquets }) {
     state.banquets = state.banquets.concat(banquets);
+  },
+  setPdfUrlResponse(state: HistoryState, { response }) {
+    state.pdfUrlResponse = response;
   },
   applySearch(state: HistoryState, { search }) {
     state.filters.search = search;

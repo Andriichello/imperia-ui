@@ -16,8 +16,11 @@ import * as runtime from "../runtime";
 import type {
   BanquetInvoiceUrlRequest,
   BanquetInvoiceUrlResponse,
+  BanquetMultipleInvoiceUrlResponse,
+  MultipleInvoiceUrlRequest,
   OrderInvoiceUrlRequest,
   OrderInvoiceUrlResponse,
+  OrderMultipleInvoiceUrlResponse,
   UnauthenticatedResponse,
 } from "../models";
 import {
@@ -25,10 +28,16 @@ import {
   BanquetInvoiceUrlRequestToJSON,
   BanquetInvoiceUrlResponseFromJSON,
   BanquetInvoiceUrlResponseToJSON,
+  BanquetMultipleInvoiceUrlResponseFromJSON,
+  BanquetMultipleInvoiceUrlResponseToJSON,
+  MultipleInvoiceUrlRequestFromJSON,
+  MultipleInvoiceUrlRequestToJSON,
   OrderInvoiceUrlRequestFromJSON,
   OrderInvoiceUrlRequestToJSON,
   OrderInvoiceUrlResponseFromJSON,
   OrderInvoiceUrlResponseToJSON,
+  OrderMultipleInvoiceUrlResponseFromJSON,
+  OrderMultipleInvoiceUrlResponseToJSON,
   UnauthenticatedResponseFromJSON,
   UnauthenticatedResponseToJSON,
 } from "../models";
@@ -38,9 +47,17 @@ export interface BanquetInvoiceUrlOperationRequest {
   banquetInvoiceUrlRequest: BanquetInvoiceUrlRequest;
 }
 
+export interface BanquetMultipleInvoiceUrlRequest {
+  multipleInvoiceUrlRequest: MultipleInvoiceUrlRequest;
+}
+
 export interface OrderInvoiceUrlOperationRequest {
   id: number;
   orderInvoiceUrlRequest: OrderInvoiceUrlRequest;
+}
+
+export interface OrderMultipleInvoiceUrlRequest {
+  multipleInvoiceUrlRequest: MultipleInvoiceUrlRequest;
 }
 
 /**
@@ -121,6 +138,69 @@ export class InvoicesApi extends runtime.BaseAPI {
   }
 
   /**
+   * Generate url for accessing invoice for multiple banquets.
+   */
+  async banquetMultipleInvoiceUrlRaw(
+    requestParameters: BanquetMultipleInvoiceUrlRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<BanquetMultipleInvoiceUrlResponse>> {
+    if (
+      requestParameters.multipleInvoiceUrlRequest === null ||
+      requestParameters.multipleInvoiceUrlRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "multipleInvoiceUrlRequest",
+        "Required parameter requestParameters.multipleInvoiceUrlRequest was null or undefined when calling banquetMultipleInvoiceUrl."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/banquets/invoice/url`,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: MultipleInvoiceUrlRequestToJSON(
+          requestParameters.multipleInvoiceUrlRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      BanquetMultipleInvoiceUrlResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Generate url for accessing invoice for multiple banquets.
+   */
+  async banquetMultipleInvoiceUrl(
+    requestParameters: BanquetMultipleInvoiceUrlRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<BanquetMultipleInvoiceUrlResponse> {
+    const response = await this.banquetMultipleInvoiceUrlRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
    * Generate url for accessing order\'s invoice.
    */
   async orderInvoiceUrlRaw(
@@ -187,6 +267,69 @@ export class InvoicesApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<OrderInvoiceUrlResponse> {
     const response = await this.orderInvoiceUrlRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Generate url for accessing invoice for multiple orders.
+   */
+  async orderMultipleInvoiceUrlRaw(
+    requestParameters: OrderMultipleInvoiceUrlRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<OrderMultipleInvoiceUrlResponse>> {
+    if (
+      requestParameters.multipleInvoiceUrlRequest === null ||
+      requestParameters.multipleInvoiceUrlRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "multipleInvoiceUrlRequest",
+        "Required parameter requestParameters.multipleInvoiceUrlRequest was null or undefined when calling orderMultipleInvoiceUrl."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/orders/invoice/url`,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: MultipleInvoiceUrlRequestToJSON(
+          requestParameters.multipleInvoiceUrlRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      OrderMultipleInvoiceUrlResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Generate url for accessing invoice for multiple orders.
+   */
+  async orderMultipleInvoiceUrl(
+    requestParameters: OrderMultipleInvoiceUrlRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<OrderMultipleInvoiceUrlResponse> {
+    const response = await this.orderMultipleInvoiceUrlRaw(
       requestParameters,
       initOverrides
     );

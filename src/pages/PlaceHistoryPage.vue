@@ -157,6 +157,7 @@ import StatesFilter from "@/components/history/filters/StatesFilter.vue";
 import {throttle} from "lodash";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import BillPicker from "@/components/order/bill/BillPicker.vue";
+import {instanceOfBanquetMultipleInvoiceUrlResponse} from "@/openapi";
 
 export default defineComponent({
   name: "PlaceHistoryPage",
@@ -178,6 +179,7 @@ export default defineComponent({
       isSearching: false,
       isLoadingMore: false,
       isShowingFilters: false,
+      isLoadingPdfUrl: false,
       banquetForBill: null,
     };
   },
@@ -193,6 +195,7 @@ export default defineComponent({
       filters: "history/filters",
       indexResponse: "history/getIndexResponse",
       indexMoreResponse: "history/getIndexMoreResponse",
+      pdfUrlResponse: "history/getPdfUrlResponse",
     }),
     banquetsCount() {
       return this.banquets?.length;
@@ -229,6 +232,7 @@ export default defineComponent({
       loadBanquets: 'history/loadBanquets',
       loadBanquetsIfMissing: 'history/loadBanquetsIfMissing',
       loadMoreBanquets: 'history/loadMoreBanquets',
+      loadBanquetsPdfUrl: 'history/loadBanquetsPdfUrl',
       applySearch: 'history/applySearch',
       applyFrom: 'history/applyFrom',
       applyUntil: 'history/applyUntil',
@@ -270,7 +274,6 @@ export default defineComponent({
       // this.applyStates([state]);
     },
     onSelectionButtonClick() {
-      console.log('onSelectionButtonClick')
       if (this.mode === 'selection') {
         this.setMode({mode: null});
         this.setSelected({selected: []});
@@ -286,38 +289,41 @@ export default defineComponent({
       //   window.open(banquet?.invoiceUrl, '_blank').focus();
       // }
     },
-    onSelectBill({menus, sections}) {
+    async onSelectBill({menus, sections}) {
       this.onSetModal(null);
 
-      if (this.mode !== 'selection') {
-        let url = this.banquetForBill?.invoiceUrl;
+      let url = this.banquetForBill?.invoiceUrl;
 
-        if (!url) {
+      if (this.mode === 'selection') {
+        const banquets = this.selected;
+        if (!banquets || !banquets.length) {
           return;
         }
 
-        if (menus) {
-          url += '&menus=' + menus.join(',');
-        }
-        if (sections) {
-          url += '&sections=' + sections.join(',')
-        }
+        const ids = banquets.map((b) => b.id);
 
-        window.open(url, '_blank').focus();
+        await this.loadBanquetsPdfUrl({ids});
+        if (this.pdfUrlResponse && instanceOfBanquetMultipleInvoiceUrlResponse(this.pdfUrlResponse)) {
+          url = this.pdfUrlResponse.url;
+
+          console.log({url});
+        }
+      }
+
+      if (!url) {
         return;
       }
 
-      const banquets = this.selected;
-      if (!banquets || !banquets.length) {
-        return;
+      if (menus) {
+        url += '&menus=' + menus.join(',');
+      }
+      if (sections) {
+        url += '&sections=' + sections.join(',')
       }
 
-      const ids = banquets.map((b) => b.id);
-      console.log({ids});
+      window.open(url, '_blank').focus();
     },
     onToggleBanquetSelection({banquet}) {
-      console.log('onToggleBanquetSelection: ', {banquet})
-
       let banquets = [...(this.selected ?? [])];
       const same = banquets.find((b) => b.id === banquet.id);
 
