@@ -3,6 +3,7 @@
     <div class="w-full flex flex-col gap-3">
       <template v-for="banquet in banquets" :key="banquet.id">
         <Banquet :banquet="banquet"
+                 @open-bill="onOpenBill"
                  @click="onToggleSelection(banquet)"/>
       </template>
     </div>
@@ -17,7 +18,7 @@ import {mapGetters} from "vuex";
 export default defineComponent({
   // eslint-disable-next-line
   name: "List",
-  emits: ["toggle-selection"],
+  emits: ["toggle-selection", "open-bill"],
   props: {
     banquets: {
       type: Array,
@@ -33,6 +34,9 @@ export default defineComponent({
     }),
   },
   methods: {
+    onOpenBill({banquet}) {
+      this.$emit('open-bill', {banquet});
+    },
     onToggleSelection(banquet) {
       if (this.mode !== 'selection') {
         return;

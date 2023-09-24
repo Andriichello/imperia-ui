@@ -58,7 +58,7 @@ import {ThemeConfig} from "@/configs";
 export default defineComponent({
   // eslint-disable-next-line
   name: 'Banquet',
-  emits: ["date-click", "time-click", "customer-click"],
+  emits: ["date-click", "time-click", "customer-click", "open-bill"],
   components: {
     BaseIcon,
     Time,
@@ -110,11 +110,13 @@ export default defineComponent({
       //
     },
     onOpenBill() {
+      this.$emit('open-bill', {banquet: this.banquet});
+
       // await this.loadPdfUrl({id: this.banquet?.id});
 
-      if (this.banquet?.invoiceUrl) {
-        window.open(this.banquet?.invoiceUrl, '_blank').focus();
-      }
+      // if (this.banquet?.invoiceUrl) {
+      //   window.open(this.banquet?.invoiceUrl, '_blank').focus();
+      // }
     },
   },
 })
