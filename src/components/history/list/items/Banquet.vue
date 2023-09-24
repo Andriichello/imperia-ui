@@ -1,16 +1,19 @@
 <template>
-  <div class="banquet">
+  <div class="banquet"
+       :class="{'selected': mode === 'selection' && isSelected, 'cursor-pointer': mode === 'selection', 'p-3': mode !== 'selection' || !isSelected, 'p-2': mode === 'selection' && isSelected}">
     <div class="flex justify-between items-center w-full gap-2">
       <div class="form-control">
         <RouterLink :to="`/place/${banquet.restaurantId}/order/${banquet.id}`"
-            class="text-xl font-semibold px-1"
-            @click="onLinkClick">
+                    class="text-xl font-semibold px-1"
+                    :class="{'disabled-clicks': mode === 'selection'}"
+                    @click="onLinkClick">
           {{ banquet?.title && banquet?.title.trim().length ? banquet?.title : $t('banquet.banquet') }}
         </RouterLink>
       </div>
 
       <button class="flex justify-center start-center btn btn-sm btn-ghost btn-square"
-        @click="onOpenBill" v-if="banquet?.invoiceUrl">
+              :disabled="mode === 'selection'"
+              @click="onOpenBill" v-if="banquet?.invoiceUrl">
         <BaseIcon width="24" height="24" color="currentColor">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M1.25 8C1.25 6.48122 2.48122 5.25 4 5.25H20C21.5188 5.25 22.75 6.48122 22.75 8V16C22.75 17.5188 21.5188 18.75 20 18.75H18C17.5858 18.75 17.25 18.4142 17.25 18C17.25 17.5858 17.5858 17.25 18 17.25H20C20.6904 17.25 21.25 16.6904 21.25 16V8C21.25 7.30964 20.6904 6.75 20 6.75H4C3.30964 6.75 2.75 7.30964 2.75 8V16C2.75 16.6904 3.30964 17.25 4 17.25H6C6.41421 17.25 6.75 17.5858 6.75 18C6.75 18.4142 6.41421 18.75 6 18.75H4C2.48122 18.75 1.25 17.5188 1.25 16V8Z"/>
           <path d="M20 9.5C20 10.3284 19.3284 11 18.5 11C17.6716 11 17 10.3284 17 9.5C17 8.67157 17.6716 8 18.5 8C19.3284 8 20 8.67157 20 9.5Z"/>
@@ -74,10 +77,19 @@ export default defineComponent({
       return ThemeConfig
     },
     ...mapGetters({
+      mode: 'history/mode',
+      selected: 'history/selected',
       theme: 'theme/get',
       pdfUrl: 'banquets/pdfUrl',
       pdfUrlResponse: 'banquets/getPdfUrlResponse',
     }),
+    isSelected() {
+      if (!this.selected || !this.selected.length) {
+        return false;
+      }
+
+      return !!this.selected.find((b) => b.id === this.banquet.id);
+    },
   },
   methods: {
     ...mapActions({
@@ -110,14 +122,18 @@ export default defineComponent({
 
 <style scoped>
   .banquet {
-    @apply flex flex-col justify-center items-center card w-full bg-base-100 shadow-xl gap-1 p-3;
+    @apply flex flex-col justify-center items-center card w-full bg-base-100 shadow-xl gap-1;
   }
 
   .selected {
-    background-color: var(--yellow);
+    border: 4px solid currentColor;
   }
 
   .selected:hover {
-    background-color: var(--yellow);
+    border: 4px solid currentColor;
+  }
+
+  .disabled-clicks {
+    pointer-events: none;
   }
 </style>

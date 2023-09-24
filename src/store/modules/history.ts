@@ -23,6 +23,8 @@ class HistoryFilters {
 }
 
 class HistoryState {
+  public mode: string | null;
+  public selected: Banquet[] | null;
   public filters: HistoryFilters;
   public banquet: Banquet | null;
   public banquets: Banquet[] | null;
@@ -31,6 +33,8 @@ class HistoryState {
   public moreBanquetsResponse: IndexBanquetResponse | null;
 
   constructor() {
+    this.mode = null;
+    this.selected = null;
     this.filters = new HistoryFilters();
     this.banquet = null;
     this.banquets = null;
@@ -43,6 +47,12 @@ class HistoryState {
 const state = new HistoryState();
 
 const getters = {
+  mode(state: HistoryState) {
+    return state.mode;
+  },
+  selected(state: HistoryState) {
+    return state.selected;
+  },
   selections(state: HistoryState) {
     return state.filters;
   },
@@ -72,6 +82,13 @@ const getters = {
 };
 
 const actions = {
+  setMode({ commit }, { mode }) {
+    commit('setMode', { mode });
+  },
+  setSelected({ commit }, { selected }) {
+    console.log('setSelected', selected)
+    commit('setSelected', { selected });
+  },
   async loadBanquets({ commit, getters, rootGetters}) {
     const request: IndexBanquetsRequest = {
       include: 'creator,customer,comments',
@@ -183,6 +200,12 @@ const actions = {
 };
 
 const mutations = {
+  setMode(state: HistoryState, { mode }) {
+    state.mode = mode;
+  },
+  setSelected(state: HistoryState, { selected }) {
+    state.selected = selected;
+  },
   setBanquetsResponse(state: HistoryState, { response }) {
     state.banquetsResponse = response;
   },
