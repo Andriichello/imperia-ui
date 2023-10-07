@@ -16,6 +16,7 @@ apis/RestaurantReviewsApi.ts
 apis/RestaurantsApi.ts
 apis/ServicesApi.ts
 apis/SpacesApi.ts
+apis/TagsApi.ts
 apis/TicketsApi.ts
 apis/UsersApi.ts
 apis/index.ts
@@ -62,6 +63,7 @@ models/IndexRestaurantReviewResponse.ts
 models/IndexServiceResponse.ts
 models/IndexSpaceReservationsResponse.ts
 models/IndexSpaceResponse.ts
+models/IndexTagResponse.ts
 models/IndexTicketResponse.ts
 models/IndexUserResponse.ts
 models/Links.ts
@@ -114,6 +116,7 @@ models/ShowRestaurantResponse.ts
 models/ShowRestaurantReviewResponse.ts
 models/ShowServiceResponse.ts
 models/ShowSpaceResponse.ts
+models/ShowTagResponse.ts
 models/ShowTicketResponse.ts
 models/ShowUserResponse.ts
 models/Space.ts
@@ -139,6 +142,7 @@ models/StoreOrderResponse.ts
 models/StoreRestaurantReviewRequest.ts
 models/StoreRestaurantReviewResponse.ts
 models/SuccessResponse.ts
+models/Tag.ts
 models/Ticket.ts
 models/TicketOrderField.ts
 models/UnauthenticatedResponse.ts

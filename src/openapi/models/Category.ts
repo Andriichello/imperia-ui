@@ -15,6 +15,8 @@
 import { exists, mapValues } from "../runtime";
 import type { Media } from "./Media";
 import { MediaFromJSON, MediaFromJSONTyped, MediaToJSON } from "./Media";
+import type { Tag } from "./Tag";
+import { TagFromJSON, TagFromJSONTyped, TagToJSON } from "./Tag";
 
 /**
  * Category resource object
@@ -60,6 +62,12 @@ export interface Category {
   description: any | null;
   /**
    *
+   * @type {Array<Tag>}
+   * @memberof Category
+   */
+  tags?: Array<Tag>;
+  /**
+   *
    * @type {Array<Media>}
    * @memberof Category
    */
@@ -100,6 +108,9 @@ export function CategoryFromJSONTyped(
     target: json["target"],
     title: json["title"],
     description: json["description"],
+    tags: !exists(json, "tags")
+      ? undefined
+      : (json["tags"] as Array<any>).map(TagFromJSON),
     media: (json["media"] as Array<any>).map(MediaFromJSON),
   };
 }
@@ -118,6 +129,10 @@ export function CategoryToJSON(value?: Category | null): any {
     target: value.target,
     title: value.title,
     description: value.description,
+    tags:
+      value.tags === undefined
+        ? undefined
+        : (value.tags as Array<any>).map(TagToJSON),
     media: (value.media as Array<any>).map(MediaToJSON),
   };
 }

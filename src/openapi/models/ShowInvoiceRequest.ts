@@ -24,6 +24,12 @@ export interface ShowInvoiceRequest {
    * @type {string}
    * @memberof ShowInvoiceRequest
    */
+  tags?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof ShowInvoiceRequest
+   */
   menus?: string | null;
   /**
    * Coma-separated list of invoice sections.
@@ -56,6 +62,7 @@ export function ShowInvoiceRequestFromJSONTyped(
     return json;
   }
   return {
+    tags: !exists(json, "tags") ? undefined : json["tags"],
     menus: !exists(json, "menus") ? undefined : json["menus"],
     sections: !exists(json, "sections") ? undefined : json["sections"],
   };
@@ -71,6 +78,7 @@ export function ShowInvoiceRequestToJSON(
     return null;
   }
   return {
+    tags: value.tags,
     menus: value.menus,
     sections: value.sections,
   };

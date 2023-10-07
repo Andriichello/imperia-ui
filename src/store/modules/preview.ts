@@ -3,13 +3,13 @@ import {
   IndexMenuResponse,
   IndexMenusRequest,
   IndexProductResponse,
-  IndexProductsRequest,
+  IndexProductsRequest, IndexTagResponse, IndexTagsRequest,
   Menu,
   MenusApi,
   Product,
   ProductsApi,
   ShowMenuRequest,
-  ShowMenuResponse
+  ShowMenuResponse, Tag, TagsApi
 } from "@/openapi";
 import {authHeaders} from "@/helpers";
 
@@ -27,6 +27,9 @@ class PreviewSelections {
 class PreviewState {
   public selections: PreviewSelections;
 
+  public tags: Tag[] | null;
+  public tagsResponse: IndexTagResponse;
+
   public menu: Menu[] | null;
   public showMenuResponse: ShowMenuResponse | null;
   public isShowingMenusModal: boolean | null;
@@ -42,6 +45,9 @@ class PreviewState {
 
   constructor() {
     this.selections = new PreviewSelections();
+
+    this.tags = null;
+    this.tagsResponse = null;
 
     this.menu = null;
     this.showMenuResponse = null;
@@ -82,6 +88,12 @@ const getters = {
   },
   isShowingMenusModal(state: PreviewState) {
     return state.isShowingMenusModal;
+  },
+  tags(state: PreviewState) {
+    return state.tags;
+  },
+  tagsResponse(state: PreviewState) {
+    return state.tagsResponse;
   },
   menu(state: PreviewState) {
     return state.menu;
@@ -214,6 +226,29 @@ const actions = {
     commit('setMenu', response.data);
     dispatch('selectMenu', response.data);
   },
+  async loadTags({commit, dispatch, rootGetters}) {
+    const request: IndexTagsRequest = {pageSize: 300};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    const response = await (new TagsApi())
+      .indexTags(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => error);
+
+    commit('setTagsResponse', response);
+    commit('setTags', response.data);
+  },
+  async loadTagsIfMissing({state, dispatch}) {
+    if (state.tagsResponse) {
+      return;
+    }
+
+    dispatch('loadTags');
+  },
   async loadProducts({commit, dispatch, rootGetters}, menu: Menu | null) {
     const request: IndexProductsRequest = {pageSize: 300};
     const restaurantId = rootGetters['restaurants/restaurantId'];
@@ -314,6 +349,12 @@ const mutations = {
   },
   setIsShowingMenusModal(state: PreviewState, isShowing) {
     state.isShowingMenusModal = isShowing;
+  },
+  setTags(state: PreviewState, tags) {
+    state.tags = tags;
+  },
+  setTagsResponse(state: PreviewState, response) {
+    state.tagsResponse = response;
   },
   setProducts(state: PreviewState, products) {
     state.products = products;

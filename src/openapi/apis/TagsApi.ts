@@ -14,57 +14,42 @@
 
 import * as runtime from "../runtime";
 import type {
-  ArchivedParameter,
-  IndexProductResponse,
-  ShowProductResponse,
+  IndexTagResponse,
+  ShowTagResponse,
   UnauthenticatedResponse,
 } from "../models";
 import {
-  ArchivedParameterFromJSON,
-  ArchivedParameterToJSON,
-  IndexProductResponseFromJSON,
-  IndexProductResponseToJSON,
-  ShowProductResponseFromJSON,
-  ShowProductResponseToJSON,
+  IndexTagResponseFromJSON,
+  IndexTagResponseToJSON,
+  ShowTagResponseFromJSON,
+  ShowTagResponseToJSON,
   UnauthenticatedResponseFromJSON,
   UnauthenticatedResponseToJSON,
 } from "../models";
 
-export interface IndexProductsRequest {
-  include?: string;
+export interface IndexTagsRequest {
   pageSize?: number;
   pageNumber?: number;
-  sort?: string;
-  filterIds?: string;
-  filterTitle?: string;
-  filterMenus?: string;
-  filterCategories?: string;
-  filterTags?: string;
   filterRestaurants?: string;
-  archived?: ArchivedParameter;
+  filterTarget?: string;
 }
 
-export interface ShowProductRequest {
+export interface ShowTagRequest {
   id: number;
-  include?: string;
 }
 
 /**
  *
  */
-export class ProductsApi extends runtime.BaseAPI {
+export class TagsApi extends runtime.BaseAPI {
   /**
-   * Index products.
+   * Index tags.
    */
-  async indexProductsRaw(
-    requestParameters: IndexProductsRequest,
+  async indexTagsRaw(
+    requestParameters: IndexTagsRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<IndexProductResponse>> {
+  ): Promise<runtime.ApiResponse<IndexTagResponse>> {
     const queryParameters: any = {};
-
-    if (requestParameters.include !== undefined) {
-      queryParameters["include"] = requestParameters.include;
-    }
 
     if (requestParameters.pageSize !== undefined) {
       queryParameters["page[size]"] = requestParameters.pageSize;
@@ -74,38 +59,13 @@ export class ProductsApi extends runtime.BaseAPI {
       queryParameters["page[number]"] = requestParameters.pageNumber;
     }
 
-    if (requestParameters.sort !== undefined) {
-      queryParameters["sort"] = requestParameters.sort;
-    }
-
-    if (requestParameters.filterIds !== undefined) {
-      queryParameters["filter[ids]"] = requestParameters.filterIds;
-    }
-
-    if (requestParameters.filterTitle !== undefined) {
-      queryParameters["filter[title]"] = requestParameters.filterTitle;
-    }
-
-    if (requestParameters.filterMenus !== undefined) {
-      queryParameters["filter[menus]"] = requestParameters.filterMenus;
-    }
-
-    if (requestParameters.filterCategories !== undefined) {
-      queryParameters["filter[categories]"] =
-        requestParameters.filterCategories;
-    }
-
-    if (requestParameters.filterTags !== undefined) {
-      queryParameters["filter[tags]"] = requestParameters.filterTags;
-    }
-
     if (requestParameters.filterRestaurants !== undefined) {
       queryParameters["filter[restaurants]"] =
         requestParameters.filterRestaurants;
     }
 
-    if (requestParameters.archived !== undefined) {
-      queryParameters["archived"] = requestParameters.archived;
+    if (requestParameters.filterTarget !== undefined) {
+      queryParameters["filter[target]"] = requestParameters.filterTarget;
     }
 
     const headerParameters: runtime.HTTPHeaders = {};
@@ -120,7 +80,7 @@ export class ProductsApi extends runtime.BaseAPI {
     }
     const response = await this.request(
       {
-        path: `/api/products`,
+        path: `/api/tags`,
         method: "GET",
         headers: headerParameters,
         query: queryParameters,
@@ -129,43 +89,36 @@ export class ProductsApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      IndexProductResponseFromJSON(jsonValue)
+      IndexTagResponseFromJSON(jsonValue)
     );
   }
 
   /**
-   * Index products.
+   * Index tags.
    */
-  async indexProducts(
-    requestParameters: IndexProductsRequest = {},
+  async indexTags(
+    requestParameters: IndexTagsRequest = {},
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<IndexProductResponse> {
-    const response = await this.indexProductsRaw(
-      requestParameters,
-      initOverrides
-    );
+  ): Promise<IndexTagResponse> {
+    const response = await this.indexTagsRaw(requestParameters, initOverrides);
     return await response.value();
   }
 
   /**
-   * Show product by id.
+   * Show tag by id.
    */
-  async showProductRaw(
-    requestParameters: ShowProductRequest,
+  async showTagRaw(
+    requestParameters: ShowTagRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<ShowProductResponse>> {
+  ): Promise<runtime.ApiResponse<ShowTagResponse>> {
     if (requestParameters.id === null || requestParameters.id === undefined) {
       throw new runtime.RequiredError(
         "id",
-        "Required parameter requestParameters.id was null or undefined when calling showProduct."
+        "Required parameter requestParameters.id was null or undefined when calling showTag."
       );
     }
 
     const queryParameters: any = {};
-
-    if (requestParameters.include !== undefined) {
-      queryParameters["include"] = requestParameters.include;
-    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 
@@ -179,7 +132,7 @@ export class ProductsApi extends runtime.BaseAPI {
     }
     const response = await this.request(
       {
-        path: `/api/products/{id}`.replace(
+        path: `/api/tags/{id}`.replace(
           `{${"id"}}`,
           encodeURIComponent(String(requestParameters.id))
         ),
@@ -191,21 +144,18 @@ export class ProductsApi extends runtime.BaseAPI {
     );
 
     return new runtime.JSONApiResponse(response, (jsonValue) =>
-      ShowProductResponseFromJSON(jsonValue)
+      ShowTagResponseFromJSON(jsonValue)
     );
   }
 
   /**
-   * Show product by id.
+   * Show tag by id.
    */
-  async showProduct(
-    requestParameters: ShowProductRequest,
+  async showTag(
+    requestParameters: ShowTagRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<ShowProductResponse> {
-    const response = await this.showProductRaw(
-      requestParameters,
-      initOverrides
-    );
+  ): Promise<ShowTagResponse> {
+    const response = await this.showTagRaw(requestParameters, initOverrides);
     return await response.value();
   }
 }

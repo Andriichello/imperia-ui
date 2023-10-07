@@ -17,5 +17,6 @@ export * from "./RestaurantReviewsApi";
 export * from "./RestaurantsApi";
 export * from "./ServicesApi";
 export * from "./SpacesApi";
+export * from "./TagsApi";
 export * from "./TicketsApi";
 export * from "./UsersApi";

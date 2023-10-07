@@ -28,15 +28,18 @@ import {
 } from "../models";
 
 export interface IndexCategoriesRequest {
+  include?: string;
   pageSize?: number;
   pageNumber?: number;
   sort?: string;
   filterRestaurants?: string;
+  filterTags?: string;
   filterTarget?: string;
 }
 
 export interface ShowCategoryRequest {
   id: number;
+  include?: string;
 }
 
 /**
@@ -51,6 +54,10 @@ export class CategoriesApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<runtime.ApiResponse<IndexCategoryResponse>> {
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     if (requestParameters.pageSize !== undefined) {
       queryParameters["page[size]"] = requestParameters.pageSize;
@@ -67,6 +74,10 @@ export class CategoriesApi extends runtime.BaseAPI {
     if (requestParameters.filterRestaurants !== undefined) {
       queryParameters["filter[restaurants]"] =
         requestParameters.filterRestaurants;
+    }
+
+    if (requestParameters.filterTags !== undefined) {
+      queryParameters["filter[tags]"] = requestParameters.filterTags;
     }
 
     if (requestParameters.filterTarget !== undefined) {
@@ -127,6 +138,10 @@ export class CategoriesApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 

@@ -27,6 +27,8 @@ import {
   ProductVariantFromJSONTyped,
   ProductVariantToJSON,
 } from "./ProductVariant";
+import type { Tag } from "./Tag";
+import { TagFromJSON, TagFromJSONTyped, TagToJSON } from "./Tag";
 
 /**
  * Product resource object
@@ -114,6 +116,12 @@ export interface Product {
   categoryIds: Array<number>;
   /**
    *
+   * @type {Array<Tag>}
+   * @memberof Product
+   */
+  tags?: Array<Tag>;
+  /**
+   *
    * @type {Array<Media>}
    * @memberof Product
    */
@@ -182,6 +190,9 @@ export function ProductFromJSONTyped(
       ? undefined
       : (json["categories"] as Array<any>).map(CategoryFromJSON),
     categoryIds: json["category_ids"],
+    tags: !exists(json, "tags")
+      ? undefined
+      : (json["tags"] as Array<any>).map(TagFromJSON),
     media: (json["media"] as Array<any>).map(MediaFromJSON),
   };
 }
@@ -210,6 +221,10 @@ export function ProductToJSON(value?: Product | null): any {
         ? undefined
         : (value.categories as Array<any>).map(CategoryToJSON),
     category_ids: value.categoryIds,
+    tags:
+      value.tags === undefined
+        ? undefined
+        : (value.tags as Array<any>).map(TagToJSON),
     media: (value.media as Array<any>).map(MediaToJSON),
   };
 }
