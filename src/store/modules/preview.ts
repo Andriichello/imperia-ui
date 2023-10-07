@@ -232,6 +232,7 @@ const actions = {
 
     if (restaurantId) {
       request.filterRestaurants = restaurantId;
+      request.filterTarget = 'products';
     }
 
     const response = await (new TagsApi())

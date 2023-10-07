@@ -43,8 +43,27 @@
             <template v-for="menu in menus" :key="menu?.id">
               <div class="form-control">
                 <label class="label cursor-pointer">
-                  <input :id="menu?.id" type="checkbox" :checked="!this.excludedMenus.includes(menu?.id)" class="checkbox checkbox-sm checkbox-primary" @change="onChange" />
+                  <input :id="menu?.id" type="checkbox" :checked="!this.excludedMenus.includes(menu?.id)" class="checkbox checkbox-sm checkbox-primary" @change="onToggleMenu" />
                   <span class="label-text pl-2">{{ menu?.title }}</span>
+                </label>
+              </div>
+            </template>
+          </div>
+
+          <div class="w-full flex flex-col justify-center items-start gap-1">
+            <span class="w-full font-semibold text-xl text-center">
+              {{ $t('banquet.bill.tags') }}
+            </span>
+
+            <template v-for="tag in tags" :key="tag?.id">
+              <div class="form-control">
+                <label class="label cursor-pointer">
+                  <input :id="tag?.id" type="checkbox" :checked="this.includedTags.includes(tag?.id)" class="checkbox checkbox-sm checkbox-primary" @change="onToggleTag" />
+                  <span class="label-text pl-2">
+                    {{ tag?.title }}<br/>
+                    <p class="font-light text-sm">{{ tag?.description }}</p>
+                  </span>
+
                 </label>
               </div>
             </template>
@@ -100,10 +119,14 @@ export default defineComponent({
     menus: {
       type: Array,
     },
+    tags: {
+      type: Array,
+    },
   },
   data() {
     return {
       excludedMenus: [],
+      includedTags: [],
       showInfoVal: this.showInfo,
       showCommentsVal: this.showComments,
       showTicketsVal: this.showTickets,
@@ -116,7 +139,7 @@ export default defineComponent({
     iconColor() {
       return 'currentColor';
     },
-    onChange(event) {
+    onToggleMenu(event) {
       const id = parseInt(event.target.id);
       const checked = event.target.checked;
 
@@ -127,6 +150,19 @@ export default defineComponent({
         this.excludedMenus = filtered;
       } else {
         this.excludedMenus = [...filtered, id];
+      }
+    },
+    onToggleTag(event) {
+      const id = parseInt(event.target.id);
+      const checked = event.target.checked;
+
+      const filtered = this.includedTags
+          .filter((tId) => tId !== id);
+
+      if (checked) {
+        this.includedTags = [...filtered, id];
+      } else {
+        this.includedTags = filtered;
       }
     },
     onCancelClick() {
@@ -168,7 +204,13 @@ export default defineComponent({
           .map(m => m?.id);
       let allMenus = !this.excludedMenus.length;
 
+      const tags = this.tags
+          .filter(m => this.includedTags.includes(m?.id))
+          .map(m => m?.id);
+      let allTags = !this.includedTags.length;
+
       this.$emit('on-select', {
+        tags: allTags ? null : tags,
         menus: allMenus ? null : menus,
         sections: allSections ? null : sections,
       });

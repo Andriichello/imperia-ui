@@ -147,6 +147,7 @@
           <BillPicker v-if="modal === 'bill'"
                       :style="{'height': Math.min(380 + (menus ?? []).length * 40, maxModalHeight) + 'px'}"
                       :menus="menus ?? []"
+                      :tags="tags ?? []"
                       @on-select="onSelectBill"
                       @on-cancel="modal = null"/>
         </div>
@@ -229,6 +230,7 @@ export default defineComponent({
   },
   computed: {
     ...mapGetters({
+      tags: 'preview/tags',
       menus: 'preview/menus',
       banquet: 'basket/banquet',
       banquetId: 'order/banquetId',
@@ -330,6 +332,7 @@ export default defineComponent({
   methods: {
     ...mapActions({
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
+      loadTagsIfMissing: 'preview/loadTagsIfMissing',
       selectRestaurant: 'restaurants/setSelected',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
       loadBanquet: 'basket/loadBanquet',
@@ -396,6 +399,7 @@ export default defineComponent({
       this.modal = 'bill';
 
       this.loadMenusIfMissing();
+      this.loadTagsIfMissing();
     },
     onOrderSwitcherClick() {
       const menuId = this.$store.getters['preview/menu']?.id;
@@ -533,7 +537,7 @@ export default defineComponent({
         this.validateBanquetForm();
       }
     },
-    onSelectBill({menus, sections}) {
+    onSelectBill({tags, menus, sections}) {
       this.modal = null;
 
       let url = this.banquet?.invoiceUrl;
@@ -542,6 +546,9 @@ export default defineComponent({
         return;
       }
 
+      if (tags) {
+        url += '&tags=' + tags.join(',')
+      }
       if (menus) {
         url += '&menus=' + menus.join(',');
       }

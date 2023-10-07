@@ -132,6 +132,7 @@
              v-if="modal === 'bill'">
           <BillPicker v-if="modal === 'bill'"
                       :menus="menus ?? []"
+                      :tags="tags ?? []"
                       @on-select="onSelectBill"
                       @on-cancel="modal = null"/>
         </div>
@@ -187,6 +188,7 @@ export default defineComponent({
     ...mapGetters({
       mode: 'history/mode',
       menus: 'preview/menus',
+      tags: 'preview/tags',
       selected: 'history/selected',
       restaurant: 'restaurants/selected',
       restaurantResponse: 'restaurants/getShowResponse',
@@ -229,6 +231,7 @@ export default defineComponent({
       selectRestaurant: 'restaurants/setSelected',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
+      loadTagsIfMissing: 'preview/loadTagsIfMissing',
       loadBanquets: 'history/loadBanquets',
       loadBanquetsIfMissing: 'history/loadBanquetsIfMissing',
       loadMoreBanquets: 'history/loadMoreBanquets',
@@ -289,7 +292,7 @@ export default defineComponent({
       //   window.open(banquet?.invoiceUrl, '_blank').focus();
       // }
     },
-    async onSelectBill({menus, sections}) {
+    async onSelectBill({tags, menus, sections}) {
       this.onSetModal(null);
 
       let url = this.banquetForBill?.invoiceUrl;
@@ -314,6 +317,9 @@ export default defineComponent({
         return;
       }
 
+      if (tags) {
+        url += '&tags=' + tags.join(',');
+      }
       if (menus) {
         url += '&menus=' + menus.join(',');
       }
@@ -369,6 +375,7 @@ export default defineComponent({
 
     this.loadBanquetsIfMissing();
     this.loadMenusIfMissing();
+    this.loadTagsIfMissing();
     },
   beforeUnmount() {
     document.removeEventListener('keydown', this.onKeyDown);
