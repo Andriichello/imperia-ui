@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from "../runtime";
+import type { Alternation } from "./Alternation";
+import {
+  AlternationFromJSON,
+  AlternationFromJSONTyped,
+  AlternationToJSON,
+} from "./Alternation";
+
 /**
  * Product variant resource object
  * @export
@@ -55,6 +62,24 @@ export interface ProductVariant {
    * @memberof ProductVariant
    */
   weightUnit: ProductVariantWeightUnitEnum;
+  /**
+   *
+   * @type {Array<Alternation>}
+   * @memberof ProductVariant
+   */
+  alterations?: Array<Alternation>;
+  /**
+   *
+   * @type {Array<Alternation>}
+   * @memberof ProductVariant
+   */
+  pendingAlterations?: Array<Alternation>;
+  /**
+   *
+   * @type {Array<Alternation>}
+   * @memberof ProductVariant
+   */
+  performedAlterations?: Array<Alternation>;
 }
 
 /**
@@ -103,6 +128,15 @@ export function ProductVariantFromJSONTyped(
     price: json["price"],
     weight: json["weight"],
     weightUnit: json["weight_unit"],
+    alterations: !exists(json, "alterations")
+      ? undefined
+      : (json["alterations"] as Array<any>).map(AlternationFromJSON),
+    pendingAlterations: !exists(json, "pendingAlterations")
+      ? undefined
+      : (json["pendingAlterations"] as Array<any>).map(AlternationFromJSON),
+    performedAlterations: !exists(json, "performedAlterations")
+      ? undefined
+      : (json["performedAlterations"] as Array<any>).map(AlternationFromJSON),
   };
 }
 
@@ -120,5 +154,17 @@ export function ProductVariantToJSON(value?: ProductVariant | null): any {
     price: value.price,
     weight: value.weight,
     weight_unit: value.weightUnit,
+    alterations:
+      value.alterations === undefined
+        ? undefined
+        : (value.alterations as Array<any>).map(AlternationToJSON),
+    pendingAlterations:
+      value.pendingAlterations === undefined
+        ? undefined
+        : (value.pendingAlterations as Array<any>).map(AlternationToJSON),
+    performedAlterations:
+      value.performedAlterations === undefined
+        ? undefined
+        : (value.performedAlterations as Array<any>).map(AlternationToJSON),
   };
 }

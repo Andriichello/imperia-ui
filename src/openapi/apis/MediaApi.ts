@@ -86,7 +86,7 @@ export interface StoreMediaRequest {
   description?: string | null;
   disk?: StoreMediaDiskEnum;
   folder?: string;
-  metadata?: object | null;
+  metadata?: object;
 }
 
 export interface UpdateMediaOperationRequest {

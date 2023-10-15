@@ -21,6 +21,8 @@ apis/TicketsApi.ts
 apis/UsersApi.ts
 apis/index.ts
 index.ts
+models/Alternation.ts
+models/AlternationAlterable.ts
 models/ArchivedParameter.ts
 models/AttachingComment.ts
 models/AttachingDiscount.ts

@@ -70,15 +70,43 @@
           </template>
 
           <template v-else>
-            <span class="font-bold text-md">
-              {{ weight ?? '' }}
-            </span>
+            <div class="breadcrumbs p-0 justify-end">
+              <ul>
+                <li>
+                   <span class="font-bold text-md">
+                    {{ weight ?? '' }}
+                  </span>
+                </li>
+
+                <template v-for="alternation in alternations" :key="alternation.id">
+                  <li v-if="alternation.metadata?.weight">
+                    <h2 class="font-semibold text-xs self-end">
+                      {{ weightFormatted(alternation.metadata?.weight, alternation.metadata?.weightUnit ?? item?.weightUnit) }}
+                    </h2>
+                  </li>
+                </template>
+              </ul>
+            </div>
           </template>
         </div>
 
-        <h2 class="card-title grow justify-end">
-          {{ price }}
-        </h2>
+        <div class="breadcrumbs p-0 justify-end">
+          <ul>
+            <li>
+              <h2 class="card-title grow">
+                {{ price }}
+              </h2>
+            </li>
+
+            <template v-for="alternation in alternations" :key="alternation.id">
+              <li v-if="alternation.metadata?.price">
+                <h2 class="card-title text-sm grow self-end">
+                  {{ priceFormatted(alternation.metadata?.price) }}
+                </h2>
+              </li>
+            </template>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -201,13 +229,29 @@ export default defineComponent({
 
       return this.$store.getters['preview/categories']
           .filter(category => ids.includes(category.id));
-    }
+    },
+    alternations() {
+      if (this.variant?.id) {
+        return this.variant.pendingAlterations ?? [];
+      }
+
+      return this.item?.pendingAlterations ?? [];
+    },
   },
   methods: {
+    priceFormatted,
     ...mapActions({
       setField: 'order/setProduct',
       unsetField: 'order/unsetProduct',
     }),
+    weightFormatted(weight, unit) {
+      if (unit) {
+        unit = this.$t('unit.' + unit);
+      }
+
+      return weight && unit
+          ? (weight + (unit ?? '')) : null;
+    },
     variantWeight(v) {
       if (!v) {
         return null;

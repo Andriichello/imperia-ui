@@ -79,6 +79,12 @@ export interface Media {
    * @memberof Media
    */
   url: string;
+  /**
+   * Media metadata resource object
+   * @type {object}
+   * @memberof Media
+   */
+  metadata: object;
 }
 
 /**
@@ -96,6 +102,7 @@ export function instanceOfMedia(value: object): boolean {
   isInstance = isInstance && "folder" in value;
   isInstance = isInstance && "order" in value;
   isInstance = isInstance && "url" in value;
+  isInstance = isInstance && "metadata" in value;
 
   return isInstance;
 }
@@ -122,6 +129,7 @@ export function MediaFromJSONTyped(
     folder: json["folder"],
     order: json["order"],
     url: json["url"],
+    metadata: json["metadata"],
   };
 }
 
@@ -143,5 +151,6 @@ export function MediaToJSON(value?: Media | null): any {
     folder: value.folder,
     order: value.order,
     url: value.url,
+    metadata: value.metadata,
   };
 }

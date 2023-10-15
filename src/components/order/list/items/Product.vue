@@ -72,15 +72,44 @@
           </template>
 
           <template v-else>
-            <span class="font-bold text-md">
-              {{ weight ?? '' }}
-            </span>
+            <div class="breadcrumbs p-0 justify-end">
+              <ul>
+                <li>
+                   <span class="font-bold text-md">
+                    {{ weight ?? '' }}
+                  </span>
+                </li>
+
+                <template v-for="alternation in alternations" :key="alternation.id">
+                  <li v-if="alternation.metadata?.weight">
+                    <h2 class="font-semibold text-xs self-end">
+                      {{ weightFormatted(alternation.metadata?.weight, alternation.metadata?.weightUnit ?? item?.weightUnit) }}
+                    </h2>
+                  </li>
+                </template>
+              </ul>
+            </div>
           </template>
         </div>
 
-        <h2 class="card-title grow justify-end">
-          {{ price }}
-        </h2>
+        <div class="breadcrumbs p-0 justify-end">
+          <ul>
+            <li>
+              <h2 class="card-title grow">
+                {{ price }}
+              </h2>
+            </li>
+
+            <template v-for="alternation in alternations" :key="alternation.id">
+              <li v-if="alternation.metadata?.price">
+                <h2 class="card-title text-sm grow self-end">
+                  {{ priceFormatted(alternation.metadata?.price) }}
+                </h2>
+              </li>
+            </template>
+          </ul>
+        </div>
+
       </div>
 
       <CommentList :comments="comments" class="w-full" v-if="comments?.length"
@@ -121,6 +150,13 @@ export default defineComponent({
       return this.$store.getters['order/orderedProduct'](this.productId)
         ?? this.$store.getters['preview/product'](this.productId);
     },
+    alternations() {
+      if (this.variant) {
+        return this.variant.pendingAlterations ?? [];
+      }
+
+      return this.item?.pendingAlterations ?? [];
+    },
     variant() {
       if (!this.selectedVariantId) {
         return null;
@@ -152,12 +188,7 @@ export default defineComponent({
       let weight = this.variant
           ? this.variant?.weight : this.item?.weight;
 
-      if (unit) {
-        unit = this.$t('unit.' + unit);
-      }
-
-      return weight && unit
-          ? (weight + (unit ?? '')) : null;
+      return this.weightFormatted(weight, unit);
     },
     variants() {
       if (!this.item || !this.item.variants || !this.item.variants.length) {
@@ -195,10 +226,19 @@ export default defineComponent({
     },
   },
   methods: {
+    priceFormatted,
     ...mapActions({
       setField: 'order/setProduct',
       unsetField: 'order/unsetProduct',
     }),
+    weightFormatted(weight, unit) {
+      if (unit) {
+        unit = this.$t('unit.' + unit);
+      }
+
+      return weight && unit
+          ? (weight + (unit ?? '')) : null;
+    },
     variantField(v) {
       if (!v) {
         return null;
@@ -213,13 +253,7 @@ export default defineComponent({
         return null;
       }
 
-      let unit = v.weightUnit;
-
-      if (unit) {
-        unit = this.$t('unit.' + unit);
-      }
-
-      return v.weight + (unit ?? '');
+      return this.weightFormatted(v.weight, v.weightUnit);
     },
     onVariantSelect(v) {
       const shouldRerender = this.variant !== v;
@@ -249,6 +283,8 @@ export default defineComponent({
       this.rerendered = true;
     },
     onChangeAmount({amount}) {
+      console.log('item: ', this.item);
+
       this.setField({
         productId: this.id,
         variantId: this.variant?.id,

@@ -13,6 +13,12 @@
  */
 
 import { exists, mapValues } from "../runtime";
+import type { Alternation } from "./Alternation";
+import {
+  AlternationFromJSON,
+  AlternationFromJSONTyped,
+  AlternationToJSON,
+} from "./Alternation";
 import type { Category } from "./Category";
 import {
   CategoryFromJSON,
@@ -126,6 +132,24 @@ export interface Product {
    * @memberof Product
    */
   media: Array<Media>;
+  /**
+   *
+   * @type {Array<Alternation>}
+   * @memberof Product
+   */
+  alterations?: Array<Alternation>;
+  /**
+   *
+   * @type {Array<Alternation>}
+   * @memberof Product
+   */
+  pendingAlterations?: Array<Alternation>;
+  /**
+   *
+   * @type {Array<Alternation>}
+   * @memberof Product
+   */
+  performedAlterations?: Array<Alternation>;
 }
 
 /**
@@ -194,6 +218,15 @@ export function ProductFromJSONTyped(
       ? undefined
       : (json["tags"] as Array<any>).map(TagFromJSON),
     media: (json["media"] as Array<any>).map(MediaFromJSON),
+    alterations: !exists(json, "alterations")
+      ? undefined
+      : (json["alterations"] as Array<any>).map(AlternationFromJSON),
+    pendingAlterations: !exists(json, "pendingAlterations")
+      ? undefined
+      : (json["pendingAlterations"] as Array<any>).map(AlternationFromJSON),
+    performedAlterations: !exists(json, "performedAlterations")
+      ? undefined
+      : (json["performedAlterations"] as Array<any>).map(AlternationFromJSON),
   };
 }
 
@@ -226,5 +259,17 @@ export function ProductToJSON(value?: Product | null): any {
         ? undefined
         : (value.tags as Array<any>).map(TagToJSON),
     media: (value.media as Array<any>).map(MediaToJSON),
+    alterations:
+      value.alterations === undefined
+        ? undefined
+        : (value.alterations as Array<any>).map(AlternationToJSON),
+    pendingAlterations:
+      value.pendingAlterations === undefined
+        ? undefined
+        : (value.pendingAlterations as Array<any>).map(AlternationToJSON),
+    performedAlterations:
+      value.performedAlterations === undefined
+        ? undefined
+        : (value.performedAlterations as Array<any>).map(AlternationToJSON),
   };
 }

@@ -50,11 +50,11 @@ export interface UpdateMediaRequest {
    */
   folder?: string;
   /**
-   *
+   * Media metadata resource object
    * @type {object}
    * @memberof UpdateMediaRequest
    */
-  metadata?: object | null;
+  metadata?: object;
 }
 
 /**

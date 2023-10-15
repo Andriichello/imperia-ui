@@ -254,6 +254,11 @@ const actions = {
     const request: IndexProductsRequest = {pageSize: 300};
     const restaurantId = rootGetters['restaurants/restaurantId'];
 
+    // todo: replace with a flag, so that alterations are only loaded when alterations preview is on
+    if (rootGetters['auth/authorized']) {
+      request.include = 'pendingAlterations,variants.pendingAlterations';
+    }
+
     if (menu) {
       request.filterMenus = String(menu.id);
     }

@@ -503,6 +503,11 @@ const actions = {
       pageSize: 200,
     };
 
+    // todo: replace with a flag, so that alterations are only loaded when alterations preview is on
+    if (rootGetters['auth/authorized']) {
+      request.include = 'pendingAlterations,variants.pendingAlterations';
+    }
+
     const response = await (new ProductsApi())
       .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
       .then(response => response)
