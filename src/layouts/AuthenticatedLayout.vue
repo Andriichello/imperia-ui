@@ -118,15 +118,20 @@ export default defineComponent({
         return;
       }
 
-      const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollHeight = document.documentElement.scrollHeight;
 
-      if (scrollPosition <= 68) {
+      // Get the current scroll position
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollBottom = scrollTop + clientHeight;
+
+      if (scrollTop <= 68) {
         this.pinMenus = true;
         return;
       }
 
-      if (this.lastScrollPosition !== null) {
-        const diff = scrollPosition - this.lastScrollPosition;
+      if (scrollBottom < (scrollHeight - 160) && this.lastScrollPosition !== null) {
+        const diff = scrollTop - this.lastScrollPosition;
 
         if (diff > 0) {
           if (this.wasLastScrollUp) {
@@ -151,7 +156,7 @@ export default defineComponent({
         }
       }
 
-      this.lastScrollPosition = scrollPosition;
+      this.lastScrollPosition = scrollTop;
     },
     onSelectMenu(menu) {
       this.setIsShowingMenusModal(false);
