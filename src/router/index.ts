@@ -9,6 +9,7 @@ import RegisterPage from "@/pages/RegisterPage.vue";
 import PlaceMenuPage from "@/pages/PlaceMenuPage.vue";
 import PlaceOrderPage from "@/pages/PlaceOrderPage.vue";
 import PlaceHistoryPage from "@/pages/PlaceHistoryPage.vue";
+import PreviewProductPage from "@/pages/PreviewProductPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -39,6 +40,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/preview/:restaurantId(\\d+)?/menu/:menuId(\\d+)?',
     name: 'preview-menu',
     component: PreviewMenuPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/preview/:restaurantId(\\d+)?/menu/:menuId(\\d+)?/product/:productId(\\d+)?',
+    name: 'preview-product',
+    component: PreviewProductPage,
     meta: {
       requiresAuth: false,
     },
