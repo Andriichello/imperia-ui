@@ -24,9 +24,9 @@
     </template>
 
     <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
-      <PreviewNavBar class="w-full" id="preview-bar"/>
+      <PreviewNavBar class="w-full" id="preview-bar" v-if="!isProductPage"/>
 
-      <template v-if="isMenuPage && !failed">
+      <template v-if="isMenuPage && !failed && !isProductPage">
         <div class="w-full sticky top-0 z-50">
           <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
                              v-if="!isShortScreen || pinMenus"/>
@@ -89,6 +89,9 @@ export default defineComponent({
     }),
     isMenuPage() {
       return this.$route['name'] === 'preview-menu';
+    },
+    isProductPage() {
+      return this.$route['name'] === 'preview-product';
     },
     isRestaurantPage() {
       return this.$route['name'] === 'preview-restaurant';
