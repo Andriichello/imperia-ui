@@ -263,5 +263,9 @@
       "from": "Від",
       "until": "По"
     }
+  },
+  "product": {
+    "create_comment": "Додати коментар",
+    "update_order": "Зберегти зміни"
   }
 }

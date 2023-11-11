@@ -266,5 +266,9 @@
       "from": "From",
       "until": "Until"
     }
+  },
+  "product": {
+    "create_comment": "Create comment",
+    "update_order": "Update order"
   }
 }
