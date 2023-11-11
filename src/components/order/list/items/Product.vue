@@ -148,7 +148,7 @@ export default defineComponent({
     }),
     item() {
       return this.$store.getters['order/orderedProduct'](this.productId)
-        ?? this.$store.getters['preview/product'](this.productId);
+        ?? this.$store.getters['preview/getProduct'](this.productId);
     },
     alternations() {
       if (this.variant) {

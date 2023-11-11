@@ -7,7 +7,8 @@
       <template v-if="products && categories">
         <template v-for="c in categories" :key="c.id">
           <ListOfCategory :category="c" :items="filterByCategory(products, c)"
-                          :id="`menu-category-${c.id}`"/>
+                          :id="`menu-category-${c.id}`"
+                          @select-item="onSelectItem"/>
         </template>
       </template>
     </div>
@@ -105,6 +106,7 @@ export default defineComponent({
     ...mapActions({
       selectMenu: 'preview/selectMenu',
       selectCategory: 'preview/selectCategory',
+      selectProduct: 'preview/selectProduct',
       setIsShowingMenusModal: 'preview/setIsShowingMenusModal',
     }),
     filterByCategory(products, category) {
@@ -115,6 +117,14 @@ export default defineComponent({
 
         return p.categoryIds.includes(category.id);
       })
+    },
+    onSelectItem(item) {
+      this.selectProduct(item);
+
+      const restaurantId = +this.$route.params['restaurantId'];
+      const menuId = +this.$route.params['menuId'];
+
+      this.$router.push(`/preview/${restaurantId}/menu/${menuId}/product/${item.id}`);
     },
     onScroll() {
       // Get the current scroll position

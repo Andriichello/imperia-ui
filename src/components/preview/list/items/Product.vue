@@ -1,5 +1,5 @@
 <template>
-  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card w-full bg-base-100 shadow-xl" @click="onSelect">
     <div class="w-full max-h-[180px] select-none" v-if="image">
       <figure class="w-full max-h-[180px] rounded-t-box" >
         <img :alt="title" :src="image"
@@ -122,6 +122,7 @@ import {priceFormatted} from "@/helpers";
 export default defineComponent({
   // eslint-disable-next-line
   name: "Product",
+  emits: ["on-select"],
   components: {Counter},
   props: {
     item: Product,
@@ -289,6 +290,9 @@ export default defineComponent({
         variantId: this.variant?.id,
         amount: amount,
       });
+    },
+    onSelect() {
+      this.$emit('on-select', this.item)
     },
     async freshRender() {
       // Remove MyComponent from the DOM

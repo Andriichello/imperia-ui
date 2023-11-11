@@ -3,13 +3,13 @@
 
     <template v-if="number === 1">
       <div class="w-full flex flex-col gap-3">
-        <Product :item="item" v-for="item in this.items" :key="item.id"/>
+        <Product :item="item" v-for="item in this.items" :key="item.id" @on-select="onSelectItem"/>
       </div>
     </template>
 
     <template v-else>
       <div class="list-col flex flex-col gap-3" v-for="(column, index) in this.splitOnColumns(this.items ?? [], this.number)" :key="index" :id="'list-' + index">
-        <Product :item="item" v-for="item in column" :key="item.id"/>
+        <Product :item="item" v-for="item in column" :key="item.id" @on-select="onSelectItem"/>
       </div>
     </template>
 
@@ -23,6 +23,7 @@ import Product from "./items/Product.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: "List",
+  emits: ["select-item"],
   props: {
     type: String,
     items: Array,
@@ -48,6 +49,9 @@ export default defineComponent({
       });
 
       return columns;
+    },
+    onSelectItem(item) {
+      this.$emit('select-item', item);
     },
     onResize() {
       if (window.innerWidth > 500) {
