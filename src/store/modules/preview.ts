@@ -3,22 +3,28 @@ import {
   IndexMenuResponse,
   IndexMenusRequest,
   IndexProductResponse,
-  IndexProductsRequest, IndexTagResponse, IndexTagsRequest,
+  IndexProductsRequest,
+  IndexTagResponse,
+  IndexTagsRequest,
   Menu,
   MenusApi,
   Product,
   ProductsApi,
   ShowMenuRequest,
-  ShowMenuResponse, Tag, TagsApi
+  ShowMenuResponse, ShowProductRequest, ShowProductResponse,
+  Tag,
+  TagsApi
 } from "@/openapi";
 import {authHeaders} from "@/helpers";
 
 class PreviewSelections {
   public menu: Menu | null;
+  public product: Product | null;
   public search: string | null;
   public category: Category | null;
   constructor() {
     this.menu = null;
+    this.product = null;
     this.search = null;
     this.category = null;
   }
@@ -38,6 +44,8 @@ class PreviewState {
   public menusRequest: IndexMenusRequest | null;
   public menusResponse: IndexMenuResponse | null;
 
+  public product: Product | null;
+  public productResponse: ShowProductResponse;
   public products: Product[] | null;
   public productsResponse: IndexProductResponse;
 
@@ -55,6 +63,9 @@ class PreviewState {
 
     this.menus = null;
     this.menusResponse = null;
+
+    this.product = null;
+    this.productResponse = null;
 
     this.products = null;
     this.productsResponse = null;
@@ -83,6 +94,9 @@ const getters = {
   isLoadingMenus(state: PreviewState) {
     return !state.menus && !state.menusResponse;
   },
+  isLoadingProduct(state: PreviewState) {
+    return !state.product && !state.productResponse;
+  },
   isLoadingProducts(state: PreviewState) {
     return !state.products && !state.productsResponse;
   },
@@ -105,6 +119,12 @@ const getters = {
     return state.menusResponse;
   },
   product(state: PreviewState) {
+    return state.product;
+  },
+  productResponse(state: PreviewState) {
+    return state.productResponse;
+  },
+  getProduct(state: PreviewState) {
     return (productId: number) => {
       let product = null;
 
@@ -136,10 +156,13 @@ const actions = {
   clear({commit}) {
     commit('selectMenu', null);
     commit('selectCategory', null);
+    commit('selectProduct', null);
     commit('setMenus', null);
     commit('setProducts', null);
+    commit('setProduct', null);
     commit('setShowMenuResponse', null);
     commit('setMenusResponse', null);
+    commit('setProductResponse', null);
     commit('setProductsResponse', null);
     commit('setMoreProductsResponse', null);
   },
@@ -250,6 +273,37 @@ const actions = {
 
     dispatch('loadTags');
   },
+  async selectProduct({commit}, product: Product | null) {
+    commit('selectProduct', product);
+  },
+  async loadProduct({commit, dispatch, rootGetters}, productId: number) {
+    const request: ShowProductRequest = {id: productId, include: 'categories'};
+
+    // todo: replace with a flag, so that alterations are only loaded when alterations preview is on
+    if (rootGetters['auth/authorized']) {
+      request.include = 'pendingAlterations,variants.pendingAlterations';
+    }
+
+    const response = await (new ProductsApi())
+      .showProduct(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setProductResponse', response);
+    commit('setProduct', response.data);
+  },
+
+  async loadAndSelectProduct({dispatch, getters}, productId: number) {
+    await dispatch('loadProduct', productId);
+
+    dispatch('selectProduct', getters.product);
+  },
   async loadProducts({commit, dispatch, rootGetters}, menu: Menu | null) {
     const request: IndexProductsRequest = {pageSize: 300};
     const restaurantId = rootGetters['restaurants/restaurantId'];
@@ -338,6 +392,9 @@ const mutations = {
   selectCategory(state: PreviewState, category) {
     state.selections.category = category;
   },
+  selectProduct(state: PreviewState, product) {
+    state.selections.product = product;
+  },
   setMenu(state: PreviewState, menu) {
     state.menu = menu;
   },
@@ -361,6 +418,12 @@ const mutations = {
   },
   setTagsResponse(state: PreviewState, response) {
     state.tagsResponse = response;
+  },
+  setProduct(state: PreviewState, product) {
+    state.product = product;
+  },
+  setProductResponse(state: PreviewState, response) {
+    state.productResponse = response;
   },
   setProducts(state: PreviewState, products) {
     state.products = products;

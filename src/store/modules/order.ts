@@ -435,7 +435,7 @@ const actions = {
     state.form.products.forEach((p) => {
       if (p.amount) {
         const product = getters['orderedProduct'](p.productId)
-          ?? rootGetters['preview/product'](p.productId);
+          ?? rootGetters['preview/getProduct'](p.productId);
 
         if (product) {
           const variant = (product.variants ?? []).find((v) => {
@@ -535,7 +535,7 @@ const actions = {
     let isMissing = false;
 
     (state.order.products ?? []).forEach((f) => {
-      if (!rootGetters['preview/product'](f.productId)) {
+      if (!rootGetters['preview/getProduct'](f.productId)) {
         isMissing = true;
         return;
       }
