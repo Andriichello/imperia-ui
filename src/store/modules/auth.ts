@@ -86,7 +86,7 @@ const actions = {
   },
   async me({ state, commit, dispatch }) {
     const me = await (new UsersApi())
-      .me({ include: 'customer' }, { headers: { ...authHeaders(state.token) } })
+      .me({ include: 'customers' }, { headers: { ...authHeaders(state.token) } })
       .then(response => response)
       .catch(error => error.response);
 

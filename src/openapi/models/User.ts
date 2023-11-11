@@ -46,10 +46,10 @@ export interface User {
   restaurantId: number | null;
   /**
    *
-   * @type {number}
+   * @type {Array<number>}
    * @memberof User
    */
-  customerId: number | null;
+  customerIds: Array<number>;
   /**
    *
    * @type {string}
@@ -70,10 +70,10 @@ export interface User {
   emailVerifiedAt: Date | null;
   /**
    *
-   * @type {Customer}
+   * @type {Array<Customer>}
    * @memberof User
    */
-  customer?: Customer;
+  customers?: Array<Customer>;
 }
 
 /**
@@ -84,7 +84,7 @@ export function instanceOfUser(value: object): boolean {
   isInstance = isInstance && "id" in value;
   isInstance = isInstance && "type" in value;
   isInstance = isInstance && "restaurantId" in value;
-  isInstance = isInstance && "customerId" in value;
+  isInstance = isInstance && "customerIds" in value;
   isInstance = isInstance && "name" in value;
   isInstance = isInstance && "email" in value;
   isInstance = isInstance && "emailVerifiedAt" in value;
@@ -107,16 +107,16 @@ export function UserFromJSONTyped(
     id: json["id"],
     type: json["type"],
     restaurantId: json["restaurant_id"],
-    customerId: json["customer_id"],
+    customerIds: json["customer_ids"],
     name: json["name"],
     email: json["email"],
     emailVerifiedAt:
       json["email_verified_at"] === null
         ? null
         : new Date(json["email_verified_at"]),
-    customer: !exists(json, "customer")
+    customers: !exists(json, "customers")
       ? undefined
-      : CustomerFromJSON(json["customer"]),
+      : (json["customers"] as Array<any>).map(CustomerFromJSON),
   };
 }
 
@@ -131,13 +131,16 @@ export function UserToJSON(value?: User | null): any {
     id: value.id,
     type: value.type,
     restaurant_id: value.restaurantId,
-    customer_id: value.customerId,
+    customer_ids: value.customerIds,
     name: value.name,
     email: value.email,
     email_verified_at:
       value.emailVerifiedAt === null
         ? null
         : value.emailVerifiedAt.toISOString(),
-    customer: CustomerToJSON(value.customer),
+    customers:
+      value.customers === undefined
+        ? undefined
+        : (value.customers as Array<any>).map(CustomerToJSON),
   };
 }
