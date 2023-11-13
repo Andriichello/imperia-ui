@@ -105,7 +105,7 @@ const actions = {
   async loadBanquets({ commit, getters, rootGetters}) {
     const request: IndexBanquetsRequest = {
       include: 'creator,customer,comments',
-      pageSize: 25,
+      pageSize: 20,
     };
 
     const restaurantId = rootGetters['restaurants/restaurantId'];
@@ -146,17 +146,19 @@ const actions = {
   async loadMoreBanquets({ state, commit, getters, rootGetters }) {
     let banquets = null;
     let page = null;
+    let size = 20;
 
-    const response = state.moreBanquetsResponse;
+    const response = state.moreBanquetsResponse ?? state.banquetsResponse;
     if (!response) {
       page = 2;
     } else {
       page = response.meta.currentPage + 1;
+      size = response.meta.perPage;
     }
 
     const request: IndexBanquetsRequest = {
       pageNumber: page,
-      pageSize: 25,
+      pageSize: size,
       include: 'creator,customer,comments',
     };
 

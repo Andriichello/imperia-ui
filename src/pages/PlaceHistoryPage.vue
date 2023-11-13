@@ -244,6 +244,10 @@ export default defineComponent({
       setIndexMoreResponse: 'history/setMoreBanquetsResponse',
     }),
     onLoadMore() {
+      if (this.isLoadingMore) {
+        return;
+      }
+
       this.isLoadingMore = true;
       this.loadMoreBanquets();
     },
@@ -251,13 +255,13 @@ export default defineComponent({
       this.isSearching = true;
       this.applySearch({search});
     },
-    onFromChange({ date }) {
+    onFromChange({date}) {
       this.isSearching = true;
       this.applyFrom({from: date});
 
       this.modal = null;
     },
-    onUntilChange({ date }) {
+    onUntilChange({date}) {
       this.isSearching = true;
       this.applyUntil({until: date});
 
@@ -349,8 +353,21 @@ export default defineComponent({
         this.modal = null;
       }
     },
+    onScroll() {
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollHeight = document.documentElement.scrollHeight;
+
+      // Get the current scroll position
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollBottom = scrollTop + clientHeight;
+
+      if ((scrollBottom + 10) > scrollHeight) {
+        this.onLoadMore();
+      }
+    },
   },
   mounted() {
+    window.addEventListener('scroll', this.onScroll);
     document.addEventListener('keydown', this.onKeyDown);
 
     const restaurantId = +this.$route.params['restaurantId'];
@@ -378,6 +395,7 @@ export default defineComponent({
     this.loadTagsIfMissing();
     },
   beforeUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
     document.removeEventListener('keydown', this.onKeyDown);
   },
 });
