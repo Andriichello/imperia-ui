@@ -62,7 +62,9 @@
 
       <div class="w-full max-w-xl flex justify-center items-center"
            v-if="isBanquetChanged && !Object.keys(banquetErrors).length">
-        <button class="w-full btn btn-md btn-primary" @click="onStoreBanquet">
+        <button class="w-full btn btn-md btn-primary"
+                :disabled="isCreatingBanquet || isUpdatingBanquet"
+                @click="onStoreBanquet">
           {{ +this.$route.params['banquetId'] ? $t('banquet.store') : $t('banquet.create') }}
           <span class="loading loading-spinner" v-if="isCreatingBanquet || isUpdatingBanquet"></span>
         </button>
