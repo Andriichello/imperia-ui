@@ -598,10 +598,11 @@ const mutations = {
       fields.forEach((f) => {
         const variantId = f.variantId ?? null;
 
-        state.form.setProduct(f.productId, f.amount, variantId, f.comments);
+        state.form.setProduct(f.productId, f.amount, variantId, f.serveAt, f.comments);
         state.form.setChange(`products-${f.productId}-${variantId}`, {
           productId: f.productId,
           amount: f.amount,
+          serveAt: f.serveAt,
           variantId: variantId
         });
       });

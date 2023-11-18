@@ -204,7 +204,7 @@ export default defineComponent({
       return this.weightFormatted(weight, unit);
     },
     servingTime() {
-      return this.current?.servingTime;
+      return this.current?.serveAt;
     },
     variants() {
       if (!this.item || !this.item.variants || !this.item.variants.length) {
