@@ -416,7 +416,6 @@ const actions = {
     commit('setProducts', products);
   },
   setProduct({ commit, dispatch }, {productId, amount, variantId, serveAt, comments}) {
-    console.log('setProduct: ', {productId, amount, variantId, serveAt, comments})
     commit('setProduct', {productId, amount, variantId, serveAt, comments});
     dispatch('recalculate');
   },

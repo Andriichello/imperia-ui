@@ -59,14 +59,12 @@ export default defineComponent({
   watch: {
     timeVal(newVal, oldVal) {
       if (newVal === ((oldVal ? oldVal : '') + ' ')) {
-        console.log('Space added...');
-
         if (/^\d+\s*$/.test(newVal)) {
-          console.log('Is digit...');
           this.timeVal = newVal.trim(' ') + ':';
         }
       }
 
+      this.isValid = this.validate(this.timeVal);
       this.onUpdate({time: newVal});
     },
   },
@@ -83,9 +81,59 @@ export default defineComponent({
         return true;
       }
 
-      let isValidMinute = /^.*:[0-5][0-9]$/.test(time);
-      let isSingleDigitHour = /^[0-9]:.*$/.test(time);
-      let isDoubleDigitHour = /^[0-2][0-9]:.*$/.test(time);
+      if (/^\s*\d\s*$/.test(time)) {
+        return true;
+      }
+
+      if (/^\s*\d\d\s*$/.test(time)) {
+        const val = time.trim(' ');
+
+        let hours = val.slice(0, 1);
+        let minutes = val.slice(1);
+
+        if (hours >= 2) {
+          return minutes < 6;
+        }
+
+        return true;
+      }
+
+      if (/^\s*\d\d\d\s*$/.test(time)) {
+        const val = time.trim(' ');
+
+        let hours = val.slice(0, 2);
+        let minutes = val.slice(2);
+
+        if (hours > 23) {
+          hours = val.slice(0, 1);
+          minutes = val.slice(1);
+
+          return minutes < 59;
+        } else {
+          return minutes < 6;
+        }
+      }
+
+      if (/^\s*\d\d\d\d\s*$/.test(time)) {
+        const val = time.trim(' ');
+
+        let hours = val.slice(0, 2);
+        let minutes = val.slice(2);
+
+        if (hours > 23) {
+          return false;
+        }
+
+        if (minutes > 59) {
+          return false;
+        }
+
+        return true;
+      }
+
+      let isValidMinute = /^.*:[0-5]?[0-9]?\s*$/.test(time);
+      let isSingleDigitHour = /^[0-9]:?.*$/.test(time);
+      let isDoubleDigitHour = /^[0-1][0-9]:?.*$/.test(time) || /^[2][0-3]:?.*$/.test(time);
 
       return isValidMinute &&
           (isSingleDigitHour || isDoubleDigitHour);
@@ -95,13 +143,22 @@ export default defineComponent({
         return '';
       }
 
+
       if (/^\s*\d{3,4}\s*$/.test(time)) {
         const val = time.trim(' ');
 
-        let hours = val.slice(0, 2);
-        let minutes = val.slice(2);
+        const hours = val.slice(0, 2);
+        const minutes = val.slice(2);
 
-        if (minutes.length === 1 && minutes > 5) {
+        if (hours > 23) {
+          return time;
+        }
+
+        if (minutes.length === 1) {
+          if (minutes > 5) {
+            return time;
+          }
+        } else if (minutes > 59) {
           return time;
         }
 
@@ -109,16 +166,33 @@ export default defineComponent({
       }
 
       if (/^\d{1,2}\s*$/.test(time)) {
+        if (time > 23) {
+          return time;
+        }
+
         return time.trim(' ') + ':' + '00';
       }
 
       if (/^\d{1,2}:$/.test(time)) {
+        if (time.trim(':') > 23) {
+          return time;
+        }
+
         return time + '00';
       }
 
       if (/^\d{1,2}:\d$/.test(time)) {
         const hours = time.split(':')[0];
         const minutes = time.split(':')[1];
+
+        if (hours > 23) {
+          return time;
+        }
+
+        if (minutes > 59) {
+          return time;
+        }
+
         return hours + ':' + (minutes > 5 ? '0' + minutes : minutes + '0');
       }
 

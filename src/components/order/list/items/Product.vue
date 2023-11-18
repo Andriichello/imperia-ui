@@ -299,8 +299,6 @@ export default defineComponent({
       this.rerendered = true;
     },
     onChangeAmount({amount}) {
-      console.log('item: ', this.item);
-
       this.setField({
         productId: this.id,
         variantId: this.variant?.id,
@@ -322,8 +320,6 @@ export default defineComponent({
       this.current.comments.push({text: ''});
     },
     onUpdateServingTime({time}) {
-      console.log('onUpdateServingTime: ' + time)
-
       this.setField({
         productId: this.id,
         variantId: this.variant?.id,
