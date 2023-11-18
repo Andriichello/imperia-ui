@@ -64,10 +64,22 @@ export interface ProductOrderField {
   variantId: number;
   /**
    *
+   * @type {string}
+   * @memberof ProductOrderField
+   */
+  batch: string | null;
+  /**
+   *
    * @type {number}
    * @memberof ProductOrderField
    */
   amount: number;
+  /**
+   * 24-hours format time, HOURS:MINUTES
+   * @type {string}
+   * @memberof ProductOrderField
+   */
+  serveAt: string | null;
   /**
    *
    * @type {number}
@@ -116,7 +128,9 @@ export function instanceOfProductOrderField(value: object): boolean {
   isInstance = isInstance && "orderId" in value;
   isInstance = isInstance && "productId" in value;
   isInstance = isInstance && "variantId" in value;
+  isInstance = isInstance && "batch" in value;
   isInstance = isInstance && "amount" in value;
+  isInstance = isInstance && "serveAt" in value;
   isInstance = isInstance && "total" in value;
   isInstance = isInstance && "discountsAmount" in value;
   isInstance = isInstance && "discountsPercent" in value;
@@ -142,7 +156,9 @@ export function ProductOrderFieldFromJSONTyped(
     orderId: json["order_id"],
     productId: json["product_id"],
     variantId: json["variant_id"],
+    batch: json["batch"],
     amount: json["amount"],
+    serveAt: json["serve_at"],
     total: json["total"],
     discountsAmount: json["discounts_amount"],
     discountsPercent: json["discounts_percent"],
@@ -169,7 +185,9 @@ export function ProductOrderFieldToJSON(value?: ProductOrderField | null): any {
     order_id: value.orderId,
     product_id: value.productId,
     variant_id: value.variantId,
+    batch: value.batch,
     amount: value.amount,
+    serve_at: value.serveAt,
     total: value.total,
     discounts_amount: value.discountsAmount,
     discounts_percent: value.discountsPercent,

@@ -121,6 +121,9 @@
       "store": "Store order"
     }
   },
+  "product": {
+    "serving_time": "Serving time"
+  },
   "reviews": {
     "unfortunately_list_is_empty": "Unfortunately the list is empty",
     "click_to_leave_review": "Click to leave review",

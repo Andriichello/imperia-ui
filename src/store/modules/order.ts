@@ -67,7 +67,9 @@ class OrderForm {
       const field: StoreOrderRequestProductField = {
         productId: p.productId,
         variantId: p.variantId ?? null,
+        batch: p.batch,
         amount: p.amount,
+        serveAt: p.serveAt,
         comments: p.comments,
       };
 
@@ -77,11 +79,12 @@ class OrderForm {
     this.products = fields;
   }
 
-  public setProduct(productId: number, amount: number | null, variantId: number = null, comments: AttachingComment[] = []) {
+  public setProduct(productId: number, amount: number | null, variantId: number = null, serveAt: string = null, comments: AttachingComment[] = []) {
     const field: StoreOrderRequestProductField = {
       productId,
       variantId,
       amount,
+      serveAt,
       comments,
     };
 
@@ -90,7 +93,9 @@ class OrderForm {
     });
 
     if (product) {
+      product.batch = field.batch;
       product.amount = field.amount;
+      product.serveAt = field.serveAt;
       product.comments = field.comments;
     } else {
       if (!this.products) {
@@ -156,6 +161,10 @@ class OrderForm {
           const change = this.getChange(name);
 
           if (field?.amount !== change?.amount) {
+            result = true;
+          }
+
+          if (field?.serveAt !== change?.serveAt) {
             result = true;
           }
 
@@ -406,8 +415,9 @@ const actions = {
   setProducts({ commit }, products) {
     commit('setProducts', products);
   },
-  setProduct({ commit, dispatch }, {productId, amount, variantId, comments}) {
-    commit('setProduct', {productId, amount, variantId, comments});
+  setProduct({ commit, dispatch }, {productId, amount, variantId, serveAt, comments}) {
+    console.log('setProduct: ', {productId, amount, variantId, serveAt, comments})
+    commit('setProduct', {productId, amount, variantId, serveAt, comments});
     dispatch('recalculate');
   },
   unsetProduct({ commit, dispatch }, {productId, variantId}) {
@@ -604,11 +614,11 @@ const mutations = {
   setProducts(state: OrderState, products) {
     state.form.products = products;
   },
-  setProduct(state: OrderState, {productId, amount, variantId, comments}) {
+  setProduct(state: OrderState, {productId, amount, variantId, serveAt, comments}) {
     variantId = variantId ?? null;
 
-    state.form.setProduct(productId, amount, variantId, comments);
-    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount, variantId, comments});
+    state.form.setProduct(productId, amount, variantId, serveAt, comments);
+    state.form.setChange(`products-${productId}-${variantId}`, {productId, amount, variantId, serveAt, comments});
   },
   unsetProduct(state: OrderState, {productId, variantId}) {
     variantId = variantId ?? null;

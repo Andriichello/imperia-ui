@@ -46,10 +46,22 @@ export interface StoreOrderRequestProductField {
   variantId: number;
   /**
    *
+   * @type {string}
+   * @memberof StoreOrderRequestProductField
+   */
+  batch?: string | null;
+  /**
+   *
    * @type {number}
    * @memberof StoreOrderRequestProductField
    */
   amount: number;
+  /**
+   * 24-hours format time, HOURS:MINUTES
+   * @type {string}
+   * @memberof StoreOrderRequestProductField
+   */
+  serveAt?: string | null;
   /**
    *
    * @type {Array<AttachingComment>}
@@ -94,7 +106,9 @@ export function StoreOrderRequestProductFieldFromJSONTyped(
   return {
     productId: json["product_id"],
     variantId: json["variant_id"],
+    batch: !exists(json, "batch") ? undefined : json["batch"],
     amount: json["amount"],
+    serveAt: !exists(json, "serve_at") ? undefined : json["serve_at"],
     comments: !exists(json, "comments")
       ? undefined
       : (json["comments"] as Array<any>).map(AttachingCommentFromJSON),
@@ -116,7 +130,9 @@ export function StoreOrderRequestProductFieldToJSON(
   return {
     product_id: value.productId,
     variant_id: value.variantId,
+    batch: value.batch,
     amount: value.amount,
+    serve_at: value.serveAt,
     comments:
       value.comments === undefined
         ? undefined

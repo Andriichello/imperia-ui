@@ -118,6 +118,9 @@
       "store": "Зберегти замовлення"
     }
   },
+  "product": {
+    "serving_time": "Час подачі"
+  },
   "reviews": {
     "unfortunately_list_is_empty": "На жаль, список порожній",
     "click_to_leave_review": "Натисніть, щоб залишити відгук",

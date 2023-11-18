@@ -8,6 +8,14 @@
           </h2>
         </div>
 
+        <div class="btn btn-square btn-ghost btn-sm flex justify-center start-center self-start" v-if="(!servingTime || !servingTime?.length) && !showServingTime"
+             @click="onAddServingTime">
+          <BaseIcon title="comment" color="currentColor" :width="24" :height="24" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.5C7.313 3.5 3.5 7.313 3.5 12C3.5 16.687 7.313 20.5 12 20.5C16.687 20.5 20.5 16.687 20.5 12C20.5 7.313 16.687 3.5 12 3.5ZM12 22C6.486 22 2 17.514 2 12C2 6.486 6.486 2 12 2C17.514 2 22 6.486 22 12C22 17.514 17.514 22 12 22Z"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M15.4311 15.6925C15.3001 15.6925 15.1681 15.6585 15.0471 15.5875L11.2771 13.3385C11.0511 13.2025 10.9111 12.9575 10.9111 12.6935V7.84546C10.9111 7.43146 11.2471 7.09546 11.6611 7.09546C12.0761 7.09546 12.4111 7.43146 12.4111 7.84546V12.2675L15.8161 14.2975C16.1711 14.5105 16.2881 14.9705 16.0761 15.3265C15.9351 15.5615 15.6861 15.6925 15.4311 15.6925Z"/>
+          </BaseIcon>
+        </div>
+
         <div class="btn btn-square btn-ghost btn-sm flex justify-center start-center self-start"
           @click="onAddComment">
           <BaseIcon title="comment" color="currentColor" :width="24" :height="24" viewBox="0 0 24 24">
@@ -112,6 +120,9 @@
 
       </div>
 
+      <ServingTime :time="servingTime" v-if="(servingTime || servingTime?.length) || showServingTime"
+                   @on-update="onUpdateServingTime"/>
+
       <CommentList :comments="comments" class="w-full" v-if="comments?.length"
                    @on-update="onUpdateComment"/>
     </div>
@@ -126,11 +137,12 @@ import {priceFormatted} from "@/helpers";
 import {throttle} from "lodash";
 import CommentList from "@/components/order/comment/CommentList.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
+import ServingTime from "@/components/preview/list/items/ServingTime.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "Product",
-  components: {BaseIcon, CommentList, Counter},
+  components: {ServingTime, BaseIcon, CommentList, Counter},
   props: {
     fields: Array,
     productId: Number,
@@ -140,6 +152,7 @@ export default defineComponent({
       current: this.fields[0],
       rerendered: true,
       selectedVariantId: this.fields[0]?.variantId,
+      showServingTime: false
     };
   },
   computed: {
@@ -189,6 +202,9 @@ export default defineComponent({
           ? this.variant?.weight : this.item?.weight;
 
       return this.weightFormatted(weight, unit);
+    },
+    servingTime() {
+      return this.current?.servingTime;
     },
     variants() {
       if (!this.item || !this.item.variants || !this.item.variants.length) {
@@ -289,8 +305,12 @@ export default defineComponent({
         productId: this.id,
         variantId: this.variant?.id,
         amount: amount,
+        serveAt: this.servingTime,
         comments: this.comments
       });
+    },
+    onAddServingTime() {
+      this.showServingTime = true;
     },
     onAddComment() {
       if (this.comments && this.comments.length) {
@@ -300,6 +320,17 @@ export default defineComponent({
       }
 
       this.current.comments.push({text: ''});
+    },
+    onUpdateServingTime({time}) {
+      console.log('onUpdateServingTime: ' + time)
+
+      this.setField({
+        productId: this.id,
+        variantId: this.variant?.id,
+        amount: this.current?.amount,
+        serveAt: time,
+        comments: this.comments
+      });
     },
     onUpdateComment({comment, index}) {
       const comments = [...(this.comments ?? [])];

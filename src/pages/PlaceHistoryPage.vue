@@ -393,7 +393,7 @@ export default defineComponent({
     this.loadBanquetsIfMissing();
     this.loadMenusIfMissing();
     this.loadTagsIfMissing();
-    },
+  },
   beforeUnmount() {
     window.removeEventListener('scroll', this.onScroll);
     document.removeEventListener('keydown', this.onKeyDown);
