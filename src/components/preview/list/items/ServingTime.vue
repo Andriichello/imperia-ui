@@ -198,8 +198,21 @@ export default defineComponent({
 
       return time;
     },
-  }
+  },
+  async mounted() {
+    // console.log('mounted', {time: this.time, timeVal: this.timeVal});
 
+    if (this.time !== this.timeVal) {
+      this.timeVal = this.time;
+    }
+  },
+  async updated() {
+    // console.log('updated', {time: this.time, timeVal: this.timeVal});
+
+    if (this.time !== this.timeVal) {
+      this.timeVal = this.time;
+    }
+  }
 })
 </script>
 

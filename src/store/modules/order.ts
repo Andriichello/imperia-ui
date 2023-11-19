@@ -108,7 +108,7 @@ class OrderForm {
 
   public unsetProduct(productId: number, variantId: number = null, batch: string = null) {
     this.products = this.products.filter((p) => {
-      return p.productId !== productId || p.variantId !== variantId || p.batch === batch;
+      return p.productId !== productId || p.variantId !== variantId || p.batch !== batch;
     });
   }
 
@@ -420,8 +420,10 @@ const actions = {
     commit('setProduct', {productId, amount, variantId, batch, serveAt, comments});
     dispatch('recalculate');
   },
-  unsetProduct({ commit, dispatch }, {productId, variantId}) {
-    commit('unsetProduct', {productId, variantId});
+  unsetProduct({ commit, dispatch }, {productId, variantId, batch}) {
+    console.log('unsetProduct: ', {productId, variantId, batch});
+
+    commit('unsetProduct', {productId, variantId, batch});
     dispatch('recalculate');
   },
   addComment({ commit }, {text}) {
@@ -627,7 +629,7 @@ const mutations = {
     batch = batch ?? null;
 
     state.form.unsetProduct(productId, variantId, batch);
-    state.form.setChange(`products-${productId}-${variantId ?? null}-${batch}`, {productId, amount: null, variantId});
+    state.form.setChange(`products-${productId}-${variantId ?? null}-${batch}`, {productId, amount: null, variantId, batch});
   },
   addComment(state: OrderState, comment) {
     const comments = [...state.form.comments];
