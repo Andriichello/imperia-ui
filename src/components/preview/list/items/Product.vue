@@ -143,7 +143,22 @@ export default defineComponent({
       return (this.$route.name ?? '').startsWith('preview');
     },
     field() {
-      return this.$store.getters['order/product'](this.id, this.variant?.id);
+      return this.variantFields.find((f) => f.batch === null)
+          ?? this.variantFields[0];
+    },
+    variantFields() {
+      return this.$store.getters['order/products'].filter(
+          (p) => p.productId === this.id && p.variantId === this.variant?.id
+      );
+    },
+    productField() {
+      return this.productFields.find((f) => f.batch === null)
+          ?? this.productFields[0];
+    },
+    productFields() {
+      return this.$store.getters['order/products'].filter(
+          (p) => p.productId === this.id
+      );
     },
     id() {
       return this.item.id;
@@ -238,6 +253,13 @@ export default defineComponent({
       return this.item?.pendingAlterations ?? [];
     },
   },
+  watch: {
+    field(newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.freshRender();
+      }
+    },
+  },
   methods: {
     priceFormatted,
     ...mapActions({
@@ -284,9 +306,22 @@ export default defineComponent({
       }
     },
     onChangeAmount({amount}) {
+      console.log({field: this.field, variantFields: this.variantFields})
+
+      if (amount === null) {
+        this.unsetField({
+          productId: this.id,
+          variantId: this.variant?.id,
+          batch: this.field?.batch ?? this.productField?.batch,
+        });
+
+        return;
+      }
+
       this.setField({
         productId: this.id,
         variantId: this.variant?.id,
+        batch: this.field?.batch ?? this.productField?.batch,
         amount: amount,
       });
     },
