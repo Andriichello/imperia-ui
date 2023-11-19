@@ -1,8 +1,10 @@
 <template>
   <div class="w-full list flex flex-wrap justify-center items-start gap-4 pb-2">
     <div class="w-full flex flex-col gap-3">
-      <template v-for="group in this.groups" :key="group[0].productId">
-        <Product :fields="group" :product-id="group[0].productId"/>
+      <template v-for="group in groups" :key="group[0].productId">
+        <template v-for="subGroups in splitGroupByBatch(group)" :key="subGroups[0].productId + '-' + subGroups[0].batch" >
+          <Product :fields="subGroups" :product-id="subGroups[0].productId"/>
+        </template>
       </template>
 
 <!--      <template v-for="field in reversedFields" :key="`${field.productId}-${field.variantId}`">-->
@@ -40,10 +42,30 @@ export default defineComponent({
         }
       });
 
-      return map.values();
+      return Array.from(map.values());
     },
     reversedFields() {
       return [...this.fields].reverse();
+    },
+  },
+  methods: {
+    splitGroupByBatch(group) {
+      if (!group || !group.length) {
+        return [];
+      }
+
+      const batches = [...new Set(group.map(f => f.batch))];
+      const subGroups = [];
+
+      batches.forEach((batch) => {
+        const subGroup = group.filter((f) => f.batch === batch);
+
+        if (subGroup.length > 0) {
+          subGroups.push(subGroup);
+        }
+      });
+
+      return subGroups;
     },
   },
 });

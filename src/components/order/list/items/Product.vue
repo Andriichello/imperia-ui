@@ -133,7 +133,7 @@
 import { defineComponent } from "vue";
 import {mapActions, mapGetters} from "vuex";
 import Counter from "@/components/preview/list/items/Counter.vue";
-import {priceFormatted} from "@/helpers";
+import {priceFormatted, randomString} from "@/helpers";
 import {throttle} from "lodash";
 import CommentList from "@/components/order/comment/CommentList.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
@@ -303,6 +303,8 @@ export default defineComponent({
         productId: this.id,
         variantId: this.variant?.id,
         amount: amount,
+        batch: this.current?.batch,
+        // batch: this.current === null ? randomString(4) : this.current?.batch,
         serveAt: this.servingTime,
         comments: this.comments
       });
@@ -324,6 +326,7 @@ export default defineComponent({
         productId: this.id,
         variantId: this.variant?.id,
         amount: this.current?.amount,
+        batch: this.current?.batch,
         serveAt: time,
         comments: this.comments
       });
@@ -353,6 +356,8 @@ export default defineComponent({
         productId: this.id,
         variantId: this.variant?.id,
         amount: this.current?.amount,
+        batch: this.current?.batch,
+        serveAt: this.current?.serveAt,
         comments: comments
       });
     },

@@ -10,6 +10,19 @@ export function jsonHeaders(): object {
     return { 'content-type': 'application/json' };
 }
 
+export function randomString(length = 4) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+    const charLength = chars.length;
+
+    let result = '';
+
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * charLength));
+    }
+
+    return result;
+}
+
 export function sameDay(d1: Date, d2: Date): boolean {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
