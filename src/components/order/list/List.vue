@@ -3,7 +3,7 @@
     <div class="w-full flex flex-col gap-3">
       <template v-for="group in groups" :key="group[0].productId">
         <template v-for="subGroups in splitGroupByBatch(group)" :key="subGroups[0].productId + '-' + subGroups[0].batch" >
-          <Product :fields="subGroups" :product-id="subGroups[0].productId"/>
+          <Product :fields="subGroups" :product-id="subGroups[0].productId" :batch="subGroups[0].batch"/>
         </template>
       </template>
 
