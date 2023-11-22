@@ -143,8 +143,11 @@ export default defineComponent({
       return (this.$route.name ?? '').startsWith('preview');
     },
     field() {
-      return this.variantFields.find((f) => f.batch === null)
-          ?? this.variantFields[0];
+      const fields = this.productFields.filter((f) => {
+        return f.variantId === (this.variant?.id ?? null);
+      });
+
+      return fields?.length ? fields[0] : this.productField;
     },
     variantFields() {
       return this.$store.getters['order/products'].filter(
@@ -306,6 +309,7 @@ export default defineComponent({
       }
     },
     onChangeAmount({amount}) {
+      console.log({item: this.item, variant: this.variant})
       console.log({field: this.field, variantFields: this.variantFields})
 
       if (amount === null) {
@@ -322,7 +326,9 @@ export default defineComponent({
         productId: this.id,
         variantId: this.variant?.id,
         batch: this.field?.batch ?? this.productField?.batch,
+        serveAt: this.field?.serveAt,
         amount: amount,
+        comments: this.field?.comments ?? [],
       });
     },
     async freshRender() {
