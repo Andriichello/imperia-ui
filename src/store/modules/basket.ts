@@ -31,6 +31,7 @@ class BanquetForm {
   public startAt: Date | string | null;
   public endAt: Date | string | null;
   public isBirthdayClub: boolean | null;
+  public withPhotographer: boolean | null;
   public actualTotal: number | null;
   public invoiceUrl: string | null;
 
@@ -61,6 +62,7 @@ class BanquetForm {
     form.startAt = banquet.startAt;
     form.endAt = banquet.endAt;
     form.isBirthdayClub = banquet.isBirthdayClub;
+    form.withPhotographer = banquet.withPhotographer;
     form.actualTotal = banquet.actualTotal;
     form.invoiceUrl = banquet.invoiceUrl;
 
@@ -124,6 +126,7 @@ class BanquetForm {
       startAt: this.startAt,
       endAt: this.endAt,
       isBirthdayClub: this.isBirthdayClub,
+      withPhotographer: this.withPhotographer,
       actualTotal: this.actualTotal,
       adultsAmount: this.adultsAmount,
       adultTicketPrice: this.adultTicketPrice,
@@ -216,6 +219,9 @@ const getters = {
   isBirthdayClub(state: BasketState) {
     return state.form.isBirthdayClub;
   },
+  withPhotographer(state: BasketState) {
+    return state.form.withPhotographer;
+  },
   childrenAmount(state: BasketState) {
     return state.form.childrenAmount;
   },
@@ -306,6 +312,9 @@ const actions = {
   },
   setIsBirthdayClub({ commit }, value: boolean | null) {
     commit('setIsBirthdayClub', value);
+  },
+  setWithPhotographer({ commit }, value: boolean | null) {
+    commit('setWithPhotographer', value);
   },
   setAdultsAmount({ commit }, value: number | null) {
     commit('setAdultsAmount', value);
@@ -421,6 +430,10 @@ const mutations = {
   setIsBirthdayClub(state: BasketState, value) {
     state.form.isBirthdayClub = value;
     state.form.setChange('isBirthdayClub', value);
+  },
+  setWithPhotographer(state: BasketState, value) {
+    state.form.withPhotographer = value;
+    state.form.setChange('withPhotographer', value);
   },
   setAdultsAmount(state: BasketState, value) {
     state.form.adultsAmount = value;

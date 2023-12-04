@@ -95,6 +95,12 @@ export interface UpdateBanquetRequest {
   isBirthdayClub?: boolean | null;
   /**
    *
+   * @type {boolean}
+   * @memberof UpdateBanquetRequest
+   */
+  withPhotographer?: boolean | null;
+  /**
+   *
    * @type {number}
    * @memberof UpdateBanquetRequest
    */
@@ -200,6 +206,9 @@ export function UpdateBanquetRequestFromJSONTyped(
     isBirthdayClub: !exists(json, "is_birthday_club")
       ? undefined
       : json["is_birthday_club"],
+    withPhotographer: !exists(json, "with_photographer")
+      ? undefined
+      : json["with_photographer"],
     childrenAmount: !exists(json, "children_amount")
       ? undefined
       : json["children_amount"],
@@ -248,6 +257,7 @@ export function UpdateBanquetRequestToJSON(
     actual_total: value.actualTotal,
     advance_amount_payment_method: value.advanceAmountPaymentMethod,
     is_birthday_club: value.isBirthdayClub,
+    with_photographer: value.withPhotographer,
     children_amount: value.childrenAmount,
     child_ticket_price: value.childTicketPrice,
     adults_amount: value.adultsAmount,

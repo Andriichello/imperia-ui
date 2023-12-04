@@ -140,6 +140,12 @@ export interface Banquet {
   isBirthdayClub: boolean | null;
   /**
    *
+   * @type {boolean}
+   * @memberof Banquet
+   */
+  withPhotographer: boolean | null;
+  /**
+   *
    * @type {number}
    * @memberof Banquet
    */
@@ -276,6 +282,7 @@ export function instanceOfBanquet(value: object): boolean {
   isInstance = isInstance && "advanceAmountPaymentMethod" in value;
   isInstance = isInstance && "actualTotal" in value;
   isInstance = isInstance && "isBirthdayClub" in value;
+  isInstance = isInstance && "withPhotographer" in value;
   isInstance = isInstance && "childrenAmount" in value;
   isInstance = isInstance && "childTicketPrice" in value;
   isInstance = isInstance && "adultsAmount" in value;
@@ -317,6 +324,7 @@ export function BanquetFromJSONTyped(
     advanceAmountPaymentMethod: json["advance_amount_payment_method"],
     actualTotal: json["actual_total"],
     isBirthdayClub: json["is_birthday_club"],
+    withPhotographer: json["with_photographer"],
     childrenAmount: json["children_amount"],
     childTicketPrice: json["child_ticket_price"],
     adultsAmount: json["adults_amount"],
@@ -366,6 +374,7 @@ export function BanquetToJSON(value?: Banquet | null): any {
     advance_amount_payment_method: value.advanceAmountPaymentMethod,
     actual_total: value.actualTotal,
     is_birthday_club: value.isBirthdayClub,
+    with_photographer: value.withPhotographer,
     children_amount: value.childrenAmount,
     child_ticket_price: value.childTicketPrice,
     adults_amount: value.adultsAmount,

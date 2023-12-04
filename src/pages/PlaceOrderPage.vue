@@ -32,6 +32,7 @@
                              @advance-amount-update="onBanquetAdvanceAmountUpdate"
                              @advance-amount-payment-method-update="onBanquetAdvanceAmountPaymentMethodUpdate"
                              @is-birthday-club-update="onBanquetIsBirthdayClubUpdate"
+                             @with-photographer-update="onBanquetWithPhotographerUpdate"
                              @actual-total-update="onBanquetActualTotalUpdate"
                              @adults-amount-update="onBanquetAdultsAmountUpdate"
                              @adult-ticket-price-update="onBanquetAdultTicketPriceUpdate"
@@ -353,6 +354,7 @@ export default defineComponent({
       setAdvanceAmount: 'basket/setAdvanceAmount',
       setAdvanceAmountPaymentMethod: 'basket/setAdvanceAmountPaymentMethod',
       setIsBirthdayClub: 'basket/setIsBirthdayClub',
+      setWithPhotographer: 'basket/setWithPhotographer',
       setActualTotal: 'basket/setActualTotal',
       setAdultsAmount: 'basket/setAdultsAmount',
       setAdultTicketPrice: 'basket/setAdultTicketPrice',
@@ -445,6 +447,13 @@ export default defineComponent({
     },
     onBanquetIsBirthdayClubUpdate({isBirthdayClub}) {
       this.setIsBirthdayClub(isBirthdayClub);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetWithPhotographerUpdate({withPhotographer}) {
+      this.setWithPhotographer(withPhotographer);
 
       if (this.wasStoreClicked) {
         this.validateBanquetForm();
