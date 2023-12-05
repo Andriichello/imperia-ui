@@ -61,6 +61,15 @@
         </span>
       </div>
 
+      <div class="w-full max-w-xl flex justify-center items-center" v-if="banquetSavedSuccessfully !== null && !isBanquetChanged">
+        <span class="label-text-alt text-success text-lg" v-if="banquetSavedSuccessfully === true">
+          {{ $t('banquet.was_successfully_saved') }}
+        </span>
+        <span class="label-text-alt text-error text-lg" v-else>
+          {{ $t('banquet.an_error_occurred_while_saving') }}
+        </span>
+      </div>
+
       <div class="w-full max-w-xl flex justify-center items-center"
            v-if="isBanquetChanged && !Object.keys(banquetErrors).length">
         <button class="w-full btn btn-md btn-primary"
@@ -92,8 +101,47 @@
 
       <List :fields="nonEmptyFields" class="w-full" v-if="nonEmptyFields.length"/>
 
+      <div class="w-full max-w-xl flex justify-center items-center"
+           v-for="errorsGroup in (Object.keys(createOrderErrors?.errors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in createOrderErrors.errors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
+      <div class="w-full max-w-xl flex justify-center items-center"
+           v-for="errorsGroup in (Object.keys(updateOrderErrors?.errors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in updateOrderErrors.errors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
+      <div class="w-full max-w-xl flex justify-center items-center"
+           v-for="errorsGroup in (Object.keys(orderErrors ?? {}))"
+           :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in orderErrors[errorsGroup]"
+              :key="error">
+          {{ error }}
+        </span>
+      </div>
+
+      <div class="w-full max-w-xl flex justify-center items-center" v-if="orderSavedSuccessfully !== null && !isOrderChanged">
+        <span class="label-text-alt text-success text-lg" v-if="orderSavedSuccessfully === true">
+          {{ $t('preview.order.was_successfully_saved') }}
+        </span>
+        <span class="label-text-alt text-error text-lg" v-else>
+          {{ $t('preview.order.an_error_occurred_while_saving') }}
+        </span>
+      </div>
+
       <div class="w-full flex justify-center items-center"
-           v-if="isOrderChanged && validateOrderForm()">
+           v-if="isOrderChanged && banquetId">
         <button class="w-full btn btn-md btn-primary" @click="onStoreOrder">
           {{ $t('preview.order.store') }}
           <span class="loading loading-spinner" v-if="isCreatingOrder || isUpdatingOrder"></span>
@@ -177,7 +225,7 @@ import TimePicker from "@/components/order/time/TimePicker.vue";
 import StatePicker from "@/components/order/state/StatePicker.vue";
 import {
   instanceOfStoreBanquetResponse,
-  instanceOfUpdateBanquetResponse
+  instanceOfUpdateBanquetResponse, instanceOfUpdateOrderResponse
 } from "@/openapi";
 import CustomerPicker from "@/components/order/customer/CustomerPicker.vue";
 import {ResponseErrors} from "@/helpers";
@@ -229,6 +277,11 @@ export default defineComponent({
       banquetErrors: {},
       createBanquetErrors: {},
       updateBanquetErrors: {},
+      banquetSavedSuccessfully: null,
+      orderErrors: {},
+      createOrderErrors: {},
+      updateOrderErrors: {},
+      orderSavedSuccessfully: null
     };
   },
   computed: {
@@ -273,6 +326,16 @@ export default defineComponent({
       this.createBanquetErrors = {};
       this.updateBanquetErrors = {};
     },
+    order(newOrder) {
+      if (!newOrder) {
+        return;
+      }
+
+      this.createOrderErrors = {};
+      this.updateOrderErrors = {};
+
+      this.loadProductsForOrderIfMissing({order: this.order});
+    },
     showBanquetResponse() {
       this.isLoadingBanquet = false;
     },
@@ -290,8 +353,12 @@ export default defineComponent({
         this.setOrder({order: newValue.data?.order, fields});
         this.loadBanquet({ id });
 
+        this.banquetSavedSuccessfully = true;
+
         const path = this.$route.path;
         this.$router.replace(`${path}/${id}`);
+      } else {
+        this.banquetSavedSuccessfully = false;
       }
     },
     async updateBanquetResponse(newValue) {
@@ -300,8 +367,12 @@ export default defineComponent({
           ? await ResponseErrors.from(newValue) : {};
 
       if (instanceOfUpdateBanquetResponse(newValue)) {
+        this.banquetSavedSuccessfully = true;
+
         const id = newValue.data.id;
         this.loadBanquet({ id });
+      } else {
+        this.banquetSavedSuccessfully = false;
       }
     },
     showOrderResponse: {
@@ -309,10 +380,18 @@ export default defineComponent({
         this.isLoadingOrder = false;
       },
     },
-    updateOrderResponse: {
-      handler() {
-        this.isUpdatingOrder = false;
-      },
+    async updateOrderResponse(newValue) {
+      console.log(newValue);
+
+      this.isUpdatingOrder = false;
+      this.updateOrderErrors = newValue
+          ? await ResponseErrors.from(newValue) : {};
+
+      if (instanceOfUpdateOrderResponse(newValue)) {
+        this.orderSavedSuccessfully = true;
+      } else {
+        this.orderSavedSuccessfully = false;
+      }
     },
     orderedProductsResponse: {
       handler() {
@@ -323,13 +402,6 @@ export default defineComponent({
       handler() {
         this.isLoadingRestaurant = false;
       },
-    },
-    order(newOrder) {
-      if (!newOrder) {
-        return;
-      }
-
-      this.loadProductsForOrderIfMissing({order: this.order});
     },
   },
   methods: {
@@ -625,11 +697,46 @@ export default defineComponent({
       }
     },
     validateOrderForm() {
-      return this.orderForm?.banquetId
+      const productErrors = [];
+      const errors = {};
+
+      if (this.orderForm?.products?.length) {
+        this.orderForm.products.forEach((field) => {
+          if (field?.serveAt) {
+            const serveAt = field?.serveAt.trim()
+
+            if (serveAt.length > 0) {
+              const isValidMinute = /^.*:[0-5]?[0-9]?\s*$/.test(serveAt);
+              const isSingleDigitHour = /^[0-9]:?.*$/.test(serveAt);
+              const isDoubleDigitHour = /^[0-1][0-9]:?.*$/.test(serveAt) || /^[2][0-3]:?.*$/.test(serveAt);
+
+              const isValid = isValidMinute && (isSingleDigitHour || isDoubleDigitHour);
+
+              if (!isValid) {
+                productErrors.push(this.$t('preview.order.errors.serve_at.invalid', {time: serveAt}))
+              }
+            }
+          }
+        });
+
+        if (productErrors.length) {
+          errors.products = productErrors;
+        }
+      }
+
+      this.orderErrors = errors;
+      console.log('order errors: ', errors)
+
+      return !Object.keys(errors).length
+          && this.orderForm?.banquetId
           && this.orderForm?.products
           && (this.orderForm?.products?.length || this.orderForm?.comments?.length);
     },
     onStoreOrder() {
+      if (!this.validateOrderForm() !== false) {
+        return;
+      }
+
       if (this.orderId) {
         this.isUpdatingOrder = true;
         this.updateOrder({ id: this.orderId, request: this.orderForm.asUpdate() });

@@ -118,7 +118,14 @@
       "loading": "Loading order",
       "loading_products": "Loading products",
       "new_order": "New order",
-      "store": "Store order"
+      "store": "Store order",
+      "was_successfully_saved": "Order was successfully saved",
+      "an_error_occurred_while_saving": "An error occurred while saving order",
+      "errors": {
+        "serve_at": {
+          "invalid": "Invalid serve at time: {time}. Examples of correct format: 8:30, 11:40, 16:05"
+        }
+      }
     }
   },
   "product": {
@@ -170,6 +177,8 @@
     "comments": "Comments",
     "create_comment": "Create comment",
     "more_details": "More details",
+    "was_successfully_saved": "Banquet was successfully saved",
+    "an_error_occurred_while_saving": "An error occurred while saving banquet",
     "more": {
       "bill": "Bill"
     },

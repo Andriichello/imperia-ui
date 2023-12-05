@@ -277,7 +277,7 @@ export default defineComponent({
       return this.current?.comments ?? [];
     },
     timeColor() {
-      if (this.isTimeValid.length) {
+      if (!this.isTimeValid) {
         return 'var(--red)';
       }
 
