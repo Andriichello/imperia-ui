@@ -602,8 +602,17 @@ const actions = {
 const mutations = {
   clear(state: OrderState) {
     state.order = null;
-    state.isSavedSuccessfully = null;
     state.form = new OrderForm();
+
+    state.showOrderResponse = null;
+    state.createOrderResponse = null;
+    state.updateOrderResponse = null;
+
+    state.isLoadingShowResponse = null;
+    state.isLoadingCreateResponse = null;
+    state.isLoadingUpdateResponse = null;
+
+    state.isSavedSuccessfully = null;
   },
   setOrder(state: OrderState, {order, fields}) {
     state.order = order;

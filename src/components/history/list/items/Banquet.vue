@@ -107,7 +107,8 @@ export default defineComponent({
       this.$emit('customer-click');
     },
     onLinkClick() {
-      //
+      this.clearOrder();
+      this.clearBanquet();
     },
     onOpenBill() {
       this.$emit('open-bill', {banquet: this.banquet});

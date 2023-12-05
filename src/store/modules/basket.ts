@@ -406,8 +406,17 @@ const actions = {
 const mutations = {
   clear(state: BasketState) {
     state.banquet = null;
-    state.isSavedSuccessfully = null;
     state.form = new BanquetForm();
+
+    state.showResponse = null;
+    state.createResponse = null;
+    state.updateResponse = null;
+
+    state.isLoadingShowResponse = null;
+    state.isLoadingCreateResponse = null;
+    state.isLoadingUpdateResponse = null;
+
+    state.isSavedSuccessfully = null;
   },
   setForm(state: BasketState, form: BanquetForm) {
     state.form = form;
