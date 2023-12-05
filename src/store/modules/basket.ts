@@ -164,6 +164,9 @@ class BasketState {
   /** Determines if update banquet response is now loading */
   public isLoadingUpdateResponse: boolean | null;
 
+  /** Determines if create/update banquet response was successful */
+  public isSavedSuccessfully: boolean | null;
+
   constructor() {
     this.form = new BanquetForm();
 
@@ -177,6 +180,8 @@ class BasketState {
     this.isLoadingShowResponse = null;
     this.isLoadingCreateResponse = null;
     this.isLoadingUpdateResponse = null;
+
+    this.isSavedSuccessfully = null;
   }
 }
 
@@ -269,6 +274,9 @@ const getters = {
   },
   isLoadingUpdateResponse(state: BasketState) {
     return state.isLoadingUpdateResponse;
+  },
+  isSavedSuccessfully(state: BasketState) {
+    return state.isSavedSuccessfully;
   },
 };
 
@@ -390,11 +398,15 @@ const actions = {
     commit('setUpdateResponse', response);
     commit('setIsLoadingUpdateResponse', false);
   },
+  setIsSavedSuccessfully({ commit }, isSavedSuccessfully: boolean|null) {
+    commit('setIsSavedSuccessfully', isSavedSuccessfully);
+  },
 };
 
 const mutations = {
   clear(state: BasketState) {
     state.banquet = null;
+    state.isSavedSuccessfully = null;
     state.form = new BanquetForm();
   },
   setForm(state: BasketState, form: BanquetForm) {
@@ -527,6 +539,9 @@ const mutations = {
   },
   setIsLoadingUpdateResponse(state: BasketState, isLoading) {
     state.isLoadingUpdateResponse = isLoading;
+  },
+  setIsSavedSuccessfully(state: BasketState, isSavedSuccessfully) {
+    state.isSavedSuccessfully = isSavedSuccessfully;
   },
 };
 

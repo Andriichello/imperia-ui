@@ -61,8 +61,8 @@
         </span>
       </div>
 
-      <div class="w-full max-w-xl flex justify-center items-center" v-if="banquetSavedSuccessfully !== null && !isBanquetChanged">
-        <span class="label-text-alt text-success text-lg" v-if="banquetSavedSuccessfully === true">
+      <div class="w-full max-w-xl flex justify-center items-center" v-if="isBanquetSavedSuccessfully !== null && !isBanquetChanged">
+        <span class="label-text-alt text-success text-lg" v-if="isBanquetSavedSuccessfully === true">
           {{ $t('banquet.was_successfully_saved') }}
         </span>
         <span class="label-text-alt text-error text-lg" v-else>
@@ -131,8 +131,8 @@
         </span>
       </div>
 
-      <div class="w-full max-w-xl flex justify-center items-center" v-if="orderSavedSuccessfully !== null && !isOrderChanged">
-        <span class="label-text-alt text-success text-lg" v-if="orderSavedSuccessfully === true">
+      <div class="w-full max-w-xl flex justify-center items-center" v-if="isOrderSavedSuccessfully !== null && !isOrderChanged">
+        <span class="label-text-alt text-success text-lg" v-if="isOrderSavedSuccessfully === true">
           {{ $t('preview.order.was_successfully_saved') }}
         </span>
         <span class="label-text-alt text-error text-lg" v-else>
@@ -277,11 +277,9 @@ export default defineComponent({
       banquetErrors: {},
       createBanquetErrors: {},
       updateBanquetErrors: {},
-      banquetSavedSuccessfully: null,
       orderErrors: {},
       createOrderErrors: {},
       updateOrderErrors: {},
-      orderSavedSuccessfully: null
     };
   },
   computed: {
@@ -310,6 +308,8 @@ export default defineComponent({
       isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
       showRestaurantResponse: 'restaurants/getShowResponse',
       customerFilters: 'customers/filters',
+      isBanquetSavedSuccessfully: 'basket/isSavedSuccessfully',
+      isOrderSavedSuccessfully: 'order/isSavedSuccessfully',
     }),
     nonEmptyFields() {
       return this.fields.filter((f) => {
@@ -353,12 +353,12 @@ export default defineComponent({
         this.setOrder({order: newValue.data?.order, fields});
         this.loadBanquet({ id });
 
-        this.banquetSavedSuccessfully = true;
+        this.setIsBanquetSavedSuccessfully(true);
 
         const path = this.$route.path;
         this.$router.replace(`${path}/${id}`);
       } else {
-        this.banquetSavedSuccessfully = false;
+        this.setIsBanquetSavedSuccessfully(false);
       }
     },
     async updateBanquetResponse(newValue) {
@@ -367,12 +367,12 @@ export default defineComponent({
           ? await ResponseErrors.from(newValue) : {};
 
       if (instanceOfUpdateBanquetResponse(newValue)) {
-        this.banquetSavedSuccessfully = true;
+        this.setIsBanquetSavedSuccessfully(true);
 
         const id = newValue.data.id;
         this.loadBanquet({ id });
       } else {
-        this.banquetSavedSuccessfully = false;
+        this.setIsBanquetSavedSuccessfully(false);
       }
     },
     showOrderResponse: {
@@ -388,9 +388,9 @@ export default defineComponent({
           ? await ResponseErrors.from(newValue) : {};
 
       if (instanceOfUpdateOrderResponse(newValue)) {
-        this.orderSavedSuccessfully = true;
+        this.setIsOrderSavedSuccessfully(true);
       } else {
-        this.orderSavedSuccessfully = false;
+        this.setIsOrderSavedSuccessfully(false);
       }
     },
     orderedProductsResponse: {
@@ -437,6 +437,8 @@ export default defineComponent({
       setEndAt: 'basket/setEndAt',
       setCustomer: 'basket/setCustomer',
       setState: 'basket/setState',
+      setIsBanquetSavedSuccessfully: 'basket/setIsSavedSuccessfully',
+      setIsOrderSavedSuccessfully: 'order/setIsSavedSuccessfully',
     }),
     onKeyDown(e) {
       if (this.modal && e.key === 'Escape') {
@@ -754,6 +756,9 @@ export default defineComponent({
     },
   },
   mounted() {
+    this.setIsOrderSavedSuccessfully(null);
+    this.setIsBanquetSavedSuccessfully(null);
+
     document.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("resize", this.onResize);
     const banquetId = +this.$route.params['banquetId'];

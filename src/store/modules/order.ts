@@ -249,6 +249,9 @@ class OrderState {
   /** Determines if update order response is now loading */
   public isLoadingUpdateResponse: boolean | null;
 
+  /** Determines if create/update order response was successful */
+  public isSavedSuccessfully: boolean | null;
+
   constructor() {
     this.form = new OrderForm();
 
@@ -264,6 +267,8 @@ class OrderState {
     this.isLoadingShowResponse = null;
     this.isLoadingCreateResponse = null;
     this.isLoadingUpdateResponse = null;
+
+    this.isSavedSuccessfully = null;
   }
 }
 
@@ -394,6 +399,9 @@ const getters = {
   },
   isLoadingUpdateResponse(state: OrderState) {
     return state.isLoadingUpdateResponse;
+  },
+  isSavedSuccessfully(state: OrderState) {
+    return state.isSavedSuccessfully;
   },
 };
 
@@ -586,11 +594,15 @@ const actions = {
       dispatch('loadOrderForBanquet', { banquetId: response.data.banquetId });
     }
   },
+  setIsSavedSuccessfully({ commit }, isSavedSuccessfully: boolean|null) {
+    commit('setIsSavedSuccessfully', isSavedSuccessfully);
+  },
 };
 
 const mutations = {
   clear(state: OrderState) {
     state.order = null;
+    state.isSavedSuccessfully = null;
     state.form = new OrderForm();
   },
   setOrder(state: OrderState, {order, fields}) {
@@ -665,6 +677,9 @@ const mutations = {
   },
   setIsLoadingUpdateResponse(state: OrderState, isLoading) {
     state.isLoadingUpdateResponse = isLoading;
+  },
+  setIsSavedSuccessfully(state: OrderState, isSavedSuccessfully) {
+    state.isSavedSuccessfully = isSavedSuccessfully;
   },
 };
 
