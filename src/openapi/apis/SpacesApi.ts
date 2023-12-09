@@ -38,6 +38,7 @@ export interface IndexSpacesRequest {
   pageSize?: number;
   pageNumber?: number;
   sort?: string;
+  filterIds?: string;
   filterTitle?: string;
   filterCategories?: string;
   filterRestaurants?: string;
@@ -82,6 +83,10 @@ export class SpacesApi extends runtime.BaseAPI {
 
     if (requestParameters.sort !== undefined) {
       queryParameters["sort"] = requestParameters.sort;
+    }
+
+    if (requestParameters.filterIds !== undefined) {
+      queryParameters["filter[ids]"] = requestParameters.filterIds;
     }
 
     if (requestParameters.filterTitle !== undefined) {
