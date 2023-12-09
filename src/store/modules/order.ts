@@ -4,6 +4,8 @@ import {
   Comment,
   IndexOrderResponse,
   IndexProductsRequest,
+  IndexSpaceResponse,
+  IndexSpacesRequest,
   Order,
   OrdersApi,
   OrderTotals,
@@ -12,13 +14,17 @@ import {
   ProductsApi,
   ShowOrderByBanquetIdRequest,
   ShowOrderResponse,
+  SpaceOrderField,
+  SpacesApi,
   StoreOrderRequest,
-  StoreOrderRequestProductField, StoreOrderRequestTicketField, StoreOrderResponse,
-  UpdateOrderRequest, UpdateOrderResponse
+  StoreOrderRequestProductField,
+  StoreOrderRequestSpaceField,
+  StoreOrderResponse,
+  UpdateOrderRequest,
+  UpdateOrderResponse
 } from "@/openapi";
 import {authHeaders, jsonHeaders} from "@/helpers";
 import router from "@/router";
-import {forEach} from "lodash";
 
 class OrderForm {
   /** Values that were set after constructor */
@@ -28,12 +34,14 @@ class OrderForm {
   public id: number | null;
   public totals: OrderTotals | null;
   public banquetId: number | null;
+  public spaces: StoreOrderRequestSpaceField[];
   public products: StoreOrderRequestProductField[];
   public comments: Comment[] | object[];
 
   constructor(order: Order = null) {
     this.changes = {};
     this.order = order;
+    this.spaces = [];
     this.products = [];
     this.comments = [];
   }
@@ -48,6 +56,64 @@ class OrderForm {
     form.comments = order?.comments ?? [];
 
     return form;
+  }
+
+  public setSpaces(spaces: SpaceOrderField[]): void {
+    const fields: StoreOrderRequestSpaceField[] = [];
+
+    spaces.sort((s1, s2) => {
+      if (s1.id < s2.id) {
+        return -1;
+      }
+      if (s1.id > s1.id) {
+        return 1;
+      }
+      return 0;
+    })
+
+    spaces.forEach((s) => {
+      const field: StoreOrderRequestSpaceField = {
+        spaceId: s.spaceId,
+        startAt: s.startAt,
+        endAt: s.endAt,
+        comments: s.comments,
+      };
+
+      fields.push(field);
+    });
+
+    this.spaces = fields;
+  }
+
+  public setSpace(spaceId: number, startAt: Date = null, endAt: Date = null, comments: AttachingComment[] = []) {
+    const field: StoreOrderRequestSpaceField = {
+      spaceId,
+      startAt,
+      endAt,
+      comments,
+    };
+
+    const space = this.spaces.find((s) => {
+      return s.spaceId === spaceId;
+    });
+
+    if (space) {
+      space.spaceId = field.spaceId;
+      space.startAt = field.startAt;
+      space.endAt = field.endAt;
+      space.comments = field.comments;
+    } else {
+      if (!this.spaces) {
+        this.spaces = [];
+      }
+      this.spaces.push(field);
+    }
+  }
+
+  public unsetSpace(spaceId: number) {
+    this.spaces = this.spaces.filter((s) => {
+      return s.spaceId !== spaceId;
+    });
   }
 
   public setProducts(products: ProductOrderField[]): void {
@@ -176,6 +242,28 @@ class OrderForm {
           return;
         }
 
+        if (name.startsWith('spaces-')) {
+          const field = (this.order.spaces ?? []).find((s) => {
+            return `${s.spaceId}` === name.replace('spaces-', '');
+          });
+
+          const change = this.getChange(name);
+
+          if (field?.startAt !== change?.startAt) {
+            result = true;
+          }
+
+          if (field?.endAt !== change?.endAt) {
+            result = true;
+          }
+
+          if (field?.comments !== change?.comments) {
+            result = true;
+          }
+
+          return;
+        }
+
         if (this.order[name] !== this.getChange(name)) {
           result = true;
           return;
@@ -208,8 +296,20 @@ class OrderForm {
         }
       });
 
+    const spaces = (this.spaces ?? [])
+      .map((f) => {
+        const comments = (f?.comments ?? [])
+          .filter((c) => c?.text?.length);
+
+        return {
+          ...f,
+          comments
+        }
+      });
+
     const request = {
       banquetId: this.banquetId,
+      spaces,
       products,
       comments,
     };
@@ -230,11 +330,15 @@ class OrderState {
   /** Selected order */
   public order: Order | null;
 
+  /** List of ordered spaces */
+  public orderedSpaces: Product[] | null;
   /** List of ordered products */
   public orderedProducts: Product[] | null;
 
   /** Latest show order response */
   public showOrderResponse: ShowOrderResponse | null;
+  /** Latest ordered products response */
+  public orderedSpacesResponse: IndexSpaceResponse | null;
   /** Latest ordered products response */
   public orderedProductsResponse: IndexOrderResponse | null;
   /** Latest create order response */
@@ -257,11 +361,13 @@ class OrderState {
 
     this.showing = false;
     this.order = null;
+    this.orderedSpaces = null;
     this.orderedProducts = null;
 
     this.showOrderResponse = null;
     this.createOrderResponse = null;
     this.updateOrderResponse = null;
+    this.orderedSpacesResponse = null;
     this.orderedProductsResponse = null;
 
     this.isLoadingShowResponse = null;
@@ -296,12 +402,48 @@ const getters = {
   comments(state: OrderState) {
     return state.form.comments ?? [];
   },
+  spaces(state: OrderState) {
+    return state.form.spaces ?? [];
+  },
   products(state: OrderState) {
     return state.form.products ?? [];
   },
   ticketsCount(state: OrderState, rootGetters) {
     return (rootGetters['basket/adultsAmount'] ?? 0)
       + (rootGetters['basket/childrenAmount'] ?? 0);
+  },
+  spacesCount(state: OrderState, getters) {
+    return getters.spaces?.length ?? 0;
+  },
+  orderedSpaces(state: OrderState) {
+    return state.orderedSpaces ?? [];
+  },
+  orderedSpace(state: OrderState, getters) {
+    return (spaceId: number) => {
+      return getters.orderedSpaces.find((s) => {
+        return s.id === spaceId;
+      }) ?? null;
+    };
+  },
+  isMissingOrderedSpaces(state: OrderState, getters) {
+    if (!state.order) {
+      return false;
+    }
+
+    if (!state.order.spaces || !state.order.spaces.length) {
+      return false;
+    }
+
+    let isMissing = false;
+
+    (state.order.spaces ?? []).forEach((f) => {
+      if (!getters['orderedSpace'](f.spaceId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    return isMissing;
   },
   productsCount(state: OrderState, getters) {
     let count = 0;
@@ -331,7 +473,7 @@ const getters = {
       }) ?? null;
     };
   },
-  isMissingOrderedProducts(state: OrderState, getters, rootGetters) {
+  isMissingOrderedProducts(state: OrderState, getters) {
     if (!state.order) {
       return false;
     }
@@ -364,6 +506,9 @@ const getters = {
 
     return total;
   },
+  spacesTotal(state: OrderState) {
+    return state.form?.totals?.spaces ?? 0;
+  },
   productsTotal(state: OrderState) {
     return state.form?.totals?.products ?? 0;
   },
@@ -378,6 +523,12 @@ const getters = {
   },
   isLoadingOrder(state: OrderState) {
     return !state.showOrderResponse;
+  },
+  getOrderedSpacesResponse(state: OrderState) {
+    return state.orderedSpacesResponse;
+  },
+  isLoadingOrderedSpaces(state: OrderState) {
+    return !state.orderedSpacesResponse && !state.orderedSpaces;
   },
   getOrderedProductsResponse(state: OrderState) {
     return state.orderedProductsResponse;
@@ -421,6 +572,13 @@ const actions = {
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
   },
+  setSpaces({ commit }, spaces) {
+    commit('setSpaces', spaces);
+  },
+  setSpace({ commit, dispatch }, {spaceId, startAt, endAt, comments}) {
+    commit('setSpace', {spaceId, startAt, endAt, comments});
+    dispatch('recalculate');
+  },
   setProducts({ commit }, products) {
     commit('setProducts', products);
   },
@@ -449,6 +607,19 @@ const actions = {
         products: 0,
         all: null,
       };
+
+    totals.spaces = 0;
+
+    state.form.spaces.forEach((s) => {
+      if (s.amount) {
+        const space = getters['orderedSpace'](s.spaceId)
+          ?? rootGetters['preview/space'](s.spaceId);
+
+        if (space) {
+          totals.spaces += (space?.price) * s.amount;
+        }
+      }
+    });
 
     totals.products = 0;
 
@@ -503,6 +674,65 @@ const actions = {
     }
 
     dispatch('loadOrderForBanquet', { banquetId, fields })
+  },
+  async loadSpacesForOrder({dispatch, commit, rootGetters}, {order}) {
+    const original = (order?.spaces ?? []).map((s) => {
+      return s.spaceId;
+    });
+
+    const ids = [...new Set(original)];
+
+    if (!ids.length) {
+      commit('setOrderedSpacesResponse', null);
+      commit('setOrderedSpaces', []);
+
+      return;
+    }
+
+    const request: IndexSpacesRequest = {
+      filterIds: ids.join(','),
+      pageSize: 200,
+    };
+
+    const response = await (new SpacesApi())
+      .indexSpaces(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+
+        return error.response;
+      });
+
+    commit('setOrderedSpacesResponse', response);
+    commit('setOrderedSpaces', response.data);
+  },
+  async loadSpacesForOrderIfMissing({ state, commit, dispatch, getters, rootGetters }, { order }) {
+    if (state.orderedSpacesResponse && !getters['isMissingOrderedSpaces']) {
+      return;
+    }
+
+    if (!state.order || !state.order.products || !state.order.products.length) {
+      commit('setOrderedSpacesResponse', null);
+      commit('setOrderedSpaces', []);
+
+      return;
+    }
+
+    let isMissing = false;
+
+    (state.order.products ?? []).forEach((f) => {
+      if (!rootGetters['preview/product'](f.productId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    if (isMissing) {
+      dispatch('loadSpacesForOrder', { order });
+    } else {
+      commit('setOrderedSpacesResponse', null);
+      commit('setOrderedSpaces', []);
+    }
   },
   async loadProductsForOrder({dispatch, commit, rootGetters}, {order}) {
     const original = (order?.products ?? []).map((p) => {
@@ -636,6 +866,13 @@ const mutations = {
   setShowing(state: OrderState, showing) {
     state.showing = showing;
   },
+  setSpaces(state: OrderState, spaces) {
+    state.form.spaces = spaces;
+  },
+  setSpace(state: OrderState, {spaceId, startAt, endAt, comments}) {
+    state.form.setSpace(spaceId, startAt, endAt, comments);
+    state.form.setChange(`spaces-${spaceId}`, {spaceId, startAt, endAt, comments});
+  },
   setProducts(state: OrderState, products) {
     state.form.products = products;
   },
@@ -663,11 +900,17 @@ const mutations = {
     state.form.comments[index]['text'] = comment.text;
     state.form.setChange(`comments`, state.form.comments);
   },
+  setOrderedSpaces(state: OrderState, spaces) {
+    state.orderedSpaces = spaces;
+  },
   setOrderedProducts(state: OrderState, products) {
     state.orderedProducts = products;
   },
   setShowOrderResponse(state: OrderState, response) {
     state.showOrderResponse = response;
+  },
+  setOrderedSpacesResponse(state: OrderState, response) {
+    state.orderedSpacesResponse = response;
   },
   setOrderedProductsResponse(state: OrderState, response) {
     state.orderedProductsResponse = response;
