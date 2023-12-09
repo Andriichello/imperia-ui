@@ -3,13 +3,13 @@ import {
   IndexMenuResponse,
   IndexMenusRequest,
   IndexProductResponse,
-  IndexProductsRequest, IndexTagResponse, IndexTagsRequest,
+  IndexProductsRequest, IndexSpaceResponse, IndexSpacesRequest, IndexTagResponse, IndexTagsRequest,
   Menu,
   MenusApi,
   Product,
   ProductsApi,
   ShowMenuRequest,
-  ShowMenuResponse, Tag, TagsApi
+  ShowMenuResponse, Space, SpacesApi, Tag, TagsApi
 } from "@/openapi";
 import {authHeaders} from "@/helpers";
 
@@ -38,9 +38,12 @@ class PreviewState {
   public menusRequest: IndexMenusRequest | null;
   public menusResponse: IndexMenuResponse | null;
 
+  public spaces: Space[] | null;
+  public spacesResponse: IndexSpaceResponse;
+  public spacesMoreResponse: IndexSpaceResponse;
+
   public products: Product[] | null;
   public productsResponse: IndexProductResponse;
-
   public productsMoreResponse: IndexProductResponse;
 
   constructor() {
@@ -55,6 +58,10 @@ class PreviewState {
 
     this.menus = null;
     this.menusResponse = null;
+
+    this.spaces = null;
+    this.spacesResponse = null;
+    this.spacesMoreResponse = null;
 
     this.products = null;
     this.productsResponse = null;
@@ -83,6 +90,9 @@ const getters = {
   isLoadingMenus(state: PreviewState) {
     return !state.menus && !state.menusResponse;
   },
+  isLoadingSpaces(state: PreviewState) {
+    return !state.spaces && !state.spacesResponse;
+  },
   isLoadingProducts(state: PreviewState) {
     return !state.products && !state.productsResponse;
   },
@@ -103,6 +113,22 @@ const getters = {
   },
   menusResponse(state: PreviewState) {
     return state.menusResponse;
+  },
+  space(state: PreviewState) {
+    return (spaceId: number) => {
+      return (state.spaces ?? []).find((s) => {
+        return s.id === spaceId;
+      });
+    };
+  },
+  spaces(state: PreviewState) {
+    return state.spaces ? state.spaces : [];
+  },
+  spacesResponse(state: PreviewState) {
+    return state.spacesResponse;
+  },
+  spacesMoreResponse(state: PreviewState) {
+    return state.spacesMoreResponse;
   },
   product(state: PreviewState) {
     return (productId: number) => {
@@ -137,9 +163,12 @@ const actions = {
     commit('selectMenu', null);
     commit('selectCategory', null);
     commit('setMenus', null);
+    commit('setSpaces', null);
     commit('setProducts', null);
     commit('setShowMenuResponse', null);
     commit('setMenusResponse', null);
+    commit('setSpacesResponse', null);
+    commit('setMoreSpacesResponse', null);
     commit('setProductsResponse', null);
     commit('setMoreProductsResponse', null);
   },
@@ -249,6 +278,64 @@ const actions = {
     }
 
     dispatch('loadTags');
+  },
+  async loadSpaces({commit, dispatch, rootGetters}) {
+    const request: IndexSpacesRequest = {pageSize: 300};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    const response = await (new SpacesApi())
+      .indexSpaces(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setSpacesResponse', response);
+    commit('setSpaces', response.data);
+  },
+  async loadMoreSpaces({state, dispatch, commit, rootGetters}) {
+    const request: IndexSpacesRequest = {pageSize: 300};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    if (!state.spacesMoreResponse) {
+      request.pageSize = state.spacesResponse.meta.perPage ?? 200;
+      request.pageNumber = 2;
+    } else {
+      request.pageNumber = state.spacesMoreResponse.meta.currentPage + 1;
+    }
+
+    const response = await (new SpacesApi())
+      .indexSpaces(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setMoreSpacesResponse', response);
+    commit('appendSpaces', response.data);
+  },
+  async loadSpacesIfMissing({state, dispatch}) {
+    if (state.spacesResponse) {
+      return;
+    }
+
+    dispatch('loadSpaces');
   },
   async loadProducts({commit, dispatch, rootGetters}, menu: Menu | null) {
     const request: IndexProductsRequest = {pageSize: 300};
@@ -362,11 +449,23 @@ const mutations = {
   setTagsResponse(state: PreviewState, response) {
     state.tagsResponse = response;
   },
+  setSpaces(state: PreviewState, spaces) {
+    state.spaces = spaces;
+  },
+  appendSpaces(state: PreviewState, spaces) {
+    state.spaces = (state.spaces ?? []).concat(spaces);
+  },
   setProducts(state: PreviewState, products) {
     state.products = products;
   },
   appendProducts(state: PreviewState, products) {
     state.products = (state.products ?? []).concat(products);
+  },
+  setSpacesResponse(state: PreviewState, response) {
+    state.spacesResponse = response;
+  },
+  setMoreSpacesResponse(state: PreviewState, response) {
+    state.spacesMoreResponse = response;
   },
   setProductsResponse(state: PreviewState, response) {
     state.productsResponse = response;
