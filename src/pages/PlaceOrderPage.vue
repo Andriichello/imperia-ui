@@ -96,10 +96,33 @@
       <CommentList :comments="comments" class="w-full px-2" v-if="comments.length"
         @on-update="onUpdateComment"/>
 
-      <Preloader :title="$t('preview.order.loading_products')" class="p-2"
-                 v-if="orderId && (isLoadingProducts || isLoadingOrderedProducts)"/>
+      <OrderTabs class="overflow-hidden"
+                 :selected="tab" :only="onlyTabs"
+                 @switch-to-tab="onSwitchToTab"/>
 
-      <List :fields="nonEmptyFields" class="w-full" v-if="nonEmptyFields.length"/>
+      <template v-if="tab === 'products'">
+        <Preloader :title="$t('preview.order.loading_products')" class="p-2"
+                   v-if="orderId && (isLoadingProducts || isLoadingOrderedProducts)"/>
+
+        <List class="w-full" v-if="nonEmptyProductFields.length"
+              :type="'products'"
+              :fields="nonEmptyProductFields"/>
+      </template>
+
+      <template v-else-if="tab === 'spaces'">
+        <Preloader :title="$t('preview.order.loading_spaces')" class="p-2"
+                   v-if="orderId && (isLoadingSpaces || isLoadingOrderedSpaces)"/>
+
+        <List class="w-full" v-if="spaceFields.length"
+              :type="'spaces'"
+              :fields="spaceFields"/>
+      </template>
+
+      <template v-else-if="tab === 'tickets' || tab === 'services'">
+        <div class="w-full max-w-xl flex justify-center items-center">
+          <span class="text-lg">Not implemented yet...</span>
+        </div>
+      </template>
 
       <div class="w-full max-w-xl flex justify-center items-center"
            v-for="errorsGroup in (Object.keys(createOrderErrors?.errors ?? {}))"
@@ -232,10 +255,12 @@ import {ResponseErrors} from "@/helpers";
 import CommentList from "@/components/order/comment/CommentList.vue";
 import BillPicker from "@/components/order/bill/BillPicker.vue";
 import BanquetAdditional from "@/components/order/banquet/BanquetAdditional.vue";
+import OrderTabs from "@/components/order/OrderTabs.vue";
 
 export default defineComponent({
   name: "PlaceOrderPage",
   components: {
+    OrderTabs,
     BanquetAdditional,
     BillPicker,
     CommentList,
@@ -265,6 +290,7 @@ export default defineComponent({
       modal: null,
       maxModalWidth,
       maxModalHeight,
+      isLoadingSpaces: false,
       isLoadingProducts: false,
       isLoadingRestaurant: false,
       isLoadingBanquet: false,
@@ -288,6 +314,7 @@ export default defineComponent({
       menus: 'preview/menus',
       banquet: 'basket/banquet',
       banquetId: 'order/banquetId',
+      tab: 'order/tab',
       banquetForm: 'basket/form',
       isBanquetChanged: 'basket/hasRealChanges',
       showBanquetResponse: 'basket/getShowResponse',
@@ -297,12 +324,14 @@ export default defineComponent({
       orderForm: 'order/form',
       comments: 'order/comments',
       isOrderChanged: 'order/hasRealChanges',
-      fields: 'order/products',
+      spaceFields: 'order/spaces',
+      productFields: 'order/products',
       orderId: 'order/orderId',
       showOrderResponse: 'order/getShowOrderResponse',
       updateOrderResponse: 'order/getUpdateOrderResponse',
       orderedProductsResponse: 'order/getOrderedProductsResponse',
       isLoadingOrderedProducts: 'order/isLoadingOrderedProducts',
+      isLoadingOrderedSpaces: 'order/isLoadingOrderedSpaces',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
       isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
@@ -311,13 +340,31 @@ export default defineComponent({
       isBanquetSavedSuccessfully: 'basket/isSavedSuccessfully',
       isOrderSavedSuccessfully: 'order/isSavedSuccessfully',
     }),
-    nonEmptyFields() {
-      return this.fields.filter((f) => {
+    onlyTabs() {
+      const only = [];
+
+      if (this.spaceFields.length) {
+        only.push('spaces');
+      }
+
+      if (this.productFields.length) {
+        only.push('products');
+      }
+
+      return only;
+    },
+    nonEmptyProductFields() {
+      return this.productFields.filter((f) => {
         return f.amount;
       });
     }
   },
   watch: {
+    onlyTabs(newValue, oldValue) {
+      if (!newValue.includes(this.tab)) {
+        this.setTab(newValue[0] ?? 'products');
+      }
+    },
     banquet(newValue) {
       if (!newValue) {
         this.wasStoreClicked = false;
@@ -334,6 +381,7 @@ export default defineComponent({
       this.createOrderErrors = {};
       this.updateOrderErrors = {};
 
+      this.loadSpacesForOrderIfMissing({order: this.order});
       this.loadProductsForOrderIfMissing({order: this.order});
     },
     showBanquetResponse() {
@@ -414,8 +462,10 @@ export default defineComponent({
       loadBanquetIfMissing: 'basket/loadBanquetIfMissing',
       createBanquet: 'basket/createBanquet',
       updateBanquet: 'basket/updateBanquet',
+      setTab: 'order/setTab',
       loadOrderForBanquet: 'order/loadOrderForBanquet',
       loadOrderForBanquetIfMissing: 'order/loadOrderForBanquetIfMissing',
+      loadSpacesForOrderIfMissing: 'order/loadSpacesForOrderIfMissing',
       loadProductsForOrderIfMissing: 'order/loadProductsForOrderIfMissing',
       setOrder: 'order/setOrder',
       createOrder: 'order/createOrder',
@@ -754,6 +804,9 @@ export default defineComponent({
     onUpdateComment({comment, index}) {
       this.updateComment({comment, index});
     },
+    onSwitchToTab({from, to}) {
+      this.setTab(to);
+    },
   },
   mounted() {
     this.setIsOrderSavedSuccessfully(null);
@@ -769,6 +822,7 @@ export default defineComponent({
     }
 
     if (this.order) {
+      this.loadSpacesForOrderIfMissing({order: this.order});
       this.loadProductsForOrderIfMissing({order: this.order});
     }
 
