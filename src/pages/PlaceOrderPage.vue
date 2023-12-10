@@ -101,26 +101,46 @@
                  @switch-to-tab="onSwitchToTab"/>
 
       <template v-if="tab === 'products'">
-        <Preloader :title="$t('preview.order.loading_products')" class="p-2"
-                   v-if="orderId && (isLoadingProducts || isLoadingOrderedProducts)"/>
 
-        <List class="w-full" v-if="nonEmptyProductFields.length"
-              :type="'products'"
-              :fields="nonEmptyProductFields"/>
+        <template v-if="nonEmptyProductFields.length">
+          <Preloader :title="$t('preview.order.loading_products')" class="p-2"
+                     v-if="orderId && (isLoadingProducts || isLoadingOrderedProducts)"/>
+
+          <List class="w-full" v-if="nonEmptyProductFields.length"
+                :type="'products'"
+                :fields="nonEmptyProductFields"/>
+        </template>
+
+        <template v-else>
+          <div class="w-full flex justify-center items-center p-5 text-xl">
+            <span>{{ $t("preview.order.empty") }}</span>
+          </div>
+        </template>
+
       </template>
 
       <template v-else-if="tab === 'spaces'">
-        <Preloader :title="$t('preview.order.loading_spaces')" class="p-2"
-                   v-if="orderId && (isLoadingSpaces || isLoadingOrderedSpaces)"/>
 
-        <List class="w-full" v-if="spaceFields.length"
-              :type="'spaces'"
-              :fields="spaceFields"/>
+        <template v-if="spaceFields.length">
+          <Preloader :title="$t('preview.order.loading_spaces')" class="p-2"
+                     v-if="orderId && (isLoadingSpaces || isLoadingOrderedSpaces)"/>
+
+          <List class="w-full" v-if="spaceFields.length"
+                :type="'spaces'"
+                :fields="spaceFields"/>
+        </template>
+
+        <template v-else>
+          <div class="w-full flex justify-center items-center p-5 text-xl">
+            <span>{{ $t("preview.order.empty") }}</span>
+          </div>
+        </template>
+
       </template>
 
       <template v-else-if="tab === 'tickets' || tab === 'services'">
-        <div class="w-full max-w-xl flex justify-center items-center">
-          <span class="text-lg">Not implemented yet...</span>
+        <div class="flex w-full justify-center items-center self-center font-semibold text-lg p-4">
+          <span>Not implemented...</span>
         </div>
       </template>
 
@@ -306,6 +326,8 @@ export default defineComponent({
       orderErrors: {},
       createOrderErrors: {},
       updateOrderErrors: {},
+      adultsAmount: 0,
+      childrenAmount: 0,
     };
   },
   computed: {
@@ -341,17 +363,19 @@ export default defineComponent({
       isOrderSavedSuccessfully: 'order/isSavedSuccessfully',
     }),
     onlyTabs() {
-      const only = [];
+      return ['products', 'spaces'];
 
-      if (this.spaceFields.length) {
-        only.push('spaces');
-      }
-
-      if (this.productFields.length) {
-        only.push('products');
-      }
-
-      return only;
+      // const only = [];
+      //
+      // if (this.spaceFields.length) {
+      //   only.push('spaces');
+      // }
+      //
+      // if (this.productFields.length) {
+      //   only.push('products');
+      // }
+      //
+      // return only;
     },
     nonEmptyProductFields() {
       return this.productFields.filter((f) => {
@@ -590,6 +614,9 @@ export default defineComponent({
         this.validateBanquetForm();
       }
     },
+    onChangeAdultsAmount({amount}) {
+      this.onBanquetAdultsAmountUpdate({adultsAmount: amount});
+    },
     onBanquetAdultsAmountUpdate({adultsAmount}) {
       this.setAdultsAmount(adultsAmount);
 
@@ -603,6 +630,9 @@ export default defineComponent({
       if (this.wasStoreClicked) {
         this.validateBanquetForm();
       }
+    },
+    onChangeChildrenAmount({amount}) {
+      this.onBanquetChildrenAmountUpdate({childrenAmount: amount});
     },
     onBanquetChildrenAmountUpdate({childrenAmount}) {
       this.setChildrenAmount(childrenAmount);

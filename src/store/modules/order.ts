@@ -613,13 +613,11 @@ const actions = {
     totals.spaces = 0;
 
     state.form.spaces.forEach((s) => {
-      if (s.amount) {
-        const space = getters['orderedSpace'](s.spaceId)
-          ?? rootGetters['preview/space'](s.spaceId);
+      const space = getters['orderedSpace'](s.spaceId)
+        ?? rootGetters['preview/space'](s.spaceId);
 
-        if (space) {
-          totals.spaces += (space?.price) * s.amount;
-        }
+      if (space) {
+        totals.spaces += (space?.price);
       }
     });
 
