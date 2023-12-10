@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col justify-start items-center gap-1">
     <Divider :title="category.title" :id="'category-' + category.id" :lines="false"/>
-    <List :items="items" class="mb-2"/>
+    <List class="mb-2" :type="type" :items="items"/>
   </div>
 </template>
 
@@ -17,6 +17,10 @@ export default defineComponent({
   props: {
     category: {
       type: Category,
+    },
+    type: {
+      type: String,
+      default: 'products',
     },
     items: {
       type: Array,
