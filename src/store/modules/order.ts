@@ -52,6 +52,7 @@ class OrderForm {
     form.id = order?.id;
     form.totals = order?.totals;
     form.banquetId = order?.banquetId;
+    form.setSpaces(order?.spaces ?? []);
     form.setProducts(order?.products ?? []);
     form.comments = order?.comments ?? [];
 
@@ -74,8 +75,6 @@ class OrderForm {
     spaces.forEach((s) => {
       const field: StoreOrderRequestSpaceField = {
         spaceId: s.spaceId,
-        startAt: s.startAt,
-        endAt: s.endAt,
         comments: s.comments,
       };
 
@@ -85,11 +84,9 @@ class OrderForm {
     this.spaces = fields;
   }
 
-  public setSpace(spaceId: number, startAt: Date = null, endAt: Date = null, comments: AttachingComment[] = []) {
+  public setSpace(spaceId: number, comments: AttachingComment[] = []) {
     const field: StoreOrderRequestSpaceField = {
       spaceId,
-      startAt,
-      endAt,
       comments,
     };
 
@@ -99,8 +96,6 @@ class OrderForm {
 
     if (space) {
       space.spaceId = field.spaceId;
-      space.startAt = field.startAt;
-      space.endAt = field.endAt;
       space.comments = field.comments;
     } else {
       if (!this.spaces) {
@@ -249,14 +244,6 @@ class OrderForm {
 
           const change = this.getChange(name);
 
-          if (field?.startAt !== change?.startAt) {
-            result = true;
-          }
-
-          if (field?.endAt !== change?.endAt) {
-            result = true;
-          }
-
           if (field?.comments !== change?.comments) {
             result = true;
           }
@@ -325,6 +312,8 @@ class OrderForm {
 class OrderState {
   /** True, if order should be shown on page */
   public showing: boolean;
+  /** Selected order's tab */
+  public tab: 'products' | 'spaces' | 'tickets' | 'services';
   /** Selected order's form */
   public form: OrderForm | null;
   /** Selected order */
@@ -360,6 +349,7 @@ class OrderState {
     this.form = new OrderForm();
 
     this.showing = false;
+    this.tab = 'products';
     this.order = null;
     this.orderedSpaces = null;
     this.orderedProducts = null;
@@ -383,6 +373,9 @@ const state = new OrderState();
 const getters = {
   showing(state: OrderState) {
     return state.showing;
+  },
+  tab(state: OrderState) {
+    return state.tab;
   },
   form(state: OrderState) {
     return state.form;
@@ -572,11 +565,20 @@ const actions = {
   setShowing({ commit }, showing) {
     commit('setShowing', showing);
   },
+  setTab({ commit }, tab: 'products' | 'spaces' | 'tickets' | 'services') {
+    commit('setTab', tab);
+  },
   setSpaces({ commit }, spaces) {
     commit('setSpaces', spaces);
   },
-  setSpace({ commit, dispatch }, {spaceId, startAt, endAt, comments}) {
-    commit('setSpace', {spaceId, startAt, endAt, comments});
+  setSpace({ commit, dispatch }, {spaceId, comments}) {
+    commit('setSpace', {spaceId, comments});
+    dispatch('recalculate');
+  },
+  unsetSpace({ commit, dispatch }, {spaceId}) {
+    console.log('unsetSpace: ', {spaceId});
+
+    commit('unsetSpace', {spaceId});
     dispatch('recalculate');
   },
   setProducts({ commit }, products) {
@@ -644,7 +646,7 @@ const actions = {
   async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId, fields}) {
     const request: ShowOrderByBanquetIdRequest = {
       id: banquetId,
-      include: 'comments,products,products.comments',
+      include: 'comments,spaces,spaces.comments,products,products.comments',
     };
 
     commit('setIsLoadingShowResponse', true);
@@ -866,12 +868,19 @@ const mutations = {
   setShowing(state: OrderState, showing) {
     state.showing = showing;
   },
+  setTab(state: OrderState, tab: 'products' | 'spaces' | 'tickets' | 'services') {
+    state.tab = tab;
+  },
   setSpaces(state: OrderState, spaces) {
     state.form.spaces = spaces;
   },
-  setSpace(state: OrderState, {spaceId, startAt, endAt, comments}) {
-    state.form.setSpace(spaceId, startAt, endAt, comments);
-    state.form.setChange(`spaces-${spaceId}`, {spaceId, startAt, endAt, comments});
+  setSpace(state: OrderState, {spaceId, comments}) {
+    state.form.setSpace(spaceId, comments);
+    state.form.setChange(`spaces-${spaceId}`, {spaceId, comments});
+  },
+  unsetSpace(state: OrderState, {spaceId}) {
+    state.form.unsetSpace(spaceId);
+    state.form.setChange(`spaces-${spaceId}`, {spaceId});
   },
   setProducts(state: OrderState, products) {
     state.form.products = products;
