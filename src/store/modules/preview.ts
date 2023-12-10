@@ -1,5 +1,6 @@
 import {
-  Category,
+  CategoriesApi,
+  Category, IndexCategoriesRequest, IndexCategoryResponse,
   IndexMenuResponse,
   IndexMenusRequest,
   IndexProductResponse,
@@ -14,10 +15,12 @@ import {
 import {authHeaders} from "@/helpers";
 
 class PreviewSelections {
+  public tab: 'products' | 'spaces' | 'ticket' | 'services';
   public menu: Menu | null;
   public search: string | null;
   public category: Category | null;
   constructor() {
+    this.tab = 'products';
     this.menu = null;
     this.search = null;
     this.category = null;
@@ -42,6 +45,9 @@ class PreviewState {
   public spacesResponse: IndexSpaceResponse;
   public spacesMoreResponse: IndexSpaceResponse;
 
+  public spaceCategories: Category[] | null;
+  public spaceCategoriesResponse: IndexCategoryResponse | null;
+
   public products: Product[] | null;
   public productsResponse: IndexProductResponse;
   public productsMoreResponse: IndexProductResponse;
@@ -63,6 +69,9 @@ class PreviewState {
     this.spacesResponse = null;
     this.spacesMoreResponse = null;
 
+    this.spaceCategories = null;
+    this.spacesMoreResponse = null;
+
     this.products = null;
     this.productsResponse = null;
     this.productsMoreResponse = null;
@@ -78,6 +87,9 @@ const getters = {
   selected(state: PreviewState) {
     return state.selections.menu;
   },
+  tab(state: PreviewState) {
+    return state.selections.tab;
+  },
   category(state: PreviewState) {
     return state.selections.category;
   },
@@ -89,6 +101,9 @@ const getters = {
   },
   isLoadingMenus(state: PreviewState) {
     return !state.menus && !state.menusResponse;
+  },
+  isLoadingSpaceCategories(state: PreviewState) {
+    return !state.spaceCategories && !state.spaceCategoriesResponse;
   },
   isLoadingSpaces(state: PreviewState) {
     return !state.spaces && !state.spacesResponse;
@@ -113,6 +128,12 @@ const getters = {
   },
   menusResponse(state: PreviewState) {
     return state.menusResponse;
+  },
+  spaceCategories(state: PreviewState) {
+    return state.spaceCategories;
+  },
+  spaceCategoriesResponse(state: PreviewState) {
+    return state.spacesMoreResponse;
   },
   space(state: PreviewState) {
     return (spaceId: number) => {
@@ -160,17 +181,23 @@ const getters = {
 
 const actions = {
   clear({commit}) {
+    commit('selectTab', 'products');
     commit('selectMenu', null);
     commit('selectCategory', null);
     commit('setMenus', null);
+    commit('setSpaceCategories', null);
     commit('setSpaces', null);
     commit('setProducts', null);
     commit('setShowMenuResponse', null);
     commit('setMenusResponse', null);
+    commit('setSpaceCategoriesResponse', null);
     commit('setSpacesResponse', null);
     commit('setMoreSpacesResponse', null);
     commit('setProductsResponse', null);
     commit('setMoreProductsResponse', null);
+  },
+  selectTab({commit}, tab: 'products' | 'spaces' | 'ticket' | 'services') {
+    commit('selectTab', tab);
   },
   async selectMenu({commit, dispatch}, menu: Menu | null) {
     commit('selectMenu', menu);
@@ -278,6 +305,35 @@ const actions = {
     }
 
     dispatch('loadTags');
+  },
+  async loadSpaceCategories({commit, dispatch, rootGetters}) {
+    const request: IndexCategoriesRequest = {pageSize: 300, filterTarget: 'spaces'};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    const response = await (new CategoriesApi())
+      .indexCategories(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setSpaceCategoriesResponse', response);
+    commit('setSpaceCategories', response.data);
+  },
+  async loadSpaceCategoriesIfMissing({state, dispatch}) {
+    if (state.spaceCategoriesResponse) {
+      return;
+    }
+
+    dispatch('loadSpaceCategories');
   },
   async loadSpaces({commit, dispatch, rootGetters}) {
     const request: IndexSpacesRequest = {pageSize: 300};
@@ -419,6 +475,9 @@ const actions = {
 };
 
 const mutations = {
+  selectTab(state: PreviewState, tab: 'products' | 'spaces' | 'ticket' | 'services') {
+    state.selections.tab = tab;
+  },
   selectMenu(state: PreviewState, menu) {
     state.selections.menu = menu;
   },
@@ -448,6 +507,12 @@ const mutations = {
   },
   setTagsResponse(state: PreviewState, response) {
     state.tagsResponse = response;
+  },
+  setSpaceCategories(state: PreviewState, categories) {
+    state.spaceCategories = categories;
+  },
+  setSpaceCategoriesResponse(state: PreviewState, response) {
+    state.spaceCategoriesResponse = response;
   },
   setSpaces(state: PreviewState, spaces) {
     state.spaces = spaces;
