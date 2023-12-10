@@ -99,7 +99,12 @@
         "title": "Menus"
       },
       "loading": "Loading menus",
+      "loading_spaces": "Loading spaces",
       "loading_products": "Loading items"
+    },
+    "space": {
+      "floor": "Floor",
+      "number": "Number"
     },
     "item": {
       "add": "Add"
@@ -116,6 +121,7 @@
       "ticket_plural2": "tickets",
       "ticket_plural5": "tickets",
       "loading": "Loading order",
+      "loading_spaces": "Loading spaces",
       "loading_products": "Loading products",
       "new_order": "New order",
       "store": "Store order",
