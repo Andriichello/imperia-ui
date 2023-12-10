@@ -39,18 +39,6 @@ export interface StoreOrderRequestSpaceField {
    */
   spaceId: number;
   /**
-   * If not present then banquet start_at date will be used.
-   * @type {Date}
-   * @memberof StoreOrderRequestSpaceField
-   */
-  startAt?: Date;
-  /**
-   * If not present then banquet end_at date will be used.
-   * @type {Date}
-   * @memberof StoreOrderRequestSpaceField
-   */
-  endAt?: Date;
-  /**
    *
    * @type {Array<AttachingComment>}
    * @memberof StoreOrderRequestSpaceField
@@ -89,8 +77,6 @@ export function StoreOrderRequestSpaceFieldFromJSONTyped(
   }
   return {
     spaceId: json["space_id"],
-    startAt: !exists(json, "start_at") ? undefined : new Date(json["start_at"]),
-    endAt: !exists(json, "end_at") ? undefined : new Date(json["end_at"]),
     comments: !exists(json, "comments")
       ? undefined
       : (json["comments"] as Array<any>).map(AttachingCommentFromJSON),
@@ -111,9 +97,6 @@ export function StoreOrderRequestSpaceFieldToJSON(
   }
   return {
     space_id: value.spaceId,
-    start_at:
-      value.startAt === undefined ? undefined : value.startAt.toISOString(),
-    end_at: value.endAt === undefined ? undefined : value.endAt.toISOString(),
     comments:
       value.comments === undefined
         ? undefined
