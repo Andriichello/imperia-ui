@@ -6,7 +6,7 @@
 
       <template v-if="products && categories">
         <template v-for="c in categories" :key="c.id">
-          <ListOfCategory :category="c" :items="filterByCategory(products, c)"
+          <ListOfCategory :type="'products'" :category="c" :items="filterByCategory(products, c)"
                           :id="`menu-category-${c.id}`"/>
         </template>
       </template>
@@ -42,6 +42,7 @@ export default defineComponent({
       menu: "preview/selected",
       menus: "preview/menus",
       category: "preview/category",
+      spaces: "preview/spaces",
       products: "preview/products",
       categories: "preview/categories",
       restaurant: "preview/selected",
