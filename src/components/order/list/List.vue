@@ -18,6 +18,14 @@
         </template>
       </template>
 
+      <template v-else-if="type === 'services'">
+        <template v-for="group in groups" :key="'services-' + group[0].serviceId">
+          <template v-for="subGroups in splitGroupByBatch(group)" :key="subGroups[0].serviceId" >
+            <Service :service-id="subGroups[0].serviceId"/>
+          </template>
+        </template>
+      </template>
+
     </div>
   </div>
 </template>
@@ -26,6 +34,7 @@
 import { defineComponent } from "vue";
 import Product from "@/components/order/list/items/Product.vue";
 import Space from "@/components/order/list/items/Space.vue";
+import Service from "@/components/order/list/items/Service.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -38,6 +47,7 @@ export default defineComponent({
     fields: Array,
   },
   components: {
+    Service,
     Space,
     Product,
   },
@@ -46,7 +56,7 @@ export default defineComponent({
       const map = new Map();
 
       this.fields.forEach((f) => {
-        if (this.type === 'products' && !f.amount) {
+        if ((this.type === 'products' || this.type === 'services') && !f.amount) {
           //
         } else {
           let id = null;
@@ -57,6 +67,10 @@ export default defineComponent({
 
           if (this.type === 'products') {
             id = f.productId;
+          }
+
+          if (this.type === 'services') {
+            id = f.serviceId;
           }
 
           let fields = map.has(id) ? map.get(id) : [];

@@ -19,6 +19,14 @@
                      v-else-if="spaces && spaces.length"/>
     </template>
 
+    <template v-if="tab === 'services'">
+      <Preloader :title="$t('preview.menu.loading_services')" class="p-2"
+                 v-if="!isLoadingRestaurants && (isLoadingServiceCategories || isLoadingServices)"/>
+
+      <PreviewServices class="pb-4"
+                     v-else-if="services && services.length"/>
+    </template>
+
     <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
       <OrderSwitcher class="w-full max-w-4xl"
                      :show-arrow="true"
@@ -35,10 +43,12 @@ import {mapActions, mapGetters} from "vuex";
 import Preloader from "@/components/preview/loading/Preloader.vue";
 import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
 import PreviewSpaces from "@/components/preview/PreviewSpaces.vue";
+import PreviewServices from "@/components/preview/PreviewServices.vue";
 
 export default defineComponent({
   name: "PlaceMenuPage",
   components: {
+    PreviewServices,
     PreviewSpaces,
     OrderSwitcher,
     Preloader,
@@ -55,6 +65,10 @@ export default defineComponent({
         if (newTab === 'spaces') {
           this.loadSpaceCategoriesIfMissing();
           this.loadSpacesIfMissing();
+        }
+        if (newTab === 'services') {
+          this.loadServiceCategoriesIfMissing();
+          this.loadServicesIfMissing();
         }
       },
     },
@@ -92,13 +106,17 @@ export default defineComponent({
       tab: 'preview/tab',
       menu: 'preview/selected',
       spaces: 'preview/spaces',
+      services: 'preview/services',
       spaceCategories: 'preview/spaceCategories',
+      serviceCategories: 'preview/serviceCategories',
       order: 'order/order',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
       showRestaurantResponse: 'restaurants/getShowResponse',
       isLoadingSpaces: "preview/isLoadingSpaces",
       isLoadingSpaceCategories: "preview/isLoadingSpaceCategories",
+      isLoadingServices: "preview/isLoadingServices",
+      isLoadingServiceCategories: "preview/isLoadingServiceCategories",
       isLoadingMenus: "preview/isLoadingMenus",
       isLoadingRestaurants: "restaurants/isLoadingRestaurants",
       isLoadingBanquet: "basket/isLoadingShowResponse",
@@ -112,6 +130,8 @@ export default defineComponent({
       selectMenu: "preview/selectMenu",
       loadSpacesIfMissing: "preview/loadSpacesIfMissing",
       loadSpaceCategoriesIfMissing: "preview/loadSpaceCategoriesIfMissing",
+      loadServicesIfMissing: "preview/loadServicesIfMissing",
+      loadServiceCategoriesIfMissing: "preview/loadServiceCategoriesIfMissing",
       loadAndSelectMenu: "preview/loadAndSelectMenu",
       loadMenusAndSelect: "preview/loadMenusAndSelect",
       loadMenusAndSelectFirst: "preview/loadMenusAndSelectFirst",
@@ -124,6 +144,8 @@ export default defineComponent({
       loadSpacesForOrderIfMissing: "order/loadSpacesForOrderIfMissing",
       loadProductsForOrder: "order/loadProductsForOrder",
       loadProductsForOrderIfMissing: "order/loadProductsForOrderIfMissing",
+      loadServicesForOrder: "order/loadServicesForOrder",
+      loadServicesForOrderIfMissing: "order/loadServicesForOrderIfMissing",
     }),
     onSwitchToOrder() {
       const restaurantId = +this.$route.params['restaurantId'];
@@ -201,6 +223,7 @@ export default defineComponent({
     if (this.order) {
       this.loadBanquetIfMissing({id: this.order.banquetId});
       this.loadSpacesForOrderIfMissing({order: this.order});
+      this.loadServicesForOrderIfMissing({order: this.order});
       this.loadProductsForOrderIfMissing({order: this.order});
     }
   },

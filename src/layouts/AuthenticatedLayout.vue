@@ -31,6 +31,7 @@
       <template v-if="isMenuPage && !failed">
         <OrderTabs class="bg-base-100 p-2 h-auto w-full overflow-y-hidden"
                    :selected="tab"
+                   :only="['products', 'spaces', 'services']"
                    @switch-to-tab="onSwitchTab"/>
 
         <div class="w-full sticky top-0 z-40" v-if="tab === 'products'">

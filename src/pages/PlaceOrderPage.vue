@@ -138,7 +138,26 @@
 
       </template>
 
-      <template v-else-if="tab === 'tickets' || tab === 'services'">
+      <template v-else-if="tab === 'services'">
+
+        <template v-if="nonEmptyServiceFields.length">
+          <Preloader :title="$t('preview.order.loading_spaces')" class="p-2"
+                     v-if="orderId && (isLoadingServices || isLoadingOrderedServices)"/>
+
+          <List class="w-full" v-if="nonEmptyServiceFields.length"
+                :type="'services'"
+                :fields="nonEmptyServiceFields"/>
+        </template>
+
+        <template v-else>
+          <div class="w-full flex justify-center items-center p-5 text-xl">
+            <span>{{ $t("preview.order.empty") }}</span>
+          </div>
+        </template>
+
+      </template>
+
+      <template v-else-if="tab === 'tickets'">
         <div class="flex w-full justify-center items-center self-center font-semibold text-lg p-4">
           <span>Not implemented...</span>
         </div>
@@ -311,6 +330,7 @@ export default defineComponent({
       maxModalWidth,
       maxModalHeight,
       isLoadingSpaces: false,
+      isLoadingServices: false,
       isLoadingProducts: false,
       isLoadingRestaurant: false,
       isLoadingBanquet: false,
@@ -347,6 +367,7 @@ export default defineComponent({
       comments: 'order/comments',
       isOrderChanged: 'order/hasRealChanges',
       spaceFields: 'order/spaces',
+      serviceFields: 'order/services',
       productFields: 'order/products',
       orderId: 'order/orderId',
       showOrderResponse: 'order/getShowOrderResponse',
@@ -354,6 +375,7 @@ export default defineComponent({
       orderedProductsResponse: 'order/getOrderedProductsResponse',
       isLoadingOrderedProducts: 'order/isLoadingOrderedProducts',
       isLoadingOrderedSpaces: 'order/isLoadingOrderedSpaces',
+      isLoadingOrderedServices: 'order/isLoadingOrderedServices',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
       isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
@@ -363,7 +385,7 @@ export default defineComponent({
       isOrderSavedSuccessfully: 'order/isSavedSuccessfully',
     }),
     onlyTabs() {
-      return ['products', 'spaces'];
+      return ['products', 'spaces', 'services'];
 
       // const only = [];
       //
@@ -379,6 +401,11 @@ export default defineComponent({
     },
     nonEmptyProductFields() {
       return this.productFields.filter((f) => {
+        return f.amount;
+      });
+    },
+    nonEmptyServiceFields() {
+      return this.serviceFields.filter((f) => {
         return f.amount;
       });
     }
@@ -407,6 +434,7 @@ export default defineComponent({
 
       this.loadSpacesForOrderIfMissing({order: this.order});
       this.loadProductsForOrderIfMissing({order: this.order});
+      this.loadServicesForOrderIfMissing({order: this.order});
     },
     showBanquetResponse() {
       this.isLoadingBanquet = false;
@@ -491,6 +519,7 @@ export default defineComponent({
       loadOrderForBanquetIfMissing: 'order/loadOrderForBanquetIfMissing',
       loadSpacesForOrderIfMissing: 'order/loadSpacesForOrderIfMissing',
       loadProductsForOrderIfMissing: 'order/loadProductsForOrderIfMissing',
+      loadServicesForOrderIfMissing: 'order/loadServicesForOrderIfMissing',
       setOrder: 'order/setOrder',
       createOrder: 'order/createOrder',
       updateOrder: 'order/updateOrder',
@@ -821,6 +850,10 @@ export default defineComponent({
 
       if (this.orderId) {
         this.isUpdatingOrder = true;
+
+        const request = this.orderForm.asUpdate();
+        console.log({request})
+
         this.updateOrder({ id: this.orderId, request: this.orderForm.asUpdate() });
       }
     },
@@ -854,6 +887,7 @@ export default defineComponent({
     if (this.order) {
       this.loadSpacesForOrderIfMissing({order: this.order});
       this.loadProductsForOrderIfMissing({order: this.order});
+      this.loadServicesForOrderIfMissing({order: this.order});
     }
 
     const restaurantId = +this.$route.params['restaurantId'];

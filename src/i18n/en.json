@@ -100,7 +100,8 @@
       },
       "loading": "Loading menus",
       "loading_spaces": "Loading spaces",
-      "loading_products": "Loading items"
+      "loading_products": "Loading items",
+      "loading_services": "Loading services"
     },
     "space": {
       "floor": "Floor",
@@ -127,6 +128,7 @@
       "loading": "Loading order",
       "loading_spaces": "Loading spaces",
       "loading_products": "Loading products",
+      "loading_services": "Loading serivces",
       "new_order": "New order",
       "store": "Store order",
       "was_successfully_saved": "Order was successfully saved",

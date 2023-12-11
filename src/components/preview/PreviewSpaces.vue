@@ -52,51 +52,6 @@ export default defineComponent({
       return this.filterByCategory(this.spaces, null)
     },
   },
-  watch: {
-    menu: {
-      handler(newMenu, oldMenu) {
-        if (newMenu !== oldMenu && newMenu.products && newMenu.products.length) {
-          const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
-
-          if (scrollPosition > 80) {
-            setTimeout(function () {
-              window.scrollTo({
-                top: 80,
-                behavior: 'smooth',
-              });
-            }, 200);
-          }
-        }
-      },
-    },
-    category: {
-      async handler(newCategory) {
-        if (newCategory) {
-
-          const divider = document.getElementById('category-' + newCategory.id);
-
-          if ((this.shouldNotScroll === 0 || (Date.now() - this.shouldNotScroll) > 100) && divider) {
-            this.ignoringScroll = true;
-
-            window.scrollTo({
-              top: divider.getBoundingClientRect().top + window.pageYOffset - (window.innerHeight >= 800 ? 98 : 54),
-              behavior: 'smooth'
-            });
-
-            const idToCheck = this.ignoringScrollId++;
-
-            setTimeout(() => {
-              if (idToCheck === (this.ignoringScrollId - 1)) {
-                this.ignoringScroll = false;
-              }
-            }, 1000)
-          }
-        }
-
-        this.shouldNotScroll = 0;
-      },
-    },
-  },
   methods: {
     ...mapActions({
       selectMenu: 'preview/selectMenu',

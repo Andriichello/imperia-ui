@@ -38,7 +38,7 @@ export default defineComponent({
     image() {
       const p = this.item;
 
-      if (p.media && p.media.length) {
+      if (p && p.media && p.media.length) {
         return p.media[0].url;
       }
 

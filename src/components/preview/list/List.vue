@@ -29,6 +29,20 @@
       </template>
     </template>
 
+    <template v-if="type === 'services'">
+      <template v-if="number === 1">
+        <div class="w-full flex flex-col gap-3">
+          <Service :item="item" v-for="item in this.items" :key="item.id"/>
+        </div>
+      </template>
+
+      <template v-else>
+        <div class="list-col flex flex-col gap-3" v-for="(column, index) in this.splitOnColumns(this.items ?? [], this.number)" :key="index" :id="'list-' + index">
+          <Service :item="item" v-for="item in column" :key="item.id"/>
+        </div>
+      </template>
+    </template>
+
   </div>
 </template>
 
@@ -36,6 +50,7 @@
 import { defineComponent } from "vue";
 import Product from "./items/Product.vue";
 import Space from "@/components/preview/list/items/Space.vue";
+import Service from "@/components/preview/list/items/Service.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -48,6 +63,7 @@ export default defineComponent({
     items: Array,
   },
   components: {
+    Service,
     Space,
     Product,
   },
