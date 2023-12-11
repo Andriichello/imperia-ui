@@ -30,6 +30,21 @@
 
           <div class="form-control">
             <label class="label cursor-pointer">
+              <input type="checkbox" v-model="showSpacesVal" class="checkbox checkbox-sm checkbox-primary" />
+              <span class="label-text pl-2">{{ $t('banquet.bill.spaces') }}</span>
+            </label>
+          </div>
+
+
+          <div class="form-control">
+            <label class="label cursor-pointer">
+              <input type="checkbox" v-model="showServicesVal" class="checkbox checkbox-sm checkbox-primary" />
+              <span class="label-text pl-2">{{ $t('banquet.bill.services') }}</span>
+            </label>
+          </div>
+
+          <div class="form-control">
+            <label class="label cursor-pointer">
               <input type="checkbox" v-model="showMenusVal" class="checkbox checkbox-sm checkbox-primary" />
               <span class="label-text pl-2">{{ $t('banquet.bill.menus') }}</span>
             </label>
