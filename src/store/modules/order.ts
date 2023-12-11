@@ -2,8 +2,8 @@ import {
   AttachingComment,
   BanquetsApi,
   Comment,
-  IndexOrderResponse,
-  IndexProductsRequest,
+  IndexOrderResponse, IndexProductResponse,
+  IndexProductsRequest, IndexServiceResponse, IndexServicesRequest,
   IndexSpaceResponse,
   IndexSpacesRequest,
   Order,
@@ -11,13 +11,13 @@ import {
   OrderTotals,
   Product,
   ProductOrderField,
-  ProductsApi,
+  ProductsApi, Service, ServiceOrderField, ServicesApi,
   ShowOrderByBanquetIdRequest,
-  ShowOrderResponse,
+  ShowOrderResponse, Space,
   SpaceOrderField,
   SpacesApi,
   StoreOrderRequest,
-  StoreOrderRequestProductField,
+  StoreOrderRequestProductField, StoreOrderRequestServiceField,
   StoreOrderRequestSpaceField,
   StoreOrderResponse,
   UpdateOrderRequest,
@@ -36,6 +36,7 @@ class OrderForm {
   public banquetId: number | null;
   public spaces: StoreOrderRequestSpaceField[];
   public products: StoreOrderRequestProductField[];
+  public services: StoreOrderRequestServiceField[];
   public comments: Comment[] | object[];
 
   constructor(order: Order = null) {
@@ -43,6 +44,7 @@ class OrderForm {
     this.order = order;
     this.spaces = [];
     this.products = [];
+    this.services = [];
     this.comments = [];
   }
 
@@ -54,6 +56,7 @@ class OrderForm {
     form.banquetId = order?.banquetId;
     form.setSpaces(order?.spaces ?? []);
     form.setProducts(order?.products ?? []);
+    form.setServices(order?.services ?? []);
     form.comments = order?.comments ?? [];
 
     return form;
@@ -173,6 +176,59 @@ class OrderForm {
     });
   }
 
+  public setServices(services: ServiceOrderField[]): void {
+    const fields: StoreOrderRequestServiceField[] = [];
+
+    services.sort((s1, s2) => {
+      if (s1.id < s2.id) {
+        return -1;
+      }
+      if (s1.id > s2.id) {
+        return 1;
+      }
+      return 0;
+    });
+
+    services.forEach((s) => {
+      const field: StoreOrderRequestServiceField = {
+        serviceId: s.serviceId,
+        amount: s.amount,
+        duration: s.duration,
+        comments: s.comments, // replace with your actual ServiceOrderField properties
+      };
+      fields.push(field);
+    });
+
+    this.services = fields;
+  }
+
+  public setService(serviceId: number, amount: number, duration: number, comments: AttachingComment[] = []) {
+    const field: StoreOrderRequestServiceField = {
+      serviceId,
+      amount,
+      duration,
+      comments,
+    };
+
+    const service = this.services.find((s) => s.serviceId === serviceId);
+
+    if (service) {
+      service.serviceId = field.serviceId;
+      service.amount = field.amount;
+      service.duration = field.duration;
+      service.comments = field.comments;
+    } else {
+      if (!this.services) {
+        this.services = [];
+      }
+      this.services.push(field);
+    }
+  }
+
+  public unsetService(serviceId: number) {
+    this.services = this.services.filter((s) => s.serviceId !== serviceId);
+  }
+
   public getChanges() {
     return this.changes;
   }
@@ -251,6 +307,28 @@ class OrderForm {
           return;
         }
 
+        if (name.startsWith('services-')) {
+          const field = (this.order.services ?? []).find((s) => {
+            return `${s.serviceId}` === name.replace('services-', '');
+          });
+
+          const change = this.getChange(name);
+
+          if (field?.amount !== change?.comments) {
+            result = true;
+          }
+
+          if (field?.duration !== change?.duration) {
+            result = true;
+          }
+
+          if (field?.comments !== change?.comments) {
+            result = true;
+          }
+
+          return;
+        }
+
         if (this.order[name] !== this.getChange(name)) {
           result = true;
           return;
@@ -294,10 +372,25 @@ class OrderForm {
         }
       });
 
+    const services = (this.services ?? [])
+      .filter((f) => {
+        return f.amount;
+      })
+      .map((f) => {
+        const comments = (f?.comments ?? [])
+          .filter((c) => c?.text?.length);
+
+        return {
+          ...f,
+          comments
+        }
+      });
+
     const request = {
       banquetId: this.banquetId,
       spaces,
       products,
+      services,
       comments,
     };
 
@@ -320,16 +413,20 @@ class OrderState {
   public order: Order | null;
 
   /** List of ordered spaces */
-  public orderedSpaces: Product[] | null;
+  public orderedSpaces: Space[] | null;
   /** List of ordered products */
   public orderedProducts: Product[] | null;
+  /** List of ordered services */
+  public orderedServices: Service[] | null;
 
   /** Latest show order response */
   public showOrderResponse: ShowOrderResponse | null;
   /** Latest ordered products response */
   public orderedSpacesResponse: IndexSpaceResponse | null;
   /** Latest ordered products response */
-  public orderedProductsResponse: IndexOrderResponse | null;
+  public orderedProductsResponse: IndexProductResponse | null;
+  /** Latest ordered services response */
+  public orderedServicesResponse: IndexServiceResponse | null;
   /** Latest create order response */
   public createOrderResponse: StoreOrderResponse | null;
   /** Latest update order response */
@@ -359,6 +456,7 @@ class OrderState {
     this.updateOrderResponse = null;
     this.orderedSpacesResponse = null;
     this.orderedProductsResponse = null;
+    this.orderedServicesResponse = null;
 
     this.isLoadingShowResponse = null;
     this.isLoadingCreateResponse = null;
@@ -397,6 +495,20 @@ const getters = {
   },
   spaces(state: OrderState) {
     return state.form.spaces ?? [];
+  },
+  services(state: OrderState) {
+    return state.form.services ?? [];
+  },
+  servicesCount(state: OrderState, getters) {
+    let count = 0;
+
+    getters.services.forEach((s) => {
+      if (s.amount) {
+        count += s.amount;
+      }
+    });
+
+    return count;
   },
   products(state: OrderState) {
     return state.form.products ?? [];
@@ -466,6 +578,36 @@ const getters = {
       }) ?? null;
     };
   },
+  orderedServices(state: OrderState) {
+    return state.orderedServices ?? [];
+  },
+  orderedService(state: OrderState, getters) {
+    return (serviceId: number) => {
+      return getters.orderedServices.find((s) => {
+        return s.id === serviceId;
+      }) ?? null;
+    };
+  },
+  isMissingOrderedServices(state: OrderState, getters) {
+    if (!state.order) {
+      return false;
+    }
+
+    if (!state.order.services || !state.order.services.length) {
+      return false;
+    }
+
+    let isMissing = false;
+
+    (state.order.services ?? []).forEach((f) => {
+      if (!getters['orderedService'](f.serviceId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    return isMissing;
+  },
   isMissingOrderedProducts(state: OrderState, getters) {
     if (!state.order) {
       return false;
@@ -502,6 +644,9 @@ const getters = {
   spacesTotal(state: OrderState) {
     return state.form?.totals?.spaces ?? 0;
   },
+  servicesTotal(state: OrderState) {
+    return state.form?.totals?.services ?? 0;
+  },
   productsTotal(state: OrderState) {
     return state.form?.totals?.products ?? 0;
   },
@@ -528,6 +673,12 @@ const getters = {
   },
   isLoadingOrderedProducts(state: OrderState) {
     return !state.orderedProductsResponse && !state.orderedProducts;
+  },
+  getOrderedServicesResponse(state: OrderState) {
+    return state.orderedServicesResponse;
+  },
+  isLoadingOrderedServices(state: OrderState) {
+    return !state.orderedServicesResponse && !state.orderedServices;
   },
   getCreateOrderResponse(state: OrderState) {
     return state.createOrderResponse;
@@ -594,6 +745,14 @@ const actions = {
     commit('unsetProduct', {productId, variantId, batch});
     dispatch('recalculate');
   },
+  setService({ commit, dispatch }, {serviceId, amount, duration, comments}) {
+    commit('setService', {serviceId, amount, duration, comments});
+    dispatch('recalculate');
+  },
+  unsetService({ commit, dispatch }, {serviceId}) {
+    commit('unsetService', {serviceId});
+    dispatch('recalculate');
+  },
   addComment({ commit }, {text}) {
     commit('addComment', {text});
   },
@@ -621,6 +780,20 @@ const actions = {
       }
     });
 
+    totals.services = 0;
+
+    state.form.services.forEach((s) => {
+      if (s.amount) {
+        const service = getters['orderedService'](s.serviceId)
+          ?? rootGetters['preview/service'](s.serviceId);
+
+        if (service) {
+          totals.services += (service?.oncePaidPrice + service?.hourlyPaidPrice * (s?.duration) / 60.0)
+            * s.amount;
+        }
+      }
+    });
+
     totals.products = 0;
 
     state.form.products.forEach((p) => {
@@ -644,7 +817,7 @@ const actions = {
   async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId, fields}) {
     const request: ShowOrderByBanquetIdRequest = {
       id: banquetId,
-      include: 'comments,spaces,spaces.comments,products,products.comments',
+      include: 'comments,services,services.comments,spaces,spaces.comments,products,products.comments',
     };
 
     commit('setIsLoadingShowResponse', true);
@@ -798,6 +971,65 @@ const actions = {
       commit('setOrderedProducts', []);
     }
   },
+  async loadServicesForOrder({dispatch, commit, rootGetters}, {order}) {
+    const original = (order?.services ?? []).map((s) => {
+      return s.serviceId;
+    });
+
+    const ids = [...new Set(original)];
+
+    if (!ids.length) {
+      commit('setOrderedServicesResponse', null);
+      commit('setOrderedServices', []);
+
+      return;
+    }
+
+    const request: IndexServicesRequest = {
+      filterIds: ids.join(','),
+      pageSize: 200,
+    };
+
+    const response = await (new ServicesApi())
+      .indexServices(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+
+        return error.response;
+      });
+
+    commit('setOrderedServicesResponse', response);
+    commit('setOrderedServices', response.data);
+  },
+  async loadServicesForOrderIfMissing({ state, commit, dispatch, getters, rootGetters }, { order }) {
+    if (state.orderedServicesResponse && !getters['isMissingOrderedServices']) {
+      return;
+    }
+
+    if (!state.order || !state.order.services || !state.order.services.length) {
+      commit('setOrderedServicesResponse', null);
+      commit('setOrderedServices', []);
+
+      return;
+    }
+
+    let isMissing = false;
+
+    (state.order.services ?? []).forEach((f) => {
+      if (!rootGetters['preview/service'](f.serviceId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    if (isMissing) {
+      dispatch('loadServicesForOrder', { order });
+    } else {
+      commit('setOrderedServicesResponse', null);
+      commit('setOrderedServices', []);
+    }
+  },
   async createOrder({ commit, rootGetters }, request: StoreOrderRequest) {
     commit('setIsLoadingCreateResponse', true);
 
@@ -896,6 +1128,14 @@ const mutations = {
     state.form.unsetProduct(productId, variantId, batch);
     state.form.setChange(`products-${productId}-${variantId ?? null}-${batch}`, {productId, amount: null, variantId, batch});
   },
+  setService(state: OrderState, {serviceId, amount, duration, comments}) {
+    state.form.setService(serviceId, amount, duration, comments);
+    state.form.setChange(`services-${serviceId}`, {serviceId, amount, duration, comments});
+  },
+  unsetService(state: OrderState, {serviceId}) {
+    state.form.unsetService(serviceId);
+    state.form.setChange(`services-${serviceId}}`, {serviceId, amount: null});
+  },
   addComment(state: OrderState, comment) {
     const comments = [...state.form.comments];
     comments.push(comment);
@@ -913,6 +1153,9 @@ const mutations = {
   setOrderedProducts(state: OrderState, products) {
     state.orderedProducts = products;
   },
+  setOrderedServices(state: OrderState, services) {
+    state.orderedServices = services;
+  },
   setShowOrderResponse(state: OrderState, response) {
     state.showOrderResponse = response;
   },
@@ -921,6 +1164,9 @@ const mutations = {
   },
   setOrderedProductsResponse(state: OrderState, response) {
     state.orderedProductsResponse = response;
+  },
+  setOrderedServicesResponse(state: OrderState, response) {
+    state.orderedServicesResponse = response;
   },
   setCreateOrderResponse(state: OrderState, response) {
     state.createOrderResponse = response;

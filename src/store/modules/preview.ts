@@ -1,16 +1,27 @@
 import {
   CategoriesApi,
-  Category, IndexCategoriesRequest, IndexCategoryResponse,
+  Category,
+  IndexCategoriesRequest,
+  IndexCategoryResponse,
   IndexMenuResponse,
   IndexMenusRequest,
   IndexProductResponse,
-  IndexProductsRequest, IndexSpaceResponse, IndexSpacesRequest, IndexTagResponse, IndexTagsRequest,
+  IndexProductsRequest,
+  IndexServiceResponse, IndexServicesRequest,
+  IndexSpaceResponse,
+  IndexSpacesRequest,
+  IndexTagResponse,
+  IndexTagsRequest,
   Menu,
   MenusApi,
   Product,
-  ProductsApi,
+  ProductsApi, Service, ServicesApi,
   ShowMenuRequest,
-  ShowMenuResponse, Space, SpacesApi, Tag, TagsApi
+  ShowMenuResponse,
+  Space,
+  SpacesApi,
+  Tag,
+  TagsApi
 } from "@/openapi";
 import {authHeaders} from "@/helpers";
 
@@ -48,6 +59,13 @@ class PreviewState {
   public spaceCategories: Category[] | null;
   public spaceCategoriesResponse: IndexCategoryResponse | null;
 
+  public services: Service[] | null;
+  public servicesResponse: IndexServiceResponse;
+  public servicesMoreResponse: IndexServiceResponse;
+
+  public serviceCategories: Category[] | null;
+  public serviceCategoriesResponse: IndexCategoryResponse | null;
+
   public products: Product[] | null;
   public productsResponse: IndexProductResponse;
   public productsMoreResponse: IndexProductResponse;
@@ -70,7 +88,14 @@ class PreviewState {
     this.spacesMoreResponse = null;
 
     this.spaceCategories = null;
-    this.spacesMoreResponse = null;
+    this.spaceCategoriesResponse = null;
+
+    this.services = null;
+    this.servicesResponse = null;
+    this.servicesMoreResponse = null;
+
+    this.serviceCategories = null;
+    this.serviceCategoriesResponse = null;
 
     this.products = null;
     this.productsResponse = null;
@@ -107,6 +132,12 @@ const getters = {
   },
   isLoadingSpaces(state: PreviewState) {
     return !state.spaces && !state.spacesResponse;
+  },
+  isLoadingServiceCategories(state: PreviewState) {
+    return !state.serviceCategories && !state.serviceCategoriesResponse;
+  },
+  isLoadingServices(state: PreviewState) {
+    return !state.services && !state.servicesResponse;
   },
   isLoadingProducts(state: PreviewState) {
     return !state.products && !state.productsResponse;
@@ -151,6 +182,28 @@ const getters = {
   spacesMoreResponse(state: PreviewState) {
     return state.spacesMoreResponse;
   },
+  serviceCategories(state: PreviewState) {
+    return state.serviceCategories;
+  },
+  serviceCategoriesResponse(state: PreviewState) {
+    return state.serviceCategoriesResponse;
+  },
+  service(state: PreviewState) {
+    return (serviceId: number) => {
+      return (state.services ?? []).find((s) => {
+        return s.id === serviceId;
+      });
+    };
+  },
+  services(state: PreviewState) {
+    return state.services ? state.services : [];
+  },
+  servicesResponse(state: PreviewState) {
+    return state.servicesResponse;
+  },
+  servicesMoreResponse(state: PreviewState) {
+    return state.servicesMoreResponse;
+  },
   product(state: PreviewState) {
     return (productId: number) => {
       let product = null;
@@ -186,6 +239,7 @@ const actions = {
     commit('selectCategory', null);
     commit('setMenus', null);
     commit('setSpaceCategories', null);
+    commit('setServiceCategories', null);
     commit('setSpaces', null);
     commit('setProducts', null);
     commit('setShowMenuResponse', null);
@@ -193,6 +247,8 @@ const actions = {
     commit('setSpaceCategoriesResponse', null);
     commit('setSpacesResponse', null);
     commit('setMoreSpacesResponse', null);
+    commit('setServicesResponse', null);
+    commit('setMoreServicesResponse', null);
     commit('setProductsResponse', null);
     commit('setMoreProductsResponse', null);
   },
@@ -393,6 +449,93 @@ const actions = {
 
     dispatch('loadSpaces');
   },
+  async loadServiceCategories({commit, dispatch, rootGetters}) {
+    const request: IndexCategoriesRequest = {pageSize: 300, filterTarget: 'services'};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    const response = await (new CategoriesApi())
+      .indexCategories(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setServiceCategoriesResponse', response);
+    commit('setServiceCategories', response.data);
+  },
+  async loadServiceCategoriesIfMissing({state, dispatch}) {
+    if (state.serviceCategoriesResponse) {
+      return;
+    }
+
+    dispatch('loadServiceCategories');
+  },
+  async loadServices({commit, dispatch, rootGetters}) {
+    const request: IndexServicesRequest = {pageSize: 300};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    const response = await (new ServicesApi())
+      .indexServices(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setServicesResponse', response);
+    commit('setServices', response.data);
+  },
+  async loadMoreServices({state, dispatch, commit, rootGetters}) {
+    const request: IndexServicesRequest = {pageSize: 300};
+    const restaurantId = rootGetters['restaurants/restaurantId'];
+
+    if (restaurantId) {
+      request.filterRestaurants = restaurantId;
+    }
+
+    if (!state.servicesMoreResponse) {
+      request.pageSize = state.servicesResponse.meta.perPage ?? 200;
+      request.pageNumber = 2;
+    } else {
+      request.pageNumber = state.servicesMoreResponse.meta.currentPage + 1;
+    }
+
+    const response = await (new ServicesApi())
+      .indexServices(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        if (error.response.status !== 404) {
+          dispatch('error/setResponse', error.response, {root:true});
+        }
+
+        return error.response;
+      });
+
+    commit('setMoreServicesResponse', response);
+    commit('appendServices', response.data);
+  },
+  async loadServicesIfMissing({state, dispatch}) {
+    if (state.servicesResponse) {
+      return;
+    }
+
+    dispatch('loadServices');
+  },
   async loadProducts({commit, dispatch, rootGetters}, menu: Menu | null) {
     const request: IndexProductsRequest = {pageSize: 300};
     const restaurantId = rootGetters['restaurants/restaurantId'];
@@ -523,8 +666,26 @@ const mutations = {
   setProducts(state: PreviewState, products) {
     state.products = products;
   },
+  setServiceCategories(state: PreviewState, categories) {
+    state.serviceCategories = categories;
+  },
+  setServiceCategoriesResponse(state: PreviewState, response) {
+    state.serviceCategoriesResponse = response;
+  },
+  setServices: (state: PreviewState, services) => {
+    state.services = services;
+  },
+  setServicesResponse(state: PreviewState, response) {
+    state.servicesResponse = response;
+  },
+  setMoreServicesResponse(state: PreviewState, response) {
+    state.servicesMoreResponse = response;
+  },
   appendProducts(state: PreviewState, products) {
     state.products = (state.products ?? []).concat(products);
+  },
+  appendServices(state: PreviewState, services) {
+    state.services = (state.services ?? []).concat(services);
   },
   setSpacesResponse(state: PreviewState, response) {
     state.spacesResponse = response;
