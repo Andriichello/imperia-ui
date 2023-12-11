@@ -98,7 +98,8 @@
       "loading": "Завантаження меню",
       "loading_spaces": "Завантаження столів та приміщень",
       "loading_products": "Завантаження страв",
-      "loading_services": "Завантаження послуг"
+      "loading_services": "Завантаження послуг",
+      "unfortunately_list_is_empty": "На жаль, список порожній"
     },
     "space": {
       "floor": "Поверх",

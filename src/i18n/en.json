@@ -101,7 +101,8 @@
       "loading": "Loading menus",
       "loading_spaces": "Loading spaces",
       "loading_products": "Loading items",
-      "loading_services": "Loading services"
+      "loading_services": "Loading services",
+      "unfortunately_list_is_empty": "Unfortunately the list is empty"
     },
     "space": {
       "floor": "Floor",

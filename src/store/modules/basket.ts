@@ -228,16 +228,16 @@ const getters = {
     return state.form.withPhotographer;
   },
   childrenAmount(state: BasketState) {
-    return state.form.childrenAmount;
+    return state.form.childrenAmount ?? 0;
   },
   childTicketPrice(state: BasketState) {
-    return state.form.childTicketPrice;
+    return state.form.childTicketPrice ?? 0;
   },
   adultsAmount(state: BasketState) {
-    return state.form.adultsAmount;
+    return state.form.adultsAmount ?? 0;
   },
   adultTicketPrice(state: BasketState) {
-    return state.form.adultTicketPrice;
+    return state.form.adultTicketPrice ?? 0;
   },
   date(state: BasketState) {
     return state.form.date;

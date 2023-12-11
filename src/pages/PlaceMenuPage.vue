@@ -15,16 +15,26 @@
       <Preloader :title="$t('preview.menu.loading_spaces')" class="p-2"
                  v-if="!isLoadingRestaurants && (isLoadingSpaceCategories || isLoadingSpaces)"/>
 
-      <PreviewSpaces class="pb-4"
-                     v-else-if="spaces && spaces.length"/>
+      <template v-else-if="spaces && spaces.length">
+        <PreviewSpaces class="pb-4"/>
+      </template>
+
+      <template v-else>
+        <span class="p-10 text-xl">{{ $t("preview.menu.unfortunately_list_is_empty") }}</span>
+      </template>
     </template>
 
     <template v-if="tab === 'services'">
       <Preloader :title="$t('preview.menu.loading_services')" class="p-2"
                  v-if="!isLoadingRestaurants && (isLoadingServiceCategories || isLoadingServices)"/>
 
-      <PreviewServices class="pb-4"
-                     v-else-if="services && services.length"/>
+      <template v-else-if="services && services.length">
+        <PreviewServices class="pb-4"/>
+      </template>
+
+      <template v-else>
+        <span class="p-10 text-xl">{{ $t("preview.menu.unfortunately_list_is_empty") }}</span>
+      </template>
     </template>
 
     <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
