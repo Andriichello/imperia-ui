@@ -193,7 +193,7 @@ class OrderForm {
       const field: StoreOrderRequestServiceField = {
         serviceId: s.serviceId,
         amount: s.amount,
-        duration: s.duration,
+        duration: s.duration ?? 0,
         comments: s.comments, // replace with your actual ServiceOrderField properties
       };
       fields.push(field);
@@ -215,7 +215,7 @@ class OrderForm {
     if (service) {
       service.serviceId = field.serviceId;
       service.amount = field.amount;
-      service.duration = field.duration;
+      service.duration = field.duration ?? 0;
       service.comments = field.comments;
     } else {
       if (!this.services) {
@@ -382,6 +382,7 @@ class OrderForm {
 
         return {
           ...f,
+          duration: f?.duration ?? 0,
           comments
         }
       });
@@ -788,7 +789,7 @@ const actions = {
           ?? rootGetters['preview/service'](s.serviceId);
 
         if (service) {
-          totals.services += (service?.oncePaidPrice + service?.hourlyPaidPrice * (s?.duration) / 60.0)
+          totals.services += (service?.oncePaidPrice + service?.hourlyPaidPrice * (s?.duration ?? 0) / 60.0)
             * s.amount;
         }
       }

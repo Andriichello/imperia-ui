@@ -50,7 +50,7 @@
 
           <div class="label translate-y-[-6px]">
             <span class="label-text-alt"></span>
-            <span class="label-text-alt">Тривалість (хв)</span>
+            <span class="label-text-alt text-md">Тривалість (хв)</span>
           </div>
         </label>
       </div>
