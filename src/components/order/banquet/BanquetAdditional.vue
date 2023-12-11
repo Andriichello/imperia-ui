@@ -60,12 +60,12 @@
                  class="checkbox checkbox-xs checkbox-primary" />
           <span class="label-text text-start pl-2">{{ $t('banquet.birthday_club') }}</span>
         </label>
-        <label class="label cursor-pointer justify-start">
-          <input type="checkbox" v-model="withPhotographer"
-                 name="withPhotographer" :checked="false"
-                 class="checkbox checkbox-xs checkbox-primary" />
-          <span class="label-text text-start pl-2">{{ $t('banquet.photographer') }}</span>
-        </label>
+<!--        <label class="label cursor-pointer justify-start">-->
+<!--          <input type="checkbox" v-model="withPhotographer"-->
+<!--                 name="withPhotographer" :checked="false"-->
+<!--                 class="checkbox checkbox-xs checkbox-primary" />-->
+<!--          <span class="label-text text-start pl-2">{{ $t('banquet.photographer') }}</span>-->
+<!--        </label>-->
       </div>
     </div>
 
