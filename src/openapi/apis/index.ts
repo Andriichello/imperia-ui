@@ -20,3 +20,4 @@ export * from "./SpacesApi";
 export * from "./TagsApi";
 export * from "./TicketsApi";
 export * from "./UsersApi";
+export * from "./WaitersApi";

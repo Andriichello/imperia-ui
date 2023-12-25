@@ -19,6 +19,7 @@ apis/SpacesApi.ts
 apis/TagsApi.ts
 apis/TicketsApi.ts
 apis/UsersApi.ts
+apis/WaitersApi.ts
 apis/index.ts
 index.ts
 models/Alternation.ts
@@ -43,6 +44,7 @@ models/DestroyMediaResponse.ts
 models/DestroyNotificationResponse.ts
 models/DestroyOrderResponse.ts
 models/DestroyRequest.ts
+models/DestroyWaiterResponse.ts
 models/Discount.ts
 models/FamilyMember.ts
 models/GetHolidaysResponse.ts
@@ -68,6 +70,7 @@ models/IndexSpaceResponse.ts
 models/IndexTagResponse.ts
 models/IndexTicketResponse.ts
 models/IndexUserResponse.ts
+models/IndexWaiterResponse.ts
 models/Links.ts
 models/LoginRequest.ts
 models/LoginResponse.ts
@@ -96,6 +99,7 @@ models/RestoreBanquetResponse.ts
 models/RestoreCustomerResponse.ts
 models/RestoreNotificationResponse.ts
 models/RestoreOrderResponse.ts
+models/RestoreWaiterResponse.ts
 models/Schedule.ts
 models/Service.ts
 models/ServiceOrderField.ts
@@ -121,6 +125,7 @@ models/ShowSpaceResponse.ts
 models/ShowTagResponse.ts
 models/ShowTicketResponse.ts
 models/ShowUserResponse.ts
+models/ShowWaiterResponse.ts
 models/Space.ts
 models/SpaceOrderField.ts
 models/SpaceReservation.ts
@@ -143,10 +148,13 @@ models/StoreOrderRequestTicketField.ts
 models/StoreOrderResponse.ts
 models/StoreRestaurantReviewRequest.ts
 models/StoreRestaurantReviewResponse.ts
+models/StoreWaiterRequest.ts
+models/StoreWaiterResponse.ts
 models/SuccessResponse.ts
 models/Tag.ts
 models/Ticket.ts
 models/TicketOrderField.ts
+models/Tip.ts
 models/UnauthenticatedResponse.ts
 models/UpdateBanquetRequest.ts
 models/UpdateBanquetResponse.ts
@@ -164,8 +172,11 @@ models/UpdateOrderRequest.ts
 models/UpdateOrderResponse.ts
 models/UpdateUserRequest.ts
 models/UpdateUserResponse.ts
+models/UpdateWaiterRequest.ts
+models/UpdateWaiterResponse.ts
 models/User.ts
 models/UserAndTokenResponse.ts
 models/ValidationErrorsResponse.ts
+models/Waiter.ts
 models/index.ts
 runtime.ts
