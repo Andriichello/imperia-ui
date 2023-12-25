@@ -18,6 +18,9 @@
                     :item="restaurant"
                     @click="onOpenReviews"/>
 
+      <ShortTips class="waiters-container mt-2"
+                    @click="onOpenTips"/>
+
       <template v-if="isLoadingMenus">
         <Preloader :title="$t('preview.restaurant.loading_menus')"
                    class="mt-3 p-2"/>
@@ -47,12 +50,14 @@ import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
 import ShortReviews from "@/components/preview/review/ShortReviews.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
+import ShortTips from "@/components/preview/waiters/ShortTips.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewRestaurant",
-  emits: ["menu-select", "open-reviews"],
+  emits: ["menu-select", "open-reviews", "open-tips"],
   components: {
+    ShortTips,
     Preloader,
     ShortReviews,
     Menu,
@@ -89,6 +94,9 @@ export default defineComponent({
     onOpenReviews() {
       this.$emit('open-reviews', {restaurant: this.restaurant})
     },
+    onOpenTips() {
+      this.$emit('open-tips', {restaurant: this.restaurant})
+    },
   },
 });
 </script>
@@ -104,6 +112,13 @@ export default defineComponent({
 }
 
 .reviews-container {
+  @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-0 bg-base-100 p-2 btn-ghost;
+
+  --rounded-box: 0.25rem;
+  --padding-card: 16px;
+}
+
+.waiters-container {
   @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-0 bg-base-100 p-2 btn-ghost;
 
   --rounded-box: 0.25rem;

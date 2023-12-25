@@ -2,7 +2,8 @@
   <div class="order-page">
     <PreviewRestaurant class="max-w-xl"
         @menu-select="onSelectMenu"
-        @open-reviews="onOpenReviews"/>
+        @open-reviews="onOpenReviews"
+        @open-tips="onOpenTips"/>
   </div>
 </template>
 
@@ -27,6 +28,7 @@ export default defineComponent({
       selectRestaurant: "restaurants/setSelected",
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       loadReviewsIfMissing: "reviews/loadReviewsIfMissing",
+      loadWaitersIfMissing: "waiters/loadWaitersIfMissing",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
     onSelectMenu({ restaurant, menu }) {
@@ -35,6 +37,9 @@ export default defineComponent({
     },
     onOpenReviews({ restaurant }) {
       this.$router.push(`/preview/${restaurant.id}/reviews`);
+    },
+    onOpenTips({ restaurant }) {
+      this.$router.push(`/preview/${restaurant.id}/tips`);
     },
   },
   async mounted() {
@@ -55,6 +60,7 @@ export default defineComponent({
       }
     }
 
+    this.loadWaitersIfMissing();
     this.loadReviewsIfMissing();
     this.loadMenusIfMissing();
   },

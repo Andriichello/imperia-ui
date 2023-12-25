@@ -139,6 +139,18 @@
           "invalid": "Invalid serve at time: {time}. Examples of correct format: 8:30, 11:40, 16:05"
         }
       }
+    },
+    "tip": {
+      "title": "Tip",
+      "for": {
+        "all": "For service, food, cleanness",
+        "service": "For service",
+        "service_description": "Tip a waiter",
+        "food": "For food",
+        "food_description": "Tip the cooks",
+        "cleanness": "For cleanness",
+        "cleanness_description": "Tip the stuff members, who keep everything clean"
+      }
     }
   },
   "product": {

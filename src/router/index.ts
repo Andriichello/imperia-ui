@@ -9,6 +9,7 @@ import RegisterPage from "@/pages/RegisterPage.vue";
 import PlaceMenuPage from "@/pages/PlaceMenuPage.vue";
 import PlaceOrderPage from "@/pages/PlaceOrderPage.vue";
 import PlaceHistoryPage from "@/pages/PlaceHistoryPage.vue";
+import PreviewTipsPage from "@/pages/PreviewTipsPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -31,6 +32,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/preview/:restaurantId(\\d+)/reviews',
     name: 'preview-reviews',
     component: PreviewReviewsPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/preview/:restaurantId(\\d+)/tips',
+    name: 'preview-tips',
+    component: PreviewTipsPage,
     meta: {
       requiresAuth: false,
     },
