@@ -12,6 +12,7 @@ import preview from "@/store/modules/preview";
 import reviews from "@/store/modules/reviews";
 import error from "@/store/modules/error";
 import order from "@/store/modules/order";
+import waiters from "@/store/modules/waiters";
 
 export default createStore({
   modules: {
@@ -23,6 +24,7 @@ export default createStore({
     'basket': basket,
     'history': history,
     'customers': customers,
+    'waiters': waiters,
     'banquets': banquets,
     'reviews': reviews,
     'preview': preview,
