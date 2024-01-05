@@ -10,18 +10,18 @@
 
 
           <div class="w-full flex justify-center items-center">
-            <div class="w-full tip-box">
+            <div class="w-full tip-box" @click="onOpenTipsForWaiters">
               <h3 class="text-lg font-semibold text-center">{{ $t('preview.tip.for.service') }}</h3>
               <p class="text-md text-center">{{ $t('preview.tip.for.service_description') }}</p>
             </div>
           </div>
 
           <div class="w-full flex justify-center items-stretch gap-2">
-            <div class="tip-box flex-grow basis-1">
+            <div class="tip-box flex-grow basis-1" @click="onOpenTipsForFood">
               <h3 class="text-lg font-semibold text-center">{{ $t('preview.tip.for.food') }}</h3>
               <p class="text-md text-center">{{ $t('preview.tip.for.food_description') }}</p>
             </div>
-            <div class="tip-box flex-grow basis-1">
+            <div class="tip-box flex-grow basis-1" @click="onOpenTipsForCleanness">
               <h3 class="text-lg font-semibold text-center">{{ $t('preview.tip.for.cleanness') }}</h3>
               <p class="text-md font-light text-center">{{ $t('preview.tip.for.cleanness_description') }}</p>
             </div>
@@ -59,6 +59,21 @@ export default defineComponent({
       loadWaitersIfMissing: "waiters/loadWaitersIfMissing",
       loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
     }),
+    onOpenTipsForWaiters() {
+      const restaurantId = +this.$route.params['restaurantId'];
+
+      this.$router.push(`/preview/${restaurantId}/tips/waiters`);
+    },
+    onOpenTipsForFood() {
+      const restaurantId = +this.$route.params['restaurantId'];
+
+      this.$router.push(`/preview/${restaurantId}/tips/food`);
+    },
+    onOpenTipsForCleanness() {
+      const restaurantId = +this.$route.params['restaurantId'];
+
+      this.$router.push(`/preview/${restaurantId}/tips/cleanness`);
+    },
   },
   async mounted() {
     const restaurantId = +this.$route.params['restaurantId'];
