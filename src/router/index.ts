@@ -12,7 +12,8 @@ import PlaceHistoryPage from "@/pages/PlaceHistoryPage.vue";
 import PreviewTipsPage from "@/pages/PreviewTipsPage.vue";
 import PreviewTipsForFoodPage from "@/pages/PreviewTipsForFoodPage.vue";
 import PreviewTipsForCleannessPage from "@/pages/PreviewTipsForCleannessPage.vue";
-import PreviewTipsForWaitersPage from "@/pages/PreviewTipsForWaitersPage.vue";
+import PreviewTipsForServicePage from "@/pages/PreviewTipsForServicePage.vue";
+import PreviewTipsForWaiterPage from "@/pages/PreviewTipsForWaiterPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -48,9 +49,17 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/preview/:restaurantId(\\d+)/tips/waiters',
-    name: 'preview-tips-for-waiters',
-    component: PreviewTipsForWaitersPage,
+    path: '/preview/:restaurantId(\\d+)/tips/waiter/:waiterId(\\d+)?',
+    name: 'preview-tips-for-waiter',
+    component: PreviewTipsForWaiterPage,
+    meta: {
+      requiresAuth: false,
+    },
+  },
+  {
+    path: '/preview/:restaurantId(\\d+)/tips/service',
+    name: 'preview-tips-for-service',
+    component: PreviewTipsForServicePage,
     meta: {
       requiresAuth: false,
     },

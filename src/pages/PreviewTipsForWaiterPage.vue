@@ -1,17 +1,17 @@
 <template>
   <div class="order-page">
-    <PreviewTipsForWaiters class="max-w-xl"/>
+    <PreviewTipsForWaiter class="max-w-xl"/>
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
-import PreviewTipsForWaiters from "@/components/preview/PreviewTipsForWaiters.vue";
+import PreviewTipsForWaiter from "@/components/preview/PreviewTipsForWaiter.vue";
 
 export default defineComponent({
-  name: "PreviewTipsForWaitersPage",
+  name: "PreviewTipsForWaiterPage",
   components: {
-    PreviewTipsForWaiters,
+    PreviewTipsForWaiter,
   },
   mounted() {
     window.scrollTo(0, 0);

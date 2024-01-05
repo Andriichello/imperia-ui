@@ -143,15 +143,27 @@
     "tip": {
       "title": "Tip",
       "leave_tip": "Leave tip",
+      "search": "Search",
       "for": {
-        "all": "For service, food, cleanness",
+        "all": "For waiter, service, food, cleanness",
+        "waiter": "For waiter",
+        "waiter_description": "Tip a waiter",
         "service": "For service",
-        "service_description": "Tip a waiter",
+        "service_description": "Tip for the service that you were given",
         "food": "For food",
         "food_description": "Tip the cooks",
         "cleanness": "For cleanness",
         "cleanness_description": "Tip the stuff members, who keep everything clean"
-      }
+      },
+      "showing_C_of_T": "Showing {count} of {total} waiters",
+      "showing_all_C": "Showing all waiters ({count})",
+      "load_more": "Load more...",
+      "errors": {
+        "amount": {
+          "min": "Minimum amount: {amount}"
+        }
+      },
+      "unfortunately_list_is_empty": "Unfortunately the list is empty"
     }
   },
   "product": {

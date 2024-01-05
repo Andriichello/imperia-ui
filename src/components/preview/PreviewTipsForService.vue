@@ -2,7 +2,7 @@
   <div class="preview">
     <Divider :lines="false"
              :title="title"/>
-    <Tip target="waiters"/>
+    <Tip target="service"/>
   </div>
 </template>
 
@@ -14,7 +14,7 @@ import Divider from "@/layouts/divider/Divider.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
-  name: "PreviewTipsForWaiters",
+  name: "PreviewTipsForService",
   components: {
     Divider,
     Tip

@@ -9,6 +9,8 @@ import {
 } from "@/openapi";
 
 class WaitersState {
+  /** Current search string */
+  public search: string | null;
   /** Loaded waiter */
   public waiter: Waiter | null;
 
@@ -73,6 +75,8 @@ const actions = {
     commit('setIndexResponse', null);
     commit('setMoreResponse', null);
     commit('setShowResponse', null);
+
+    commit('applySearch', null);
   },
   setSelected({ commit }, waiter: Waiter | null) {
     commit('setSelected', waiter);
@@ -101,12 +105,16 @@ const actions = {
 
     commit('setShowResponse', response);
   },
-  async loadWaiters({ commit, dispatch, rootGetters }) {
+  async loadWaiters({ state, commit, dispatch, rootGetters }) {
     const request: IndexWaitersRequest = {pageSize: 50};
 
     const restaurantId = rootGetters['restaurants/restaurantId'];
     if (restaurantId) {
       request.filterRestaurants = restaurantId;
+    }
+
+    if (state.search && state.search.length > 0) {
+      request.filterSearch = state.search;
     }
 
     const response = await (new WaitersApi())
@@ -138,6 +146,10 @@ const actions = {
       request.filterRestaurants = restaurantId;
     }
 
+    if (state.search && state.search.length > 0) {
+      request.filterSearch = state.search;
+    }
+
     if (!state.moreResponse) {
       request.pageNumber = 2;
     } else {
@@ -157,6 +169,23 @@ const actions = {
 
     commit('setMoreResponse', response);
     commit('appendWaiters', response.data);
+  },
+  applySearch({ commit, dispatch }, { search }) {
+    commit('setIndexResponse', null);
+    commit('setMoreResponse', null);
+    commit('setWaiters', null)
+
+    commit('applySearch', search);
+    dispatch('loadWaiters');
+  },
+  setIndexResponse({ commit }, response) {
+    commit('setIndexResponse', response);
+  },
+  setMoreResponse({ commit }, response) {
+    commit('setMoreResponse', response);
+  },
+  setShowResponse({ commit }, response) {
+    commit('setShowResponse', response);
   },
 };
 
@@ -184,6 +213,9 @@ const mutations = {
   },
   setMoreResponse(state: WaitersState, response) {
     state.moreResponse = response;
+  },
+  applySearch(state: WaitersState, search) {
+    state.search = search;
   },
 };
 
