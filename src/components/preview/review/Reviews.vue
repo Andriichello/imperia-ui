@@ -40,7 +40,7 @@
 
         <div class="w-full flex flex-col justify-start gap-1">
           <input v-model="reviewer" name="reviewer" type="text" :placeholder="$t('reviews.your_name') + '...'" class="input input-bordered input-md w-full"
-                 :class="{'border-error': errors && errors.reviewer}"/>
+                 :class="{'input-error': errors && errors.reviewer}"/>
 
           <span class="label-text-alt text-error text-sm" v-for="error in (errors?.reviewer ?? [])" :key="error">
             {{ error }}
@@ -49,7 +49,7 @@
 
         <div class="w-full flex flex-col justify-start gap-1">
           <textarea v-model="description" name="description" class="w-full textarea textarea-bordered" :placeholder="$t('reviews.your_review') + '...'"
-                    :class="{'border-error': errors && errors.description}">
+                    :class="{'input-error': errors && errors.description}">
           </textarea>
 
           <span class="label-text-alt text-error text-sm" v-for="error in (errors?.description ?? [])" :key="error">
