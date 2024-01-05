@@ -142,6 +142,7 @@
     },
     "tip": {
       "title": "Tip",
+      "leave_tip": "Leave tip",
       "for": {
         "all": "For service, food, cleanness",
         "service": "For service",

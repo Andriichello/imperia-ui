@@ -50,7 +50,7 @@ import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
 import ShortReviews from "@/components/preview/review/ShortReviews.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
-import ShortTips from "@/components/preview/waiters/ShortTips.vue";
+import ShortTips from "@/components/preview/tips/ShortTips.vue";
 
 export default defineComponent({
   // eslint-disable-next-line

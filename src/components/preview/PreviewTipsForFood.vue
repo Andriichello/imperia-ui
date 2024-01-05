@@ -1,22 +1,23 @@
 <template>
   <div class="preview">
-    <div>
-      <h3 class="font-bold text-xl text-current">
-        {{ $t('preview.tip.title') }}
-        "{{ $t('preview.tip.for.food') }}"
-      </h3>
-    </div>
+    <Divider :lines="false"
+             :title="title"/>
+    <Tip target="food"/>
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
+import Tip from "@/components/preview/tips/Tip.vue";
+import Divider from "@/layouts/divider/Divider.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewTipsForFood",
   components: {
+    Divider,
+    Tip
     // Tips,
     // Preloader,
   },
@@ -26,6 +27,9 @@ export default defineComponent({
       restaurants: 'restaurants/restaurants',
       isLoadingWaiters: 'waiters/isLoadingWaiters',
     }),
+    title() {
+      return `${this.$t('preview.tip.title')} "${this.$t('preview.tip.for.food')}"`
+    },
   },
   methods: {
     ...mapActions({
