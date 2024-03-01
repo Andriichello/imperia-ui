@@ -358,10 +358,23 @@ export default defineComponent({
     },
     onEditCustomer({customer}) {
       this.mode = 'edit';
+
+      this.errors = {};
+      this.createErrors = {};
+      this.updateErrors = {};
+
       this.setFormCustomer(customer);
     },
     onCreateCustomer() {
       this.mode = 'create';
+
+      this.errors = {};
+      this.updateErrors = {};
+      this.createErrors = {};
+
+      if (this.formCustomer !== null) {
+        this.setFormCustomer(null);
+      }
     },
     onCloseCustomer() {
       this.mode = 'view';
