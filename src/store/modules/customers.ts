@@ -228,6 +228,7 @@ const actions = {
   async loadCustomers({ dispatch, commit, getters, rootGetters }) {
     const request: IndexCustomersRequest = {
       include: 'comments',
+      sort: '-updated_at',
     };
 
     const filters = getters.filters;

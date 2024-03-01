@@ -58,6 +58,7 @@ export interface DestroyCustomerRequest {
 
 export interface IndexCustomersRequest {
   include?: string;
+  sort?: string;
   filterSearch?: string;
   filterName?: string;
   filterSurname?: string;
@@ -162,6 +163,10 @@ export class CustomersApi extends runtime.BaseAPI {
 
     if (requestParameters.include !== undefined) {
       queryParameters["include"] = requestParameters.include;
+    }
+
+    if (requestParameters.sort !== undefined) {
+      queryParameters["sort"] = requestParameters.sort;
     }
 
     if (requestParameters.filterSearch !== undefined) {
