@@ -18,8 +18,8 @@
                     :item="restaurant"
                     @click="onOpenReviews"/>
 
-      <ShortTips class="waiters-container mt-2"
-                    @click="onOpenTips"/>
+<!--      <ShortTips class="waiters-container mt-2"-->
+<!--                    @click="onOpenTips"/>-->
 
       <template v-if="isLoadingMenus">
         <Preloader :title="$t('preview.restaurant.loading_menus')"
@@ -50,14 +50,14 @@ import Restaurant from "@/components/preview/restaurant/Restaurant.vue";
 import Menu from "@/components/preview/menu/Menu.vue";
 import ShortReviews from "@/components/preview/review/ShortReviews.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
-import ShortTips from "@/components/preview/tips/ShortTips.vue";
+// import ShortTips from "@/components/preview/tips/ShortTips.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewRestaurant",
   emits: ["menu-select", "open-reviews", "open-tips"],
   components: {
-    ShortTips,
+    // ShortTips,
     Preloader,
     ShortReviews,
     Menu,
