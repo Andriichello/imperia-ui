@@ -120,6 +120,28 @@ class BanquetForm {
   }
 
   public asCreate(): StoreBanquetRequest {
+    let childrenAmounts = this.childrenAmounts
+      ?.filter(function (item) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return item != null && item != "";
+      });
+
+    if (childrenAmounts?.length === 0) {
+      childrenAmounts = null;
+    }
+
+    let childTicketPrices = this.childTicketPrices
+      ?.filter(function (item) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        return item != null && item != "";
+      });
+
+    if (childTicketPrices?.length === 0) {
+      childTicketPrices = null;
+    }
+
     const request = {
       state: this.state,
       title: this.title,
@@ -136,8 +158,8 @@ class BanquetForm {
       adultTicketPrice: this.adultTicketPrice,
       childrenAmount: this.childrenAmount,
       childTicketPrice: this.childTicketPrice,
-      childrenAmounts: this.childrenAmounts,
-      childTicketPrices: this.childTicketPrices,
+      childrenAmounts: childrenAmounts,
+      childTicketPrices: childTicketPrices,
     };
 
     return request as StoreBanquetRequest;
