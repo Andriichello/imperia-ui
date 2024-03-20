@@ -103,6 +103,37 @@
     <div class="flex flex-wrap justify-start items-start w-full gap-2 mt-2">
       <div class="form-control grow basis-[140px]">
         <label class="label">
+          <span class="label-text text-md font-semibold">+ {{ $t('banquet.children_amount') }}</span>
+        </label>
+        <input class="input input-sm input-ghost text-lg font-semibold px-1 w-full"
+               :class="{ 'input-error' : childrenAmountsErrors !== null }"
+               name="advanceAmount" type="number" min="0" v-model="childrenAmounts"
+               :placeholder="$t('banquet.children_amount') + '...'"/>
+        <label class="label flex-col items-start" v-if="childrenAmountsErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in childrenAmountsErrors" :key="error">
+                {{ error }}
+              </span>
+        </label>
+      </div>
+      <div class="form-control grow basis-[140px]">
+        <label class="label">
+          <span class="label-text text-md font-semibold">+ {{ $t('banquet.child_ticket_price') }}</span>
+        </label>
+        <input class="input input-sm input-ghost text-lg font-semibold px-1 w-full"
+               :class="{ 'input-error' : childTicketPricesErrors !== null }"
+               name="actualTotal" type="number" min="0" v-model="childTicketPrices"
+               :placeholder="$t('banquet.child_ticket_price') + '...'"/>
+        <label class="label flex-col items-start" v-if="childTicketPricesErrors">
+              <span class="label-text-alt text-error text-sm" v-for="error in childTicketPricesErrors" :key="error">
+                {{ error }}
+              </span>
+        </label>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap justify-start items-start w-full gap-2 mt-2">
+      <div class="form-control grow basis-[140px]">
+        <label class="label">
           <span class="label-text text-md font-semibold">{{ $t('banquet.adults_amount') }}</span>
         </label>
         <input class="input input-sm input-ghost text-lg font-semibold px-1 w-full"
@@ -149,6 +180,8 @@ export default defineComponent({
     "adult-ticket-price-update",
     "children-amount-update",
     "child-ticket-price-update",
+    "children-amounts-update",
+    "child-ticket-prices-update",
   ],
   props: {
     banquet: {
@@ -233,6 +266,22 @@ export default defineComponent({
         return this.$emit('child-ticket-price-update', {childTicketPrice: value});
       },
     },
+    childrenAmounts: {
+      get() {
+        return this.banquet?.childrenAmounts?.length ? this.banquet?.childrenAmounts[0] : null;
+      },
+      set(value) {
+        return this.$emit('children-amounts-update', {childrenAmounts: [value]});
+      },
+    },
+    childTicketPrices: {
+      get() {
+        return this.banquet?.childTicketPrices?.length ? this.banquet?.childTicketPrices[0] : null;
+      },
+      set(value) {
+        return this.$emit('child-ticket-prices-update', {childTicketPrices: [value]});
+      },
+    },
     advanceAmountErrors() {
       return this.errors?.advanceAmount ?? null;
     },
@@ -256,6 +305,12 @@ export default defineComponent({
     },
     childTicketPriceErrors() {
       return this.errors?.childTicketPrice ?? null;
+    },
+    childrenAmountsErrors() {
+      return this.errors?.childrenAmounts ?? null;
+    },
+    childTicketPricesErrors() {
+      return this.errors?.childTicketPrices ?? null;
     },
   },
 })

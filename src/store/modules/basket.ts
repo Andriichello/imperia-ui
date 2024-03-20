@@ -27,6 +27,8 @@ class BanquetForm {
   public adultTicketPrice: number | null;
   public childrenAmount: number | null;
   public childTicketPrice: number | null;
+  public childrenAmounts: number[] | null;
+  public childTicketPrices: number[] | null;
   public date: Date | string | null;
   public startAt: Date | string | null;
   public endAt: Date | string | null;
@@ -58,6 +60,8 @@ class BanquetForm {
     form.adultTicketPrice = banquet.adultTicketPrice;
     form.childrenAmount = banquet.childrenAmount;
     form.childTicketPrice = banquet.childTicketPrice;
+    form.childrenAmounts = banquet.childrenAmounts;
+    form.childTicketPrices = banquet.childTicketPrices;
     form.date = banquet.startAt;
     form.startAt = banquet.startAt;
     form.endAt = banquet.endAt;
@@ -132,6 +136,8 @@ class BanquetForm {
       adultTicketPrice: this.adultTicketPrice,
       childrenAmount: this.childrenAmount,
       childTicketPrice: this.childTicketPrice,
+      childrenAmounts: this.childrenAmounts,
+      childTicketPrices: this.childTicketPrices,
     };
 
     return request as StoreBanquetRequest;
@@ -232,6 +238,12 @@ const getters = {
   },
   childTicketPrice(state: BasketState) {
     return state.form.childTicketPrice ?? 0;
+  },
+  childrenAmounts(state: BasketState) {
+    return state.form.childrenAmounts ?? [];
+  },
+  childTicketPrices(state: BasketState) {
+    return state.form.childTicketPrices ?? [];
   },
   adultsAmount(state: BasketState) {
     return state.form.adultsAmount ?? 0;
@@ -335,6 +347,12 @@ const actions = {
   },
   setChildTicketPrice({ commit }, value: number | null) {
     commit('setChildTicketPrice', value);
+  },
+  setChildrenAmounts({ commit }, value: number[] | null) {
+    commit('setChildrenAmounts', value);
+  },
+  setChildTicketPrices({ commit }, value: number[] | null) {
+    commit('setChildTicketPrices', value);
   },
   setDescription({ commit }, value: string | null) {
     commit('setDescription', value);
@@ -471,6 +489,14 @@ const mutations = {
   setChildTicketPrice(state: BasketState, value) {
     state.form.childTicketPrice = value;
     state.form.setChange('childTicketPrice', value);
+  },
+  setChildrenAmounts(state: BasketState, value) {
+    state.form.childrenAmounts = value;
+    state.form.setChange('childrenAmounts', value);
+  },
+  setChildTicketPrices(state: BasketState, value) {
+    state.form.childTicketPrices = value;
+    state.form.setChange('childTicketPrices', value);
   },
   setDescription(state: BasketState, value) {
     state.form.description = value;

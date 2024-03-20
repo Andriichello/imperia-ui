@@ -37,7 +37,9 @@
                              @adults-amount-update="onBanquetAdultsAmountUpdate"
                              @adult-ticket-price-update="onBanquetAdultTicketPriceUpdate"
                              @children-amount-update="onBanquetChildrenAmountUpdate"
-                             @child-ticket-price-update="onBanquetChildTicketPriceUpdate"/>
+                             @child-ticket-price-update="onBanquetChildTicketPriceUpdate"
+                             @children-amounts-update="onBanquetChildrenAmountsUpdate"
+                             @child-ticket-prices-update="onBanquetChildTicketPricesUpdate"/>
         </div>
       </details>
 
@@ -535,6 +537,8 @@ export default defineComponent({
       setAdultTicketPrice: 'basket/setAdultTicketPrice',
       setChildrenAmount: 'basket/setChildrenAmount',
       setChildTicketPrice: 'basket/setChildTicketPrice',
+      setChildrenAmounts: 'basket/setChildrenAmounts',
+      setChildTicketPrices: 'basket/setChildTicketPrices',
       setDate: 'basket/setDate',
       setStartAt: 'basket/setStartAt',
       setEndAt: 'basket/setEndAt',
@@ -672,6 +676,20 @@ export default defineComponent({
     },
     onBanquetChildTicketPriceUpdate({childTicketPrice}) {
       this.setChildTicketPrice(childTicketPrice);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetChildrenAmountsUpdate({childrenAmounts}) {
+      this.setChildrenAmounts(childrenAmounts);
+
+      if (this.wasStoreClicked) {
+        this.validateBanquetForm();
+      }
+    },
+    onBanquetChildTicketPricesUpdate({childTicketPrices}) {
+      this.setChildTicketPrices(childTicketPrices);
 
       if (this.wasStoreClicked) {
         this.validateBanquetForm();

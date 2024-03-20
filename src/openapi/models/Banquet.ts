@@ -158,6 +158,18 @@ export interface Banquet {
   childTicketPrice: number | null;
   /**
    *
+   * @type {Array<number>}
+   * @memberof Banquet
+   */
+  childrenAmounts?: Array<number>;
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof Banquet
+   */
+  childTicketPrices?: Array<number>;
+  /**
+   *
    * @type {number}
    * @memberof Banquet
    */
@@ -327,6 +339,12 @@ export function BanquetFromJSONTyped(
     withPhotographer: json["with_photographer"],
     childrenAmount: json["children_amount"],
     childTicketPrice: json["child_ticket_price"],
+    childrenAmounts: !exists(json, "children_amounts")
+      ? undefined
+      : json["children_amounts"],
+    childTicketPrices: !exists(json, "child_ticket_prices")
+      ? undefined
+      : json["child_ticket_prices"],
     adultsAmount: json["adults_amount"],
     adultTicketPrice: json["adult_ticket_price"],
     totals: OrderTotalsFromJSON(json["totals"]),
@@ -377,6 +395,8 @@ export function BanquetToJSON(value?: Banquet | null): any {
     with_photographer: value.withPhotographer,
     children_amount: value.childrenAmount,
     child_ticket_price: value.childTicketPrice,
+    children_amounts: value.childrenAmounts,
+    child_ticket_prices: value.childTicketPrices,
     adults_amount: value.adultsAmount,
     adult_ticket_price: value.adultTicketPrice,
     totals: OrderTotalsToJSON(value.totals),

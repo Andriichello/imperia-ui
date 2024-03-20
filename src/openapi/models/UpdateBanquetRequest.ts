@@ -113,6 +113,18 @@ export interface UpdateBanquetRequest {
   childTicketPrice?: number | null;
   /**
    *
+   * @type {Array<number>}
+   * @memberof UpdateBanquetRequest
+   */
+  childrenAmounts?: Array<number>;
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof UpdateBanquetRequest
+   */
+  childTicketPrices?: Array<number>;
+  /**
+   *
    * @type {number}
    * @memberof UpdateBanquetRequest
    */
@@ -215,6 +227,12 @@ export function UpdateBanquetRequestFromJSONTyped(
     childTicketPrice: !exists(json, "child_ticket_price")
       ? undefined
       : json["child_ticket_price"],
+    childrenAmounts: !exists(json, "children_amounts")
+      ? undefined
+      : json["children_amounts"],
+    childTicketPrices: !exists(json, "child_ticket_prices")
+      ? undefined
+      : json["child_ticket_prices"],
     adultsAmount: !exists(json, "adults_amount")
       ? undefined
       : json["adults_amount"],
@@ -260,6 +278,8 @@ export function UpdateBanquetRequestToJSON(
     with_photographer: value.withPhotographer,
     children_amount: value.childrenAmount,
     child_ticket_price: value.childTicketPrice,
+    children_amounts: value.childrenAmounts,
+    child_ticket_prices: value.childTicketPrices,
     adults_amount: value.adultsAmount,
     adult_ticket_price: value.adultTicketPrice,
     start_at:

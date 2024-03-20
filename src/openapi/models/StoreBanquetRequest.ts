@@ -112,6 +112,18 @@ export interface StoreBanquetRequest {
   childTicketPrice?: number | null;
   /**
    *
+   * @type {Array<number>}
+   * @memberof StoreBanquetRequest
+   */
+  childrenAmounts?: Array<number>;
+  /**
+   *
+   * @type {Array<number>}
+   * @memberof StoreBanquetRequest
+   */
+  childTicketPrices?: Array<number>;
+  /**
+   *
    * @type {number}
    * @memberof StoreBanquetRequest
    */
@@ -229,6 +241,12 @@ export function StoreBanquetRequestFromJSONTyped(
     childTicketPrice: !exists(json, "child_ticket_price")
       ? undefined
       : json["child_ticket_price"],
+    childrenAmounts: !exists(json, "children_amounts")
+      ? undefined
+      : json["children_amounts"],
+    childTicketPrices: !exists(json, "child_ticket_prices")
+      ? undefined
+      : json["child_ticket_prices"],
     adultsAmount: !exists(json, "adults_amount")
       ? undefined
       : json["adults_amount"],
@@ -274,6 +292,8 @@ export function StoreBanquetRequestToJSON(
     with_photographer: value.withPhotographer,
     children_amount: value.childrenAmount,
     child_ticket_price: value.childTicketPrice,
+    children_amounts: value.childrenAmounts,
+    child_ticket_prices: value.childTicketPrices,
     adults_amount: value.adultsAmount,
     adult_ticket_price: value.adultTicketPrice,
     start_at: value.startAt.toISOString(),
