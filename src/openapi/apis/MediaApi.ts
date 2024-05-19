@@ -62,6 +62,7 @@ export interface GetModelMediaRequest {
 }
 
 export interface IndexMediaRequest {
+  include?: string;
   pageSize?: number;
   pageNumber?: number;
   filterSearch?: string;
@@ -77,6 +78,7 @@ export interface SetModelMediaOperationRequest {
 
 export interface ShowMediaRequest {
   id: number;
+  include?: string;
 }
 
 export interface StoreMediaRequest {
@@ -244,6 +246,10 @@ export class MediaApi extends runtime.BaseAPI {
   ): Promise<runtime.ApiResponse<IndexMediaResponse>> {
     const queryParameters: any = {};
 
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
+
     if (requestParameters.pageSize !== undefined) {
       queryParameters["page[size]"] = requestParameters.pageSize;
     }
@@ -376,6 +382,10 @@ export class MediaApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 

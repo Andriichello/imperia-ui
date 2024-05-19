@@ -42,6 +42,12 @@ export interface Media {
    * @type {string}
    * @memberof Media
    */
+  mime?: string;
+  /**
+   *
+   * @type {string}
+   * @memberof Media
+   */
   extension: string;
   /**
    *
@@ -85,6 +91,12 @@ export interface Media {
    * @memberof Media
    */
   metadata: object;
+  /**
+   *
+   * @type {Array<Media>}
+   * @memberof Media
+   */
+  variants?: Array<Media>;
 }
 
 /**
@@ -122,6 +134,7 @@ export function MediaFromJSONTyped(
     id: json["id"],
     type: json["type"],
     name: json["name"],
+    mime: !exists(json, "mime") ? undefined : json["mime"],
     extension: json["extension"],
     title: json["title"],
     description: json["description"],
@@ -130,6 +143,9 @@ export function MediaFromJSONTyped(
     order: json["order"],
     url: json["url"],
     metadata: json["metadata"],
+    variants: !exists(json, "variants")
+      ? undefined
+      : (json["variants"] as Array<any>).map(MediaFromJSON),
   };
 }
 
@@ -144,6 +160,7 @@ export function MediaToJSON(value?: Media | null): any {
     id: value.id,
     type: value.type,
     name: value.name,
+    mime: value.mime,
     extension: value.extension,
     title: value.title,
     description: value.description,
@@ -152,5 +169,9 @@ export function MediaToJSON(value?: Media | null): any {
     order: value.order,
     url: value.url,
     metadata: value.metadata,
+    variants:
+      value.variants === undefined
+        ? undefined
+        : (value.variants as Array<any>).map(MediaToJSON),
   };
 }
