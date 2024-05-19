@@ -179,6 +179,15 @@ export default defineComponent({
       const p = this.item;
 
       if (p && p.media && p.media.length) {
+
+        if (p.media[0].variants && p.media[0].variants.length) {
+          const variants = p.media[0].variants.filter((v) => v.extension === 'webp');
+
+          if (variants.length && variants[0].url) {
+            return variants[0].url;
+          }
+        }
+
         return p.media[0].url;
       }
 
