@@ -49,7 +49,7 @@
 
       <div class="w-fit sticky bottom-2 left-2 z-50 self-start">
         <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
-                v-show="isMenuPage && isShortScreen && products && products.length > 10 && showGoToTop"
+                v-show="isMenuPage && products && products.length > 10 && showGoToTop"
                 @click="goToTop()">
           <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
             <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -124,7 +124,7 @@ export default defineComponent({
       this.isShortScreen = window.innerHeight < 800;
     },
     onScroll() {
-      if (this.isShowingMenusModal || !this.isShortScreen) {
+      if (this.isShowingMenusModal) {
         return;
       }
 
@@ -138,6 +138,14 @@ export default defineComponent({
       if (scrollTop <= 68) {
         this.pinMenus = true;
         this.showGoToTop = false;
+        return;
+      }
+
+      if (!this.isShortScreen) {
+        if (scrollBottom < (scrollHeight - 160)) {
+          this.showGoToTop = true;
+        }
+
         return;
       }
 

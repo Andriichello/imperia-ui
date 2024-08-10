@@ -34,9 +34,12 @@
                    :only="['products', 'spaces', 'services']"
                    @switch-to-tab="onSwitchTab"/>
 
+        <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
+                           v-if="pinMenus && isShortScreen"/>
+
         <div class="w-full sticky top-0 z-40" v-if="tab === 'products'">
           <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
-                             v-if="!isShortScreen || pinMenus"/>
+                             v-if="pinMenus && !isShortScreen"/>
 
           <PreviewCategoryNavBar class="w-full"/>
         </div>
@@ -52,6 +55,25 @@
         <slot />
       </template>
 
+      <div class="w-full sticky bottom-[68px] left-[8px] ml-4 z-50" v-if="!isWideScreen">
+        <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
+                v-show="isMenuPage && products && products.length > 10 && showGoToTop"
+                @click="goToTop()">
+          <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
+            <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </BaseIcon>
+        </button>
+      </div>
+      <div class="w-fit sticky bottom-2 left-2 z-50 self-start" v-else>
+        <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
+                v-show="isMenuPage && products && products.length > 10 && showGoToTop"
+                @click="goToTop()">
+          <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
+            <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </BaseIcon>
+        </button>
+      </div>
+
     </div>
   </div>
 </template>
@@ -66,6 +88,7 @@ import {mapActions, mapGetters} from "vuex";
 import Menu from "@/components/preview/menu/Menu.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import OrderTabs from "@/components/order/OrderTabs.vue";
+import PreviewNavBar from "@/layouts/navbar/PreviewNavBar.vue";
 
 export default defineComponent({
   name: "AuthenticatedLayout",
@@ -80,10 +103,12 @@ export default defineComponent({
   data() {
     return {
       isShortScreen: window.innerHeight < 800,
+      isWideScreen: window.innerWidth > 920,
       pinMenus: true,
       scrolledDistance: 0,
       lastScrollPosition: null,
       wasLastScrollUp: null,
+      showGoToTop: false,
     };
   },
   computed: {
@@ -92,6 +117,7 @@ export default defineComponent({
       tab: 'preview/tab',
       menu: 'preview/menu',
       menus: 'preview/menus',
+      products: 'preview/products',
       restaurant: 'restaurants/selected',
       isShowingMenusModal: 'preview/isShowingMenusModal',
     }),
@@ -121,9 +147,10 @@ export default defineComponent({
     }),
     onResize() {
       this.isShortScreen = window.innerHeight < 800;
+      this.isWideScreen = window.innerWidth > 920;
     },
     onScroll() {
-      if (this.isShowingMenusModal || !this.isShortScreen) {
+      if (this.isShowingMenusModal) {
         return;
       }
 
@@ -136,6 +163,15 @@ export default defineComponent({
 
       if (scrollTop <= 68) {
         this.pinMenus = true;
+        this.showGoToTop = false;
+        return;
+      }
+
+      if (!this.isShortScreen) {
+        if (scrollBottom < (scrollHeight - 160)) {
+          this.showGoToTop = true;
+        }
+
         return;
       }
 
@@ -159,10 +195,12 @@ export default defineComponent({
         this.scrolledDistance += diff;
 
         if (this.wasLastScrollUp && this.scrolledDistance < -50) {
-          this.pinMenus = true;
+          // this.pinMenus = true;
         } else if (this.scrolledDistance > 10) {
-          this.pinMenus = false
+          // this.pinMenus = false
         }
+
+        this.showGoToTop = true;
       }
 
       this.lastScrollPosition = scrollTop;
@@ -203,6 +241,12 @@ export default defineComponent({
 
       this.$store.dispatch('error/clear');
     },
+    goToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
   },
   mounted() {
     window.addEventListener("resize", this.onResize);
@@ -232,5 +276,15 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
+}
+
+
+.up {
+  @apply text-black;
+  background-color: var(--yellow);
+}
+
+.up:hover {
+  background-color: var(--yellow);
 }
 </style>
