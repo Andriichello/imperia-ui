@@ -18,8 +18,6 @@ router.beforeEach((to, from, next) => {
         record => record.name === 'login' || record.name === 'register'
     );
 
-    console.log({isOpen, isAuth, isLoginOrRegister, to, from})
-
     if (isAuth || withToken) {
         if (isLoginOrRegister) {
             next('place');

@@ -27,13 +27,15 @@
       <PreviewNavBar class="w-full" id="preview-bar"/>
 
       <template v-if="isMenuPage && !failed">
+        <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
+                           v-if="pinMenus && isShortScreen"/>
+
         <div class="w-full sticky top-0 z-50">
           <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
-                             v-if="!isShortScreen || pinMenus"/>
+                             v-if="pinMenus && !isShortScreen"/>
 
           <PreviewCategoryNavBar class="w-full"/>
         </div>
-
       </template>
 
       <template v-if="failed">
@@ -45,7 +47,17 @@
         <slot />
       </template>
 
+      <div class="w-fit sticky bottom-2 left-2 z-50 self-start">
+        <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
+                v-show="isMenuPage && isShortScreen && products && products.length > 10 && showGoToTop"
+                @click="goToTop()">
+          <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
+            <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </BaseIcon>
+        </button>
+      </div>
     </div>
+
 
   </div>
 </template>
@@ -77,6 +89,7 @@ export default defineComponent({
       scrolledDistance: 0,
       lastScrollPosition: null,
       wasLastScrollUp: null,
+      showGoToTop: false,
     };
   },
   computed: {
@@ -84,6 +97,7 @@ export default defineComponent({
       failed: 'error/present',
       menu: 'preview/menu',
       menus: 'preview/menus',
+      products: 'preview/products',
       restaurant: 'restaurants/selected',
       isShowingMenusModal: 'preview/isShowingMenusModal',
     }),
@@ -123,6 +137,7 @@ export default defineComponent({
 
       if (scrollTop <= 68) {
         this.pinMenus = true;
+        this.showGoToTop = false;
         return;
       }
 
@@ -146,10 +161,12 @@ export default defineComponent({
         this.scrolledDistance += diff;
 
         if (this.wasLastScrollUp && this.scrolledDistance < -50) {
-          this.pinMenus = true;
+          // this.pinMenus = true;
         } else if (this.scrolledDistance > 10) {
-          this.pinMenus = false
+          // this.pinMenus = false
         }
+
+        this.showGoToTop = true;
       }
 
       this.lastScrollPosition = scrollTop;
@@ -173,6 +190,12 @@ export default defineComponent({
 
       this.$store.dispatch('error/clear');
     },
+    goToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    },
   },
   mounted() {
     window.addEventListener("resize", this.onResize);
@@ -193,5 +216,14 @@ export default defineComponent({
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
+}
+
+.up {
+  @apply text-black;
+  background-color: var(--yellow);
+}
+
+.up:hover {
+  background-color: var(--yellow);
 }
 </style>

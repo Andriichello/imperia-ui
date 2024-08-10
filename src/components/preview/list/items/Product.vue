@@ -318,9 +318,6 @@ export default defineComponent({
       }
     },
     onChangeAmount({amount}) {
-      console.log({item: this.item, variant: this.variant})
-      console.log({field: this.field, variantFields: this.variantFields})
-
       if (amount === null) {
         this.unsetField({
           productId: this.id,
