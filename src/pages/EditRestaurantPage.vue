@@ -1,17 +1,22 @@
 <template>
   <div class="edit-restaurant-page">
+    <template v-if="isLoadingRestaurant">
+      <Preloader :title="$t('preview.restaurant.loading')"
+                 class="p-2"/>
+    </template>
+
     <Divider v-if="restaurant"
              class="mb-1"
              :lines="false"
              :title="$t('preview.restaurant.restaurant')"/>
 
-    <div class="container max-w-xl">
+    <div class="container max-w-xl" v-if="restaurant">
 
       <div class="form-control w-full">
         <label class="label">
-          <span class="label-text">Name</span>
+          <span class="label-text">{{ $t("restaurant.name") }}</span>
         </label>
-        <input v-model="title" name="title" type="text" required placeholder="Type here"
+        <input v-model="title" name="title" type="text" required placeholder="..."
                class="input input-bordered w-full max-w-xl"
                :class="{ 'input-error' : titleErrors !== null }"/>
         <label class="label flex-col items-start" v-if="titleErrors">
@@ -25,9 +30,9 @@
         <div class="w-full flex justify-center items-center gap-2">
           <div class="form-control w-full flex-1">
             <label class="label">
-              <span class="label-text">Country</span>
+              <span class="label-text">{{ $t("restaurant.country") }}</span>
             </label>
-            <input v-model="country" name="country" type="text" required placeholder="Type here"
+            <input v-model="country" name="country" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
                    :class="{ 'input-error' : countryErrors !== null }"/>
             <label class="label flex-col items-start" v-if="countryErrors">
@@ -39,9 +44,9 @@
 
           <div class="form-control w-full flex-1">
             <label class="label">
-              <span class="label-text">City</span>
+              <span class="label-text">{{ $t("restaurant.city") }}</span>
             </label>
-            <input v-model="city" name="city" type="text" required placeholder="Type here"
+            <input v-model="city" name="city" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
                    :class="{ 'input-error' : cityErrors !== null }"/>
             <label class="label flex-col items-start" v-if="cityErrors">
@@ -54,9 +59,9 @@
 
         <div class="form-control w-full">
           <label class="label">
-            <span class="label-text">Street</span>
+            <span class="label-text">{{ $t("restaurant.street") }}</span>
           </label>
-          <input v-model="street" name="street" type="text" required placeholder="Type here"
+          <input v-model="street" name="street" type="text" required placeholder="..."
                  class="input input-bordered w-full max-w-xl"
                  :class="{ 'input-error' : streetErrors !== null }"/>
           <label class="label flex-col items-start" v-if="streetErrors">
@@ -69,163 +74,41 @@
 
       <div class="w-full flex flex-col justify-center items-center mt-4">
         <label class="label">
-          <span class="label-text">Schedule</span>
+          <span class="label-text">{{ $t("schedule.working_schedule") }}</span>
         </label>
 
         <div class="w-full flex flex-col justify-start items-start">
           <div class="w-full overflow-x-auto">
             <table class="table table-md w-full">
               <tbody class="w-full">
+
+              <template v-for="schedule in scheduling" :key="schedule.weekday">
                 <tr>
+                  <td class="p-2 w-[32px] text-end">
+                    <input type="checkbox" class="toggle toggle-success toggle-sm align-center mt-1.5" :checked="schedule.active"/>
+                  </td>
                   <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.monday") }}</span>
+                    <span>{{ $t(`weekday.${schedule.weekday}`) }}</span>
                   </td>
-                   <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
+                  <td class="p-2 w-[60px] text-end">
+                    <input class="w-[60px] input input-xs text-[16px] px-1 bg-transparent text-center"
                            style="min-height: 2rem;"
                            maxlength="5"
                            name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
+                           :value="time(schedule.begHour, schedule.begMinute)"
+                           placeholder="11:00"/>
                   </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
+                  <td class="p-2 w-[60px] text-end">
+                    <input class="w-[60px] input input-xs text-[16px] px-1 bg-transparent text-center"
                            style="min-height: 2rem;"
                            maxlength="5"
                            name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-center">
-                    <input type="checkbox" class="toggle toggle-sm toggle-success mt-1" checked="checked" />
+                           :value="time(schedule.endHour, schedule.endMinute)"
+                           placeholder="15:00"/>
                   </td>
                 </tr>
-                <tr>
-                  <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.tuesday") }}</span>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.wednesday") }}</span>
-                  </td>
-                   <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.thursday") }}</span>
-                  </td>
-                   <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.friday") }}</span>
-                  </td>
-                   <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.saturday") }}</span>
-                  </td>
-                   <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="p-2 text-md grow">
-                    <span>{{ $t("weekday.sunday") }}</span>
-                  </td>
-                   <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="12:15"
-                           :placeholder="Start"/>
-                  </td>
-                  <td class="p-2 w-[48px] text-end">
-                    <input class="w-[48px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           value="18:20"
-                           :placeholder="Start"/>
-                  </td>
-                </tr>
+              </template>
+
               </tbody>
             </table>
           </div>
@@ -234,40 +117,62 @@
 
     </div>
 
-    <PreviewRestaurant class="max-w-xl"/>
+    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="restaurant">
+      <button class="btn btn-ghost btn-md flex-1">
+        {{ $t('restaurant.cancel_changes') }}
+      </button>
+      <button class="btn btn-neutral btn-md flex-1">
+        {{ $t('restaurant.save_changes') }}
+      </button>
+    </div>
+
   </div>
 </template>
 
 <script>
 import {defineComponent} from "vue";
-import PreviewRestaurant from "@/components/preview/PreviewRestaurant.vue";
 import {mapActions, mapGetters} from "vuex";
 import Divider from "@/layouts/divider/Divider.vue";
-import Time from "@/components/order/time/Time.vue";
+import Preloader from "@/components/preview/loading/Preloader.vue";
 
 export default defineComponent({
   name: "EditRestaurantPage",
   components: {
+    Preloader,
     Divider,
-    PreviewRestaurant,
   },
   data() {
-    const scheduling = [];
-
-    // scheduling[] = {
-    //   'day': '',
-    //   'enabled': '',
-    // }
-
     return {
-      scheduling,
+      scheduling: this.calculateSchedules(),
+      title: null,
+      titleErrors: null,
+      country: null,
+      countryErrors: null,
+      city: null,
+      cityErrors: null,
+      street: null,
+      streetErrors: null,
     };
   },
   computed: {
     ...mapGetters({
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/restaurants',
+      restaurantsResponse: 'restaurants/getIndexResponse',
+      restaurantResponse: 'restaurants/getShowResponse',
     }),
+    isLoadingRestaurant() {
+      return !this.restaurant && !this.restaurantResponse && !this.restaurantsResponse;
+    },
+  },
+  watch: {
+    restaurant: {
+      handler(newVal, oldVal) {
+        if (newVal !== oldVal) {
+          this.scheduling = this.calculateSchedules();
+        }
+      },
+    }
   },
   methods: {
     ...mapActions({
@@ -284,6 +189,35 @@ export default defineComponent({
       time += minute < 10 ? '0' + minute : minute;
 
       return time;
+    },
+    calculateSchedules() {
+      console.log('restaurnt: ', this.restaurant);
+
+      if (this.restaurant === undefined || this.restaurant === null || !this.restaurant.schedules || !this.restaurant.schedules.length) {
+        return [];
+      }
+
+      console.log('proceeded...');
+
+      const schedules = this.restaurant.schedules.map(function (schedule) {
+        return {
+          weekday: schedule.weekday,
+          begHour: schedule.begHour,
+          begMinute: schedule.begMinute,
+          endHour: schedule.endHour,
+          endMinute: schedule.endMinute,
+          archived: schedule.archived,
+          active: !schedule.archived,
+        };
+      });
+
+      const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+
+      schedules.sort(function(a, b) {
+        return weekdays.indexOf(a.weekday) - weekdays.indexOf(b.weekday);
+      });
+
+      return schedules;
     },
   },
   async mounted() {
@@ -303,6 +237,8 @@ export default defineComponent({
         await this.loadAndSelectRestaurant({ id: restaurantId });
       }
     }
+
+    this.scheduling = this.calculateSchedules();
   },
 });
 </script>

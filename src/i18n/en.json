@@ -318,5 +318,13 @@
       "from": "From",
       "until": "Until"
     }
+  },
+  "restaurant": {
+    "name": "Name",
+    "country": "Country",
+    "city": "City",
+    "street": "Street",
+    "save_changes": "Save changes",
+    "cancel_changes": "Cancel changes"
   }
 }

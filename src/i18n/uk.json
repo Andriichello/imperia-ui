@@ -316,5 +316,13 @@
       "from": "Від",
       "until": "По"
     }
+  },
+  "restaurant": {
+    "name": "Назва",
+    "country": "Країна",
+    "city": "Місто",
+    "street": "Вулиця",
+    "save_changes": "Зберегти зміни",
+    "cancel_changes": "Відмінити зміни"
   }
 }
