@@ -1,4 +1,3 @@
-.openapi-generator-ignore
 apis/AuthApi.ts
 apis/BanquetsApi.ts
 apis/CategoriesApi.ts
@@ -77,6 +76,7 @@ models/LoginResponse.ts
 models/LogoutResponse.ts
 models/MeResponse.ts
 models/Media.ts
+models/MediaMetadata.ts
 models/Menu.ts
 models/MultipleInvoiceUrlRequest.ts
 models/Notification.ts

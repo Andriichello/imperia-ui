@@ -129,6 +129,11 @@ export default defineComponent({
 
       return name && name.endsWith('-restaurant');
     },
+    isEditRestaurantPage() {
+      const name = this.$route.name;
+
+      return name && name === 'edit-restaurant';
+    },
     isReviewsPage() {
       const name = this.$route.name;
 
@@ -204,7 +209,7 @@ export default defineComponent({
     onBack() {
       const restaurantId = this.$route.params['restaurantId'];
 
-      if (this.isReviewsPage || this.isMenuPage || this.isHistoryPage) {
+      if (this.isReviewsPage || this.isMenuPage || this.isHistoryPage || this.isEditRestaurantPage) {
         this.$router.push(`/place/${restaurantId}`)
       } else if (this.isRestaurantPage) {
         this.$router.push(`/place`);

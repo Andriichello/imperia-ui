@@ -14,6 +14,7 @@ import PreviewTipsForFoodPage from "@/pages/PreviewTipsForFoodPage.vue";
 import PreviewTipsForCleannessPage from "@/pages/PreviewTipsForCleannessPage.vue";
 import PreviewTipsForServicePage from "@/pages/PreviewTipsForServicePage.vue";
 import PreviewTipsForWaiterPage from "@/pages/PreviewTipsForWaiterPage.vue";
+import EditRestaurantPage from "@/pages/EditRestaurantPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -92,6 +93,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/place/:restaurantId(\\d+)?',
     name: 'home',
     component: HomePage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/edit',
+    name: 'edit-restaurant',
+    component: EditRestaurantPage,
     meta: {
       requiresAuth: true,
     },
