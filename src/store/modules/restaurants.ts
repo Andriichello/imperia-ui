@@ -1,4 +1,3 @@
-import {authHeaders} from "@/helpers";
 import {
   IndexRestaurantResponse,
   Restaurant,

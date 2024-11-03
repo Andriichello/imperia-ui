@@ -24,6 +24,9 @@ export default class CrudState <
   /** Last index response. */
   public index: I | Response | null;
 
+  /** Last index more response. */
+  public indexMore: I | Response | null;
+
   /** Last show response. */
   public show: S | Response | null;
 
@@ -38,6 +41,9 @@ export default class CrudState <
 
   /** Is `true` if currently waiting for index response.  */
   public isLoadingIndex: boolean;
+
+  /** Is `true` if currently waiting for index more response.  */
+  public isLoadingIndexMore: boolean;
 
   /** Is `true` if currently waiting for show response.  */
   public isLoadingShow: boolean;
@@ -61,12 +67,14 @@ export default class CrudState <
     this.form = new FormClass();
 
     this.index = null;
+    this.indexMore = null;
     this.show = null;
     this.store = null;
     this.update = null;
     this.destroy = null;
 
     this.isLoadingIndex = false;
+    this.isLoadingIndexMore = false;
     this.isLoadingShow = false;
     this.isLoadingStore = false;
     this.isLoadingUpdate = false;

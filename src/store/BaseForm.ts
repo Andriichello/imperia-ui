@@ -1,3 +1,5 @@
+import {StoreBanquetRequest, UpdateBanquetRequest} from "@/openapi";
+
 export default class BaseForm <T extends object = object> {
   /** Resource that was used to populate the form. */
   protected resource: T | null;
@@ -58,11 +60,16 @@ export default class BaseForm <T extends object = object> {
    * Returns all the form's properties.
    *
    * @param name Name of the property to retrieve.
-   * @return The value of the property, or undefined if it does not exist.
+   * @param defaultValue
    *
+   * @return The value of the property, or undefined if it does not exist.
    */
-  public getProperty<K extends keyof T>(name: K): T[K] | undefined  {
-    return this.properties[name];
+  public getProperty<K extends keyof T>(name: K, defaultValue: undefined): T[K] | undefined  {
+    if (Object.prototype.hasOwnProperty.call(this.changes, name)) {
+      return this.changes[name];
+    }
+
+    return defaultValue;
   }
 
   /**
@@ -201,5 +208,23 @@ export default class BaseForm <T extends object = object> {
       });
 
     return result;
+  }
+
+  /**
+   * Transforms the form into a `store` request.
+   *
+   * @return object
+   */
+  public asCreate(): object {
+    return this.getProperties();
+  }
+
+  /**
+   * Transforms the form into an `update` request.
+   *
+   * @return object
+   */
+  public asUpdate(): object {
+    return this.asCreate();
   }
 }

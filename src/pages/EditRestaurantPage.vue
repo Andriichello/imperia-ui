@@ -16,7 +16,7 @@
         <label class="label">
           <span class="label-text">{{ $t("restaurant.name") }}</span>
         </label>
-        <input v-model="title" name="title" type="text" required placeholder="..."
+        <input v-model="form.name" name="title" type="text" required placeholder="..."
                class="input input-bordered w-full max-w-xl"
                :class="{ 'input-error' : titleErrors !== null }"/>
         <label class="label flex-col items-start" v-if="titleErrors">
@@ -32,7 +32,7 @@
             <label class="label">
               <span class="label-text">{{ $t("restaurant.country") }}</span>
             </label>
-            <input v-model="country" name="country" type="text" required placeholder="..."
+            <input v-model="form.country" name="country" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
                    :class="{ 'input-error' : countryErrors !== null }"/>
             <label class="label flex-col items-start" v-if="countryErrors">
@@ -46,7 +46,7 @@
             <label class="label">
               <span class="label-text">{{ $t("restaurant.city") }}</span>
             </label>
-            <input v-model="city" name="city" type="text" required placeholder="..."
+            <input v-model="form.city" name="city" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
                    :class="{ 'input-error' : cityErrors !== null }"/>
             <label class="label flex-col items-start" v-if="cityErrors">
@@ -61,11 +61,11 @@
           <label class="label">
             <span class="label-text">{{ $t("restaurant.street") }}</span>
           </label>
-          <input v-model="street" name="street" type="text" required placeholder="..."
+          <input v-model="form.place" name="street" type="text" required placeholder="..."
                  class="input input-bordered w-full max-w-xl"
-                 :class="{ 'input-error' : streetErrors !== null }"/>
-          <label class="label flex-col items-start" v-if="streetErrors">
-          <span class="label-text-alt text-error text-sm" v-for="error in streetErrors" :key="error">
+                 :class="{ 'input-error' : placeErrors !== null }"/>
+          <label class="label flex-col items-start" v-if="placeErrors">
+          <span class="label-text-alt text-error text-sm" v-for="error in placeErrors" :key="error">
             {{ error }}
           </span>
           </label>
@@ -144,26 +144,21 @@ export default defineComponent({
   data() {
     return {
       scheduling: this.calculateSchedules(),
-      title: this.restaurant?.title,
       titleErrors: null,
-      country: this.restaurant?.country,
       countryErrors: null,
-      city: this.restaurant?.city,
       cityErrors: null,
-      street: this.restaurant?.street,
-      streetErrors: null,
+      placeErrors: null,
     };
   },
   computed: {
     ...mapGetters({
+      form: 'restaurants/form',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/resources',
       restaurantsResponse: 'restaurants/index',
       restaurantResponse: 'restaurants/show',
+      isLoadingRestaurant: 'restaurants/isLoadingShow',
     }),
-    isLoadingRestaurant() {
-      return !this.restaurant && !this.restaurantResponse && !this.restaurantsResponse;
-    },
   },
   watch: {
     restaurant: {

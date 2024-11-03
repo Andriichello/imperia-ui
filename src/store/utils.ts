@@ -2,7 +2,6 @@ import CrudState from "@/store/CrudState";
 import BaseForm from "@/store/BaseForm";
 import {authHeaders} from "@/helpers";
 import * as runtime from "@/openapi/runtime";
-import {Restaurant} from "@/openapi";
 
 export interface ActionMapping {
   api: runtime.BaseAPI;
@@ -39,6 +38,9 @@ export function crudGetters<
     index(state: State) {
       return state.index;
     },
+    indexMore(state: State) {
+      return state.indexMore;
+    },
     show(state: State) {
       return state.show;
     },
@@ -53,6 +55,9 @@ export function crudGetters<
     },
     isLoadingIndex(state: State) {
       return state.isLoadingIndex;
+    },
+    isLoadingIndexMore(state: State) {
+      return state.isLoadingIndexMore;
     },
     isLoadingShow(state: State) {
       return state.isLoadingShow;
@@ -94,6 +99,8 @@ export function crudActions<
       const request = { id, ...(params ?? {}) };
       const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
 
+      commit('setIsLoadingShow', true);
+
       const response = await actions.api[actions.show](request, options)
         .then(response => response)
         .catch(error => {
@@ -103,19 +110,22 @@ export function crudActions<
 
       commit('setShow', response);
       commit('setResource', response?.data ?? null);
+      commit('setIsLoadingShow', false);
     },
     async loadAndSelectResource({ commit, dispatch, getters }, { id, params }) {
       await dispatch('loadResource', {id, params});
 
       commit('setSelected', getters.resource);
     },
-    async loadResources({ commit, dispatch, rootGetters }, { params}) {
+    async loadResources({ commit, dispatch, rootGetters }, { params }) {
       if (!actions.index) {
         throw new Error('There is no index action present for ' + actions.api.constructor.name)
       }
 
       const request = { ...(params ?? {}) };
       const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
+
+      commit('setIsLoadingIndex', true);
 
       const response = await actions.api[actions.index](request, options)
         .then(response => response)
@@ -126,6 +136,7 @@ export function crudActions<
 
       commit('setIndex', response);
       dispatch('setResources', response?.data ?? []);
+      commit('setIsLoadingIndex', false);
     },
     async loadResourcesIfMissing({ state, dispatch }, { params }) {
       if (state.index) {
@@ -133,6 +144,77 @@ export function crudActions<
       }
 
       dispatch('loadResources', { params });
+    },
+    async loadMoreResources({state, dispatch, commit, rootGetters}, { params }) {
+      if (!actions.index) {
+        throw new Error('There is no index action present for ' + actions.api.constructor.name)
+      }
+
+      const request = {...(params ?? {})};
+      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
+
+      if (!state.indexMore) {
+        const perPage = state.index?.meta?.perPage ?? null;
+
+        if (perPage) {
+          request.pageSize =  perPage;
+        }
+
+        request.pageNumber = 2;
+      } else {
+        request.pageNumber = state.indexMore.meta.currentPage + 1;
+      }
+
+      commit('setIsLoadingIndexMore', true);
+
+      const response = await actions.api[actions.index](request, options)
+        .then(response => response)
+        .catch(error => {
+          if (error.response.status !== 404) {
+            dispatch('error/setResponse', error.response, {root:true});
+          }
+          return error.response;
+        });
+
+      commit('setIndexMore', response);
+      commit('appendResources', response.data);
+      commit('setIsLoadingIndexMore', false);
+    },
+    async storeResource({ commit, rootGetters }, {request, params}) {
+      if (!actions.store) {
+        throw new Error('There is no store action present for ' + actions.api.constructor.name)
+      }
+
+      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
+      const req = { ...params };
+      req[actions.store + 'Request'] = request
+
+      commit('setIsLoadingStore', true);
+
+      const response = await actions.api[actions.store](req, options)
+        .then(response => response)
+        .catch(error => error.response);
+
+      commit('setStore', response);
+      commit('setIsLoadingStore', false);
+    },
+    async updateResource({ commit, rootGetters }, { id, request, params }) {
+      if (!actions.update) {
+        throw new Error('There is no update action present for ' + actions.api.constructor.name)
+      }
+
+      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
+      const req = { id, ...params };
+      req[actions.update + 'Request'] = request
+
+      commit('setIsLoadingUpdate', true);
+
+      const response = await actions.api[actions.store](req, { headers: options })
+        .then(response => response)
+        .catch(error => error.response);
+
+      commit('setUpdate', response);
+      commit('setIsLoadingUpdate', false);
     },
   };
 }
@@ -160,8 +242,14 @@ export function crudMutations<
     setResources(state: State, resources: T[] | null) {
       state.resources = resources;
     },
+    appendResources(state: State, resources: T[] | null) {
+      state.resources = (state.resources ?? []).concat(resources);
+    },
     setIndex(state: State, response: I | Response | null) {
       state.index = response;
+    },
+    setIndexMore(state: State, response: I | Response | null) {
+      state.indexMore = response;
     },
     setShow(state: State, response: S | Response | null) {
       state.show = response;
@@ -174,6 +262,24 @@ export function crudMutations<
     },
     setDestroy(state: State, response: D | Response | null) {
       state.destroy = response;
+    },
+    setIsLoadingIndex(state: State, loading: boolean) {
+      state.isLoadingIndex = loading;
+    },
+    setIsLoadingIndexMore(state: State, loading: boolean) {
+      state.isLoadingIndexMore = loading;
+    },
+    setIsLoadingShow(state: State, loading: boolean) {
+      state.isLoadingShow = loading;
+    },
+    setIsLoadingStore(state: State, loading: boolean) {
+      state.isLoadingStore = loading;
+    },
+    setIsLoadingUpdate(state: State, loading: boolean) {
+      state.isLoadingUpdate = loading;
+    },
+    setIsLoadingDestroy(state: State, loading: boolean) {
+      state.isLoadingDestroy = loading;
     },
   };
 }
