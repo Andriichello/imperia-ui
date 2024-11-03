@@ -1,5 +1,3 @@
-import {StoreBanquetRequest, UpdateBanquetRequest} from "@/openapi";
-
 export default class BaseForm <T extends object = object> {
   /** Resource that was used to populate the form. */
   protected resource: T | null;
@@ -16,7 +14,6 @@ export default class BaseForm <T extends object = object> {
    * @param resource
    */
   constructor(resource: T = {} as T) {
-    this.resource = resource;
     this.properties = {} as T;
     this.changes = {} as Partial<T>;
 
@@ -26,25 +23,26 @@ export default class BaseForm <T extends object = object> {
   /**
    * Dynamically populate properties from the given data object.
    *
-   * @param data
+   * @param resource
    */
-  public populate(data: Partial<T> = {}) {
-    for (const [key, value] of Object.entries(data)) {
+  public populate(resource: T) {
+    this.clearProperties();
+    this.clearChanges();
+
+    this.resource = resource;
+
+    for (const [key, value] of Object.entries(resource)) {
       this.properties[key] = value;
     }
   }
 
   /**
-   * Dynamically repopulate properties from the given data object.
-   * Sets `properties` to an empty object before setting new values.
+   * Get the form's resource.
    *
-   * @param data
-   *
-   * @return void
+   * @return object
    */
-  public repopulate(data: Partial<T> = {}): void {
-    this.properties = {} as T;
-    this.populate(data);
+  public getResource(): T | null {
+    return this.resource;
   }
 
   /**
@@ -78,8 +76,15 @@ export default class BaseForm <T extends object = object> {
    * @return object
    */
   public setProperty<K extends keyof T>(name: K, value: any, silent = false): void {
-    if (silent === false && this.differs(name, value)) {
+    const original = this.resource[name] ?? null;
+    const current = this.getProperty(name, null);
+
+    if (silent === false && current !== value) {
       this.setChange(name, value);
+
+      if (original === value) {
+        this.unsetChange(name)
+      }
     }
 
     this.properties[name] = value;
@@ -104,18 +109,6 @@ export default class BaseForm <T extends object = object> {
    */
   public clearProperties(): void {
     this.properties = {} as T;
-  }
-
-  /**
-   * Determines if property's value differs from the given value.
-   *
-   * @param name Name of the property
-   * @param value Value to be compared against
-   *
-   * @return boolean
-   */
-  public differs<K extends keyof T>(name: K, value: unknown): boolean {
-    return this.properties[name] !== value;
   }
 
   /**

@@ -26,6 +26,9 @@ export function crudGetters<
     form(state: State) {
       return state.form as F;
     },
+    properties(state: State) {
+      return state.form.getProperties();
+    },
     selected(state: State) {
       return state.selected;
     },
@@ -81,6 +84,12 @@ export function crudActions<
   return {
     setForm({ commit }, form: F | null) {
       commit('setForm', form);
+    },
+    setOnForm({ commit }, {name, value}) {
+      commit('setOnForm', {name, value});
+    },
+    populateForm({ commit }, resource: T | null) {
+      commit('populateForm', resource);
     },
     setSelected({ commit }, selected: T | null) {
       commit('setSelected', selected);
@@ -232,6 +241,12 @@ export function crudMutations<
   return {
     setForm(state: State, form: F | null) {
       state.form = form;
+    },
+    populateForm(state: State, resource: T | null) {
+      state.form.populate(resource);
+    },
+    setOnForm(state: State, { name, value }) {
+      state.form.setProperty(name, value);
     },
     setSelected(state: State, selected: T | null) {
       state.selected = selected;

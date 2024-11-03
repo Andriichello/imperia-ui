@@ -16,11 +16,11 @@
         <label class="label">
           <span class="label-text">{{ $t("restaurant.name") }}</span>
         </label>
-        <input v-model="form.name" name="title" type="text" required placeholder="..."
+        <input v-model="name" name="name" type="text" required placeholder="..."
                class="input input-bordered w-full max-w-xl"
-               :class="{ 'input-error' : titleErrors !== null }"/>
-        <label class="label flex-col items-start" v-if="titleErrors">
-          <span class="label-text-alt text-error text-sm" v-for="error in titleErrors" :key="error">
+               :class="{ 'input-error' : nameErrors !== null }"/>
+        <label class="label flex-col items-start" v-if="nameErrors">
+          <span class="label-text-alt text-error text-sm" v-for="error in nameErrors" :key="error">
             {{ error }}
           </span>
         </label>
@@ -32,7 +32,7 @@
             <label class="label">
               <span class="label-text">{{ $t("restaurant.country") }}</span>
             </label>
-            <input v-model="form.country" name="country" type="text" required placeholder="..."
+            <input v-model="country" name="country" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
                    :class="{ 'input-error' : countryErrors !== null }"/>
             <label class="label flex-col items-start" v-if="countryErrors">
@@ -46,7 +46,7 @@
             <label class="label">
               <span class="label-text">{{ $t("restaurant.city") }}</span>
             </label>
-            <input v-model="form.city" name="city" type="text" required placeholder="..."
+            <input v-model="city" name="city" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
                    :class="{ 'input-error' : cityErrors !== null }"/>
             <label class="label flex-col items-start" v-if="cityErrors">
@@ -61,7 +61,7 @@
           <label class="label">
             <span class="label-text">{{ $t("restaurant.street") }}</span>
           </label>
-          <input v-model="form.place" name="street" type="text" required placeholder="..."
+          <input v-model="place" name="street" type="text" required placeholder="..."
                  class="input input-bordered w-full max-w-xl"
                  :class="{ 'input-error' : placeErrors !== null }"/>
           <label class="label flex-col items-start" v-if="placeErrors">
@@ -144,7 +144,7 @@ export default defineComponent({
   data() {
     return {
       scheduling: this.calculateSchedules(),
-      titleErrors: null,
+      nameErrors: null,
       countryErrors: null,
       cityErrors: null,
       placeErrors: null,
@@ -153,28 +153,49 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       form: 'restaurants/form',
+      properties: 'restaurants/properties',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/resources',
       restaurantsResponse: 'restaurants/index',
       restaurantResponse: 'restaurants/show',
       isLoadingRestaurant: 'restaurants/isLoadingShow',
     }),
+    slug: {
+      get() { return this.properties?.slug; },
+      set(value) { this.setOnForm({name: 'slug', value: value}); },
+    },
+    name: {
+      get() { return this.properties?.name; },
+      set(value) { this.setOnForm({name: 'name', value: value}); },
+    },
+    country: {
+      get() { return this.properties?.country; },
+      set(value) { this.setOnForm({name: 'country', value: value}); },
+    },
+    city: {
+      get() { return this.properties?.city; },
+      set(value) { this.setOnForm({name: 'city', value: value}); },
+    },
+    place: {
+      get() { return this.properties?.place; },
+      set(value) { this.setOnForm({name: 'place', value: value}); },
+    },
   },
   watch: {
     restaurant: {
       handler(newVal, oldVal) {
         if (newVal && newVal !== oldVal) {
+          this.populateForm(newVal);
+
           this.scheduling = this.calculateSchedules();
-          this.title = newVal?.name;
-          this.country = newVal?.country;
-          this.city = newVal?.city;
-          this.street = newVal?.place;
         }
       },
     }
   },
   methods: {
     ...mapActions({
+      setOnForm: "restaurants/setOnForm",
+      populateForm: "restaurants/populateForm",
       selectRestaurant: "restaurants/setSelected",
       loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
