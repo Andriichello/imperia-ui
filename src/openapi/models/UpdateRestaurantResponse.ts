@@ -13,33 +13,37 @@
  */
 
 import { exists, mapValues } from "../runtime";
-import type { Waiter } from "./Waiter";
-import { WaiterFromJSON, WaiterFromJSONTyped, WaiterToJSON } from "./Waiter";
+import type { Restaurant } from "./Restaurant";
+import {
+  RestaurantFromJSON,
+  RestaurantFromJSONTyped,
+  RestaurantToJSON,
+} from "./Restaurant";
 
 /**
- * Store waiter response object.
+ * Update restaurant response object.
  * @export
- * @interface StoreWaiterResponse
+ * @interface UpdateRestaurantResponse
  */
-export interface StoreWaiterResponse {
+export interface UpdateRestaurantResponse {
   /**
    *
-   * @type {Waiter}
-   * @memberof StoreWaiterResponse
+   * @type {Restaurant}
+   * @memberof UpdateRestaurantResponse
    */
-  data: Waiter;
+  data: Restaurant;
   /**
    *
    * @type {string}
-   * @memberof StoreWaiterResponse
+   * @memberof UpdateRestaurantResponse
    */
   message: string;
 }
 
 /**
- * Check if a given object implements the StoreWaiterResponse interface.
+ * Check if a given object implements the UpdateRestaurantResponse interface.
  */
-export function instanceOfStoreWaiterResponse(value: object): boolean {
+export function instanceOfUpdateRestaurantResponse(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && "data" in value;
   isInstance = isInstance && "message" in value;
@@ -47,25 +51,27 @@ export function instanceOfStoreWaiterResponse(value: object): boolean {
   return isInstance;
 }
 
-export function StoreWaiterResponseFromJSON(json: any): StoreWaiterResponse {
-  return StoreWaiterResponseFromJSONTyped(json, false);
+export function UpdateRestaurantResponseFromJSON(
+  json: any
+): UpdateRestaurantResponse {
+  return UpdateRestaurantResponseFromJSONTyped(json, false);
 }
 
-export function StoreWaiterResponseFromJSONTyped(
+export function UpdateRestaurantResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): StoreWaiterResponse {
+): UpdateRestaurantResponse {
   if (json === undefined || json === null) {
     return json;
   }
   return {
-    data: WaiterFromJSON(json["data"]),
+    data: RestaurantFromJSON(json["data"]),
     message: json["message"],
   };
 }
 
-export function StoreWaiterResponseToJSON(
-  value?: StoreWaiterResponse | null
+export function UpdateRestaurantResponseToJSON(
+  value?: UpdateRestaurantResponse | null
 ): any {
   if (value === undefined) {
     return undefined;
@@ -74,7 +80,7 @@ export function StoreWaiterResponseToJSON(
     return null;
   }
   return {
-    data: WaiterToJSON(value.data),
+    data: RestaurantToJSON(value.data),
     message: value.message,
   };
 }

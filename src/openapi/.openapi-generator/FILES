@@ -1,3 +1,4 @@
+.openapi-generator-ignore
 apis/AuthApi.ts
 apis/BanquetsApi.ts
 apis/CategoriesApi.ts
@@ -146,6 +147,8 @@ models/StoreOrderRequestServiceField.ts
 models/StoreOrderRequestSpaceField.ts
 models/StoreOrderRequestTicketField.ts
 models/StoreOrderResponse.ts
+models/StoreRestaurantRequest.ts
+models/StoreRestaurantResponse.ts
 models/StoreRestaurantReviewRequest.ts
 models/StoreRestaurantReviewResponse.ts
 models/StoreWaiterRequest.ts
@@ -170,6 +173,8 @@ models/UpdateNotificationRequest.ts
 models/UpdateNotificationResponse.ts
 models/UpdateOrderRequest.ts
 models/UpdateOrderResponse.ts
+models/UpdateRestaurantRequest.ts
+models/UpdateRestaurantResponse.ts
 models/UpdateUserRequest.ts
 models/UpdateUserResponse.ts
 models/UpdateWaiterRequest.ts

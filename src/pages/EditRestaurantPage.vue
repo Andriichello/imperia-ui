@@ -144,13 +144,13 @@ export default defineComponent({
   data() {
     return {
       scheduling: this.calculateSchedules(),
-      title: null,
+      title: this.restaurant?.title,
       titleErrors: null,
-      country: null,
+      country: this.restaurant?.country,
       countryErrors: null,
-      city: null,
+      city: this.restaurant?.city,
       cityErrors: null,
-      street: null,
+      street: this.restaurant?.street,
       streetErrors: null,
     };
   },
@@ -168,8 +168,14 @@ export default defineComponent({
   watch: {
     restaurant: {
       handler(newVal, oldVal) {
-        if (newVal !== oldVal) {
+        console.log('restaurant: ', JSON.stringify(newVal));
+
+        if (newVal && newVal !== oldVal) {
           this.scheduling = this.calculateSchedules();
+          this.title = newVal?.name;
+          this.country = newVal?.country;
+          this.city = newVal?.city;
+          this.street = newVal?.place;
         }
       },
     }
