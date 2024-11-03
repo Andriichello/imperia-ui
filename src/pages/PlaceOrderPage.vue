@@ -379,9 +379,9 @@ export default defineComponent({
       isLoadingOrderedSpaces: 'order/isLoadingOrderedSpaces',
       isLoadingOrderedServices: 'order/isLoadingOrderedServices',
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
-      isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
-      showRestaurantResponse: 'restaurants/getShowResponse',
+      restaurants: 'restaurants/resources',
+      isLoadingRestaurants: 'restaurants/isLoadingIndex',
+      showRestaurantResponse: 'restaurants/show',
       customerFilters: 'customers/filters',
       isBanquetSavedSuccessfully: 'basket/isSavedSuccessfully',
       isOrderSavedSuccessfully: 'order/isSavedSuccessfully',
@@ -483,8 +483,6 @@ export default defineComponent({
       },
     },
     async updateOrderResponse(newValue) {
-      console.log(newValue);
-
       this.isUpdatingOrder = false;
       this.updateOrderErrors = newValue
           ? await ResponseErrors.from(newValue) : {};
@@ -511,7 +509,7 @@ export default defineComponent({
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
       loadTagsIfMissing: 'preview/loadTagsIfMissing',
       selectRestaurant: 'restaurants/setSelected',
-      loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
+      loadAndSelectRestaurant: 'restaurants/loadAndSelectResource',
       loadBanquet: 'basket/loadBanquet',
       loadBanquetIfMissing: 'basket/loadBanquetIfMissing',
       createBanquet: 'basket/createBanquet',
@@ -854,7 +852,6 @@ export default defineComponent({
       }
 
       this.orderErrors = errors;
-      console.log('order errors: ', errors)
 
       return !Object.keys(errors).length
           && this.orderForm?.banquetId
@@ -870,7 +867,6 @@ export default defineComponent({
         this.isUpdatingOrder = true;
 
         const request = this.orderForm.asUpdate();
-        console.log({request})
 
         this.updateOrder({ id: this.orderId, request: this.orderForm.asUpdate() });
       }
@@ -920,7 +916,7 @@ export default defineComponent({
         this.selectRestaurant(target);
       } else {
         this.isLoadingRestaurant = true;
-        this.loadAndSelectRestaurant({ id: restaurantId });
+        this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
   },

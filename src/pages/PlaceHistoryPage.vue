@@ -191,7 +191,7 @@ export default defineComponent({
       tags: 'preview/tags',
       selected: 'history/selected',
       restaurant: 'restaurants/selected',
-      restaurantResponse: 'restaurants/getShowResponse',
+      restaurantResponse: 'restaurants/show',
       banquets: "history/banquets",
       banquetsTotal: "history/banquetsTotal",
       filters: "history/filters",
@@ -229,7 +229,7 @@ export default defineComponent({
       setMode: 'history/setMode',
       setSelected: 'history/setSelected',
       selectRestaurant: 'restaurants/setSelected',
-      loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
+      loadAndSelectRestaurant: 'restaurants/loadAndSelectResource',
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
       loadTagsIfMissing: 'preview/loadTagsIfMissing',
       loadBanquets: 'history/loadBanquets',
@@ -312,8 +312,6 @@ export default defineComponent({
         await this.loadBanquetsPdfUrl({ids});
         if (this.pdfUrlResponse && instanceOfBanquetMultipleInvoiceUrlResponse(this.pdfUrlResponse)) {
           url = this.pdfUrlResponse.url;
-
-          console.log({url});
         }
       }
 
@@ -382,7 +380,7 @@ export default defineComponent({
         this.selectRestaurant(target);
       } else {
         this.isLoadingRestaurant = true;
-        this.loadAndSelectRestaurant({ id: restaurantId });
+        this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
 

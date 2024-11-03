@@ -728,8 +728,6 @@ const actions = {
     dispatch('recalculate');
   },
   unsetSpace({ commit, dispatch }, {spaceId}) {
-    console.log('unsetSpace: ', {spaceId});
-
     commit('unsetSpace', {spaceId});
     dispatch('recalculate');
   },
@@ -741,8 +739,6 @@ const actions = {
     dispatch('recalculate');
   },
   unsetProduct({ commit, dispatch }, {productId, variantId, batch}) {
-    console.log('unsetProduct: ', {productId, variantId, batch});
-
     commit('unsetProduct', {productId, variantId, batch});
     dispatch('recalculate');
   },

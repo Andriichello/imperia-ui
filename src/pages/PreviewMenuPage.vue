@@ -61,10 +61,10 @@ export default defineComponent({
     ...mapGetters({
       menu: 'preview/selected',
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
-      showRestaurantResponse: 'restaurants/getShowResponse',
+      restaurants: 'restaurants/resources',
+      showRestaurantResponse: 'restaurants/show',
       isLoadingMenus: "preview/isLoadingMenus",
-      isLoadingRestaurants: "restaurants/isLoadingRestaurants",
+      isLoadingRestaurants: "restaurants/isLoadingIndex",
     }),
   },
   methods: {
@@ -75,7 +75,7 @@ export default defineComponent({
       loadMenusAndSelectFirst: "preview/loadMenusAndSelectFirst",
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
-      loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
   },
   async mounted() {
@@ -123,7 +123,7 @@ export default defineComponent({
         await this.selectRestaurant(target);
       } else {
         this.loadingRestaurant = true;
-        await this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
   },

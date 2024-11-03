@@ -24,9 +24,9 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
-      indexResponse: 'restaurants/getIndexResponse',
-      showResponse: 'restaurants/getShowResponse',
+      restaurants: 'restaurants/resources',
+      indexResponse: 'restaurants/index',
+      showResponse: 'restaurants/show',
     }),
     isLoading() {
       return !this.restaurant && !this.indexResponse && !this.showResponse;

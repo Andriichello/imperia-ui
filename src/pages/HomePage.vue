@@ -84,9 +84,9 @@ export default defineComponent({
       restaurant: 'restaurants/selected',
       menus: 'preview/menus',
       isLoadingMenus: 'preview/isLoadingMenus',
-      isLoadingRestaurants: 'restaurants/isLoadingRestaurants',
-      restaurantResponse: 'restaurants/getShowResponse',
-      restaurantsResponse: 'restaurants/getIndexResponse',
+      isLoadingRestaurants: 'restaurants/isLoadingIndex',
+      restaurantResponse: 'restaurants/show',
+      restaurantsResponse: 'restaurants/index',
     }),
     isLoadingRestaurant() {
       return !this.restaurant && !this.restaurantResponse && !this.restaurantsResponse;
@@ -110,7 +110,7 @@ export default defineComponent({
       const restaurantId = +this.$route.params['restaurantId'];
 
       if (!restaurantId || restaurantId === newUser.restaurantId) {
-        this.loadAndSelectRestaurant({id: newUser.restaurantId});
+        this.loadAndSelectRestaurant({id: newUser.restaurantId, params: {include: 'schedules'}});
         this.$router.push(`/place/${newUser.restaurantId}`);
       }
     },
@@ -123,7 +123,7 @@ export default defineComponent({
     ...mapActions({
       selectMenu: 'preview/selectMenu',
       selectRestaurant: 'restaurants/setSelected',
-      loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
+      loadAndSelectRestaurant: 'restaurants/loadAndSelectResource',
       loadReviewsIfMissing: 'reviews/loadReviewsIfMissing',
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
     }),
@@ -132,7 +132,7 @@ export default defineComponent({
         this.$router.replace(`/place/${this.user.restaurantId}`);
 
         if (!this.restaurant) {
-          this.loadAndSelectRestaurant({id: this.user.restaurantId});
+          this.loadAndSelectRestaurant({id: this.user.restaurantId, params: {include: 'schedules'}});
         }
       } else {
         this.$router.replace(`/place`);
@@ -184,7 +184,7 @@ export default defineComponent({
       if (target) {
         await this.selectRestaurant(target);
       } else {
-        await this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
 

@@ -157,9 +157,9 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
-      restaurantsResponse: 'restaurants/getIndexResponse',
-      restaurantResponse: 'restaurants/getShowResponse',
+      restaurants: 'restaurants/resources',
+      restaurantsResponse: 'restaurants/index',
+      restaurantResponse: 'restaurants/show',
     }),
     isLoadingRestaurant() {
       return !this.restaurant && !this.restaurantResponse && !this.restaurantsResponse;
@@ -168,8 +168,6 @@ export default defineComponent({
   watch: {
     restaurant: {
       handler(newVal, oldVal) {
-        console.log('restaurant: ', JSON.stringify(newVal));
-
         if (newVal && newVal !== oldVal) {
           this.scheduling = this.calculateSchedules();
           this.title = newVal?.name;
@@ -183,7 +181,7 @@ export default defineComponent({
   methods: {
     ...mapActions({
       selectRestaurant: "restaurants/setSelected",
-      loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
     time(hour, minute) {
       let time = '';
@@ -197,13 +195,9 @@ export default defineComponent({
       return time;
     },
     calculateSchedules() {
-      console.log('restaurnt: ', this.restaurant);
-
       if (this.restaurant === undefined || this.restaurant === null || !this.restaurant.schedules || !this.restaurant.schedules.length) {
         return [];
       }
-
-      console.log('proceeded...');
 
       const schedules = this.restaurant.schedules.map(function (schedule) {
         return {
@@ -240,7 +234,7 @@ export default defineComponent({
       if (target) {
         await this.selectRestaurant(target);
       } else {
-        await this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
 

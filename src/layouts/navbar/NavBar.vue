@@ -105,7 +105,7 @@ export default defineComponent({
       themes: "theme/list",
       restaurantId: "restaurants/restaurantId",
       restaurant: "restaurants/selected",
-      restaurants: "restaurants/restaurants",
+      restaurants: "restaurants/resources",
       menu: "preview/menu",
       menus: "preview/menus",
     }),

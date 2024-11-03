@@ -85,7 +85,7 @@ export default defineComponent({
       theme: "theme/get",
       themes: "theme/list",
       restaurant: "restaurants/selected",
-      restaurants: "restaurants/restaurants",
+      restaurants: "restaurants/resources",
       menu: "preview/selected",
       menus: "preview/menus",
       category: "preview/category",
