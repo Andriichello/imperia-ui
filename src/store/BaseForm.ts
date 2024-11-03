@@ -3,7 +3,7 @@ export default class BaseForm <T extends object = object> {
   protected resource: T | null;
 
   /** Properties that were set to the form. */
-  protected properties: T;
+  protected properties: Partial<T>;
 
   /** Changes that were made to the form's properties. */
   protected changes: Partial<T>;
@@ -13,7 +13,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @param resource
    */
-  constructor(resource: T = null) {
+  constructor(resource: T = {} as T) {
     this.resource = resource;
     this.properties = {} as T;
     this.changes = {} as Partial<T>;
@@ -55,11 +55,22 @@ export default class BaseForm <T extends object = object> {
   }
 
   /**
+   * Returns all the form's properties.
+   *
+   * @param name Name of the property to retrieve.
+   * @return The value of the property, or undefined if it does not exist.
+   *
+   */
+  public getProperty<K extends keyof T>(name: K): T[K] | undefined  {
+    return this.properties[name];
+  }
+
+  /**
    * Sets property on the form.
    *
    * @return object
    */
-  public setProperty(name: string, value: unknown, silent = false): void {
+  public setProperty<K extends keyof T>(name: K, value: any, silent = false): void {
     if (silent === false && this.differs(name, value)) {
       this.setChange(name, value);
     }
@@ -74,7 +85,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @return boolean
    */
-  public unsetProperty(name: string): boolean {
+  public unsetProperty<K extends keyof T>(name: K): boolean {
     this.unsetChange(name);
     return delete this.properties[name];
   }
@@ -96,7 +107,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @return boolean
    */
-  public differs(name: string, value: unknown): boolean {
+  public differs<K extends keyof T>(name: K, value: unknown): boolean {
     return this.properties[name] !== value;
   }
 
@@ -117,7 +128,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @return any
    */
-  public getChange(name: string, defaultValue = undefined): unknown {
+  public getChange<K extends keyof T>(name: K, defaultValue = undefined): unknown {
     if (Object.prototype.hasOwnProperty.call(this.changes, name)) {
       return this.changes[name];
     }
@@ -133,7 +144,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @return void
    */
-  public setChange(name: string, value: unknown): void {
+  public setChange<K extends keyof T>(name: K, value: any): void {
     this.changes[name] = value;
   }
 
@@ -144,7 +155,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @return boolean
    */
-  public unsetChange(name: string): boolean {
+  public unsetChange<K extends keyof T>(name: K): boolean {
     return delete this.changes[name];
   }
 
@@ -183,7 +194,7 @@ export default class BaseForm <T extends object = object> {
 
     Object.keys(this.getChanges())
       .forEach(name => {
-        if (this.resource[name] !== this.getChange(name)) {
+        if (this.resource[name] !== this.getChange(name as keyof T)) {
           result = true;
           return;
         }
