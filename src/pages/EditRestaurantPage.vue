@@ -18,7 +18,7 @@
         </label>
         <input v-model="name" name="name" type="text" required placeholder="..."
                class="input input-bordered w-full max-w-xl"
-               :class="{ 'input-error' : nameErrors !== null }"/>
+               :class="{ 'input-error' : nameErrors }"/>
         <label class="label flex-col items-start" v-if="nameErrors">
           <span class="label-text-alt text-error text-sm" v-for="error in nameErrors" :key="error">
             {{ error }}
@@ -27,14 +27,14 @@
       </div>
 
       <div class="w-full flex flex-col justify-center items-center mt-4">
-        <div class="w-full flex justify-center items-center gap-2">
+        <div class="w-full flex justify-center items-start gap-2">
           <div class="form-control w-full flex-1">
             <label class="label">
               <span class="label-text">{{ $t("restaurant.country") }}</span>
             </label>
             <input v-model="country" name="country" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
-                   :class="{ 'input-error' : countryErrors !== null }"/>
+                   :class="{ 'input-error' : countryErrors }"/>
             <label class="label flex-col items-start" v-if="countryErrors">
           <span class="label-text-alt text-error text-sm" v-for="error in countryErrors" :key="error">
             {{ error }}
@@ -48,7 +48,7 @@
             </label>
             <input v-model="city" name="city" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
-                   :class="{ 'input-error' : cityErrors !== null }"/>
+                   :class="{ 'input-error' : cityErrors }"/>
             <label class="label flex-col items-start" v-if="cityErrors">
           <span class="label-text-alt text-error text-sm" v-for="error in cityErrors" :key="error">
             {{ error }}
@@ -63,7 +63,7 @@
           </label>
           <input v-model="place" name="street" type="text" required placeholder="..."
                  class="input input-bordered w-full max-w-xl"
-                 :class="{ 'input-error' : placeErrors !== null }"/>
+                 :class="{ 'input-error' : placeErrors }"/>
           <label class="label flex-col items-start" v-if="placeErrors">
           <span class="label-text-alt text-error text-sm" v-for="error in placeErrors" :key="error">
             {{ error }}
@@ -73,14 +73,14 @@
       </div>
 
       <div class="w-full flex flex-col justify-center items-center mt-4">
-        <div class="w-full flex justify-center items-center gap-2">
+        <div class="w-full flex justify-center items-start gap-2">
           <div class="form-control w-full flex-1">
             <label class="label">
               <span class="label-text">{{ $t("restaurant.phone") }}</span>
             </label>
             <input v-model="phone" name="phone" type="tel" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
-                   :class="{ 'input-error' : phoneErrors !== null }"/>
+                   :class="{ 'input-error' : phoneErrors }"/>
             <label class="label flex-col items-start" v-if="phoneErrors">
           <span class="label-text-alt text-error text-sm" v-for="error in phoneErrors" :key="error">
             {{ error }}
@@ -94,7 +94,7 @@
             </label>
             <input v-model="email" name="city" type="text" required placeholder="..."
                    class="input input-bordered w-full max-w-xl"
-                   :class="{ 'input-error' : emailErrors !== null }"/>
+                   :class="{ 'input-error' : emailErrors }"/>
             <label class="label flex-col items-start" v-if="emailErrors">
           <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">
             {{ error }}
@@ -107,7 +107,7 @@
     </div>
 
     <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="form && form.hasRealChanges()">
-      <button class="btn btn-ghost btn-md flex-1" @click="rollbackForm">
+      <button class="btn btn-ghost btn-md flex-1" @click="cancelForm">
         {{ $t('restaurant.cancel_changes') }}
       </button>
       <button class="btn btn-neutral btn-md flex-1" @click="updateForm">
@@ -190,12 +190,7 @@ export default defineComponent({
   data() {
     return {
       scheduling: this.calculateSchedules(),
-      nameErrors: null,
-      countryErrors: null,
-      cityErrors: null,
-      placeErrors: null,
-      phoneErrors: null,
-      emailErrors: null,
+      errors: {},
     };
   },
   computed: {
@@ -207,6 +202,7 @@ export default defineComponent({
       restaurantsResponse: 'restaurants/index',
       restaurantResponse: 'restaurants/show',
       restaurantUpdateResponse: 'restaurants/update',
+      restaurantUpdateResponseErrors: 'restaurants/updateErrors',
       isLoadingRestaurant: 'restaurants/isLoadingShow',
     }),
     restaurantId() {
@@ -240,6 +236,12 @@ export default defineComponent({
       get() { return this.properties?.email; },
       set(value) { this.setOnForm({name: 'email', value: value}); },
     },
+    nameErrors() { return this.restaurantUpdateResponseErrors?.name ?? this.errors?.name; },
+    countryErrors() { return this.restaurantUpdateResponseErrors?.country ?? this.errors?.country; },
+    cityErrors() { return this.restaurantUpdateResponseErrors?.city ?? this.errors?.city; },
+    placeErrors() { return this.restaurantUpdateResponseErrors?.place ?? this.errors?.place; },
+    phoneErrors() { return this.restaurantUpdateResponseErrors?.phone ?? this.errors?.phone; },
+    emailErrors() { return this.restaurantUpdateResponseErrors?.email ?? this.errors?.email; },
   },
   watch: {
     restaurant: {
@@ -249,11 +251,6 @@ export default defineComponent({
 
           this.scheduling = this.calculateSchedules();
         }
-      },
-    },
-    restaurantUpdateResponse: {
-      handler(newVal, oldVal) {
-        console.log('updateREsource: ', newVal);
       },
     },
   },
@@ -266,12 +263,63 @@ export default defineComponent({
       updateRestaurant: "restaurants/updateResource",
       loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
+    cancelForm() {
+      this.errors = {};
+      this.rollbackForm();
+    },
+    validateForm() {
+      const errors = {};
+
+      const name = this.name;
+      if (!name) {
+        errors.name = [this.$t('restaurant.errors.required.name')];
+      } else if (name.trim().length < 2) {
+        errors.name = [this.$t('restaurant.errors.min.name')];
+      }
+
+      const country = this.country;
+      if (!country) {
+        errors.country = [this.$t('restaurant.errors.required.country')];
+      } else if (country.trim().length < 2) {
+        errors.country = [this.$t('restaurant.errors.min.country')];
+      }
+
+      const city = this.city;
+      if (!city) {
+        errors.city = [this.$t('restaurant.errors.required.city')];
+      } else if (city.trim().length < 2) {
+        errors.city = [this.$t('restaurant.errors.min.city')];
+      }
+
+      const place = this.place;
+      if (!place) {
+        errors.place = [this.$t('restaurant.errors.required.place')];
+      } else if (place.trim().length < 2) {
+        errors.place = [this.$t('restaurant.errors.min.place')];
+      }
+
+      const phone = this.phone;
+      if (phone && (!phone.startsWith('+') || phone.trim().length < 10)) {
+        errors.phone = [this.$t('restaurant.errors.phone_rules')];
+      }
+
+      const email = this.email;
+      if (email && (!email.includes('@') || email.trim().startsWith('@') || email.trim().endsWith('@') || email.trim().includes(' '))) {
+        errors.email = [this.$t('restaurant.errors.email_rules', {sign: '@'})];
+      }
+
+      this.errors = errors;
+
+      return Object.keys(errors).length === 0;
+    },
     updateForm() {
+      if (!this.validateForm()) {
+        return;
+      }
+
       // validate first
 
       const request = this.form.asUpdate();
-
-      console.log('request: ', request);
 
       this.updateRestaurant({
         id: this.restaurantId,

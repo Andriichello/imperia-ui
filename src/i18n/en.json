@@ -327,6 +327,25 @@
     "phone": "Phone",
     "email": "Email",
     "save_changes": "Save changes",
-    "cancel_changes": "Cancel changes"
+    "cancel_changes": "Cancel changes",
+    "errors": {
+      "required": {
+        "name": "Title is required.",
+        "country": "Country is required.",
+        "city": "City is required.",
+        "place": "Street is required.",
+        "phone": "Phone number is required.",
+        "email": "Email is required."
+      },
+      "min": {
+        "name": "Title must be at least 2 characters.",
+        "country": "Country must be at least 2 characters.",
+        "city": "City must be at least 2 characters.",
+        "place": "Street must be at least 2 characters.",
+        "phone": "Phone number must be at least 2 digits."
+      },
+      "email_rules": "Email must contain {sign} and must not contain spaces.",
+      "phone_rules": "Phone must start with + and be at least 10 characters.",
+    }
   }
 }

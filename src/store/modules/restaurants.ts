@@ -43,7 +43,15 @@ class RestaurantForm extends BaseForm<Restaurant> {
    * @return object
    */
   public asUpdate(): UpdateRestaurantRequest {
-    return this.asCreate() as UpdateRestaurantRequest;
+    const request = this.asCreate();
+    const changed = {};
+
+    Object.keys(this.getChanges())
+      .forEach((name) => {
+        changed[name] = request?.[name];
+      });
+
+    return changed as UpdateRestaurantRequest;
   }
 }
 

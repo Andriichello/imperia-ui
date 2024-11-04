@@ -1,4 +1,5 @@
 import BaseForm from "@/store/BaseForm";
+import {ResponseErrors} from "@/helpers";
 
 export default class CrudState <
   T extends object = object,
@@ -22,22 +23,22 @@ export default class CrudState <
   public resources: T[] | null;
 
   /** Last index response. */
-  public index: I | Response | null;
+  public index: I | Response | ResponseErrors | null;
 
   /** Last index more response. */
-  public indexMore: I | Response | null;
+  public indexMore: I | Response | ResponseErrors | null;
 
   /** Last show response. */
-  public show: S | Response | null;
+  public show: S | Response | ResponseErrors | null;
 
   /** Last store response. */
-  public store: C | Response | null;
+  public store: C | Response | ResponseErrors | null;
 
   /** Last update response. */
-  public update: U | Response | null;
+  public update: U | Response | ResponseErrors | null;
 
   /** Last delete response. */
-  public destroy: D | Response | null;
+  public destroy: D | Response| ResponseErrors | null;
 
   /** Is `true` if currently waiting for index response.  */
   public isLoadingIndex: boolean;

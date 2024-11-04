@@ -1,8 +1,8 @@
 import CrudState from "@/store/CrudState";
 import BaseForm from "@/store/BaseForm";
-import {authHeaders} from "@/helpers";
+import {authHeaders, ResponseErrors} from "@/helpers";
 import * as runtime from "@/openapi/runtime";
-import {instanceOfUpdateRestaurantResponse} from "@/openapi";
+import {Configuration, DefaultConfig} from "@/openapi/runtime";
 
 export interface ActionMapping {
   api: runtime.BaseAPI;
@@ -11,6 +11,10 @@ export interface ActionMapping {
   store?: string;
   update?: string;
   destroy?: string;
+}
+
+export function setTokenGlobally(token: string | null) {
+  DefaultConfig.config = new Configuration({accessToken: token});
 }
 
 export function crudGetters<
@@ -22,7 +26,7 @@ export function crudGetters<
   C = Response,
   U = Response,
   D = Response,
-> () {
+>() {
   return {
     form(state: State) {
       return state.form as F;
@@ -57,6 +61,27 @@ export function crudGetters<
     destroy(state: State) {
       return state.destroy;
     },
+    indexData(state: State): T[] | null {
+      return state.index?.['data'] ?? null;
+    },
+    indexMoreData(state: State): T[] | null {
+      return state.indexMore?.['data'] ?? null;
+    },
+    showData(state: State): T | null {
+      return state.show?.['data'] ?? null;
+    },
+    storeData(state: State): T | null {
+      return state.store?.['data'] ?? null;
+    },
+    updateData(state: State): T | null {
+      return state.update?.['data'] ?? null;
+    },
+    storeErrors(state: State): object | null {
+      return state.store?.['errors'] ?? null;
+    },
+    updateErrors(state: State): object | null {
+      return state.update?.['errors'] ?? null;
+    },
     isLoadingIndex(state: State) {
       return state.isLoadingIndex;
     },
@@ -81,96 +106,93 @@ export function crudGetters<
 export function crudActions<
   T extends object = object,
   F extends BaseForm<T> = BaseForm<T>,
-> (actions: ActionMapping) {
+>(actions: ActionMapping) {
   return {
-    setForm({ commit }, form: F | null) {
+    setForm({commit}, form: F | null) {
       commit('setForm', form);
     },
-    setOnForm({ commit }, {name, value}) {
+    setOnForm({commit}, {name, value}) {
       commit('setOnForm', {name, value});
     },
-    populateForm({ commit }, resource: T | null) {
+    populateForm({commit}, resource: T | null) {
       commit('populateForm', resource);
     },
-    rollbackForm({ commit }) {
+    rollbackForm({commit}) {
       commit('rollbackForm');
     },
-    setSelected({ commit }, selected: T | null) {
+    setSelected({commit}, selected: T | null) {
       commit('setSelected', selected);
     },
-    setResource({ commit }, resource: T | null) {
+    setResource({commit}, resource: T | null) {
       commit('setResource', resource);
     },
-    setResources({ commit }, resources: T[] | null) {
+    setResources({commit}, resources: T[] | null) {
       commit('setResources', resources);
     },
-    async loadResource({ commit, dispatch, rootGetters }, { id, params }) {
+    async loadResource({commit, dispatch}, {id, params}) {
       if (!actions.show) {
         throw new Error('There is no show action present for ' + actions.api.constructor.name)
       }
 
-      const request = { id, ...(params ?? {}) };
-      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
+      const request = {id, ...(params ?? {})};
 
       commit('setIsLoadingShow', true);
 
-      const response = await actions.api[actions.show](request, options)
+      const response = await actions.api[actions.show](request)
         .then(response => response)
         .catch(error => {
-          dispatch('error/setResponse', error.response, {root:true});
-          return error.response;
+          dispatch('error/setResponse', error.response, {root: true});
+          return ResponseErrors.from(error.response);
         });
 
       commit('setShow', response);
       commit('setResource', response?.data ?? null);
       commit('setIsLoadingShow', false);
     },
-    async loadAndSelectResource({ commit, dispatch, getters }, { id, params }) {
+    async loadAndSelectResource({commit, dispatch, getters}, {id, params}) {
       await dispatch('loadResource', {id, params});
 
       commit('setSelected', getters.resource);
     },
-    async loadResources({ commit, dispatch, rootGetters }, { params }) {
+    async loadResources({commit, dispatch}, {params}) {
       if (!actions.index) {
         throw new Error('There is no index action present for ' + actions.api.constructor.name)
       }
 
-      const request = { ...(params ?? {}) };
-      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
+      const request = {...(params ?? {})};
 
       commit('setIsLoadingIndex', true);
 
-      const response = await actions.api[actions.index](request, options)
+      const response = await actions.api[actions.index](request)
         .then(response => response)
         .catch(error => {
-          dispatch('error/setResponse', error.response, {root:true});
-          return error.response;
+          dispatch('error/setResponse', error.response, {root: true});
+          return ResponseErrors.from(error.response);
         });
 
       commit('setIndex', response);
       dispatch('setResources', response?.data ?? []);
       commit('setIsLoadingIndex', false);
     },
-    async loadResourcesIfMissing({ state, dispatch }, { params }) {
+    async loadResourcesIfMissing({state, dispatch}, {params}) {
       if (state.index) {
         return;
       }
 
-      dispatch('loadResources', { params });
+      dispatch('loadResources', {params});
     },
-    async loadMoreResources({state, dispatch, commit, rootGetters}, { params }) {
+    async loadMoreResources({state, dispatch, commit}, {params}) {
       if (!actions.index) {
         throw new Error('There is no index action present for ' + actions.api.constructor.name)
       }
 
       const request = {...(params ?? {})};
-      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
 
       if (!state.indexMore) {
         const perPage = state.index?.meta?.perPage ?? null;
 
         if (perPage) {
-          request.pageSize =  perPage;
+          request.pageSize = perPage;
         }
 
         request.pageNumber = 2;
@@ -180,51 +202,50 @@ export function crudActions<
 
       commit('setIsLoadingIndexMore', true);
 
-      const response = await actions.api[actions.index](request, options)
+      const response = await actions.api[actions.index](request)
         .then(response => response)
         .catch(error => {
           if (error.response.status !== 404) {
-            dispatch('error/setResponse', error.response, {root:true});
+            dispatch('error/setResponse', error.response, {root: true});
           }
-          return error.response;
+
+          return ResponseErrors.from(error.response);
         });
 
       commit('setIndexMore', response);
       commit('appendResources', response.data);
       commit('setIsLoadingIndexMore', false);
     },
-    async storeResource({ commit, rootGetters }, {request, params}) {
+    async storeResource({commit}, {request, params}) {
       if (!actions.store) {
         throw new Error('There is no store action present for ' + actions.api.constructor.name)
       }
 
-      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
-      const req = { ...params };
+      const req = {...params};
       req[actions.store + 'Request'] = request
 
       commit('setIsLoadingStore', true);
 
-      const response = await actions.api[actions.store](req, options)
+      const response = await actions.api[actions.store](req)
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => ResponseErrors.from(error.response));
 
       commit('setStore', response);
       commit('setIsLoadingStore', false);
     },
-    async updateResource({ commit, rootGetters }, { id, request, params }) {
+    async updateResource({commit}, {id, request, params}) {
       if (!actions.update) {
         throw new Error('There is no update action present for ' + actions.api.constructor.name)
       }
 
-      const options = { headers: { ...authHeaders(rootGetters['auth/token']) } };
-      const req = { id, ...params };
+      const req = {id, ...params};
       req[actions.update + 'Request'] = request
 
       commit('setIsLoadingUpdate', true);
 
-      const response = await actions.api[actions.update](req, options)
+      const response = await actions.api[actions.update](req)
         .then(response => response)
-        .catch(error => error.response);
+        .catch(error => ResponseErrors.from(error.response));
 
       commit('setUpdate', response);
       commit('setIsLoadingUpdate', false);
@@ -241,7 +262,7 @@ export function crudMutations<
   C = Response,
   U = Response,
   D = Response,
-> () {
+>() {
   return {
     setForm(state: State, form: F | null) {
       state.form = form;
@@ -252,7 +273,7 @@ export function crudMutations<
     rollbackForm(state: State) {
       state.form.rollback();
     },
-    setOnForm(state: State, { name, value }) {
+    setOnForm(state: State, {name, value}) {
       state.form.setProperty(name, value);
     },
     setSelected(state: State, selected: T | null) {
