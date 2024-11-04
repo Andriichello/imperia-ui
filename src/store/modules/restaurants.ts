@@ -2,8 +2,8 @@ import {
   IndexRestaurantResponse,
   Restaurant,
   RestaurantsApi,
-  ShowRestaurantResponse,
-  StoreRestaurantResponse,
+  ShowRestaurantResponse, StoreRestaurantRequest,
+  StoreRestaurantResponse, UpdateRestaurantRequest,
   UpdateRestaurantResponse
 } from "@/openapi";
 import router from "@/router";
@@ -17,6 +17,33 @@ class RestaurantForm extends BaseForm<Restaurant> {
    */
   constructor() {
     super();
+  }
+
+  /**
+   * Transforms the form into a `store` request.
+   *
+   * @return object
+   */
+  public asCreate(): StoreRestaurantRequest {
+    const request = super.asCreate();
+
+    delete request['type'];
+    delete request['fullAddress'];
+    delete request['timezoneOffset'];
+
+    delete request['media'];
+    delete request['schedules'];
+
+    return request as StoreRestaurantRequest;
+  }
+
+  /**
+   * Transforms the form into an `update` request.
+   *
+   * @return object
+   */
+  public asUpdate(): UpdateRestaurantRequest {
+    return this.asCreate() as UpdateRestaurantRequest;
   }
 }
 

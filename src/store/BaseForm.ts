@@ -37,6 +37,18 @@ export default class BaseForm <T extends object = object> {
   }
 
   /**
+   * Rollback to the original values.
+   */
+  public rollback() {
+    this.clearProperties();
+    this.clearChanges();
+
+    for (const [key, value] of Object.entries(this.resource)) {
+      this.properties[key] = value;
+    }
+  }
+
+  /**
    * Get the form's resource.
    *
    * @return object

@@ -12,7 +12,7 @@
  * Do not edit the class manually.
  */
 
-export const BASE_PATH = (process.env.VUE_APP_API_URL).replace(/\/+$/, "");
+export const BASE_PATH = "https://dev.imperia.pp.ua".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
   basePath?: string; // override base path

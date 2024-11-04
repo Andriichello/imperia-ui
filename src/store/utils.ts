@@ -2,6 +2,7 @@ import CrudState from "@/store/CrudState";
 import BaseForm from "@/store/BaseForm";
 import {authHeaders} from "@/helpers";
 import * as runtime from "@/openapi/runtime";
+import {instanceOfUpdateRestaurantResponse} from "@/openapi";
 
 export interface ActionMapping {
   api: runtime.BaseAPI;
@@ -90,6 +91,9 @@ export function crudActions<
     },
     populateForm({ commit }, resource: T | null) {
       commit('populateForm', resource);
+    },
+    rollbackForm({ commit }) {
+      commit('rollbackForm');
     },
     setSelected({ commit }, selected: T | null) {
       commit('setSelected', selected);
@@ -218,7 +222,7 @@ export function crudActions<
 
       commit('setIsLoadingUpdate', true);
 
-      const response = await actions.api[actions.store](req, { headers: options })
+      const response = await actions.api[actions.update](req, options)
         .then(response => response)
         .catch(error => error.response);
 
@@ -244,6 +248,9 @@ export function crudMutations<
     },
     populateForm(state: State, resource: T | null) {
       state.form.populate(resource);
+    },
+    rollbackForm(state: State) {
+      state.form.rollback();
     },
     setOnForm(state: State, { name, value }) {
       state.form.setProperty(name, value);
@@ -271,9 +278,17 @@ export function crudMutations<
     },
     setStore(state: State, response: C | Response | null) {
       state.store = response;
+
+      if (response?.['data']) {
+        state.form.populate(response?.['data'])
+      }
     },
     setUpdate(state: State, response: U | Response | null) {
       state.update = response;
+
+      if (response?.['data']) {
+        state.form.populate(response?.['data'])
+      }
     },
     setDestroy(state: State, response: D | Response | null) {
       state.destroy = response;

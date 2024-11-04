@@ -73,10 +73,56 @@
       </div>
 
       <div class="w-full flex flex-col justify-center items-center mt-4">
-        <label class="label">
-          <span class="label-text">{{ $t("schedule.working_schedule") }}</span>
-        </label>
+        <div class="w-full flex justify-center items-center gap-2">
+          <div class="form-control w-full flex-1">
+            <label class="label">
+              <span class="label-text">{{ $t("restaurant.phone") }}</span>
+            </label>
+            <input v-model="phone" name="phone" type="tel" required placeholder="..."
+                   class="input input-bordered w-full max-w-xl"
+                   :class="{ 'input-error' : phoneErrors !== null }"/>
+            <label class="label flex-col items-start" v-if="phoneErrors">
+          <span class="label-text-alt text-error text-sm" v-for="error in phoneErrors" :key="error">
+            {{ error }}
+          </span>
+            </label>
+          </div>
 
+          <div class="form-control w-full flex-1">
+            <label class="label">
+              <span class="label-text">{{ $t("restaurant.email") }}</span>
+            </label>
+            <input v-model="email" name="city" type="text" required placeholder="..."
+                   class="input input-bordered w-full max-w-xl"
+                   :class="{ 'input-error' : emailErrors !== null }"/>
+            <label class="label flex-col items-start" v-if="emailErrors">
+          <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">
+            {{ error }}
+          </span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="form && form.hasRealChanges()">
+      <button class="btn btn-ghost btn-md flex-1" @click="rollbackForm">
+        {{ $t('restaurant.cancel_changes') }}
+      </button>
+      <button class="btn btn-neutral btn-md flex-1" @click="updateForm">
+        {{ $t('restaurant.save_changes') }}
+      </button>
+    </div>
+
+    <Divider v-if="restaurant"
+             class="mt-4 mb-1"
+             :lines="false"
+             :title="$t('schedule.working_schedule')"/>
+
+    <div class="container max-w-xl" v-if="restaurant">
+
+      <div class="w-full flex flex-col justify-center items-center">
         <div class="w-full flex flex-col justify-start items-start">
           <div class="w-full overflow-x-auto">
             <table class="table table-md w-full">
@@ -117,14 +163,14 @@
 
     </div>
 
-    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="restaurant">
-      <button class="btn btn-ghost btn-md flex-1">
-        {{ $t('restaurant.cancel_changes') }}
-      </button>
-      <button class="btn btn-neutral btn-md flex-1">
-        {{ $t('restaurant.save_changes') }}
-      </button>
-    </div>
+<!--    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="restaurant">-->
+<!--      <button class="btn btn-ghost btn-md flex-1">-->
+<!--        {{ $t('restaurant.cancel_changes') }}-->
+<!--      </button>-->
+<!--      <button class="btn btn-neutral btn-md flex-1">-->
+<!--        {{ $t('restaurant.save_changes') }}-->
+<!--      </button>-->
+<!--    </div>-->
 
   </div>
 </template>
@@ -148,6 +194,8 @@ export default defineComponent({
       countryErrors: null,
       cityErrors: null,
       placeErrors: null,
+      phoneErrors: null,
+      emailErrors: null,
     };
   },
   computed: {
@@ -158,8 +206,12 @@ export default defineComponent({
       restaurants: 'restaurants/resources',
       restaurantsResponse: 'restaurants/index',
       restaurantResponse: 'restaurants/show',
+      restaurantUpdateResponse: 'restaurants/update',
       isLoadingRestaurant: 'restaurants/isLoadingShow',
     }),
+    restaurantId() {
+      return this.restaurant?.id ?? null;
+    },
     slug: {
       get() { return this.properties?.slug; },
       set(value) { this.setOnForm({name: 'slug', value: value}); },
@@ -180,6 +232,14 @@ export default defineComponent({
       get() { return this.properties?.place; },
       set(value) { this.setOnForm({name: 'place', value: value}); },
     },
+    phone: {
+      get() { return this.properties?.phone; },
+      set(value) { this.setOnForm({name: 'phone', value: value}); },
+    },
+    email: {
+      get() { return this.properties?.email; },
+      set(value) { this.setOnForm({name: 'email', value: value}); },
+    },
   },
   watch: {
     restaurant: {
@@ -190,15 +250,34 @@ export default defineComponent({
           this.scheduling = this.calculateSchedules();
         }
       },
-    }
+    },
+    restaurantUpdateResponse: {
+      handler(newVal, oldVal) {
+        console.log('updateREsource: ', newVal);
+      },
+    },
   },
   methods: {
     ...mapActions({
       setOnForm: "restaurants/setOnForm",
       populateForm: "restaurants/populateForm",
+      rollbackForm: "restaurants/rollbackForm",
       selectRestaurant: "restaurants/setSelected",
+      updateRestaurant: "restaurants/updateResource",
       loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
+    updateForm() {
+      // validate first
+
+      const request = this.form.asUpdate();
+
+      console.log('request: ', request);
+
+      this.updateRestaurant({
+        id: this.restaurantId,
+        request: request,
+      })
+    },
     time(hour, minute) {
       let time = '';
 
