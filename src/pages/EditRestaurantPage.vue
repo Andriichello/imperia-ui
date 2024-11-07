@@ -246,9 +246,8 @@ export default defineComponent({
   watch: {
     restaurant: {
       handler(newVal, oldVal) {
-        if (newVal && newVal !== oldVal) {
+        if (newVal !== oldVal) {
           this.populateForm(newVal);
-
           this.scheduling = this.calculateSchedules();
         }
       },
@@ -378,6 +377,14 @@ export default defineComponent({
         await this.selectRestaurant(target);
       } else {
         await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
+      }
+    }
+
+    if (this.form) {
+      const formId = this.form.getProperty('id');
+
+      if (!formId || this.restaurant.id !== formId) {
+        this.populateForm(this.restaurant);
       }
     }
 

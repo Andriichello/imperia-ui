@@ -75,8 +75,8 @@ export default class BaseForm <T extends object = object> {
    * @return The value of the property, or undefined if it does not exist.
    */
   public getProperty<K extends keyof T>(name: K, defaultValue = undefined): T[K] | undefined  {
-    if (Object.prototype.hasOwnProperty.call(this.changes, name)) {
-      return this.changes[name];
+    if (Object.prototype.hasOwnProperty.call(this.properties, name)) {
+      return this.properties[name];
     }
 
     return defaultValue;
