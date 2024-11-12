@@ -189,6 +189,7 @@ export default defineComponent({
       form: 'restaurants/form',
       properties: 'restaurants/properties',
       restaurant: 'restaurants/selected',
+      resultingRestaurant: 'restaurants/resource',
       restaurants: 'restaurants/resources',
       restaurantsResponse: 'restaurants/index',
       restaurantResponse: 'restaurants/show',
@@ -245,6 +246,11 @@ export default defineComponent({
           this.populateForm(newVal);
         }
       },
+    },
+    resultingRestaurant(newVal, oldVal) {
+      if (newVal && newVal !== oldVal) {
+        this.selectRestaurant(newVal);
+      }
     },
   },
   methods: {

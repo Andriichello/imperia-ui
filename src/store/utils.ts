@@ -299,13 +299,15 @@ export function crudMutations<
     },
     setStore(state: State, response: C | Response | null) {
       state.store = response;
+      state.resource = response?.['data'];
 
       if (response?.['data']) {
-        state.form.populate(response?.['data'])
+          state.form.populate(response?.['data'])
       }
     },
     setUpdate(state: State, response: U | Response | null) {
       state.update = response;
+      state.resource = response?.['data'];
 
       if (response?.['data']) {
         state.form.populate(response?.['data'])
