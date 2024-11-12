@@ -1,7 +1,7 @@
 import {
   IndexRestaurantResponse,
   Restaurant,
-  RestaurantsApi,
+  RestaurantsApi, Schedule, ScheduleWeekdayEnum,
   ShowRestaurantResponse,
   StoreRestaurantRequest,
   StoreRestaurantResponse,
@@ -22,6 +22,59 @@ class RestaurantForm extends BaseForm<Restaurant> {
   }
 
   /**
+   * Dynamically populate properties from the given data object.
+   *
+   * @param resource
+   */
+  public populate(resource: Restaurant) {
+    super.populate(resource);
+
+    const schedules = (resource['schedules'] ?? [])
+      .map((s) => { return { ...s }; });
+
+    if (!schedules || schedules.length !== 7) {
+      let missing = false;
+
+      for (const scheduleWeekdayEnumKey in ScheduleWeekdayEnum) {
+        const weekday = ScheduleWeekdayEnum[scheduleWeekdayEnumKey];
+        const schedule = schedules.find((s) => s.weekday === weekday);
+
+
+        if (!schedule) {
+          missing = true;
+
+          schedules.push(
+            {
+              archived: true,
+              weekday,
+              begHour: 9,
+              begMinute: 0,
+              endHour: 21,
+              endMinute: 0,
+            } as Schedule
+          );
+        }
+      }
+
+      if (missing) {
+        this.setProperty('schedules', schedules);
+      }
+    } else {
+      const schedules = [];
+
+      for (const scheduleWeekdayEnumKey in ScheduleWeekdayEnum) {
+        const weekday = ScheduleWeekdayEnum[scheduleWeekdayEnumKey];
+        const schedule = this.getProperty('schedules', [])
+          .find((s) => s.weekday === weekday);
+
+        schedules.push(schedule);
+      }
+
+      this.setProperty('schedules', schedules, true);
+    }
+  }
+
+  /**
    * Determines if specific property has a record about
    * properties being changed and at the same time the
    * resource property's value differs from the new one.
@@ -30,15 +83,15 @@ class RestaurantForm extends BaseForm<Restaurant> {
    */
   public hasRealChange(name: keyof Restaurant): boolean {
     if (name === 'schedules') {
-      const oldSchedules = this.resource['schedules'] ?? [];
+      const oldSchedules = this.resource['schedules'];
       const newSchedules = this.getChange('schedules');
 
       if (!oldSchedules || !oldSchedules.length) {
-        return !newSchedules || !newSchedules.length;
+        return !!newSchedules || newSchedules.length > 0;
       }
 
       if (!newSchedules || !newSchedules.length) {
-        return !oldSchedules || !oldSchedules.length;
+        return !!oldSchedules || oldSchedules.length > 0;
       }
 
       if (oldSchedules.length !== newSchedules.length) {

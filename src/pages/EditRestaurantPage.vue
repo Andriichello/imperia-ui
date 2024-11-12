@@ -155,7 +155,7 @@
 
     </div>
 
-    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="form && form.hasRealChanges()">
+    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="!isLoadingRestaurant && form && form.hasRealChanges()">
       <button class="btn btn-ghost btn-md flex-1" @click="cancelForm">
         {{ $t('restaurant.cancel_changes') }}
       </button>
@@ -181,7 +181,6 @@ export default defineComponent({
   },
   data() {
     return {
-      scheduling: this.calculateSchedules(),
       errors: {},
     };
   },
@@ -244,7 +243,6 @@ export default defineComponent({
       handler(newVal, oldVal) {
         if (newVal !== oldVal) {
           this.populateForm(newVal);
-          this.scheduling = this.calculateSchedules();
         }
       },
     },
@@ -333,31 +331,6 @@ export default defineComponent({
 
       return time;
     },
-    calculateSchedules() {
-      if (this.restaurant === undefined || this.restaurant === null || !this.restaurant.schedules || !this.restaurant.schedules.length) {
-        return [];
-      }
-
-      const schedules = this.restaurant.schedules.map(function (schedule) {
-        return {
-          weekday: schedule.weekday,
-          begHour: schedule.begHour,
-          begMinute: schedule.begMinute,
-          endHour: schedule.endHour,
-          endMinute: schedule.endMinute,
-          archived: schedule.archived,
-          active: !schedule.archived,
-        };
-      });
-
-      const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-
-      schedules.sort(function(a, b) {
-        return weekdays.indexOf(a.weekday) - weekdays.indexOf(b.weekday);
-      });
-
-      return schedules;
-    },
     onChangeScheduleIsActive(event, weekday) {
       const archived = Number(!event.target.checked);
       this.setOnSchedules({ weekday, properties: { archived } });
@@ -388,8 +361,6 @@ export default defineComponent({
         this.populateForm(this.restaurant);
       }
     }
-
-    this.scheduling = this.calculateSchedules();
   },
 });
 </script>
