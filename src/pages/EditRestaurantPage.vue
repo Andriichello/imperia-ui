@@ -128,21 +128,25 @@
                   <td class="p-2 text-md grow">
                     <span>{{ $t(`weekday.${schedule.weekday}`) }}</span>
                   </td>
-                  <td class="p-2 w-[60px] text-end">
-                    <input class="w-[60px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           :value="time(schedule.begHour, schedule.begMinute)"
-                           placeholder="11:00"/>
+                  <td class="p-2 w-[106px] text-end">
+                    <VueDatePicker utc time-picker
+                                   format="HH:mm"
+                                   :teleport="true"
+                                   :model-value="schedule.beg"
+                                   @update:modelValue="(t) => onUpdateBegDate(t, schedule)"
+                                   :hide-input-icon="true"
+                                   :clearable="false"
+                                   :auto-apply="true"/>
                   </td>
-                  <td class="p-2 w-[60px] text-end">
-                    <input class="w-[60px] input input-xs text-[16px] px-1 bg-transparent text-center"
-                           style="min-height: 2rem;"
-                           maxlength="5"
-                           name="time" type="text"
-                           :value="time(schedule.endHour, schedule.endMinute)"
-                           placeholder="15:00"/>
+                  <td class="p-2 w-[106px] text-end">
+                    <VueDatePicker utc time-picker
+                                   format="HH:mm"
+                                   :teleport="true"
+                                   @update:modelValue="(t) => onUpdateEndDate(t, schedule)"
+                                   :model-value="schedule.end"
+                                   :hide-input-icon="true"
+                                   :clearable="false"
+                                   :auto-apply="true"/>
                   </td>
                 </tr>
               </template>
@@ -168,14 +172,19 @@
 </template>
 
 <script>
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
 import Divider from "@/layouts/divider/Divider.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
+import {DateTime} from "luxon";
+import {ThemeConfig} from "@/configs";
 
 export default defineComponent({
   name: "EditRestaurantPage",
   components: {
+    VueDatePicker,
     Preloader,
     Divider,
   },
@@ -185,7 +194,14 @@ export default defineComponent({
     };
   },
   computed: {
+    DateTime() {
+      return DateTime
+    },
+    ThemeConfig() {
+      return ThemeConfig
+    },
     ...mapGetters({
+      theme: "theme/get",
       form: 'restaurants/form',
       properties: 'restaurants/properties',
       restaurant: 'restaurants/selected',
@@ -202,34 +218,51 @@ export default defineComponent({
     },
     slug: {
       get() { return this.properties?.slug; },
-      set(value) { this.setOnForm({name: 'slug', value: value}); },
+      set(value) { this.setOnForm({name: 'slug', value: value}); this.revalidateFormIfErrors(); },
     },
     name: {
       get() { return this.properties?.name; },
-      set(value) { this.setOnForm({name: 'name', value: value}); },
+      set(value) { this.setOnForm({name: 'name', value: value}); this.revalidateFormIfErrors(); },
     },
     country: {
       get() { return this.properties?.country; },
-      set(value) { this.setOnForm({name: 'country', value: value}); },
+      set(value) { this.setOnForm({name: 'country', value: value}); this.revalidateFormIfErrors(); },
     },
     city: {
       get() { return this.properties?.city; },
-      set(value) { this.setOnForm({name: 'city', value: value}); },
+      set(value) { this.setOnForm({name: 'city', value: value}); this.revalidateFormIfErrors(); },
     },
     place: {
       get() { return this.properties?.place; },
-      set(value) { this.setOnForm({name: 'place', value: value}); },
+      set(value) { this.setOnForm({name: 'place', value: value}); this.revalidateFormIfErrors(); },
     },
     phone: {
       get() { return this.properties?.phone; },
-      set(value) { this.setOnForm({name: 'phone', value: value}); },
+      set(value) { this.setOnForm({name: 'phone', value: value}); this.revalidateFormIfErrors(); },
     },
     email: {
       get() { return this.properties?.email; },
-      set(value) { this.setOnForm({name: 'email', value: value}); },
+      set(value) { this.setOnForm({name: 'email', value: value}); this.revalidateFormIfErrors(); },
     },
     schedules: {
-      get() { return this.properties?.schedules ?? []; },
+      get() {
+        return (this.properties?.schedules ?? [])
+            .map((s) => {
+              return {
+                ...s,
+                beg: {
+                  hours: s.begHour,
+                  minutes: s.begMinute,
+                  seconds: 0,
+                },
+                end: {
+                  hours: s.endHour,
+                  minutes: s.endMinute,
+                  seconds: 0,
+                },
+              };
+            });
+        },
       set(value) { this.setOnForm({name: 'schedules', value: value}); },
     },
     nameErrors() { return this.restaurantUpdateResponseErrors?.name ?? this.errors?.name; },
@@ -312,6 +345,18 @@ export default defineComponent({
 
       return Object.keys(errors).length === 0;
     },
+    revalidateFormIfErrors() {
+      const hasErrors = (this.nameErrors && this.nameErrors.length)
+          || (this.countryErrors && this.countryErrors.length)
+          || (this.cityErrors && this.cityErrors.length)
+          || (this.placeErrors && this.placeErrors.length)
+          || (this.phoneErrors && this.phoneErrors.length)
+          || (this.emailErrors && this.emailErrors.length)
+
+      if (hasErrors) {
+        this.validateForm();
+      }
+    },
     updateForm() {
       if (!this.validateForm()) {
         return;
@@ -340,6 +385,18 @@ export default defineComponent({
     onChangeScheduleIsActive(event, weekday) {
       const archived = Number(!event.target.checked);
       this.setOnSchedules({ weekday, properties: { archived } });
+    },
+    onUpdateBegDate({ hours, minutes, seconds }, schedule) {
+      this.setOnSchedules({
+        weekday: schedule.weekday,
+        properties: { begHour: hours, begMinute: minutes },
+      });
+    },
+    onUpdateEndDate({ hours, minutes, seconds }, schedule) {
+      this.setOnSchedules({
+        weekday: schedule.weekday,
+        properties: { endHour: hours, endMinute: minutes },
+      });
     },
   },
   async mounted() {
@@ -373,14 +430,13 @@ export default defineComponent({
 
 <style scoped>
 .edit-restaurant-page {
-  @apply flex flex-col w-full gap-0 pt-3;
+  @apply flex flex-col w-full gap-0 pt-3 pb-10;
 
   display: flex;
   flex-basis: 100%;
   justify-content: center;
   align-items: center;
 }
-
 
 .container {
   @apply card shadow-xl flex flex-row flex-wrap justify-center items-start gap-3 p-4 bg-base-100;
