@@ -402,8 +402,6 @@ export class RestaurantsApi extends runtime.BaseAPI {
     requestParameters: UpdateRestaurantOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<runtime.ApiResponse<UpdateRestaurantResponse>> {
-    console.log({requestParameters, initOverrides})
-
     if (requestParameters.id === null || requestParameters.id === undefined) {
       throw new runtime.RequiredError(
         "id",
@@ -463,8 +461,6 @@ export class RestaurantsApi extends runtime.BaseAPI {
     requestParameters: UpdateRestaurantOperationRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<UpdateRestaurantResponse> {
-    console.log({requestParameters, initOverrides})
-
     const response = await this.updateRestaurantRaw(
       requestParameters,
       initOverrides

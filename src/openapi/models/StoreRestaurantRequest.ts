@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from "../runtime";
+import type { ScheduleForStoreRestaurantRequest } from "./ScheduleForStoreRestaurantRequest";
+import {
+  ScheduleForStoreRestaurantRequestFromJSON,
+  ScheduleForStoreRestaurantRequestFromJSONTyped,
+  ScheduleForStoreRestaurantRequestToJSON,
+} from "./ScheduleForStoreRestaurantRequest";
+
 /**
  * Store restaurant request
  * @export
@@ -60,13 +67,13 @@ export interface StoreRestaurantRequest {
    * @type {string}
    * @memberof StoreRestaurantRequest
    */
-  email?: string;
+  email?: string | null;
   /**
    * Phone number may start with a plus and must contain only digits 0-9.
    * @type {string}
    * @memberof StoreRestaurantRequest
    */
-  phone?: string;
+  phone?: string | null;
   /**
    * Link to restaurant's location on Google Maps.
    * @type {string}
@@ -79,6 +86,12 @@ export interface StoreRestaurantRequest {
    * @memberof StoreRestaurantRequest
    */
   website?: string | null;
+  /**
+   *
+   * @type {Array<ScheduleForStoreRestaurantRequest>}
+   * @memberof StoreRestaurantRequest
+   */
+  schedules?: Array<ScheduleForStoreRestaurantRequest> | null;
 }
 
 /**
@@ -120,6 +133,13 @@ export function StoreRestaurantRequestFromJSONTyped(
     phone: !exists(json, "phone") ? undefined : json["phone"],
     location: !exists(json, "location") ? undefined : json["location"],
     website: !exists(json, "website") ? undefined : json["website"],
+    schedules: !exists(json, "schedules")
+      ? undefined
+      : json["schedules"] === null
+      ? null
+      : (json["schedules"] as Array<any>).map(
+          ScheduleForStoreRestaurantRequestFromJSON
+        ),
   };
 }
 
@@ -143,5 +163,13 @@ export function StoreRestaurantRequestToJSON(
     phone: value.phone,
     location: value.location,
     website: value.website,
+    schedules:
+      value.schedules === undefined
+        ? undefined
+        : value.schedules === null
+        ? null
+        : (value.schedules as Array<any>).map(
+            ScheduleForStoreRestaurantRequestToJSON
+          ),
   };
 }

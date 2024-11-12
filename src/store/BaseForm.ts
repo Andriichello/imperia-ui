@@ -94,7 +94,7 @@ export default class BaseForm <T extends object = object> {
     if (silent === false && current !== value) {
       this.setChange(name, value);
 
-      if (original === value) {
+      if (original === value || (original === null && value?.length === 0)) {
         this.unsetChange(name)
       }
     }
@@ -140,7 +140,7 @@ export default class BaseForm <T extends object = object> {
    *
    * @return any
    */
-  public getChange<K extends keyof T>(name: K, defaultValue = undefined): unknown {
+  public getChange<K extends keyof T>(name: K, defaultValue = undefined): T[K] | undefined {
     if (Object.prototype.hasOwnProperty.call(this.changes, name)) {
       return this.changes[name];
     }
@@ -191,6 +191,30 @@ export default class BaseForm <T extends object = object> {
   }
 
   /**
+   * Determines if specific property has a change record.
+   *
+   * @return boolean
+   */
+  public hasChange(name: keyof T): boolean {
+    return this.getChange(name) !== undefined;
+  }
+
+  /**
+   * Determines if specific property has a record about
+   * properties being changed and at the same time the
+   * resource property's value differs from the new one.
+   *
+   * @return boolean
+   */
+  public hasRealChange(name: keyof T): boolean {
+    if (!this.resource) {
+      return this.hasChange(name);
+    }
+
+    return this.resource[name] !== this.getChange(name);
+  }
+
+  /**
    * Determines if there is at least one record about
    * properties being changed and at the same time the
    * resource property's value differs from the new one.
@@ -206,7 +230,7 @@ export default class BaseForm <T extends object = object> {
 
     Object.keys(this.getChanges())
       .forEach(name => {
-        if (this.resource[name] !== this.getChange(name as keyof T)) {
+        if (this.hasRealChange(name as keyof T)) {
           result = true;
           return;
         }

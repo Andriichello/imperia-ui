@@ -102,6 +102,8 @@ models/RestoreNotificationResponse.ts
 models/RestoreOrderResponse.ts
 models/RestoreWaiterResponse.ts
 models/Schedule.ts
+models/ScheduleForStoreRestaurantRequest.ts
+models/ScheduleForUpdateRestaurantRequest.ts
 models/Service.ts
 models/ServiceOrderField.ts
 models/SetModelMediaRequest.ts

@@ -80,6 +80,8 @@ export * from "./RestoreNotificationResponse";
 export * from "./RestoreOrderResponse";
 export * from "./RestoreWaiterResponse";
 export * from "./Schedule";
+export * from "./ScheduleForStoreRestaurantRequest";
+export * from "./ScheduleForUpdateRestaurantRequest";
 export * from "./Service";
 export * from "./ServiceOrderField";
 export * from "./SetModelMediaRequest";

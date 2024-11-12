@@ -13,6 +13,13 @@
  */
 
 import { exists, mapValues } from "../runtime";
+import type { ScheduleForUpdateRestaurantRequest } from "./ScheduleForUpdateRestaurantRequest";
+import {
+  ScheduleForUpdateRestaurantRequestFromJSON,
+  ScheduleForUpdateRestaurantRequestFromJSONTyped,
+  ScheduleForUpdateRestaurantRequestToJSON,
+} from "./ScheduleForUpdateRestaurantRequest";
+
 /**
  * Update restaurant request
  * @export
@@ -60,13 +67,13 @@ export interface UpdateRestaurantRequest {
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
-  email?: string;
+  email?: string | null;
   /**
    * Phone number may start with a plus and must contain only digits 0-9.
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
-  phone?: string;
+  phone?: string | null;
   /**
    * Link to restaurant's location on Google Maps.
    * @type {string}
@@ -79,6 +86,12 @@ export interface UpdateRestaurantRequest {
    * @memberof UpdateRestaurantRequest
    */
   website?: string | null;
+  /**
+   *
+   * @type {Array<ScheduleForUpdateRestaurantRequest>}
+   * @memberof UpdateRestaurantRequest
+   */
+  schedules?: Array<ScheduleForUpdateRestaurantRequest> | null;
 }
 
 /**
@@ -114,6 +127,13 @@ export function UpdateRestaurantRequestFromJSONTyped(
     phone: !exists(json, "phone") ? undefined : json["phone"],
     location: !exists(json, "location") ? undefined : json["location"],
     website: !exists(json, "website") ? undefined : json["website"],
+    schedules: !exists(json, "schedules")
+      ? undefined
+      : json["schedules"] === null
+      ? null
+      : (json["schedules"] as Array<any>).map(
+          ScheduleForUpdateRestaurantRequestFromJSON
+        ),
   };
 }
 
@@ -137,5 +157,13 @@ export function UpdateRestaurantRequestToJSON(
     phone: value.phone,
     location: value.location,
     website: value.website,
+    schedules:
+      value.schedules === undefined
+        ? undefined
+        : value.schedules === null
+        ? null
+        : (value.schedules as Array<any>).map(
+            ScheduleForUpdateRestaurantRequestToJSON
+          ),
   };
 }

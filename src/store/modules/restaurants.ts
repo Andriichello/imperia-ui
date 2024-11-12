@@ -2,8 +2,10 @@ import {
   IndexRestaurantResponse,
   Restaurant,
   RestaurantsApi,
-  ShowRestaurantResponse, StoreRestaurantRequest,
-  StoreRestaurantResponse, UpdateRestaurantRequest,
+  ShowRestaurantResponse,
+  StoreRestaurantRequest,
+  StoreRestaurantResponse,
+  UpdateRestaurantRequest,
   UpdateRestaurantResponse
 } from "@/openapi";
 import router from "@/router";
@@ -20,6 +22,58 @@ class RestaurantForm extends BaseForm<Restaurant> {
   }
 
   /**
+   * Determines if specific property has a record about
+   * properties being changed and at the same time the
+   * resource property's value differs from the new one.
+   *
+   * @return boolean
+   */
+  public hasRealChange(name: keyof Restaurant): boolean {
+    if (name === 'schedules') {
+      const oldSchedules = this.resource['schedules'] ?? [];
+      const newSchedules = this.getChange('schedules');
+
+      if (!oldSchedules || !oldSchedules.length) {
+        return !newSchedules || !newSchedules.length;
+      }
+
+      if (!newSchedules || !newSchedules.length) {
+        return !oldSchedules || !oldSchedules.length;
+      }
+
+      if (oldSchedules.length !== newSchedules.length) {
+        return true;
+      }
+
+      let result = false;
+
+      newSchedules.forEach((newSchedule) => {
+        const oldSchedule = oldSchedules.find(
+          (schedule) => schedule.weekday === newSchedule.weekday
+        );
+
+        const isSame = oldSchedule
+          && (
+            oldSchedule.archived === newSchedule.archived
+            && oldSchedule.begHour === newSchedule.begHour
+            && oldSchedule.begMinute === newSchedule.begMinute
+            && oldSchedule.endHour === newSchedule.endHour
+            && oldSchedule.endMinute === newSchedule.endMinute
+          );
+
+        if (!isSame) {
+          result = true;
+          return;
+        }
+      });
+
+      return result;
+    }
+
+    return super.hasRealChange(name);
+  }
+
+  /**
    * Transforms the form into a `store` request.
    *
    * @return object
@@ -32,7 +86,6 @@ class RestaurantForm extends BaseForm<Restaurant> {
     delete request['timezoneOffset'];
 
     delete request['media'];
-    delete request['schedules'];
 
     return request as StoreRestaurantRequest;
   }
@@ -83,7 +136,6 @@ const getters = {
     StoreRestaurantResponse,
     UpdateRestaurantResponse
   >(),
-
   timezoneOffset(state: RestaurantsState) {
     return state.selected?.timezoneOffset;
   },
@@ -105,6 +157,21 @@ const actions = {
       update: 'updateRestaurant',
     }
   ),
+  setOnSchedules({ state, commit }, { weekday, properties }) {
+    const schedules = (state.form.getProperty('schedules') ?? [])
+      .map((schedule) => {
+        if (schedule.weekday === weekday) {
+          return {
+            ...schedule,
+            ...properties
+          };
+        }
+
+        return { ...schedule };
+      });
+
+    commit('setOnForm', { name: 'schedules', value: schedules });
+  },
 };
 
 const mutations = {

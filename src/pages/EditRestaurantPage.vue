@@ -106,15 +106,6 @@
 
     </div>
 
-    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="form && form.hasRealChanges()">
-      <button class="btn btn-ghost btn-md flex-1" @click="cancelForm">
-        {{ $t('restaurant.cancel_changes') }}
-      </button>
-      <button class="btn btn-neutral btn-md flex-1" @click="updateForm">
-        {{ $t('restaurant.save_changes') }}
-      </button>
-    </div>
-
     <Divider v-if="restaurant"
              class="mt-4 mb-1"
              :lines="false"
@@ -128,10 +119,11 @@
             <table class="table table-md w-full">
               <tbody class="w-full">
 
-              <template v-for="schedule in scheduling" :key="schedule.weekday">
+              <template v-for="schedule in schedules" :key="schedule.weekday">
                 <tr>
                   <td class="p-2 w-[32px] text-end">
-                    <input type="checkbox" class="toggle toggle-success toggle-sm align-center mt-1.5" :checked="schedule.active"/>
+                    <input type="checkbox" class="toggle toggle-success toggle-sm align-center mt-1.5" :checked="!schedule.archived"
+                      @change="onChangeScheduleIsActive($event, schedule.weekday)"/>
                   </td>
                   <td class="p-2 text-md grow">
                     <span>{{ $t(`weekday.${schedule.weekday}`) }}</span>
@@ -163,14 +155,14 @@
 
     </div>
 
-<!--    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="restaurant">-->
-<!--      <button class="btn btn-ghost btn-md flex-1">-->
-<!--        {{ $t('restaurant.cancel_changes') }}-->
-<!--      </button>-->
-<!--      <button class="btn btn-neutral btn-md flex-1">-->
-<!--        {{ $t('restaurant.save_changes') }}-->
-<!--      </button>-->
-<!--    </div>-->
+    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="form && form.hasRealChanges()">
+      <button class="btn btn-ghost btn-md flex-1" @click="cancelForm">
+        {{ $t('restaurant.cancel_changes') }}
+      </button>
+      <button class="btn btn-neutral btn-md flex-1" @click="updateForm">
+        {{ $t('restaurant.save_changes') }}
+      </button>
+    </div>
 
   </div>
 </template>
@@ -236,6 +228,10 @@ export default defineComponent({
       get() { return this.properties?.email; },
       set(value) { this.setOnForm({name: 'email', value: value}); },
     },
+    schedules: {
+      get() { return this.properties?.schedules ?? []; },
+      set(value) { this.setOnForm({name: 'schedules', value: value}); },
+    },
     nameErrors() { return this.restaurantUpdateResponseErrors?.name ?? this.errors?.name; },
     countryErrors() { return this.restaurantUpdateResponseErrors?.country ?? this.errors?.country; },
     cityErrors() { return this.restaurantUpdateResponseErrors?.city ?? this.errors?.city; },
@@ -256,6 +252,7 @@ export default defineComponent({
   methods: {
     ...mapActions({
       setOnForm: "restaurants/setOnForm",
+      setOnSchedules: "restaurants/setOnSchedules",
       populateForm: "restaurants/populateForm",
       rollbackForm: "restaurants/rollbackForm",
       selectRestaurant: "restaurants/setSelected",
@@ -360,6 +357,10 @@ export default defineComponent({
       });
 
       return schedules;
+    },
+    onChangeScheduleIsActive(event, weekday) {
+      const archived = Number(!event.target.checked);
+      this.setOnSchedules({ weekday, properties: { archived } });
     },
   },
   async mounted() {
