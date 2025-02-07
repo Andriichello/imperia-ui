@@ -64,12 +64,6 @@ export interface Schedule {
   endMinute: number;
   /**
    *
-   * @type {boolean}
-   * @memberof Schedule
-   */
-  archived: boolean | null;
-  /**
-   *
    * @type {number}
    * @memberof Schedule
    */
@@ -111,6 +105,12 @@ export interface Schedule {
    * @memberof Schedule
    */
   timezoneOffset: number | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof Schedule
+   */
+  archived: boolean;
 }
 
 /**
@@ -140,7 +140,6 @@ export function instanceOfSchedule(value: object): boolean {
   isInstance = isInstance && "endHour" in value;
   isInstance = isInstance && "begMinute" in value;
   isInstance = isInstance && "endMinute" in value;
-  isInstance = isInstance && "archived" in value;
   isInstance = isInstance && "restaurantId" in value;
   isInstance = isInstance && "begsIn" in value;
   isInstance = isInstance && "endsIn" in value;
@@ -148,6 +147,7 @@ export function instanceOfSchedule(value: object): boolean {
   isInstance = isInstance && "closestDate" in value;
   isInstance = isInstance && "timezone" in value;
   isInstance = isInstance && "timezoneOffset" in value;
+  isInstance = isInstance && "archived" in value;
 
   return isInstance;
 }
@@ -171,7 +171,6 @@ export function ScheduleFromJSONTyped(
     endHour: json["end_hour"],
     begMinute: json["beg_minute"],
     endMinute: json["end_minute"],
-    archived: json["archived"],
     restaurantId: json["restaurant_id"],
     begsIn: json["begs_in"],
     endsIn: json["ends_in"],
@@ -180,6 +179,7 @@ export function ScheduleFromJSONTyped(
       json["closest_date"] === null ? null : new Date(json["closest_date"]),
     timezone: json["timezone"],
     timezoneOffset: json["timezone_offset"],
+    archived: json["archived"],
   };
 }
 
@@ -198,7 +198,6 @@ export function ScheduleToJSON(value?: Schedule | null): any {
     end_hour: value.endHour,
     beg_minute: value.begMinute,
     end_minute: value.endMinute,
-    archived: value.archived,
     restaurant_id: value.restaurantId,
     begs_in: value.begsIn,
     ends_in: value.endsIn,
@@ -207,5 +206,6 @@ export function ScheduleToJSON(value?: Schedule | null): any {
       value.closestDate === null ? null : value.closestDate.toISOString(),
     timezone: value.timezone,
     timezone_offset: value.timezoneOffset,
+    archived: value.archived,
   };
 }

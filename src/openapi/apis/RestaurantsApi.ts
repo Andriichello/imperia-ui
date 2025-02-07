@@ -18,8 +18,6 @@ import type {
   GetSchedulesResponse,
   IndexRestaurantResponse,
   ShowRestaurantResponse,
-  StoreRestaurantRequest,
-  StoreRestaurantResponse,
   UnauthenticatedResponse,
   UpdateRestaurantRequest,
   UpdateRestaurantResponse,
@@ -33,10 +31,6 @@ import {
   IndexRestaurantResponseToJSON,
   ShowRestaurantResponseFromJSON,
   ShowRestaurantResponseToJSON,
-  StoreRestaurantRequestFromJSON,
-  StoreRestaurantRequestToJSON,
-  StoreRestaurantResponseFromJSON,
-  StoreRestaurantResponseToJSON,
   UnauthenticatedResponseFromJSON,
   UnauthenticatedResponseToJSON,
   UpdateRestaurantRequestFromJSON,
@@ -67,13 +61,10 @@ export interface ShowRestaurantRequest {
   include?: string;
 }
 
-export interface StoreRestaurantOperationRequest {
-  storeRestaurantRequest: StoreRestaurantRequest;
-}
-
 export interface UpdateRestaurantOperationRequest {
   id: number;
   updateRestaurantRequest: UpdateRestaurantRequest;
+  include?: string;
 }
 
 /**
@@ -333,69 +324,6 @@ export class RestaurantsApi extends runtime.BaseAPI {
   }
 
   /**
-   * Store restaurant.
-   */
-  async storeRestaurantRaw(
-    requestParameters: StoreRestaurantOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<runtime.ApiResponse<StoreRestaurantResponse>> {
-    if (
-      requestParameters.storeRestaurantRequest === null ||
-      requestParameters.storeRestaurantRequest === undefined
-    ) {
-      throw new runtime.RequiredError(
-        "storeRestaurantRequest",
-        "Required parameter requestParameters.storeRestaurantRequest was null or undefined when calling storeRestaurant."
-      );
-    }
-
-    const queryParameters: any = {};
-
-    const headerParameters: runtime.HTTPHeaders = {};
-
-    headerParameters["Content-Type"] = "application/json";
-
-    if (this.configuration && this.configuration.accessToken) {
-      const token = this.configuration.accessToken;
-      const tokenString = await token("bearerAuth", []);
-
-      if (tokenString) {
-        headerParameters["Authorization"] = `Bearer ${tokenString}`;
-      }
-    }
-    const response = await this.request(
-      {
-        path: `/api/restaurants`,
-        method: "POST",
-        headers: headerParameters,
-        query: queryParameters,
-        body: StoreRestaurantRequestToJSON(
-          requestParameters.storeRestaurantRequest
-        ),
-      },
-      initOverrides
-    );
-
-    return new runtime.JSONApiResponse(response, (jsonValue) =>
-      StoreRestaurantResponseFromJSON(jsonValue)
-    );
-  }
-
-  /**
-   * Store restaurant.
-   */
-  async storeRestaurant(
-    requestParameters: StoreRestaurantOperationRequest,
-    initOverrides?: RequestInit | runtime.InitOverrideFunction
-  ): Promise<StoreRestaurantResponse> {
-    const response = await this.storeRestaurantRaw(
-      requestParameters,
-      initOverrides
-    );
-    return await response.value();
-  }
-
-  /**
    * Update restaurant.
    */
   async updateRestaurantRaw(
@@ -420,6 +348,10 @@ export class RestaurantsApi extends runtime.BaseAPI {
     }
 
     const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
 
     const headerParameters: runtime.HTTPHeaders = {};
 

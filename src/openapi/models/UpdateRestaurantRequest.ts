@@ -21,77 +21,47 @@ import {
 } from "./ScheduleForUpdateRestaurantRequest";
 
 /**
- * Update restaurant request
+ * Request body for updating restaurant details
  * @export
  * @interface UpdateRestaurantRequest
  */
 export interface UpdateRestaurantRequest {
   /**
-   * Must be unique within the database.
-   * @type {string}
-   * @memberof UpdateRestaurantRequest
-   */
-  slug?: string;
-  /**
-   *
+   * The name of the restaurant.
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
   name?: string;
   /**
-   *
+   * The country where the restaurant is located.
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
-  country?: string;
+  country?: string | null;
   /**
-   *
+   * The city where the restaurant is located.
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
-  city?: string;
+  city?: string | null;
   /**
-   *
+   * Additional information about the restaurant's location.
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
-  place?: string;
+  place?: string | null;
   /**
-   *
-   * @type {string}
-   * @memberof UpdateRestaurantRequest
-   */
-  timezone?: string;
-  /**
-   *
-   * @type {string}
-   * @memberof UpdateRestaurantRequest
-   */
-  email?: string | null;
-  /**
-   * Phone number may start with a plus and must contain only digits 0-9.
+   * The contact phone number of the restaurant.
    * @type {string}
    * @memberof UpdateRestaurantRequest
    */
   phone?: string | null;
   /**
-   * Link to restaurant's location on Google Maps.
-   * @type {string}
-   * @memberof UpdateRestaurantRequest
-   */
-  location?: string | null;
-  /**
-   * Link to restaurant's website.
-   * @type {string}
-   * @memberof UpdateRestaurantRequest
-   */
-  website?: string | null;
-  /**
    *
    * @type {Array<ScheduleForUpdateRestaurantRequest>}
    * @memberof UpdateRestaurantRequest
    */
-  schedules?: Array<ScheduleForUpdateRestaurantRequest> | null;
+  schedules?: Array<ScheduleForUpdateRestaurantRequest>;
 }
 
 /**
@@ -117,20 +87,13 @@ export function UpdateRestaurantRequestFromJSONTyped(
     return json;
   }
   return {
-    slug: !exists(json, "slug") ? undefined : json["slug"],
     name: !exists(json, "name") ? undefined : json["name"],
     country: !exists(json, "country") ? undefined : json["country"],
     city: !exists(json, "city") ? undefined : json["city"],
     place: !exists(json, "place") ? undefined : json["place"],
-    timezone: !exists(json, "timezone") ? undefined : json["timezone"],
-    email: !exists(json, "email") ? undefined : json["email"],
     phone: !exists(json, "phone") ? undefined : json["phone"],
-    location: !exists(json, "location") ? undefined : json["location"],
-    website: !exists(json, "website") ? undefined : json["website"],
     schedules: !exists(json, "schedules")
       ? undefined
-      : json["schedules"] === null
-      ? null
       : (json["schedules"] as Array<any>).map(
           ScheduleForUpdateRestaurantRequestFromJSON
         ),
@@ -147,21 +110,14 @@ export function UpdateRestaurantRequestToJSON(
     return null;
   }
   return {
-    slug: value.slug,
     name: value.name,
     country: value.country,
     city: value.city,
     place: value.place,
-    timezone: value.timezone,
-    email: value.email,
     phone: value.phone,
-    location: value.location,
-    website: value.website,
     schedules:
       value.schedules === undefined
         ? undefined
-        : value.schedules === null
-        ? null
         : (value.schedules as Array<any>).map(
             ScheduleForUpdateRestaurantRequestToJSON
           ),

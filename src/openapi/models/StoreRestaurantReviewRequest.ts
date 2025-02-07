@@ -48,13 +48,13 @@ export interface StoreRestaurantReviewRequest {
    * @type {string}
    * @memberof StoreRestaurantReviewRequest
    */
-  title?: string | null;
+  title?: string;
   /**
    *
    * @type {string}
    * @memberof StoreRestaurantReviewRequest
    */
-  description?: string | null;
+  description?: string;
 }
 
 /**

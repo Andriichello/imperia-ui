@@ -13,13 +13,6 @@
  */
 
 import { exists, mapValues } from "../runtime";
-import type { MediaMetadata } from "./MediaMetadata";
-import {
-  MediaMetadataFromJSON,
-  MediaMetadataFromJSONTyped,
-  MediaMetadataToJSON,
-} from "./MediaMetadata";
-
 /**
  * Update media request
  * @export
@@ -57,11 +50,11 @@ export interface UpdateMediaRequest {
    */
   folder?: string;
   /**
-   *
-   * @type {MediaMetadata}
+   * Media metadata resource object
+   * @type {object}
    * @memberof UpdateMediaRequest
    */
-  metadata?: MediaMetadata;
+  metadata?: object;
 }
 
 /**
@@ -90,9 +83,7 @@ export function UpdateMediaRequestFromJSONTyped(
     title: !exists(json, "title") ? undefined : json["title"],
     description: !exists(json, "description") ? undefined : json["description"],
     folder: !exists(json, "folder") ? undefined : json["folder"],
-    metadata: !exists(json, "metadata")
-      ? undefined
-      : MediaMetadataFromJSON(json["metadata"]),
+    metadata: !exists(json, "metadata") ? undefined : json["metadata"],
   };
 }
 
@@ -111,6 +102,6 @@ export function UpdateMediaRequestToJSON(
     title: value.title,
     description: value.description,
     folder: value.folder,
-    metadata: MediaMetadataToJSON(value.metadata),
+    metadata: value.metadata,
   };
 }

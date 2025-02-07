@@ -13,13 +13,6 @@
  */
 
 import { exists, mapValues } from "../runtime";
-import type { MediaMetadata } from "./MediaMetadata";
-import {
-  MediaMetadataFromJSON,
-  MediaMetadataFromJSONTyped,
-  MediaMetadataToJSON,
-} from "./MediaMetadata";
-
 /**
  * Media resource object
  * @export
@@ -93,11 +86,11 @@ export interface Media {
    */
   url: string;
   /**
-   *
-   * @type {MediaMetadata}
+   * Media metadata resource object
+   * @type {object}
    * @memberof Media
    */
-  metadata: MediaMetadata;
+  metadata: object;
   /**
    *
    * @type {Array<Media>}
@@ -149,7 +142,7 @@ export function MediaFromJSONTyped(
     folder: json["folder"],
     order: json["order"],
     url: json["url"],
-    metadata: MediaMetadataFromJSON(json["metadata"]),
+    metadata: json["metadata"],
     variants: !exists(json, "variants")
       ? undefined
       : (json["variants"] as Array<any>).map(MediaFromJSON),
@@ -175,7 +168,7 @@ export function MediaToJSON(value?: Media | null): any {
     folder: value.folder,
     order: value.order,
     url: value.url,
-    metadata: MediaMetadataToJSON(value.metadata),
+    metadata: value.metadata,
     variants:
       value.variants === undefined
         ? undefined

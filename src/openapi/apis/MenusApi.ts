@@ -15,6 +15,14 @@
 import * as runtime from "../runtime";
 import type {
   ArchivedParameter,
+  AttachCategoryToMenuRequest,
+  AttachCategoryToMenuResponse,
+  AttachProductToMenuRequest,
+  AttachProductToMenuResponse,
+  DetachCategoryFromMenuRequest,
+  DetachCategoryFromMenuResponse,
+  DetachProductFromMenuRequest,
+  DetachProductFromMenuResponse,
   IndexMenuResponse,
   ShowMenuResponse,
   UnauthenticatedResponse,
@@ -22,6 +30,22 @@ import type {
 import {
   ArchivedParameterFromJSON,
   ArchivedParameterToJSON,
+  AttachCategoryToMenuRequestFromJSON,
+  AttachCategoryToMenuRequestToJSON,
+  AttachCategoryToMenuResponseFromJSON,
+  AttachCategoryToMenuResponseToJSON,
+  AttachProductToMenuRequestFromJSON,
+  AttachProductToMenuRequestToJSON,
+  AttachProductToMenuResponseFromJSON,
+  AttachProductToMenuResponseToJSON,
+  DetachCategoryFromMenuRequestFromJSON,
+  DetachCategoryFromMenuRequestToJSON,
+  DetachCategoryFromMenuResponseFromJSON,
+  DetachCategoryFromMenuResponseToJSON,
+  DetachProductFromMenuRequestFromJSON,
+  DetachProductFromMenuRequestToJSON,
+  DetachProductFromMenuResponseFromJSON,
+  DetachProductFromMenuResponseToJSON,
   IndexMenuResponseFromJSON,
   IndexMenuResponseToJSON,
   ShowMenuResponseFromJSON,
@@ -29,6 +53,22 @@ import {
   UnauthenticatedResponseFromJSON,
   UnauthenticatedResponseToJSON,
 } from "../models";
+
+export interface AttachCategoryToMenuOperationRequest {
+  attachCategoryToMenuRequest: AttachCategoryToMenuRequest;
+}
+
+export interface AttachProductToMenuOperationRequest {
+  attachProductToMenuRequest: AttachProductToMenuRequest;
+}
+
+export interface DetachCategoryFromMenuOperationRequest {
+  detachCategoryFromMenuRequest: DetachCategoryFromMenuRequest;
+}
+
+export interface DetachProductFromMenuOperationRequest {
+  detachProductFromMenuRequest: DetachProductFromMenuRequest;
+}
 
 export interface IndexMenusRequest {
   include?: string;
@@ -48,6 +88,258 @@ export interface ShowMenuRequest {
  *
  */
 export class MenusApi extends runtime.BaseAPI {
+  /**
+   * Attach category to menu.
+   */
+  async attachCategoryToMenuRaw(
+    requestParameters: AttachCategoryToMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<AttachCategoryToMenuResponse>> {
+    if (
+      requestParameters.attachCategoryToMenuRequest === null ||
+      requestParameters.attachCategoryToMenuRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "attachCategoryToMenuRequest",
+        "Required parameter requestParameters.attachCategoryToMenuRequest was null or undefined when calling attachCategoryToMenu."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/menus/attach-category`,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: AttachCategoryToMenuRequestToJSON(
+          requestParameters.attachCategoryToMenuRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      AttachCategoryToMenuResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Attach category to menu.
+   */
+  async attachCategoryToMenu(
+    requestParameters: AttachCategoryToMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<AttachCategoryToMenuResponse> {
+    const response = await this.attachCategoryToMenuRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Attach product to menu.
+   */
+  async attachProductToMenuRaw(
+    requestParameters: AttachProductToMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<AttachProductToMenuResponse>> {
+    if (
+      requestParameters.attachProductToMenuRequest === null ||
+      requestParameters.attachProductToMenuRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "attachProductToMenuRequest",
+        "Required parameter requestParameters.attachProductToMenuRequest was null or undefined when calling attachProductToMenu."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/menus/attach-product`,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: AttachProductToMenuRequestToJSON(
+          requestParameters.attachProductToMenuRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      AttachProductToMenuResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Attach product to menu.
+   */
+  async attachProductToMenu(
+    requestParameters: AttachProductToMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<AttachProductToMenuResponse> {
+    const response = await this.attachProductToMenuRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Detach category from menu.
+   */
+  async detachCategoryFromMenuRaw(
+    requestParameters: DetachCategoryFromMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<DetachCategoryFromMenuResponse>> {
+    if (
+      requestParameters.detachCategoryFromMenuRequest === null ||
+      requestParameters.detachCategoryFromMenuRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "detachCategoryFromMenuRequest",
+        "Required parameter requestParameters.detachCategoryFromMenuRequest was null or undefined when calling detachCategoryFromMenu."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/menus/detach-category`,
+        method: "DELETE",
+        headers: headerParameters,
+        query: queryParameters,
+        body: DetachCategoryFromMenuRequestToJSON(
+          requestParameters.detachCategoryFromMenuRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      DetachCategoryFromMenuResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Detach category from menu.
+   */
+  async detachCategoryFromMenu(
+    requestParameters: DetachCategoryFromMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<DetachCategoryFromMenuResponse> {
+    const response = await this.detachCategoryFromMenuRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Detach product from menu.
+   */
+  async detachProductFromMenuRaw(
+    requestParameters: DetachProductFromMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<DetachProductFromMenuResponse>> {
+    if (
+      requestParameters.detachProductFromMenuRequest === null ||
+      requestParameters.detachProductFromMenuRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "detachProductFromMenuRequest",
+        "Required parameter requestParameters.detachProductFromMenuRequest was null or undefined when calling detachProductFromMenu."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/menus/detach-product`,
+        method: "DELETE",
+        headers: headerParameters,
+        query: queryParameters,
+        body: DetachProductFromMenuRequestToJSON(
+          requestParameters.detachProductFromMenuRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      DetachProductFromMenuResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Detach product from menu.
+   */
+  async detachProductFromMenu(
+    requestParameters: DetachProductFromMenuOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<DetachProductFromMenuResponse> {
+    const response = await this.detachProductFromMenuRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
   /**
    * Index menus.
    */

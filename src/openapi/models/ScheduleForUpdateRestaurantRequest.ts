@@ -14,23 +14,11 @@
 
 import { exists, mapValues } from "../runtime";
 /**
- * Schedule object for update restaurant request.
+ * Request body for updating restaurant's schedules details
  * @export
  * @interface ScheduleForUpdateRestaurantRequest
  */
 export interface ScheduleForUpdateRestaurantRequest {
-  /**
-   *
-   * @type {number}
-   * @memberof ScheduleForUpdateRestaurantRequest
-   */
-  id?: number;
-  /**
-   *
-   * @type {number}
-   * @memberof ScheduleForUpdateRestaurantRequest
-   */
-  restaurantId?: number;
   /**
    *
    * @type {string}
@@ -38,25 +26,26 @@ export interface ScheduleForUpdateRestaurantRequest {
    */
   weekday: ScheduleForUpdateRestaurantRequestWeekdayEnum;
   /**
-   *
+   * Start hour of the day [0 ; 23].
    * @type {number}
    * @memberof ScheduleForUpdateRestaurantRequest
    */
   begHour: number;
   /**
-   *
-   * @type {number}
-   * @memberof ScheduleForUpdateRestaurantRequest
-   */
-  begMinute: number;
-  /**
-   *
+   * End hour of the day [0 ; 23]. If less then beg_hour it,
+   *      *   then it meens that it's a cross day schedule
    * @type {number}
    * @memberof ScheduleForUpdateRestaurantRequest
    */
   endHour: number;
   /**
-   *
+   * Start minute of the day [0 ; 59].
+   * @type {number}
+   * @memberof ScheduleForUpdateRestaurantRequest
+   */
+  begMinute: number;
+  /**
+   * End minute of the day [0 ; 59].
    * @type {number}
    * @memberof ScheduleForUpdateRestaurantRequest
    */
@@ -66,7 +55,7 @@ export interface ScheduleForUpdateRestaurantRequest {
    * @type {boolean}
    * @memberof ScheduleForUpdateRestaurantRequest
    */
-  archived?: boolean;
+  archived: boolean;
 }
 
 /**
@@ -93,9 +82,10 @@ export function instanceOfScheduleForUpdateRestaurantRequest(
   let isInstance = true;
   isInstance = isInstance && "weekday" in value;
   isInstance = isInstance && "begHour" in value;
-  isInstance = isInstance && "begMinute" in value;
   isInstance = isInstance && "endHour" in value;
+  isInstance = isInstance && "begMinute" in value;
   isInstance = isInstance && "endMinute" in value;
+  isInstance = isInstance && "archived" in value;
 
   return isInstance;
 }
@@ -114,16 +104,12 @@ export function ScheduleForUpdateRestaurantRequestFromJSONTyped(
     return json;
   }
   return {
-    id: !exists(json, "id") ? undefined : json["id"],
-    restaurantId: !exists(json, "restaurant_id")
-      ? undefined
-      : json["restaurant_id"],
     weekday: json["weekday"],
     begHour: json["beg_hour"],
-    begMinute: json["beg_minute"],
     endHour: json["end_hour"],
+    begMinute: json["beg_minute"],
     endMinute: json["end_minute"],
-    archived: !exists(json, "archived") ? undefined : json["archived"],
+    archived: json["archived"],
   };
 }
 
@@ -137,12 +123,10 @@ export function ScheduleForUpdateRestaurantRequestToJSON(
     return null;
   }
   return {
-    id: value.id,
-    restaurant_id: value.restaurantId,
     weekday: value.weekday,
     beg_hour: value.begHour,
-    beg_minute: value.begMinute,
     end_hour: value.endHour,
+    beg_minute: value.begMinute,
     end_minute: value.endMinute,
     archived: value.archived,
   };

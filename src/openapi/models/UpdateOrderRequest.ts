@@ -58,6 +58,54 @@ import {
 export interface UpdateOrderRequest {
   /**
    *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  slug?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  kind?: UpdateOrderRequestKindEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  state?: UpdateOrderRequestStateEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  recipient?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  phone?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  address?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof UpdateOrderRequest
+   */
+  deliveryTime?: string | null;
+  /**
+   *
+   * @type {Date}
+   * @memberof UpdateOrderRequest
+   */
+  deliveryDate?: Date | null;
+  /**
+   *
    * @type {Array<StoreOrderRequestSpaceField>}
    * @memberof UpdateOrderRequest
    */
@@ -95,6 +143,29 @@ export interface UpdateOrderRequest {
 }
 
 /**
+ * @export
+ */
+export const UpdateOrderRequestKindEnum = {
+  Delivery: "delivery",
+  Banquet: "banquet",
+} as const;
+export type UpdateOrderRequestKindEnum =
+  (typeof UpdateOrderRequestKindEnum)[keyof typeof UpdateOrderRequestKindEnum];
+
+/**
+ * @export
+ */
+export const UpdateOrderRequestStateEnum = {
+  New: "new",
+  Confirmed: "confirmed",
+  Postponed: "postponed",
+  Cancelled: "cancelled",
+  Completed: "completed",
+} as const;
+export type UpdateOrderRequestStateEnum =
+  (typeof UpdateOrderRequestStateEnum)[keyof typeof UpdateOrderRequestStateEnum];
+
+/**
  * Check if a given object implements the UpdateOrderRequest interface.
  */
 export function instanceOfUpdateOrderRequest(value: object): boolean {
@@ -115,6 +186,20 @@ export function UpdateOrderRequestFromJSONTyped(
     return json;
   }
   return {
+    slug: !exists(json, "slug") ? undefined : json["slug"],
+    kind: !exists(json, "kind") ? undefined : json["kind"],
+    state: !exists(json, "state") ? undefined : json["state"],
+    recipient: !exists(json, "recipient") ? undefined : json["recipient"],
+    phone: !exists(json, "phone") ? undefined : json["phone"],
+    address: !exists(json, "address") ? undefined : json["address"],
+    deliveryTime: !exists(json, "delivery_time")
+      ? undefined
+      : json["delivery_time"],
+    deliveryDate: !exists(json, "delivery_date")
+      ? undefined
+      : json["delivery_date"] === null
+      ? null
+      : new Date(json["delivery_date"]),
     spaces: !exists(json, "spaces")
       ? undefined
       : (json["spaces"] as Array<any>).map(StoreOrderRequestSpaceFieldFromJSON),
@@ -152,6 +237,19 @@ export function UpdateOrderRequestToJSON(
     return null;
   }
   return {
+    slug: value.slug,
+    kind: value.kind,
+    state: value.state,
+    recipient: value.recipient,
+    phone: value.phone,
+    address: value.address,
+    delivery_time: value.deliveryTime,
+    delivery_date:
+      value.deliveryDate === undefined
+        ? undefined
+        : value.deliveryDate === null
+        ? null
+        : value.deliveryDate.toISOString().substr(0, 10),
     spaces:
       value.spaces === undefined
         ? undefined

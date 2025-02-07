@@ -61,7 +61,55 @@ export interface StoreOrderRequest {
    * @type {number}
    * @memberof StoreOrderRequest
    */
-  banquetId: number;
+  banquetId?: number;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  slug?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  kind?: StoreOrderRequestKindEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  state?: StoreOrderRequestStateEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  recipient?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  phone?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  address?: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof StoreOrderRequest
+   */
+  deliveryTime?: string | null;
+  /**
+   *
+   * @type {Date}
+   * @memberof StoreOrderRequest
+   */
+  deliveryDate?: Date | null;
   /**
    *
    * @type {Array<StoreOrderRequestSpaceField>}
@@ -101,11 +149,33 @@ export interface StoreOrderRequest {
 }
 
 /**
+ * @export
+ */
+export const StoreOrderRequestKindEnum = {
+  Delivery: "delivery",
+  Banquet: "banquet",
+} as const;
+export type StoreOrderRequestKindEnum =
+  (typeof StoreOrderRequestKindEnum)[keyof typeof StoreOrderRequestKindEnum];
+
+/**
+ * @export
+ */
+export const StoreOrderRequestStateEnum = {
+  New: "new",
+  Confirmed: "confirmed",
+  Postponed: "postponed",
+  Cancelled: "cancelled",
+  Completed: "completed",
+} as const;
+export type StoreOrderRequestStateEnum =
+  (typeof StoreOrderRequestStateEnum)[keyof typeof StoreOrderRequestStateEnum];
+
+/**
  * Check if a given object implements the StoreOrderRequest interface.
  */
 export function instanceOfStoreOrderRequest(value: object): boolean {
   let isInstance = true;
-  isInstance = isInstance && "banquetId" in value;
 
   return isInstance;
 }
@@ -122,7 +192,21 @@ export function StoreOrderRequestFromJSONTyped(
     return json;
   }
   return {
-    banquetId: json["banquet_id"],
+    banquetId: !exists(json, "banquet_id") ? undefined : json["banquet_id"],
+    slug: !exists(json, "slug") ? undefined : json["slug"],
+    kind: !exists(json, "kind") ? undefined : json["kind"],
+    state: !exists(json, "state") ? undefined : json["state"],
+    recipient: !exists(json, "recipient") ? undefined : json["recipient"],
+    phone: !exists(json, "phone") ? undefined : json["phone"],
+    address: !exists(json, "address") ? undefined : json["address"],
+    deliveryTime: !exists(json, "delivery_time")
+      ? undefined
+      : json["delivery_time"],
+    deliveryDate: !exists(json, "delivery_date")
+      ? undefined
+      : json["delivery_date"] === null
+      ? null
+      : new Date(json["delivery_date"]),
     spaces: !exists(json, "spaces")
       ? undefined
       : (json["spaces"] as Array<any>).map(StoreOrderRequestSpaceFieldFromJSON),
@@ -159,6 +243,19 @@ export function StoreOrderRequestToJSON(value?: StoreOrderRequest | null): any {
   }
   return {
     banquet_id: value.banquetId,
+    slug: value.slug,
+    kind: value.kind,
+    state: value.state,
+    recipient: value.recipient,
+    phone: value.phone,
+    address: value.address,
+    delivery_time: value.deliveryTime,
+    delivery_date:
+      value.deliveryDate === undefined
+        ? undefined
+        : value.deliveryDate === null
+        ? null
+        : value.deliveryDate.toISOString().substr(0, 10),
     spaces:
       value.spaces === undefined
         ? undefined

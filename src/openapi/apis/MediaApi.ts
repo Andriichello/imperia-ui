@@ -18,7 +18,6 @@ import type {
   DestroyRequest,
   GetModelMediaResponse,
   IndexMediaResponse,
-  MediaMetadata,
   SetModelMediaRequest,
   SetModelMediaResponse,
   ShowMediaResponse,
@@ -36,8 +35,6 @@ import {
   GetModelMediaResponseToJSON,
   IndexMediaResponseFromJSON,
   IndexMediaResponseToJSON,
-  MediaMetadataFromJSON,
-  MediaMetadataToJSON,
   SetModelMediaRequestFromJSON,
   SetModelMediaRequestToJSON,
   SetModelMediaResponseFromJSON,
@@ -91,7 +88,7 @@ export interface StoreMediaRequest {
   description?: string | null;
   disk?: StoreMediaDiskEnum;
   folder?: string;
-  metadata?: MediaMetadata;
+  metadata?: object;
 }
 
 export interface UpdateMediaOperationRequest {
@@ -491,10 +488,9 @@ export class MediaApi extends runtime.BaseAPI {
     if (requestParameters.metadata !== undefined) {
       formParams.append(
         "metadata",
-        new Blob(
-          [JSON.stringify(MediaMetadataToJSON(requestParameters.metadata))],
-          { type: "application/json" }
-        )
+        new Blob([JSON.stringify(requestParameters.metadata)], {
+          type: "application/json",
+        })
       );
     }
 

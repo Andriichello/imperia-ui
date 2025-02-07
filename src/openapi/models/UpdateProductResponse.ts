@@ -13,37 +13,37 @@
  */
 
 import { exists, mapValues } from "../runtime";
-import type { Restaurant } from "./Restaurant";
+import type { Product } from "./Product";
 import {
-  RestaurantFromJSON,
-  RestaurantFromJSONTyped,
-  RestaurantToJSON,
-} from "./Restaurant";
+  ProductFromJSON,
+  ProductFromJSONTyped,
+  ProductToJSON,
+} from "./Product";
 
 /**
- * Store restaurant response object.
+ * Update product response object.
  * @export
- * @interface StoreRestaurantResponse
+ * @interface UpdateProductResponse
  */
-export interface StoreRestaurantResponse {
+export interface UpdateProductResponse {
   /**
    *
-   * @type {Restaurant}
-   * @memberof StoreRestaurantResponse
+   * @type {Product}
+   * @memberof UpdateProductResponse
    */
-  data: Restaurant;
+  data: Product;
   /**
    *
    * @type {string}
-   * @memberof StoreRestaurantResponse
+   * @memberof UpdateProductResponse
    */
   message: string;
 }
 
 /**
- * Check if a given object implements the StoreRestaurantResponse interface.
+ * Check if a given object implements the UpdateProductResponse interface.
  */
-export function instanceOfStoreRestaurantResponse(value: object): boolean {
+export function instanceOfUpdateProductResponse(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && "data" in value;
   isInstance = isInstance && "message" in value;
@@ -51,27 +51,27 @@ export function instanceOfStoreRestaurantResponse(value: object): boolean {
   return isInstance;
 }
 
-export function StoreRestaurantResponseFromJSON(
+export function UpdateProductResponseFromJSON(
   json: any
-): StoreRestaurantResponse {
-  return StoreRestaurantResponseFromJSONTyped(json, false);
+): UpdateProductResponse {
+  return UpdateProductResponseFromJSONTyped(json, false);
 }
 
-export function StoreRestaurantResponseFromJSONTyped(
+export function UpdateProductResponseFromJSONTyped(
   json: any,
   ignoreDiscriminator: boolean
-): StoreRestaurantResponse {
+): UpdateProductResponse {
   if (json === undefined || json === null) {
     return json;
   }
   return {
-    data: RestaurantFromJSON(json["data"]),
+    data: ProductFromJSON(json["data"]),
     message: json["message"],
   };
 }
 
-export function StoreRestaurantResponseToJSON(
-  value?: StoreRestaurantResponse | null
+export function UpdateProductResponseToJSON(
+  value?: UpdateProductResponse | null
 ): any {
   if (value === undefined) {
     return undefined;
@@ -80,7 +80,7 @@ export function StoreRestaurantResponseToJSON(
     return null;
   }
   return {
-    data: RestaurantToJSON(value.data),
+    data: ProductToJSON(value.data),
     message: value.message,
   };
 }
