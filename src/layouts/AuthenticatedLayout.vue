@@ -7,7 +7,7 @@
       <div class="drawer-side z-[51]">
         <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-        <ul tabindex="0" class="menu bg-base-200 text-base-content min-h-full p-4 text-lg max-w-full"
+        <ul tabindex="0" class="menu bg-base-200 text-base-content min-h-full text-lg max-w-full"
             id="navbar-menu-dropdown-list">
 
           <li @click="clickDrawer">
@@ -20,32 +20,26 @@
             </div>
           </li>
 
-          <li>
-            <h2 class="menu-title text-md">{{ $t('Theme') }}</h2>
+          <li class="opacity-0 w-[300px]"></li>
+
+          <li v-if="restaurant" class="max-w-[300px]">
+            <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
             <ul>
-              <li class="p-0" @click="onSwitchTheme">
+              <li class="p-0 m-0" @click="clickDrawer(); $router.replace(`/place/${restaurantId}`)">
                 <div class="w-full flex flex-row justify-start items-center">
-                  <BaseIcon v-if="theme === ThemeConfig.dark()" width="20" height="20" title="theme">
-                    <svg class="swap-off h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
-                    </svg>
-                  </BaseIcon>
+                  <div class="flex justify-center items-center gap-2">
+                    <div class="flex justify-center items-center pr-1 rounded">
+                      <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">
+                        <path d="M11 4C9.355 4 8 5.355 8 7v2.068a13.74 13.74 0 0 1-.465 3.541L4.531 23.875A15.741 15.741 0 0 0 4 27.932V30.5a7.502 7.502 0 0 0 4 6.63V57c0 1.645 1.355 3 3 3h42c1.645 0 3-1.355 3-3V37.13a7.502 7.502 0 0 0 4-6.629v-2.568c0-1.37-.178-2.733-.531-4.057L56.465 12.61A13.74 13.74 0 0 1 56 9.07V7c0-1.645-1.355-3-3-3H11zm0 2h42c.564 0 1 .436 1 1v2.068c0 .312.01.622.03.932H9.97c.019-.31.03-.62.03-.932V7c0-.564.435-1 1-1zm-1.277 6h44.555c.071.377.154.753.254 1.125l3.004 11.266c.053.202.098.406.142.61H6.323c.045-.204.089-.408.143-.61L9.47 13.125c.099-.372.182-.748.253-1.125zm-3.69 15h51.934c.021.31.033.62.033.932V30.5c0 3.064-2.435 5.5-5.5 5.5S47 33.564 47 30.5V30a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0v.5c0 3.064-2.435 5.5-5.5 5.5S6 33.564 6 30.5v-2.568c0-.312.012-.622.034-.932zM32 33.664C33.34 36.208 35.928 38 39 38c2.994 0 5.508-1.718 6.88-4.156C47.117 36.28 49.581 38 52.5 38a7.51 7.51 0 0 0 1.5-.15V57c0 .564-.436 1-1 1H30v-8c0-4.415-3.585-8-8-8s-8 3.585-8 8v8h-3c-.564 0-1-.436-1-1V37.85c.485.098.986.15 1.5.15 2.918 0 5.382-1.719 6.621-4.156C19.493 36.282 22.006 38 25.001 38c3.071 0 5.659-1.792 7-4.336zM22 44c3.341 0 6 2.659 6 6v8H16v-8c0-3.341 2.659-6 6-6z"/>
+                      </BaseIcon>
+                    </div>
 
-                  <BaseIcon v-else  width="20" height="20" title="theme">
-                    <svg class="swap-on h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                      <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
-                    </svg>
-                  </BaseIcon>
-
-                  <span class="text-md">
-                    {{ $t('Change to ' + (theme === ThemeConfig.dark() ? 'Light' : 'Dark'))}}
-                  </span>
+                    <span class="text-md max-w-xs">{{ restaurant.name }}</span>
+                  </div>
                 </div>
               </li>
             </ul>
           </li>
-
-          <li class="opacity-0 w-[300px]"></li>
 
           <li v-if="(address || phone)" class="max-w-[300px]">
             <h2 class="menu-title">{{ $t('Contacts') }}</h2>
@@ -173,6 +167,32 @@
               </li>
             </ul>
           </li>
+
+          <li>
+            <h2 class="menu-title text-md">{{ $t('Theme') }}</h2>
+            <ul>
+              <li class="p-0" @click="onSwitchTheme">
+                <div class="w-full flex flex-row justify-start items-center">
+                  <BaseIcon v-if="theme === ThemeConfig.dark()" width="20" height="20" title="theme">
+                    <svg class="swap-off h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M5.64,17l-.71.71a1,1,0,0,0,0,1.41,1,1,0,0,0,1.41,0l.71-.71A1,1,0,0,0,5.64,17ZM5,12a1,1,0,0,0-1-1H3a1,1,0,0,0,0,2H4A1,1,0,0,0,5,12Zm7-7a1,1,0,0,0,1-1V3a1,1,0,0,0-2,0V4A1,1,0,0,0,12,5ZM5.64,7.05a1,1,0,0,0,.7.29,1,1,0,0,0,.71-.29,1,1,0,0,0,0-1.41l-.71-.71A1,1,0,0,0,4.93,6.34Zm12,.29a1,1,0,0,0,.7-.29l.71-.71a1,1,0,1,0-1.41-1.41L17,5.64a1,1,0,0,0,0,1.41A1,1,0,0,0,17.66,7.34ZM21,11H20a1,1,0,0,0,0,2h1a1,1,0,0,0,0-2Zm-9,8a1,1,0,0,0-1,1v1a1,1,0,0,0,2,0V20A1,1,0,0,0,12,19ZM18.36,17A1,1,0,0,0,17,18.36l.71.71a1,1,0,0,0,1.41,0,1,1,0,0,0,0-1.41ZM12,6.5A5.5,5.5,0,1,0,17.5,12,5.51,5.51,0,0,0,12,6.5Zm0,9A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z" />
+                    </svg>
+                  </BaseIcon>
+
+                  <BaseIcon v-else  width="20" height="20" title="theme">
+                    <svg class="swap-on h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
+                    </svg>
+                  </BaseIcon>
+
+                  <span class="text-md">
+                    {{ $t('Change to ' + (theme === ThemeConfig.dark() ? 'Light' : 'Dark'))}}
+                  </span>
+                </div>
+              </li>
+            </ul>
+          </li>
+
 
           <li>
             <h2 class="menu-title text-md">{{ $t('User') }}</h2>
