@@ -128,7 +128,7 @@ import List from "@/components/order/list/List.vue";
 import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
 
 export default defineComponent({
-  name: "PlaceOrderOnlyPage",
+  name: "PlaceDeliveryOrderPage",
   components: {
     OrderSwitcher,
     List,

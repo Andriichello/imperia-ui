@@ -8,7 +8,7 @@ import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
 import PlaceMenuPage from "@/pages/PlaceMenuPage.vue";
 import PlaceOrderPage from "@/pages/PlaceOrderPage.vue";
-import PlaceOrderOnlyPage from "@/pages/PlaceOrderOnlyPage.vue";
+import PlaceDeliveryOrderPage from "@/pages/PlaceDeliveryOrderPage.vue";
 import PlaceHistoryPage from "@/pages/PlaceHistoryPage.vue";
 import PreviewTipsPage from "@/pages/PreviewTipsPage.vue";
 import PreviewTipsForFoodPage from "@/pages/PreviewTipsForFoodPage.vue";
@@ -139,9 +139,9 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/place/:restaurantId(\\d+)?/order-only/:orderId(\\d+)?',
-    name: 'place-order-only',
-    component: PlaceOrderOnlyPage,
+    path: '/place/:restaurantId(\\d+)?/delivery/order/:orderId(\\d+)?',
+    name: 'place-delivery-order',
+    component: PlaceDeliveryOrderPage,
     meta: {
       requiresAuth: true,
     },

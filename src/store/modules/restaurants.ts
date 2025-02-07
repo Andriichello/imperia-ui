@@ -3,8 +3,6 @@ import {
   Restaurant,
   RestaurantsApi, Schedule, ScheduleWeekdayEnum,
   ShowRestaurantResponse,
-  StoreRestaurantRequest,
-  StoreRestaurantResponse,
   UpdateRestaurantRequest,
   UpdateRestaurantResponse
 } from "@/openapi";
@@ -131,7 +129,7 @@ class RestaurantForm extends BaseForm<Restaurant> {
    *
    * @return object
    */
-  public asCreate(): StoreRestaurantRequest {
+  public asCreate(): UpdateRestaurantRequest {
     const request = super.asCreate();
 
     delete request['type'];
@@ -140,7 +138,7 @@ class RestaurantForm extends BaseForm<Restaurant> {
 
     delete request['media'];
 
-    return request as StoreRestaurantRequest;
+    return request as UpdateRestaurantRequest;
   }
 
   /**
@@ -166,7 +164,6 @@ class RestaurantsState extends CrudState<
   RestaurantForm,
   IndexRestaurantResponse,
   ShowRestaurantResponse,
-  StoreRestaurantResponse,
   UpdateRestaurantResponse
 > {
   /**
@@ -186,7 +183,6 @@ const getters = {
     RestaurantForm,
     IndexRestaurantResponse,
     ShowRestaurantResponse,
-    StoreRestaurantResponse,
     UpdateRestaurantResponse
   >(),
   timezoneOffset(state: RestaurantsState) {
@@ -234,7 +230,6 @@ const mutations = {
     RestaurantForm,
     IndexRestaurantResponse,
     ShowRestaurantResponse,
-    StoreRestaurantResponse,
     UpdateRestaurantResponse
   >(),
 };
