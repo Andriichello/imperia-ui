@@ -10,6 +10,7 @@
 import { defineComponent } from "vue";
 import Restaurant from "@/openapi/models/Restaurant";
 import {DateTime} from "luxon";
+import {filterAndSortSchedules, getCurrentUtcWithOffset, getUpcomingSchedules} from "@/helpers";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -19,17 +20,17 @@ export default defineComponent({
   },
   computed: {
     schedules() {
-      return this.item.schedules.filter((schedule) => !schedule.archived);
+      return filterAndSortSchedules(this.item?.schedules ?? []);
     },
     upcomingSchedules() {
-      const now = this.getCurrentUtcWithOffset(this.timezoneOffset);
-      return this.getUpcomingSchedules(now, this.schedules);
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      return getUpcomingSchedules(now, this.schedules);
     },
     relevantSchedule() {
       return this.upcomingSchedules[0] ?? null;
     },
     activeSchedule() {
-      const now = this.getCurrentUtcWithOffset(this.timezoneOffset);
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
       const relevant = this.relevantSchedule;
 
       if (relevant && relevant.closestBegDate <= now && now <= relevant.closestEndDate) {
@@ -52,7 +53,7 @@ export default defineComponent({
         return '-';
       }
 
-      const now = this.getCurrentUtcWithOffset(this.timezoneOffset);
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
       const beg = this.relevantSchedule.closestBegDate;
       const end = this.relevantSchedule.closestEndDate;
 
@@ -139,67 +140,6 @@ export default defineComponent({
       time += minute < 10 ? '0' + minute : minute;
 
       return time;
-    },
-    getCurrentUtcWithOffset(timezoneOffset) {
-      // Get the current UTC time and apply the timezone offset
-      return DateTime.utc()
-          .plus({minutes: timezoneOffset});
-    },
-    getNextOccurrence(baseDate, weekday) {
-      // Map weekday name to a number (1 = Monday, 7 = Sunday)
-      const weekdayMap = {
-        monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6, sunday: 7,
-      };
-      const targetWeekday = weekdayMap[weekday.toLowerCase()];
-
-      let daysUntilNext = (targetWeekday + 7 - baseDate.weekday) % 7;
-      // if (daysUntilNext === 0) daysUntilNext = 0; // Skip to next week if today is the target weekday
-
-      return baseDate.plus({days: daysUntilNext});
-    },
-    getUpcomingSchedules(now, schedules, timezoneOffset) {
-      const upcomingSchedules = [];
-
-      schedules.forEach(schedule => {
-        // Find the next occurrence of the schedule's weekday
-        let nextOccurrenceBeg = this.getNextOccurrence(now, schedule.weekday)
-            .set({hour: schedule.begHour, minute: schedule.begMinute, second: 0, millisecond: 0})
-            .minus({minutes: timezoneOffset}); // Adjust back to UTC
-
-        let nextOccurrenceEnd = this.getNextOccurrence(now, schedule.weekday)
-            .set({hour: schedule.endHour, minute: schedule.endMinute, second: 0, millisecond: 0})
-            .minus({minutes: timezoneOffset}); // Adjust back to UTC
-
-        // Handle cross-date schedules (end time is before start time)
-        if (nextOccurrenceEnd < nextOccurrenceBeg) {
-          nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 1});
-        }
-
-
-        if (nextOccurrenceBeg.toMillis() < now.toMillis()) {
-          if (nextOccurrenceEnd > now.toMillis()) {
-            upcomingSchedules.push({
-              weekday: schedule.weekday,
-              closestBegDate: nextOccurrenceBeg,
-              closestEndDate: nextOccurrenceEnd,
-            });
-
-            nextOccurrenceBeg = nextOccurrenceBeg.plus({days: 7});
-            nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 7});
-          } else {
-            nextOccurrenceBeg = nextOccurrenceBeg.plus({days: 7});
-            nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 7});
-          }
-        }
-
-        upcomingSchedules.push({
-          weekday: schedule.weekday,
-          closestBegDate: nextOccurrenceBeg,
-          closestEndDate: nextOccurrenceEnd,
-        });
-      });
-
-      return upcomingSchedules.sort((a, b) => a.closestBegDate - b.closestBegDate);
     },
   },
 });
