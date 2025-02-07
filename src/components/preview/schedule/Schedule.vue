@@ -190,7 +190,11 @@ export default defineComponent({
       return time;
     },
     isActive(schedule) {
-      return this.activeSchedule?.weekday === schedule?.weekday;
+      if (this.activeSchedule) {
+        return this.activeSchedule?.weekday === schedule?.weekday;
+      }
+
+      return this.relevantSchedule?.weekday === schedule?.weekday;
     },
   },
 });

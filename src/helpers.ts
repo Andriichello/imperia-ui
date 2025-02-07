@@ -79,6 +79,20 @@ export function priceFormatted(price: number | null): string | null {
     return price.toFixed(2) + ' ₴';
 }
 
+export function sortSchedules(items: Schedule[]): Schedule[] {
+    const schedules = [];
+
+    for (const scheduleWeekdayEnumKey in ScheduleWeekdayEnum) {
+        const weekday = ScheduleWeekdayEnum[scheduleWeekdayEnumKey];
+        const schedule = items.find((s) => s.weekday === weekday);
+
+        if (schedule) {
+            schedules.push(schedule);
+        }
+    }
+
+    return schedules;
+}
 export function filterAndSortSchedules(items: Schedule[]): Schedule[] {
     const filtered = items.filter((schedule) => !schedule.archived);
     const schedules = [];

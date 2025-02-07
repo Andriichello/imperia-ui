@@ -119,7 +119,7 @@
             <table class="table table-md w-full">
               <tbody class="w-full">
 
-              <template v-for="schedule in schedules" :key="schedule.weekday">
+              <template v-for="schedule in sortSchedules(schedules)" :key="schedule.weekday">
                 <tr>
                   <td class="p-2 w-[32px] text-end">
                     <input type="checkbox" class="toggle toggle-success toggle-sm align-center mt-1.5" :checked="!schedule.archived"
@@ -180,6 +180,7 @@ import Divider from "@/layouts/divider/Divider.vue";
 import Preloader from "@/components/preview/loading/Preloader.vue";
 import {DateTime} from "luxon";
 import {ThemeConfig} from "@/configs";
+import {sortSchedules} from "@/helpers";
 
 export default defineComponent({
   name: "EditRestaurantPage",
@@ -287,6 +288,7 @@ export default defineComponent({
     },
   },
   methods: {
+    sortSchedules,
     ...mapActions({
       setOnForm: "restaurants/setOnForm",
       setOnSchedules: "restaurants/setOnSchedules",
