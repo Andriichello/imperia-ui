@@ -65,8 +65,8 @@
               @click="onTimeClick"/>
       </div>
 
-      <div class="flex flex-col justify-start items-start gap-1">
-        <State class="cursor-pointer w-full"
+      <div class="flex flex-col justify-start items-start gap-1 grow">
+        <State class="cursor-pointer"
                :state="banquet?.state"
                @click="onStateClick"/>
         <Customer class="cursor-pointer w-full"
@@ -173,6 +173,10 @@ export default defineComponent({
       this.$emit('customer-click');
     },
     onStateClick() {
+      if (!this.banquet?.id) {
+        return;
+      }
+
       this.$emit('state-click');
     },
     onOpenBill() {
