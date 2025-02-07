@@ -53,7 +53,8 @@
     "something_went_wrong": {
       "title": "Oops, something went wrong...",
       "description": "There was an error while loading data from server."
-    }
+    },
+    "Invalid credentials": "Invalid credentials."
   },
   "login": {
     "title": "Welcome back!",

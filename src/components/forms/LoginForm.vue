@@ -8,9 +8,10 @@
 
         <div class="auth-card-divider"></div>
 
-        <label class="label flex-grow justify-center" v-if="!hasErrors && message">
+        <label class="label flex-grow justify-center"
+               v-if="hasErrors &&  message && !emailErrors?.length && !passwordErrors?.length">
           <span class="label-text-alt text-error text-sm">
-            {{ message }}
+            {{ $t('error.' + message) }}
           </span>
         </label>
 
@@ -39,9 +40,7 @@
             </label>
           </div>
         
-          <router-link to="/register" class="link link-hover font-bold self-end mt-4 mb-4">{{ $t('login.register_link') }}</router-link>
-
-          <div class="card-actions w-full">
+          <div class="card-actions w-full mt-8">
             <button type="submit" class="btn btn-block btn-primary">
               {{ $t('login.login_button') }}
               <span class="loading loading-spinner" v-if="loggingIn"></span>
