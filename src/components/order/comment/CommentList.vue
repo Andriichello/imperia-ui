@@ -5,7 +5,9 @@
         <Comment v-for="(comment, index) in comments"
                  :comment="comment" :key="comment"
                  :index="index"
-                 @on-update="onUpdate"/>
+                 :min-rows="minRows"
+                 @on-update="onUpdate"
+                 @on-delete="onDelete"/>
       </div>
     </div>
   </div>
@@ -18,9 +20,13 @@ import Comment from "@/components/order/comment/Comment.vue";
 export default defineComponent({
   // eslint-disable-next-line
   name: "CommentList",
-  emits: ["on-update"],
+  emits: ["on-update", "on-delete"],
   props: {
     comments: Array,
+    minRows: {
+      type: Number,
+      default: 2,
+    },
   },
   components: {
     Comment,
@@ -28,6 +34,9 @@ export default defineComponent({
   methods: {
     onUpdate({comment, index}) {
       this.$emit('on-update', {comment, index});
+    },
+    onDelete({comment, index}) {
+      this.$emit('on-delete', {comment, index});
     },
   },
 });

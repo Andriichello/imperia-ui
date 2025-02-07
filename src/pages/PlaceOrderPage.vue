@@ -872,7 +872,7 @@ export default defineComponent({
       }
     },
     onCreateComment() {
-      if (this.comments?.length > 0 && !this.comments[0]?.text?.length) {
+      if (this.comments?.length > 0 && !this.comments[this.comments?.length - 1]?.text?.length) {
         return;
       }
 

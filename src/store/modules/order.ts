@@ -12,7 +12,7 @@ import {
   Product,
   ProductOrderField,
   ProductsApi, Service, ServiceOrderField, ServicesApi,
-  ShowOrderByBanquetIdRequest,
+  ShowOrderByBanquetIdRequest, ShowOrderRequest,
   ShowOrderResponse, Space,
   SpaceOrderField,
   SpacesApi,
@@ -756,6 +756,9 @@ const actions = {
   updateComment({ commit }, {comment, index}) {
     commit('updateComment', {comment, index});
   },
+  deleteComment({ commit }, {comment, index}) {
+    commit('deleteComment', {comment, index});
+  },
   recalculate({state, getters, rootGetters}) {
     const totals: OrderTotals = state?.order?.totals
       ?? {
@@ -810,6 +813,40 @@ const actions = {
 
     totals.all = totals.products + totals.spaces + totals.services + totals.tickets;
     state.form.totals = totals;
+  },
+  async loadOrder({dispatch, commit, rootGetters}, {orderId, fields}) {
+    const request: ShowOrderRequest = {
+      id: orderId,
+      include: 'comments,products,products.comments',
+    };
+
+    commit('setIsLoadingShowResponse', true);
+
+    const response = await (new OrdersApi())
+      .showOrder(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+
+        return error.response;
+      });
+
+    commit('setShowOrderResponse', response);
+    commit('setOrder', {order: response.data, fields});
+    commit('setIsLoadingShowResponse', false);
+  },
+  async loadOrderIfMissing({dispatch, commit}, {orderId, fields}) {
+    if (state.showOrderResponse || state.order) {
+      if (state.showOrderResponse && state.showOrderResponse['data'] && state.showOrderResponse['data']['orderId'] === orderId) {
+        return;
+      }
+
+      if (state.order && state.order.id === orderId) {
+        return;
+      }
+    }
+
+    dispatch('loadOrder', { orderId, fields })
   },
   async loadOrderForBanquet({dispatch, commit, rootGetters}, {banquetId, fields}) {
     const request: ShowOrderByBanquetIdRequest = {
@@ -1143,6 +1180,11 @@ const mutations = {
   updateComment(state: OrderState, {comment, index}) {
     state.form.comments[index]['text'] = comment.text;
     state.form.setChange(`comments`, state.form.comments);
+  },
+  deleteComment(state: OrderState, {index}) {
+    console.log({comments: state.form.comments, index, after: state.form.comments.splice(index, 1)});
+
+    state.form.setChange(`comments`, state.form.comments.splice(index, 1));
   },
   setOrderedSpaces(state: OrderState, spaces) {
     state.orderedSpaces = spaces;

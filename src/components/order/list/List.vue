@@ -5,7 +5,9 @@
       <template v-if="type === 'products'">
         <template v-for="group in groups" :key="'product-' + group[0].productId">
           <template v-for="subGroups in splitGroupByBatch(group)" :key="subGroups[0].productId + '-' + subGroups[0].batch" >
-            <Product :fields="subGroups" :product-id="subGroups[0].productId" :batch="subGroups[0].batch"/>
+            <Product :fields="subGroups" :product-id="subGroups[0].productId" :batch="subGroups[0].batch"
+              :show-description="showDescriptions" :show-serve-at="showServeAts"
+              :show-compactly="showCompactly" :show-actions-on-side="showActionsOnSide"/>
           </template>
         </template>
       </template>
@@ -45,6 +47,22 @@ export default defineComponent({
       default: 'products',
     },
     fields: Array,
+    showDescriptions: {
+      type: Boolean,
+      default: true,
+    },
+    showServeAts: {
+      type: Boolean,
+      default: true,
+    },
+    showCompactly: {
+      type: Boolean,
+      default: false,
+    },
+    showActionsOnSide: {
+      type: Boolean,
+      default: false,
+    }
   },
   components: {
     Service,

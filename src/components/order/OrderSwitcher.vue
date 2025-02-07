@@ -15,7 +15,7 @@
         </span>
       </template>
 
-      <div class="w-full flex flex-wrap justify-between items-center gap-6" v-if="!isEmpty">
+      <div class="w-full flex flex-wrap justify-between items-center gap-6" v-if="!isEmpty && shouldShow('products')">
 
         <div class="flex justify-center items-center grow gap-6">
           <div class="flex grow justify-center items-center">
@@ -34,7 +34,7 @@
           </div>
           </div>
 
-          <div class="flex grow justify-center items-center">
+          <div class="flex grow justify-center items-center" v-if="shouldShow('tickets')">
             <div class="indicator">
             <span class="indicator-item indicator-start badge badge-neutral badge-sm px-1 rounded translate-y-[-2px] translate-x-[-6px]">{{ ticketsCount }}</span>
 
@@ -59,7 +59,7 @@
           </div>
         </div>
 
-        <div class="flex justify-center items-center grow gap-6">
+        <div class="flex justify-center items-center grow gap-6" v-if="shouldShow('spaces')">
           <div class="flex grow justify-center items-center">
             <div class="indicator">
               <span class="indicator-item indicator-start badge badge-neutral badge-sm px-1 rounded translate-y-[-2px] translate-x-[-6px]">{{ spacesCount }}</span>
@@ -76,7 +76,7 @@
             </div>
           </div>
 
-          <div class="flex grow justify-center items-center">
+          <div class="flex grow justify-center items-center" v-if="shouldShow('services')">
             <div class="indicator">
             <span class="indicator-item indicator-start badge badge-neutral badge-sm px-1 rounded translate-y-[-2px] translate-x-[-6px]">{{ servicesCount }}</span>
 
@@ -135,6 +135,10 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    showTabs: {
+      type: Array,
+      default: () => ['products', 'services', 'spaces', 'tickets'],
+    }
   },
   data() {
     return {
@@ -161,7 +165,7 @@ export default defineComponent({
       return (this.$route.name ?? '') === ('place-order');
     },
     showTotals() {
-      return this.isPlaceOrder || !this.isNarrowScreen;
+      return this.isPlaceOrder || (!this.isNarrowScreen || this.showTabs?.length < 3);
     },
     ticketsCount() {
       return (+this.adultTicketsAmount) + (+this.childTicketsAmount);
@@ -187,6 +191,9 @@ export default defineComponent({
     }),
     iconColor() {
       return 'text-base-100';
+    },
+    shouldShow(tab) {
+      return this.showTabs?.includes(tab);
     },
     onSwitchOrder(showing) {
       this.setShowing(showing);
