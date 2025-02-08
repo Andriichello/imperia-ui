@@ -3,7 +3,7 @@
 
     <div class="flex flex-row justify-start w-full min-h-[80px] gap-2">
       <div class="details flex flex-col justify-start items-start gap-1 grow">
-        <span class="font-semibold text-xl">{{ title }}</span>
+        <span class="w-full font-semibold text-xl">{{ title }}</span>
 
         <div class="w-full flex flex-col justify-start items-start gap-1 mt-1 ml-1">
 

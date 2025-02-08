@@ -3,7 +3,7 @@
 
     <div class="w-full flex-col text-neutral-content bg-neutral">
       <div class="navbar flex w-full h-[68px]">
-        <div class="flex-1 gap-2">
+        <div class="flex-1">
           <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isTipsPage || isTipsForWaiterPage || isTipsForServicePage || isTipsForFoodPage || isTipsForCleannessPage" @click="onBack">
             <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
               <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -11,7 +11,7 @@
           </button>
 
           <Item v-if="isMenuPage || isReviewsPage || isTipsPage || isTipsForWaiterPage || isTipsForServicePage || isTipsForFoodPage || isTipsForCleannessPage"
-                :with-icon="true"
+                :with-icon="!isNarrowScreen"
                 :restaurant="restaurant"/>
         </div>
 
@@ -46,6 +46,7 @@ export default defineComponent({
       lastScrollPosition: 0,
       showMainNavbar: true,
       showMenusNavbar: true,
+      isNarrowScreen: window.innerWidth < 600,
     };
   },
   computed: {
@@ -120,6 +121,9 @@ export default defineComponent({
 
       window.scrollTo(0, 0);
     },
+    onResize() {
+      this.isNarrowScreen = window.innerWidth < 500;
+    },
     onHide() {
       const elem = document.activeElement;
       if(elem){
@@ -175,9 +179,11 @@ export default defineComponent({
   },
   mounted() {
     window.addEventListener('scroll', this.onScroll);
+    window.addEventListener("resize", this.onResize);
   },
   beforeUnmount() {
     window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener("resize", this.onResize);
   }
 });
 </script>

@@ -15,7 +15,7 @@
           </span>
         </label>
 
-        <form @submit.prevent="onLogin" class="form-control w-full max-w-md">
+        <form @submit.prevent="onLogin" class="form-control w-full w-md max-w-md">
           <div class="form-control w-full max-w-md">
             <label class="label">
               <span class="label-text">{{ $t('login.email') }}</span>

@@ -8,6 +8,7 @@
         <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
         <ul tabindex="0" class="menu bg-base-200 text-base-content min-h-full text-md max-w-full"
+            :class="{'bg-neutral': theme === 'dark', 'text-neutral-content': theme === 'dark'}"
             id="navbar-menu-dropdown-list">
 
           <li @click="clickDrawer">
@@ -24,29 +25,41 @@
 
           <template v-if="authorized">
             <li v-if="restaurant" class="max-w-[300px]">
-            <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
-            <ul>
-              <li @click="clickDrawer(); $router.replace(`/place/${restaurantId}`)">
-                <div class="w-full flex flex-row justify-start items-center">
-                  <div class="flex justify-center items-center gap-2">
-                    <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">
-                      <path d="M11 4C9.355 4 8 5.355 8 7v2.068a13.74 13.74 0 0 1-.465 3.541L4.531 23.875A15.741 15.741 0 0 0 4 27.932V30.5a7.502 7.502 0 0 0 4 6.63V57c0 1.645 1.355 3 3 3h42c1.645 0 3-1.355 3-3V37.13a7.502 7.502 0 0 0 4-6.629v-2.568c0-1.37-.178-2.733-.531-4.057L56.465 12.61A13.74 13.74 0 0 1 56 9.07V7c0-1.645-1.355-3-3-3H11zm0 2h42c.564 0 1 .436 1 1v2.068c0 .312.01.622.03.932H9.97c.019-.31.03-.62.03-.932V7c0-.564.435-1 1-1zm-1.277 6h44.555c.071.377.154.753.254 1.125l3.004 11.266c.053.202.098.406.142.61H6.323c.045-.204.089-.408.143-.61L9.47 13.125c.099-.372.182-.748.253-1.125zm-3.69 15h51.934c.021.31.033.62.033.932V30.5c0 3.064-2.435 5.5-5.5 5.5S47 33.564 47 30.5V30a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0v.5c0 3.064-2.435 5.5-5.5 5.5S6 33.564 6 30.5v-2.568c0-.312.012-.622.034-.932zM32 33.664C33.34 36.208 35.928 38 39 38c2.994 0 5.508-1.718 6.88-4.156C47.117 36.28 49.581 38 52.5 38a7.51 7.51 0 0 0 1.5-.15V57c0 .564-.436 1-1 1H30v-8c0-4.415-3.585-8-8-8s-8 3.585-8 8v8h-3c-.564 0-1-.436-1-1V37.85c.485.098.986.15 1.5.15 2.918 0 5.382-1.719 6.621-4.156C19.493 36.282 22.006 38 25.001 38c3.071 0 5.659-1.792 7-4.336zM22 44c3.341 0 6 2.659 6 6v8H16v-8c0-3.341 2.659-6 6-6z"
-                            stroke="currentColor"
-                            stroke-width="2"/>
-                    </BaseIcon>
-                  </div>
+              <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
+              <ul>
+                <li @click="clickDrawer(); $router.replace(`/preview/${restaurantId}`)">
+                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
+                    <div class="flex justify-center items-center gap-2">
+                      <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">
+                        <path d="M11 4C9.355 4 8 5.355 8 7v2.068a13.74 13.74 0 0 1-.465 3.541L4.531 23.875A15.741 15.741 0 0 0 4 27.932V30.5a7.502 7.502 0 0 0 4 6.63V57c0 1.645 1.355 3 3 3h42c1.645 0 3-1.355 3-3V37.13a7.502 7.502 0 0 0 4-6.629v-2.568c0-1.37-.178-2.733-.531-4.057L56.465 12.61A13.74 13.74 0 0 1 56 9.07V7c0-1.645-1.355-3-3-3H11zm0 2h42c.564 0 1 .436 1 1v2.068c0 .312.01.622.03.932H9.97c.019-.31.03-.62.03-.932V7c0-.564.435-1 1-1zm-1.277 6h44.555c.071.377.154.753.254 1.125l3.004 11.266c.053.202.098.406.142.61H6.323c.045-.204.089-.408.143-.61L9.47 13.125c.099-.372.182-.748.253-1.125zm-3.69 15h51.934c.021.31.033.62.033.932V30.5c0 3.064-2.435 5.5-5.5 5.5S47 33.564 47 30.5V30a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0v.5c0 3.064-2.435 5.5-5.5 5.5S6 33.564 6 30.5v-2.568c0-.312.012-.622.034-.932zM32 33.664C33.34 36.208 35.928 38 39 38c2.994 0 5.508-1.718 6.88-4.156C47.117 36.28 49.581 38 52.5 38a7.51 7.51 0 0 0 1.5-.15V57c0 .564-.436 1-1 1H30v-8c0-4.415-3.585-8-8-8s-8 3.585-8 8v8h-3c-.564 0-1-.436-1-1V37.85c.485.098.986.15 1.5.15 2.918 0 5.382-1.719 6.621-4.156C19.493 36.282 22.006 38 25.001 38c3.071 0 5.659-1.792 7-4.336zM22 44c3.341 0 6 2.659 6 6v8H16v-8c0-3.341 2.659-6 6-6z"
+                              stroke="currentColor"
+                              stroke-width="2"/>
+                      </BaseIcon>
+                    </div>
 
-                  <span class="text-md max-w-xs">{{ restaurant.name }}</span>
-                </div>
-              </li>
-            </ul>
+                    <span class="text-lg font-bold grow">{{ restaurant.name }}</span>
+                  </div>
+                </li>
+                <li>
+                  <div class="w-full flex flex-row justify-start items-center p-0 w-[270px] max-w-[270px]">
+                    <div class="flex justify-center items-center p-0">
+                      <BaseIcon width="20" height="20" color="currentColor" :title="restaurant.name" view-box="0 0 24 24">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.5C7.313 3.5 3.5 7.313 3.5 12C3.5 16.687 7.313 20.5 12 20.5C16.687 20.5 20.5 16.687 20.5 12C20.5 7.313 16.687 3.5 12 3.5ZM12 22C6.486 22 2 17.514 2 12C2 6.486 6.486 2 12 2C17.514 2 22 6.486 22 12C22 17.514 17.514 22 12 22Z"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M15.4311 15.6925C15.3001 15.6925 15.1681 15.6585 15.0471 15.5875L11.2771 13.3385C11.0511 13.2025 10.9111 12.9575 10.9111 12.6935V7.84546C10.9111 7.43146 11.2471 7.09546 11.6611 7.09546C12.0761 7.09546 12.4111 7.43146 12.4111 7.84546V12.2675L15.8161 14.2975C16.1711 14.5105 16.2881 14.9705 16.0761 15.3265C15.9351 15.5615 15.6861 15.6925 15.4311 15.6925Z"/>
+                      </BaseIcon>
+                    </div>
+
+                    <ShortSchedule id="side-schedule" v-if="restaurant" :item="restaurant" class="grow"/>
+                  </div>
+                </li>
+              </ul>
           </li>
 
             <li>
               <h2 class="menu-title text-md">{{ $t('Delivery') }}</h2>
               <ul>
                 <li @click="clickDrawer(); onNewDelivery();">
-                  <div class="w-full flex flex-row justify-start items-center">
+                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                     <div>
                       <BaseIcon color="currentColor" width="16" height="16">
                         <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
@@ -55,13 +68,13 @@
                       </BaseIcon>
                     </div>
 
-                    <span class="text-md">
-                      {{ $t('Delivery')}}
+                    <span class="text-md grow font-semibold">
+                      {{ $t('Delivery') }}
                     </span>
                   </div>
                 </li>
                 <li @click="clickDrawer(); $router.replace(`/place/${restaurantId}/delivery/history`)">
-                  <div class="w-full flex flex-row justify-start items-center">
+                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                     <div>
                       <BaseIcon width="16" height="16" class="currentColor">
                         <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
@@ -76,8 +89,8 @@
                     </div>
 
 
-                    <span class="text-md">
-                      {{ $t('History')}}
+                    <span class="text-md grow font-semibold">
+                      {{ $t('History') }}
                     </span>
                   </div>
                 </li>
@@ -88,7 +101,7 @@
               <h2 class="menu-title text-md">{{ $t('Banquets') }}</h2>
               <ul>
                 <li @click="clickDrawer(); onNewOrder();">
-                  <div class="w-full flex flex-row justify-start items-center">
+                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                     <div>
                       <BaseIcon color="currentColor" width="16" height="16">
                         <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
@@ -97,13 +110,13 @@
                       </BaseIcon>
                     </div>
 
-                    <span class="text-md">
+                    <span class="text-md grow font-semibold">
                     {{ $t('Banquet')}}
                   </span>
                   </div>
                 </li>
                 <li @click="clickDrawer(); $router.replace(`/place/${restaurantId}/history`)">
-                  <div class="w-full flex flex-row justify-start items-center">
+                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                     <div>
                       <BaseIcon width="16" height="16" class="currentColor">
                         <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
@@ -117,7 +130,7 @@
                       </BaseIcon>
                     </div>
 
-                    <span class="text-md">
+                    <span class="text-md grow font-semibold">
                     {{ $t('History')}}
                   </span>
                   </div>
@@ -132,7 +145,7 @@
             <h2 class="menu-title">{{ $t('Contacts') }}</h2>
             <ul>
               <li v-if="phone?.length" @click="clickPhone">
-                <div class="w-full flex flex-row justify-start items-center">
+                <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                   <div>
                     <BaseIcon :width="20" :height="20" title="phone" view-box="0 0 24 24">
                       <g id="Iconly/Light-Outline/Calling">
@@ -151,12 +164,12 @@
                       </g>
                     </BaseIcon>
                   </div>
-                  <a id="phone-ref" :href="'tel:' + phone" class="w-full text-md">{{ phone }}</a>
+                  <a id="phone-ref grow" :href="'tel:' + phone" class="w-full text-md">{{ phone }}</a>
                 </div>
               </li>
               <li v-if="address?.length"
                   class="p-0" @click="window.open(`https://www.google.com/maps/search/?api=1&query=${address}`, '_blank')">
-                <div class="w-full flex flex-row justify-start items-center">
+                <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                   <div>
                     <BaseIcon :width="20" :height="20" title="address" view-box="0 0 24 24">
                       <g id="Iconly/Light-Outline/Location">
@@ -174,7 +187,7 @@
                       </g>
                     </BaseIcon>
                   </div>
-                  <span class="text-md max-w-xs">{{ address }}</span>
+                  <span class="text-md max-w-xs grow">{{ address }}</span>
                 </div>
               </li>
             </ul>
@@ -184,7 +197,7 @@
             <h2 class="menu-title text-md">{{ $t('Theme') }}</h2>
             <ul>
               <li @click="onSwitchTheme()">
-                <div class="w-full flex flex-row justify-start items-center">
+                <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                   <div v-if="theme === ThemeConfig.dark()">
                     <BaseIcon :width="20" :height="20" title="theme">
                       <svg class="swap-off h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -201,7 +214,7 @@
                     </BaseIcon>
                   </div>
 
-                  <span class="text-md">
+                  <span class="text-md grow">
                     {{ $t('Change to ' + (theme === ThemeConfig.dark() ? 'Light' : 'Dark'))}}
                   </span>
                 </div>
@@ -325,10 +338,12 @@ import BaseIcon from "@/components/icons/BaseIcon.vue";
 import OrderTabs from "@/components/order/OrderTabs.vue";
 import PreviewNavBar from "@/layouts/navbar/PreviewNavBar.vue";
 import {ThemeConfig} from "@/configs";
+import ShortSchedule from "@/components/preview/schedule/ShortSchedule.vue";
 
 export default defineComponent({
   name: "AuthenticatedLayout",
   components: {
+    ShortSchedule,
     OrderTabs,
     BaseIcon, Menu,
     Error,
@@ -597,5 +612,10 @@ export default defineComponent({
 
 .menu ul li div {
   @apply px-1 m-0;
+
+  white-space: normal;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 </style>

@@ -20,7 +20,7 @@
             <tbody class="w-full">
               <template v-for="(schedule) in schedules" :key="schedule.id">
                 {{ void(active = isActive(schedule)) }}
-                <tr>
+                <tr :class="{'bg-base-200': active}">
                   <td class="p-2 grow" :class="{'font-light': !active, 'font-bold': active}">
                     <span>{{ $t("weekday." + schedule.weekday) }}</span>
                   </td>

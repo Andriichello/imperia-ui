@@ -11,7 +11,19 @@ module.exports = {
   daisyui: {
     styled: true,
     // themes: ['lofi', 'emerald', 'dark', 'black',],
-    themes: ['lofi', 'dark'],
-    darkTheme: 'dark',
+    themes: [
+      {
+        lofi: {
+          ...require("daisyui/src/theming/themes")["lofi"],
+        }
+      },
+      {
+        dark: {
+          ...require("daisyui/src/theming/themes")["dark"],
+          "base-100": "#232830", // Lightened for better background contrast
+        }
+      },
+    ],
+    darkTheme: "dark",
   },
 }
