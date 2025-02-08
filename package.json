@@ -21,7 +21,6 @@
     "@vuepic/vue-datepicker": "^10.0.0",
     "core-js": "^3.8.3",
     "daisyui": "^4.12.10",
-    "lodash": "^4.17.21",
     "luxon": "^3.3.0",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",
@@ -32,7 +31,6 @@
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^3.0.0",
     "@types/jest": "^27.0.1",
-    "@types/lodash.debounce": "^4.0.7",
     "@typescript-eslint/eslint-plugin": "^5.4.0",
     "@typescript-eslint/parser": "^5.4.0",
     "@vue/cli-plugin-babel": "~5.0.0",
@@ -51,6 +49,7 @@
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3",
     "jest": "^27.0.5",
+    "lodash": "^4.17.21",
     "postcss": "^8.4.41",
     "tailwindcss": "^3.3.2",
     "ts-jest": "^27.0.4",
