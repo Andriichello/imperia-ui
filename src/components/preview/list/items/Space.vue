@@ -158,7 +158,6 @@ export default defineComponent({
       unsetField: 'order/unsetSpace',
     }),
     onToggle() {
-      console.log()
       if (this.field) {
         this.unsetField({
           spaceId: this.id

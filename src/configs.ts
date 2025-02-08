@@ -8,7 +8,15 @@ export class ThemeConfig {
 
     /** List of available themes */
     public static list(): string[] {
-        return daisyui.themes;
+        console.log(daisyui.themes);
+
+        return daisyui.themes.map((theme) => {
+            if (typeof theme === 'string') {
+                return theme;
+            } else if (typeof theme === 'object') {
+                return Object.keys(theme);
+            }
+        }).flat();
     } 
     /** Dark theme name */
     public static dark(): string {

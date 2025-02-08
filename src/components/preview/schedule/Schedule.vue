@@ -18,15 +18,16 @@
         <div class="w-full overflow-x-auto">
           <table class="table table-sm w-full">
             <tbody class="w-full">
-              <template v-for="(schedule, index) in schedules" :key="schedule.id">
-                <tr >
-                  <td class="p-2 grow" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
+              <template v-for="(schedule) in schedules" :key="schedule.id">
+                {{ void(active = isActive(schedule)) }}
+                <tr :class="{'bg-base-200': active}">
+                  <td class="p-2 grow" :class="{'font-light': !active, 'font-bold': active}">
                     <span>{{ $t("weekday." + schedule.weekday) }}</span>
                   </td>
-                  <td class="p-2 w-[60px] text-end" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
+                  <td class="p-2 w-[60px] text-end" :class="{'font-light': !active, 'font-bold': active}">
                     <span>{{ time(schedule.begHour, schedule.begMinute) }}</span>
                   </td>
-                  <td class="p-2 w-[60px]" :class="{'font-light': !isOpen || index !== 0, 'font-bold': isOpen && index === 0}">
+                  <td class="p-2 w-[60px]" :class="{'font-light': !active, 'font-bold': active}">
                     <span>{{ time(schedule.endHour, schedule.endMinute) }}</span>
                   </td>
                 </tr>
@@ -44,6 +45,8 @@ import { defineComponent } from "vue";
 import Restaurant from "@/openapi/models/Restaurant";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import {DateTime} from "luxon";
+import {Schedule, ScheduleWeekdayEnum} from "@/openapi";
+import {filterAndSortSchedules, getCurrentUtcWithOffset, getUpcomingSchedules} from "@/helpers";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -58,9 +61,6 @@ export default defineComponent({
     };
   },
   computed: {
-    DateTime() {
-      return DateTime
-    },
     title() {
       return this.item.name;
     },
@@ -68,51 +68,42 @@ export default defineComponent({
       return this.item.place + ', ' + this.item.city +  ', ' + this.item.country;
     },
     schedules() {
-      return this.item.schedules;
+      return filterAndSortSchedules(this.item?.schedules ?? []);
     },
-    scheduleBeg(schedule) {
-      return DateTime.utc()
-          .set({hours: schedule.begHour, minutes: schedule.begMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
+    upcomingSchedules() {
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      return getUpcomingSchedules(now, this.schedules);
     },
-    scheduleEnd(schedule) {
-      return DateTime.utc()
-          .set({hours: schedule.begHour, minutes: schedule.begMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
+    relevantSchedule() {
+      return this.upcomingSchedules[0] ?? null;
+    },
+    activeSchedule() {
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      const relevant = this.relevantSchedule;
+
+      if (relevant && relevant.closestBegDate <= now && now <= relevant.closestEndDate) {
+        return relevant;
+      }
+
+      return null;
     },
     timezoneOffset() {
       return this.item.timezoneOffset ?? 0;
     },
     isOpen() {
-      const current = this.schedules[0];
-
-      const beg = DateTime.utc()
-          .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const end = DateTime.utc()
-          .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const now = DateTime.utc();
-
-      return beg.toMillis() <= now.toMillis() && now.toMillis() <= end.toMillis();
+      return !!this.activeSchedule;
     },
     statusDescription() {
       return this.isOpen ? this.$t("schedule.open") : this.$t("schedule.closed");
     },
     timeBeforeOrUntil() {
-      const current = this.schedules[0];
+      if (!this.relevantSchedule) {
+        return '-';
+      }
 
-      const beg = DateTime.utc()
-          .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const end = DateTime.utc()
-          .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const now = DateTime.utc();
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      const beg = this.relevantSchedule.closestBegDate;
+      const end = this.relevantSchedule.closestEndDate;
 
       if (this.isOpen) {
         const minutes = Math.trunc(end.diff(now, 'minutes').values.minutes);
@@ -197,6 +188,13 @@ export default defineComponent({
       time += minute < 10 ? '0' + minute : minute;
 
       return time;
+    },
+    isActive(schedule) {
+      if (this.activeSchedule) {
+        return this.activeSchedule?.weekday === schedule?.weekday;
+      }
+
+      return this.relevantSchedule?.weekday === schedule?.weekday;
     },
   },
 });

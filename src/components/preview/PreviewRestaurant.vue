@@ -67,11 +67,11 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
+      restaurants: 'restaurants/resources',
       menus: 'preview/menus',
       menusResponse: 'preview/menusResponse',
-      restaurantsResponse: 'restaurants/getIndexResponse',
-      restaurantResponse: 'restaurants/getShowResponse',
+      restaurantsResponse: 'restaurants/index',
+      restaurantResponse: 'restaurants/show',
     }),
     isLoadingRestaurant() {
       return !this.restaurant && !this.restaurantResponse && !this.restaurantsResponse;
@@ -85,7 +85,7 @@ export default defineComponent({
       selectMenu: 'preview/selectMenu',
       selectRestaurant: 'restaurants/setSelected',
       loadMenusIfMissing: 'preview/loadMenusIfMissing',
-      loadAndSelectRestaurant: 'restaurants/loadAndSelectRestaurant',
+      loadAndSelectRestaurant: 'restaurants/loadAndSelectResource',
     }),
     onMenuSelect(menu) {
       this.selectMenu(menu);

@@ -105,6 +105,12 @@ export interface Schedule {
    * @memberof Schedule
    */
   timezoneOffset: number | null;
+  /**
+   *
+   * @type {boolean}
+   * @memberof Schedule
+   */
+  archived: boolean;
 }
 
 /**
@@ -141,6 +147,7 @@ export function instanceOfSchedule(value: object): boolean {
   isInstance = isInstance && "closestDate" in value;
   isInstance = isInstance && "timezone" in value;
   isInstance = isInstance && "timezoneOffset" in value;
+  isInstance = isInstance && "archived" in value;
 
   return isInstance;
 }
@@ -172,6 +179,7 @@ export function ScheduleFromJSONTyped(
       json["closest_date"] === null ? null : new Date(json["closest_date"]),
     timezone: json["timezone"],
     timezoneOffset: json["timezone_offset"],
+    archived: json["archived"],
   };
 }
 
@@ -198,5 +206,6 @@ export function ScheduleToJSON(value?: Schedule | null): any {
       value.closestDate === null ? null : value.closestDate.toISOString(),
     timezone: value.timezone,
     timezone_offset: value.timezoneOffset,
+    archived: value.archived,
   };
 }

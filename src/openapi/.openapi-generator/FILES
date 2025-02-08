@@ -25,6 +25,10 @@ index.ts
 models/Alternation.ts
 models/AlternationAlterable.ts
 models/ArchivedParameter.ts
+models/AttachCategoryToMenuRequest.ts
+models/AttachCategoryToMenuResponse.ts
+models/AttachProductToMenuRequest.ts
+models/AttachProductToMenuResponse.ts
 models/AttachingComment.ts
 models/AttachingDiscount.ts
 models/AttachingMedia.ts
@@ -43,8 +47,13 @@ models/DestroyFamilyMemberResponse.ts
 models/DestroyMediaResponse.ts
 models/DestroyNotificationResponse.ts
 models/DestroyOrderResponse.ts
+models/DestroyProductResponse.ts
 models/DestroyRequest.ts
 models/DestroyWaiterResponse.ts
+models/DetachCategoryFromMenuRequest.ts
+models/DetachCategoryFromMenuResponse.ts
+models/DetachProductFromMenuRequest.ts
+models/DetachProductFromMenuResponse.ts
 models/Discount.ts
 models/FamilyMember.ts
 models/GetHolidaysResponse.ts
@@ -99,8 +108,10 @@ models/RestoreBanquetResponse.ts
 models/RestoreCustomerResponse.ts
 models/RestoreNotificationResponse.ts
 models/RestoreOrderResponse.ts
+models/RestoreProductResponse.ts
 models/RestoreWaiterResponse.ts
 models/Schedule.ts
+models/ScheduleForUpdateRestaurantRequest.ts
 models/Service.ts
 models/ServiceOrderField.ts
 models/SetModelMediaRequest.ts
@@ -146,6 +157,8 @@ models/StoreOrderRequestServiceField.ts
 models/StoreOrderRequestSpaceField.ts
 models/StoreOrderRequestTicketField.ts
 models/StoreOrderResponse.ts
+models/StoreProductRequest.ts
+models/StoreProductResponse.ts
 models/StoreRestaurantReviewRequest.ts
 models/StoreRestaurantReviewResponse.ts
 models/StoreWaiterRequest.ts
@@ -170,6 +183,10 @@ models/UpdateNotificationRequest.ts
 models/UpdateNotificationResponse.ts
 models/UpdateOrderRequest.ts
 models/UpdateOrderResponse.ts
+models/UpdateProductRequest.ts
+models/UpdateProductResponse.ts
+models/UpdateRestaurantRequest.ts
+models/UpdateRestaurantResponse.ts
 models/UpdateUserRequest.ts
 models/UpdateUserResponse.ts
 models/UpdateWaiterRequest.ts

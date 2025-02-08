@@ -19,6 +19,8 @@ import type {
   IndexRestaurantResponse,
   ShowRestaurantResponse,
   UnauthenticatedResponse,
+  UpdateRestaurantRequest,
+  UpdateRestaurantResponse,
 } from "../models";
 import {
   GetHolidaysResponseFromJSON,
@@ -31,6 +33,10 @@ import {
   ShowRestaurantResponseToJSON,
   UnauthenticatedResponseFromJSON,
   UnauthenticatedResponseToJSON,
+  UpdateRestaurantRequestFromJSON,
+  UpdateRestaurantRequestToJSON,
+  UpdateRestaurantResponseFromJSON,
+  UpdateRestaurantResponseToJSON,
 } from "../models";
 
 export interface GetHolidaysRequest {
@@ -52,6 +58,12 @@ export interface IndexRestaurantsRequest {
 
 export interface ShowRestaurantRequest {
   id: number;
+  include?: string;
+}
+
+export interface UpdateRestaurantOperationRequest {
+  id: number;
+  updateRestaurantRequest: UpdateRestaurantRequest;
   include?: string;
 }
 
@@ -305,6 +317,83 @@ export class RestaurantsApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ShowRestaurantResponse> {
     const response = await this.showRestaurantRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Update restaurant.
+   */
+  async updateRestaurantRaw(
+    requestParameters: UpdateRestaurantOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<UpdateRestaurantResponse>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        "id",
+        "Required parameter requestParameters.id was null or undefined when calling updateRestaurant."
+      );
+    }
+
+    if (
+      requestParameters.updateRestaurantRequest === null ||
+      requestParameters.updateRestaurantRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "updateRestaurantRequest",
+        "Required parameter requestParameters.updateRestaurantRequest was null or undefined when calling updateRestaurant."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    if (requestParameters.include !== undefined) {
+      queryParameters["include"] = requestParameters.include;
+    }
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/restaurants/{id}`.replace(
+          `{${"id"}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: "PATCH",
+        headers: headerParameters,
+        query: queryParameters,
+        body: UpdateRestaurantRequestToJSON(
+          requestParameters.updateRestaurantRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      UpdateRestaurantResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Update restaurant.
+   */
+  async updateRestaurant(
+    requestParameters: UpdateRestaurantOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<UpdateRestaurantResponse> {
+    const response = await this.updateRestaurantRaw(
       requestParameters,
       initOverrides
     );

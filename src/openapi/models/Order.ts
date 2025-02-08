@@ -70,22 +70,70 @@ export interface Order {
   id: number;
   /**
    *
+   * @type {number}
+   * @memberof Order
+   */
+  banquetId: number;
+  /**
+   *
+   * @type {string}
+   * @memberof Order
+   */
+  slug: string | null;
+  /**
+   *
    * @type {string}
    * @memberof Order
    */
   type: string;
   /**
    *
+   * @type {string}
+   * @memberof Order
+   */
+  kind: OrderKindEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Order
+   */
+  state: OrderStateEnum;
+  /**
+   *
+   * @type {string}
+   * @memberof Order
+   */
+  recipient: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Order
+   */
+  phone: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Order
+   */
+  address: string | null;
+  /**
+   *
+   * @type {string}
+   * @memberof Order
+   */
+  deliveryTime: string | null;
+  /**
+   *
+   * @type {Date}
+   * @memberof Order
+   */
+  deliveryDate: Date | null;
+  /**
+   *
    * @type {OrderTotals}
    * @memberof Order
    */
   totals: OrderTotals;
-  /**
-   *
-   * @type {number}
-   * @memberof Order
-   */
-  banquetId: number;
   /**
    *
    * @type {string}
@@ -131,14 +179,44 @@ export interface Order {
 }
 
 /**
+ * @export
+ */
+export const OrderKindEnum = {
+  Delivery: "delivery",
+  Banquet: "banquet",
+} as const;
+export type OrderKindEnum = (typeof OrderKindEnum)[keyof typeof OrderKindEnum];
+
+/**
+ * @export
+ */
+export const OrderStateEnum = {
+  New: "new",
+  Confirmed: "confirmed",
+  Postponed: "postponed",
+  Cancelled: "cancelled",
+  Completed: "completed",
+} as const;
+export type OrderStateEnum =
+  (typeof OrderStateEnum)[keyof typeof OrderStateEnum];
+
+/**
  * Check if a given object implements the Order interface.
  */
 export function instanceOfOrder(value: object): boolean {
   let isInstance = true;
   isInstance = isInstance && "id" in value;
-  isInstance = isInstance && "type" in value;
-  isInstance = isInstance && "totals" in value;
   isInstance = isInstance && "banquetId" in value;
+  isInstance = isInstance && "slug" in value;
+  isInstance = isInstance && "type" in value;
+  isInstance = isInstance && "kind" in value;
+  isInstance = isInstance && "state" in value;
+  isInstance = isInstance && "recipient" in value;
+  isInstance = isInstance && "phone" in value;
+  isInstance = isInstance && "address" in value;
+  isInstance = isInstance && "deliveryTime" in value;
+  isInstance = isInstance && "deliveryDate" in value;
+  isInstance = isInstance && "totals" in value;
 
   return isInstance;
 }
@@ -156,9 +234,18 @@ export function OrderFromJSONTyped(
   }
   return {
     id: json["id"],
-    type: json["type"],
-    totals: OrderTotalsFromJSON(json["totals"]),
     banquetId: json["banquet_id"],
+    slug: json["slug"],
+    type: json["type"],
+    kind: json["kind"],
+    state: json["state"],
+    recipient: json["recipient"],
+    phone: json["phone"],
+    address: json["address"],
+    deliveryTime: json["delivery_time"],
+    deliveryDate:
+      json["delivery_date"] === null ? null : new Date(json["delivery_date"]),
+    totals: OrderTotalsFromJSON(json["totals"]),
     invoiceUrl: !exists(json, "invoice_url") ? undefined : json["invoice_url"],
     spaces: !exists(json, "spaces")
       ? undefined
@@ -190,9 +277,20 @@ export function OrderToJSON(value?: Order | null): any {
   }
   return {
     id: value.id,
-    type: value.type,
-    totals: OrderTotalsToJSON(value.totals),
     banquet_id: value.banquetId,
+    slug: value.slug,
+    type: value.type,
+    kind: value.kind,
+    state: value.state,
+    recipient: value.recipient,
+    phone: value.phone,
+    address: value.address,
+    delivery_time: value.deliveryTime,
+    delivery_date:
+      value.deliveryDate === null
+        ? null
+        : value.deliveryDate.toISOString().substr(0, 10),
+    totals: OrderTotalsToJSON(value.totals),
     invoice_url: value.invoiceUrl,
     spaces:
       value.spaces === undefined

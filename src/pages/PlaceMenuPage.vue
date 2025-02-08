@@ -121,14 +121,14 @@ export default defineComponent({
       serviceCategories: 'preview/serviceCategories',
       order: 'order/order',
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
-      showRestaurantResponse: 'restaurants/getShowResponse',
+      restaurants: 'restaurants/resources',
+      showRestaurantResponse: 'restaurants/show',
       isLoadingSpaces: "preview/isLoadingSpaces",
       isLoadingSpaceCategories: "preview/isLoadingSpaceCategories",
       isLoadingServices: "preview/isLoadingServices",
       isLoadingServiceCategories: "preview/isLoadingServiceCategories",
       isLoadingMenus: "preview/isLoadingMenus",
-      isLoadingRestaurants: "restaurants/isLoadingRestaurants",
+      isLoadingRestaurants: "restaurants/isLoadingIndex",
       isLoadingBanquet: "basket/isLoadingShowResponse",
       productsCount: 'order/productsCount',
       banquetId: 'order/banquetId',
@@ -147,7 +147,7 @@ export default defineComponent({
       loadMenusAndSelectFirst: "preview/loadMenusAndSelectFirst",
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       selectRestaurant: "restaurants/setSelected",
-      loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
       loadBanquetIfMissing: "basket/loadBanquetIfMissing",
       loadOrderForBanquetIfMissing: "order/loadOrderForBanquetIfMissing",
       loadSpacesForOrder: "order/loadSpacesForOrder",
@@ -221,7 +221,7 @@ export default defineComponent({
         await this.selectRestaurant(target);
       } else {
         this.loadingRestaurant = true;
-        await this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
 

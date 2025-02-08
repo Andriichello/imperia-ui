@@ -325,10 +325,6 @@ export default defineComponent({
     @apply p-1;
   }
 
-  .input::placeholder {
-    color: hsl(var(--bc) / 0.15);
-  }
-
   .selected {
     background-color: var(--yellow);
   }

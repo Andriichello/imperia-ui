@@ -77,7 +77,7 @@ export interface Menu {
    */
   products?: Array<Product>;
   /**
-   *
+   * Categories that are attached directly to the menu.
    * @type {Array<Category>}
    * @memberof Menu
    */

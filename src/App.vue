@@ -47,7 +47,7 @@ export default defineComponent({
       resolveAuth: 'auth/resolve',
       setScrolled: 'nav/setScrolled',
       resolveTheme: 'theme/resolve',
-      resolveRestaurant: 'restaurants/resolve',
+      resolveRestaurant: 'restaurants/loadResourcesIfMissing',
       loadMoreItems: 'marketplace/loadMoreItems',
     }),
     handleScroll() {
@@ -76,7 +76,7 @@ export default defineComponent({
   mounted() {
     this.resolveAuth();
     this.resolveTheme();
-    this.resolveRestaurant();
+    this.resolveRestaurant({ params: { include: 'schedules' }});
 
     this.debouncedHandleScroll = debounce(this.handleScroll, 250);
     window.addEventListener('scroll', this.debouncedHandleScroll);

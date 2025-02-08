@@ -22,7 +22,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
+      restaurants: 'restaurants/resources',
       isLoadingWaiters: 'waiters/isLoadingWaiters',
     }),
     title() {
@@ -33,7 +33,7 @@ export default defineComponent({
     ...mapActions({
       selectRestaurant: "restaurants/setSelected",
       loadWaitersIfMissing: "waiters/loadWaitersIfMissing",
-      loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
   },
   async mounted() {
@@ -50,7 +50,7 @@ export default defineComponent({
       if (target) {
         this.selectRestaurant(target);
       } else {
-        this.loadAndSelectRestaurant({ id: restaurantId });
+        this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
   },

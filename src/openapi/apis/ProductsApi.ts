@@ -15,20 +15,46 @@
 import * as runtime from "../runtime";
 import type {
   ArchivedParameter,
+  DestroyProductResponse,
+  DestroyRequest,
   IndexProductResponse,
+  RestoreProductResponse,
   ShowProductResponse,
+  StoreProductRequest,
+  StoreProductResponse,
   UnauthenticatedResponse,
+  UpdateProductRequest,
+  UpdateProductResponse,
 } from "../models";
 import {
   ArchivedParameterFromJSON,
   ArchivedParameterToJSON,
+  DestroyProductResponseFromJSON,
+  DestroyProductResponseToJSON,
+  DestroyRequestFromJSON,
+  DestroyRequestToJSON,
   IndexProductResponseFromJSON,
   IndexProductResponseToJSON,
+  RestoreProductResponseFromJSON,
+  RestoreProductResponseToJSON,
   ShowProductResponseFromJSON,
   ShowProductResponseToJSON,
+  StoreProductRequestFromJSON,
+  StoreProductRequestToJSON,
+  StoreProductResponseFromJSON,
+  StoreProductResponseToJSON,
   UnauthenticatedResponseFromJSON,
   UnauthenticatedResponseToJSON,
+  UpdateProductRequestFromJSON,
+  UpdateProductRequestToJSON,
+  UpdateProductResponseFromJSON,
+  UpdateProductResponseToJSON,
 } from "../models";
+
+export interface DestroyProductRequest {
+  id: number;
+  destroyRequest?: DestroyRequest;
+}
 
 export interface IndexProductsRequest {
   include?: string;
@@ -44,15 +70,89 @@ export interface IndexProductsRequest {
   archived?: ArchivedParameter;
 }
 
+export interface RestoreProductRequest {
+  id: number;
+}
+
 export interface ShowProductRequest {
   id: number;
   include?: string;
+}
+
+export interface StoreProductOperationRequest {
+  storeProductRequest: StoreProductRequest;
+}
+
+export interface UpdateProductOperationRequest {
+  id: number;
+  updateProductRequest: UpdateProductRequest;
 }
 
 /**
  *
  */
 export class ProductsApi extends runtime.BaseAPI {
+  /**
+   * Delete product.
+   */
+  async destroyProductRaw(
+    requestParameters: DestroyProductRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<DestroyProductResponse>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        "id",
+        "Required parameter requestParameters.id was null or undefined when calling destroyProduct."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/products/{id}`.replace(
+          `{${"id"}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: "DELETE",
+        headers: headerParameters,
+        query: queryParameters,
+        body: DestroyRequestToJSON(requestParameters.destroyRequest),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      DestroyProductResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Delete product.
+   */
+  async destroyProduct(
+    requestParameters: DestroyProductRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<DestroyProductResponse> {
+    const response = await this.destroyProductRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
   /**
    * Index products.
    */
@@ -148,6 +248,64 @@ export class ProductsApi extends runtime.BaseAPI {
   }
 
   /**
+   * Restore product.
+   */
+  async restoreProductRaw(
+    requestParameters: RestoreProductRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<RestoreProductResponse>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        "id",
+        "Required parameter requestParameters.id was null or undefined when calling restoreProduct."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/products/{id}/restore`.replace(
+          `{${"id"}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      RestoreProductResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Restore product.
+   */
+  async restoreProduct(
+    requestParameters: RestoreProductRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<RestoreProductResponse> {
+    const response = await this.restoreProductRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
    * Show product by id.
    */
   async showProductRaw(
@@ -203,6 +361,140 @@ export class ProductsApi extends runtime.BaseAPI {
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<ShowProductResponse> {
     const response = await this.showProductRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Store product.
+   */
+  async storeProductRaw(
+    requestParameters: StoreProductOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<StoreProductResponse>> {
+    if (
+      requestParameters.storeProductRequest === null ||
+      requestParameters.storeProductRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "storeProductRequest",
+        "Required parameter requestParameters.storeProductRequest was null or undefined when calling storeProduct."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/products`,
+        method: "POST",
+        headers: headerParameters,
+        query: queryParameters,
+        body: StoreProductRequestToJSON(requestParameters.storeProductRequest),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      StoreProductResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Store product.
+   */
+  async storeProduct(
+    requestParameters: StoreProductOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<StoreProductResponse> {
+    const response = await this.storeProductRaw(
+      requestParameters,
+      initOverrides
+    );
+    return await response.value();
+  }
+
+  /**
+   * Update product.
+   */
+  async updateProductRaw(
+    requestParameters: UpdateProductOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<runtime.ApiResponse<UpdateProductResponse>> {
+    if (requestParameters.id === null || requestParameters.id === undefined) {
+      throw new runtime.RequiredError(
+        "id",
+        "Required parameter requestParameters.id was null or undefined when calling updateProduct."
+      );
+    }
+
+    if (
+      requestParameters.updateProductRequest === null ||
+      requestParameters.updateProductRequest === undefined
+    ) {
+      throw new runtime.RequiredError(
+        "updateProductRequest",
+        "Required parameter requestParameters.updateProductRequest was null or undefined when calling updateProduct."
+      );
+    }
+
+    const queryParameters: any = {};
+
+    const headerParameters: runtime.HTTPHeaders = {};
+
+    headerParameters["Content-Type"] = "application/json";
+
+    if (this.configuration && this.configuration.accessToken) {
+      const token = this.configuration.accessToken;
+      const tokenString = await token("bearerAuth", []);
+
+      if (tokenString) {
+        headerParameters["Authorization"] = `Bearer ${tokenString}`;
+      }
+    }
+    const response = await this.request(
+      {
+        path: `/api/products/{id}`.replace(
+          `{${"id"}}`,
+          encodeURIComponent(String(requestParameters.id))
+        ),
+        method: "PATCH",
+        headers: headerParameters,
+        query: queryParameters,
+        body: UpdateProductRequestToJSON(
+          requestParameters.updateProductRequest
+        ),
+      },
+      initOverrides
+    );
+
+    return new runtime.JSONApiResponse(response, (jsonValue) =>
+      UpdateProductResponseFromJSON(jsonValue)
+    );
+  }
+
+  /**
+   * Update product.
+   */
+  async updateProduct(
+    requestParameters: UpdateProductOperationRequest,
+    initOverrides?: RequestInit | runtime.InitOverrideFunction
+  ): Promise<UpdateProductResponse> {
+    const response = await this.updateProductRaw(
       requestParameters,
       initOverrides
     );

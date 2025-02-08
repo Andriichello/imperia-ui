@@ -20,7 +20,7 @@ export default defineComponent({
   computed: {
     ...mapGetters({
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
+      restaurants: 'restaurants/resources',
     }),
   },
   methods: {
@@ -29,7 +29,7 @@ export default defineComponent({
       loadMenusIfMissing: "preview/loadMenusIfMissing",
       loadReviewsIfMissing: "reviews/loadReviewsIfMissing",
       loadWaitersIfMissing: "waiters/loadWaitersIfMissing",
-      loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
     }),
     onSelectMenu({ restaurant, menu }) {
       window.scrollTo(0, 0)
@@ -56,7 +56,7 @@ export default defineComponent({
       if (target) {
         await this.selectRestaurant(target);
       } else {
-        await this.loadAndSelectRestaurant({ id: restaurantId });
+        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
 

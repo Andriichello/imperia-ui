@@ -32,7 +32,7 @@
       </div>
 
       <div class="flex-grow">
-        <p class="">
+        <p class="opacity-80">
           {{ description }}
         </p>
       </div>

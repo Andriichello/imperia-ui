@@ -13,6 +13,7 @@ import {
   User,
   UsersApi
 } from "@/openapi";
+import {setTokenGlobally} from "@/store/utils";
 
 interface AuthState {
   ip: string | null,
@@ -33,6 +34,8 @@ const state: AuthState = {
   logout: null,
   register: null,
 };
+
+setTokenGlobally(state.token);
 
 const getters = {
   ip(state: AuthState) {
@@ -82,6 +85,7 @@ const actions = {
   },
   token({ commit }, token: string | null) {
     localStorage.setItem('access-token', token);
+    setTokenGlobally(token);
     commit('token', token);
   },
   async me({ state, commit, dispatch }) {

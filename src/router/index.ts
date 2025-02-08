@@ -8,12 +8,14 @@ import LoginPage from "@/pages/LoginPage.vue";
 import RegisterPage from "@/pages/RegisterPage.vue";
 import PlaceMenuPage from "@/pages/PlaceMenuPage.vue";
 import PlaceOrderPage from "@/pages/PlaceOrderPage.vue";
+import PlaceDeliveryOrderPage from "@/pages/PlaceDeliveryOrderPage.vue";
 import PlaceHistoryPage from "@/pages/PlaceHistoryPage.vue";
 import PreviewTipsPage from "@/pages/PreviewTipsPage.vue";
 import PreviewTipsForFoodPage from "@/pages/PreviewTipsForFoodPage.vue";
 import PreviewTipsForCleannessPage from "@/pages/PreviewTipsForCleannessPage.vue";
 import PreviewTipsForServicePage from "@/pages/PreviewTipsForServicePage.vue";
 import PreviewTipsForWaiterPage from "@/pages/PreviewTipsForWaiterPage.vue";
+import EditRestaurantPage from "@/pages/EditRestaurantPage.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -97,6 +99,14 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/place/:restaurantId(\\d+)?/edit',
+    name: 'edit-restaurant',
+    component: EditRestaurantPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
     path: '/place/:restaurantId(\\d+)?/history',
     name: 'place-history',
     component: PlaceHistoryPage,
@@ -124,6 +134,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/place/:restaurantId(\\d+)?/order/:banquetId(\\d+)/menu/:menuId(\\d+)?',
     name: 'place-order-menu',
     component: PlaceMenuPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/delivery/order/:orderId(\\d+)?',
+    name: 'place-delivery-order',
+    component: PlaceDeliveryOrderPage,
     meta: {
       requiresAuth: true,
     },

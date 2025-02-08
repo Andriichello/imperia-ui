@@ -10,6 +10,7 @@
 import { defineComponent } from "vue";
 import Restaurant from "@/openapi/models/Restaurant";
 import {DateTime} from "luxon";
+import {filterAndSortSchedules, getCurrentUtcWithOffset, getUpcomingSchedules} from "@/helpers";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -19,41 +20,42 @@ export default defineComponent({
   },
   computed: {
     schedules() {
-      return this.item.schedules;
+      return filterAndSortSchedules(this.item?.schedules ?? []);
+    },
+    upcomingSchedules() {
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      return getUpcomingSchedules(now, this.schedules);
+    },
+    relevantSchedule() {
+      return this.upcomingSchedules[0] ?? null;
+    },
+    activeSchedule() {
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      const relevant = this.relevantSchedule;
+
+      if (relevant && relevant.closestBegDate <= now && now <= relevant.closestEndDate) {
+        return relevant;
+      }
+
+      return null;
     },
     timezoneOffset() {
       return this.item.timezoneOffset ?? 0;
     },
     isOpen() {
-      const current = this.schedules[0];
-
-      const beg = DateTime.utc()
-          .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const end = DateTime.utc()
-          .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const now = DateTime.utc();
-
-      return beg.toMillis() <= now.toMillis() && now.toMillis() <= end.toMillis();
+      return !!this.activeSchedule;
     },
     statusDescription() {
       return this.isOpen ? this.$t("schedule.open") : this.$t("schedule.closed");
     },
     timeBeforeOrUntil() {
-      const current = this.schedules[0];
+      if (!this.relevantSchedule) {
+        return '-';
+      }
 
-      const beg = DateTime.utc()
-          .set({hours: current.begHour, minutes: current.begMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const end = DateTime.utc()
-          .set({hours: current.endHour, minutes: current.endMinute, seconds: 0, milliseconds: 0})
-          .minus({minutes: this.timezoneOffset});
-
-      const now = DateTime.utc();
+      const now = getCurrentUtcWithOffset(this.timezoneOffset);
+      const beg = this.relevantSchedule.closestBegDate;
+      const end = this.relevantSchedule.closestEndDate;
 
       if (this.isOpen) {
         const minutes = Math.trunc(end.diff(now, 'minutes').values.minutes);

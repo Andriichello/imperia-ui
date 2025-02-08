@@ -102,7 +102,7 @@ export default defineComponent({
   computed: {
    ...mapGetters({
       restaurant: 'restaurants/selected',
-      restaurants: 'restaurants/restaurants',
+      restaurants: 'restaurants/resources',
       isLoadingWaiters: 'waiters/isLoadingWaiters',
       indexResponse: 'waiters/getIndexResponse',
       indexMoreResponse: 'waiters/getMoreResponse',
@@ -142,7 +142,7 @@ export default defineComponent({
       setIndexResponse: "waiters/setIndexResponse",
       loadWaitersIfMissing: "waiters/loadWaitersIfMissing",
       loadMoreWaiters: "waiters/loadMoreWaiters",
-      loadAndSelectRestaurant: "restaurants/loadAndSelectRestaurant",
+      loadAndSelectRestaurant: "restaurants/loadAndSelectResource",
       applySearch: "waiters/applySearch",
     }),
     onSearch() {
@@ -167,7 +167,7 @@ export default defineComponent({
       if (target) {
         this.selectRestaurant(target);
       } else {
-        this.loadAndSelectRestaurant({ id: restaurantId });
+        this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
       }
     }
 

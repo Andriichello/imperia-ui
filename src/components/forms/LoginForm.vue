@@ -1,25 +1,26 @@
 <template>
- <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-card-body">
-        <div class="auth-card-title">
+ <div class="w-full h-full p-5 flex justify-center items-center">
+    <div class="card shadow-xl bg-base-100 flex flex-col justify-center items-center max-w-md ">
+      <div class="card-body justify-center items-center gap-0">
+        <div class="card-title pt-4">
           <h1>{{ $t('login.title') }}</h1>
         </div>
 
-        <div class="auth-card-divider"></div>
+        <div class="divider p-3 pl-8 pr-8 m-0"/>
 
-        <label class="label flex-grow justify-center" v-if="!hasErrors && message">
+        <label class="label flex-grow justify-center"
+               v-if="hasErrors &&  message && !emailErrors?.length && !passwordErrors?.length">
           <span class="label-text-alt text-error text-sm">
-            {{ message }}
+            {{ $t('error.' + message) }}
           </span>
         </label>
 
-        <form @submit.prevent="onLogin" class="form-control w-full max-w-md">
-          <div class="form-control w-full max-w-md">
+        <form @submit.prevent="onLogin" class="flex flex-col w-full">
+          <div class="flex flex-col w-full">
             <label class="label">
               <span class="label-text">{{ $t('login.email') }}</span>
             </label>
-            <input v-model="email" name="email" type="email" required placeholder="Email..." class="input input-bordered w-full max-w-xs" :class="{ 'input-error' : emailErrors !== null }"/>
+            <input autofocus v-model="email" name="email" type="email" required placeholder="Email..." class="input input-bordered w-full max-w-xs" :class="{ 'input-error' : emailErrors !== null }"/>
             <label class="label flex-col items-start" v-if="emailErrors">
               <span class="label-text-alt text-error text-sm" v-for="error in emailErrors" :key="error">
                 {{ error }}
@@ -27,7 +28,7 @@
             </label>
           </div>
 
-          <div class="form-control w-full max-w-md">
+          <div class="flex flex-col w-full">
             <label class="label flex-col items-start">
               <span class="label-text">{{ $t('login.password') }}</span>
             </label>
@@ -39,9 +40,7 @@
             </label>
           </div>
         
-          <router-link to="/register" class="link link-hover font-bold self-end mt-4 mb-4">{{ $t('login.register_link') }}</router-link>
-
-          <div class="card-actions w-full">
+          <div class="card-actions w-full mt-8">
             <button type="submit" class="btn btn-block btn-primary">
               {{ $t('login.login_button') }}
               <span class="loading loading-spinner" v-if="loggingIn"></span>
@@ -101,32 +100,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.auth-container {
-  @apply w-full h-full;
-
-  padding: 12px;
-  padding-bottom: 80px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-}
-
-.auth-card {
-  @apply card shadow-xl block bg-base-100;
-}
-
-.auth-card-body {
-  @apply card-body justify-center items-center gap-0;
-}
-
-.auth-card-title {
-  @apply card-title pt-4;
-}
-
-.auth-card-divider {
-  @apply divider p-3 pl-8 pr-8 m-0;
-}
 </style>

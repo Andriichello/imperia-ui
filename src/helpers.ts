@@ -1,3 +1,6 @@
+import {DateTime} from "luxon";
+import {Schedule, ScheduleWeekdayEnum} from "@/openapi";
+
 export function authHeaders(token: string, type = 'bearer'): object {
     if (type === 'bearer') {
         return { authorization: 'Bearer ' + token };
@@ -74,6 +77,102 @@ export function priceFormatted(price: number | null): string | null {
     }
 
     return price.toFixed(2) + ' ₴';
+}
+
+export function sortByPopularity(items: object[]): object[] {
+    return items.sort((a, b) => (b?.['popularity'] ?? 0) - (a?.['popularity'] ?? 0));
+}
+
+export function sortSchedules(items: Schedule[]): Schedule[] {
+    const schedules = [];
+
+    for (const scheduleWeekdayEnumKey in ScheduleWeekdayEnum) {
+        const weekday = ScheduleWeekdayEnum[scheduleWeekdayEnumKey];
+        const schedule = items.find((s) => s.weekday === weekday);
+
+        if (schedule) {
+            schedules.push(schedule);
+        }
+    }
+
+    return schedules;
+}
+export function filterAndSortSchedules(items: Schedule[]): Schedule[] {
+    const filtered = items.filter((schedule) => !schedule.archived);
+    const schedules = [];
+
+    for (const scheduleWeekdayEnumKey in ScheduleWeekdayEnum) {
+        const weekday = ScheduleWeekdayEnum[scheduleWeekdayEnumKey];
+        const schedule = filtered.find((s) => s.weekday === weekday);
+
+        if (schedule) {
+            schedules.push(schedule);
+        }
+    }
+
+    return schedules;
+}
+export function getCurrentUtcWithOffset(timezoneOffset: number) {
+    // Get the current UTC time and apply the timezone offset
+    return DateTime.utc()
+      .plus({minutes: timezoneOffset});
+}
+
+export function getNextOccurrence(baseDate: DateTime, weekday: string) {
+    // Map weekday name to a number (1 = Monday, 7 = Sunday)
+    const weekdayMap = {
+        monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6, sunday: 7,
+    };
+
+    const targetWeekday = weekdayMap[weekday.toLowerCase()];
+    const daysUntilNext = (targetWeekday + 7 - baseDate.weekday) % 7;
+
+    return baseDate.plus({days: daysUntilNext});
+}
+
+export function getUpcomingSchedules(now: DateTime, schedules: Schedule[], timezoneOffset: number): object[] {
+    const upcomingSchedules = [];
+
+    schedules.forEach(schedule => {
+        // Find the next occurrence of the schedule's weekday
+        let nextOccurrenceBeg = getNextOccurrence(now, schedule.weekday)
+          .set({hour: schedule.begHour, minute: schedule.begMinute, second: 0, millisecond: 0})
+          .minus({minutes: timezoneOffset}); // Adjust back to UTC
+
+        let nextOccurrenceEnd = getNextOccurrence(now, schedule.weekday)
+          .set({hour: schedule.endHour, minute: schedule.endMinute, second: 0, millisecond: 0})
+          .minus({minutes: timezoneOffset}); // Adjust back to UTC
+
+        // Handle cross-date schedules (end time is before start time)
+        if (nextOccurrenceEnd < nextOccurrenceBeg) {
+            nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 1});
+        }
+
+
+        if (nextOccurrenceBeg.toMillis() < now.toMillis()) {
+            if (nextOccurrenceEnd > now.toMillis()) {
+                upcomingSchedules.push({
+                    weekday: schedule.weekday,
+                    closestBegDate: nextOccurrenceBeg,
+                    closestEndDate: nextOccurrenceEnd,
+                });
+
+                nextOccurrenceBeg = nextOccurrenceBeg.plus({days: 7});
+                nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 7});
+            } else {
+                nextOccurrenceBeg = nextOccurrenceBeg.plus({days: 7});
+                nextOccurrenceEnd = nextOccurrenceEnd.plus({days: 7});
+            }
+        }
+
+        upcomingSchedules.push({
+            weekday: schedule.weekday,
+            closestBegDate: nextOccurrenceBeg,
+            closestEndDate: nextOccurrenceEnd,
+        });
+    });
+
+    return upcomingSchedules.sort((a, b) => a.closestBegDate - b.closestBegDate);
 }
 
 export class ResponseErrors {

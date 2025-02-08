@@ -82,7 +82,7 @@ export default defineComponent({
 
 <style scoped>
 .date {
-  @apply flex flex-wrap gap-2 justify-stretch items-center;
+  @apply flex flex-wrap gap-2 justify-start items-center;
 }
 
 .date-info {
