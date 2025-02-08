@@ -2,7 +2,7 @@
   <div class="authenticated-layout">
 
     <div class="drawer drawer-end">
-      <input id="app-drawer" type="checkbox" class="drawer-toggle" :checked="true"/>
+      <input id="app-drawer" type="checkbox" class="drawer-toggle"/>
 
       <div class="drawer-side z-[51]">
         <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
