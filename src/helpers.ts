@@ -79,6 +79,10 @@ export function priceFormatted(price: number | null): string | null {
     return price.toFixed(2) + ' ₴';
 }
 
+export function sortByPopularity(items: object[]): object[] {
+    return items.sort((a, b) => (b?.['popularity'] ?? 0) - (a?.['popularity'] ?? 0));
+}
+
 export function sortSchedules(items: Schedule[]): Schedule[] {
     const schedules = [];
 

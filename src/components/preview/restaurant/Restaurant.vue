@@ -8,8 +8,8 @@
         <div class="w-full flex flex-col justify-start items-start gap-1 mt-1 ml-1">
 
           <div class="w-full flex flex-row justify-start items-center gap-1" v-if="address?.length">
-            <div class="w-4 h-4 flex justify-center items-center rounded">
-              <BaseIcon width="20" height="20" title="address" view-box="0 0 24 24">
+            <div class="flex justify-center items-center rounded">
+              <BaseIcon width="16" height="16" title="address" view-box="0 0 24 24">
                 <g id="Iconly/Light-Outline/Location">
                   <g id="Location">
                     <path id="Fill 1" fill-rule="evenodd" clip-rule="evenodd" d="M12.2505 8.5C11.2855 8.5 10.5005 9.285 10.5005 10.251C10.5005 11.216 11.2855 12 12.2505 12C13.2155 12 14.0005 11.216 14.0005 10.251C14.0005 9.285 13.2155 8.5 12.2505 8.5ZM12.2505 13.5C10.4585 13.5 9.00049 12.043 9.00049 10.251C9.00049 8.458 10.4585 7 12.2505 7C14.0425 7 15.5005 8.458 15.5005 10.251C15.5005 12.043 14.0425 13.5 12.2505 13.5Z"/>
@@ -30,8 +30,8 @@
           </div>
 
           <div class="flex flex-row justify-start items-center gap-1" v-if="phone?.length">
-            <div class="w-4 h-4 flex justify-center items-center rounded">
-              <BaseIcon width="20" height="20" title="phone" view-box="0 0 24 24">
+            <div class="flex justify-center items-center rounded">
+              <BaseIcon width="16" height="16" title="phone" view-box="0 0 24 24">
                 <g id="Iconly/Light-Outline/Calling">
                   <g id="Calling">
                     <g id="Group 3">
