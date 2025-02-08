@@ -2,7 +2,7 @@
   <div class="authenticated-layout">
 
     <div class="drawer drawer-end">
-      <input id="app-drawer" type="checkbox" class="drawer-toggle" :checked="true"/>
+      <input id="app-drawer" type="checkbox" class="drawer-toggle"/>
 
       <div class="drawer-side z-[51]">
         <label for="app-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
@@ -22,7 +22,8 @@
 
           <li class="opacity-0 w-[300px]"></li>
 
-          <li v-if="restaurant" class="max-w-[300px]">
+          <template v-if="authorized">
+            <li v-if="restaurant" class="max-w-[300px]">
             <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
             <ul>
               <li class="p-0 m-0" @click="clickDrawer(); $router.replace(`/place/${restaurantId}`)">
@@ -30,7 +31,10 @@
                   <div class="flex justify-center items-center gap-2">
                     <div class="flex justify-center items-center pr-1 rounded">
                       <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">
-                        <path d="M11 4C9.355 4 8 5.355 8 7v2.068a13.74 13.74 0 0 1-.465 3.541L4.531 23.875A15.741 15.741 0 0 0 4 27.932V30.5a7.502 7.502 0 0 0 4 6.63V57c0 1.645 1.355 3 3 3h42c1.645 0 3-1.355 3-3V37.13a7.502 7.502 0 0 0 4-6.629v-2.568c0-1.37-.178-2.733-.531-4.057L56.465 12.61A13.74 13.74 0 0 1 56 9.07V7c0-1.645-1.355-3-3-3H11zm0 2h42c.564 0 1 .436 1 1v2.068c0 .312.01.622.03.932H9.97c.019-.31.03-.62.03-.932V7c0-.564.435-1 1-1zm-1.277 6h44.555c.071.377.154.753.254 1.125l3.004 11.266c.053.202.098.406.142.61H6.323c.045-.204.089-.408.143-.61L9.47 13.125c.099-.372.182-.748.253-1.125zm-3.69 15h51.934c.021.31.033.62.033.932V30.5c0 3.064-2.435 5.5-5.5 5.5S47 33.564 47 30.5V30a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0v.5c0 3.064-2.435 5.5-5.5 5.5S6 33.564 6 30.5v-2.568c0-.312.012-.622.034-.932zM32 33.664C33.34 36.208 35.928 38 39 38c2.994 0 5.508-1.718 6.88-4.156C47.117 36.28 49.581 38 52.5 38a7.51 7.51 0 0 0 1.5-.15V57c0 .564-.436 1-1 1H30v-8c0-4.415-3.585-8-8-8s-8 3.585-8 8v8h-3c-.564 0-1-.436-1-1V37.85c.485.098.986.15 1.5.15 2.918 0 5.382-1.719 6.621-4.156C19.493 36.282 22.006 38 25.001 38c3.071 0 5.659-1.792 7-4.336zM22 44c3.341 0 6 2.659 6 6v8H16v-8c0-3.341 2.659-6 6-6z"/>
+                        <path d="M11 4C9.355 4 8 5.355 8 7v2.068a13.74 13.74 0 0 1-.465 3.541L4.531 23.875A15.741 15.741 0 0 0 4 27.932V30.5a7.502 7.502 0 0 0 4 6.63V57c0 1.645 1.355 3 3 3h42c1.645 0 3-1.355 3-3V37.13a7.502 7.502 0 0 0 4-6.629v-2.568c0-1.37-.178-2.733-.531-4.057L56.465 12.61A13.74 13.74 0 0 1 56 9.07V7c0-1.645-1.355-3-3-3H11zm0 2h42c.564 0 1 .436 1 1v2.068c0 .312.01.622.03.932H9.97c.019-.31.03-.62.03-.932V7c0-.564.435-1 1-1zm-1.277 6h44.555c.071.377.154.753.254 1.125l3.004 11.266c.053.202.098.406.142.61H6.323c.045-.204.089-.408.143-.61L9.47 13.125c.099-.372.182-.748.253-1.125zm-3.69 15h51.934c.021.31.033.62.033.932V30.5c0 3.064-2.435 5.5-5.5 5.5S47 33.564 47 30.5V30a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0v.5c0 3.064-2.435 5.5-5.5 5.5S6 33.564 6 30.5v-2.568c0-.312.012-.622.034-.932zM32 33.664C33.34 36.208 35.928 38 39 38c2.994 0 5.508-1.718 6.88-4.156C47.117 36.28 49.581 38 52.5 38a7.51 7.51 0 0 0 1.5-.15V57c0 .564-.436 1-1 1H30v-8c0-4.415-3.585-8-8-8s-8 3.585-8 8v8h-3c-.564 0-1-.436-1-1V37.85c.485.098.986.15 1.5.15 2.918 0 5.382-1.719 6.621-4.156C19.493 36.282 22.006 38 25.001 38c3.071 0 5.659-1.792 7-4.336zM22 44c3.341 0 6 2.659 6 6v8H16v-8c0-3.341 2.659-6 6-6z"
+                              stroke="currentColor"
+                              stroke-width="1.6"
+                              fill="none"/>
                       </BaseIcon>
                     </div>
 
@@ -40,6 +44,83 @@
               </li>
             </ul>
           </li>
+
+            <li>
+              <h2 class="menu-title text-md">{{ $t('Delivery') }}</h2>
+              <ul>
+                <li class="p-0" @click="clickDrawer(); onNewDelivery();">
+                  <div class="w-full flex flex-row justify-start items-center">
+                    <BaseIcon color="currentColor" width="20" height="20">
+                      <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </BaseIcon>
+
+                    <span class="text-md">
+                    {{ $t('Delivery')}}
+                  </span>
+                  </div>
+                </li>
+                <li class="p-0" @click="clickDrawer(); $router.replace(`/place/${restaurantId}/delivery/history`)">
+                  <div class="w-full flex flex-row justify-start items-center">
+                    <BaseIcon width="20" height="20" class="currentColor">
+                      <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
+                        <path d="M2 2H21.4768V21.477H2V2Z"/>
+                      </mask>
+                      <path d="M11.739 3.5C7.196 3.5 3.5 7.195 3.5 11.738C3.5 16.281 7.196 19.977 11.739 19.977C16.281 19.977 19.977 16.281 19.977 11.738C19.977 7.195 16.281 3.5 11.739 3.5ZM11.739 21.477C6.369 21.477 2 17.108 2 11.738C2 6.368 6.369 2 11.739 2C17.109 2 21.477 6.368 21.477 11.738C21.477 17.108 17.109 21.477 11.739 21.477Z"/>
+                      <mask id="mask1_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="17" width="6" height="6">
+                        <path d="M17.2397 17.707H22.2638V22.7218H17.2397V17.707Z"/>
+                      </mask>
+                      <path d="M21.514 22.7218C21.323 22.7218 21.131 22.6488 20.984 22.5028L17.46 18.9888C17.167 18.6958 17.166 18.2208 17.459 17.9278C17.751 17.6328 18.226 17.6348 18.52 17.9258L22.044 21.4408C22.337 21.7338 22.338 22.2078 22.045 22.5008C21.899 22.6488 21.706 22.7218 21.514 22.7218Z"/>
+                    </BaseIcon>
+
+                    <span class="text-md">
+                    {{ $t('History')}}
+                  </span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+
+            <li>
+              <h2 class="menu-title text-md">{{ $t('Banquets') }}</h2>
+              <ul>
+                <li class="p-0" @click="clickDrawer(); onNewOrder();">
+                  <div class="w-full flex flex-row justify-start items-center">
+                    <BaseIcon color="currentColor" width="20" height="20">
+                      <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
+                        <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </BaseIcon>
+
+                    <span class="text-md">
+                    {{ $t('Banquet')}}
+                  </span>
+                  </div>
+                </li>
+                <li class="p-0" @click="clickDrawer(); $router.replace(`/place/${restaurantId}/history`)">
+                  <div class="w-full flex flex-row justify-start items-center">
+                    <BaseIcon width="20" height="20" class="currentColor">
+                      <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
+                        <path d="M2 2H21.4768V21.477H2V2Z"/>
+                      </mask>
+                      <path d="M11.739 3.5C7.196 3.5 3.5 7.195 3.5 11.738C3.5 16.281 7.196 19.977 11.739 19.977C16.281 19.977 19.977 16.281 19.977 11.738C19.977 7.195 16.281 3.5 11.739 3.5ZM11.739 21.477C6.369 21.477 2 17.108 2 11.738C2 6.368 6.369 2 11.739 2C17.109 2 21.477 6.368 21.477 11.738C21.477 17.108 17.109 21.477 11.739 21.477Z"/>
+                      <mask id="mask1_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="17" width="6" height="6">
+                        <path d="M17.2397 17.707H22.2638V22.7218H17.2397V17.707Z"/>
+                      </mask>
+                      <path d="M21.514 22.7218C21.323 22.7218 21.131 22.6488 20.984 22.5028L17.46 18.9888C17.167 18.6958 17.166 18.2208 17.459 17.9278C17.751 17.6328 18.226 17.6348 18.52 17.9258L22.044 21.4408C22.337 21.7338 22.338 22.2078 22.045 22.5008C21.899 22.6488 21.706 22.7218 21.514 22.7218Z"/>
+                    </BaseIcon>
+
+                    <span class="text-md">
+                    {{ $t('History')}}
+                  </span>
+                  </div>
+                </li>
+              </ul>
+            </li>
+          </template>
+
+          <li class="opacity-0 w-[300px] grow"></li>
 
           <li v-if="(address || phone)" class="max-w-[300px]">
             <h2 class="menu-title">{{ $t('Contacts') }}</h2>
@@ -88,81 +169,7 @@
                       </g>
                     </BaseIcon>
                   </div>
-                   <span class="text-md max-w-xs">{{ address }}</span>
-                </div>
-              </li>
-            </ul>
-          </li>
-
-          <li>
-            <h2 class="menu-title text-md">{{ $t('Delivery') }}</h2>
-            <ul>
-              <li class="p-0" @click="clickDrawer(); onNewDelivery();">
-                <div class="w-full flex flex-row justify-start items-center">
-                  <BaseIcon color="currentColor" width="20" height="20">
-                    <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
-                      <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </BaseIcon>
-
-                  <span class="text-md">
-                    {{ $t('Delivery')}}
-                  </span>
-                </div>
-              </li>
-              <li class="p-0" @click="clickDrawer(); $router.replace(`/place/${restaurantId}/delivery/history`)">
-                <div class="w-full flex flex-row justify-start items-center">
-                  <BaseIcon width="20" height="20" class="currentColor">
-                    <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
-                      <path d="M2 2H21.4768V21.477H2V2Z"/>
-                    </mask>
-                    <path d="M11.739 3.5C7.196 3.5 3.5 7.195 3.5 11.738C3.5 16.281 7.196 19.977 11.739 19.977C16.281 19.977 19.977 16.281 19.977 11.738C19.977 7.195 16.281 3.5 11.739 3.5ZM11.739 21.477C6.369 21.477 2 17.108 2 11.738C2 6.368 6.369 2 11.739 2C17.109 2 21.477 6.368 21.477 11.738C21.477 17.108 17.109 21.477 11.739 21.477Z"/>
-                    <mask id="mask1_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="17" width="6" height="6">
-                      <path d="M17.2397 17.707H22.2638V22.7218H17.2397V17.707Z"/>
-                    </mask>
-                    <path d="M21.514 22.7218C21.323 22.7218 21.131 22.6488 20.984 22.5028L17.46 18.9888C17.167 18.6958 17.166 18.2208 17.459 17.9278C17.751 17.6328 18.226 17.6348 18.52 17.9258L22.044 21.4408C22.337 21.7338 22.338 22.2078 22.045 22.5008C21.899 22.6488 21.706 22.7218 21.514 22.7218Z"/>
-                  </BaseIcon>
-
-                  <span class="text-md">
-                    {{ $t('History')}}
-                  </span>
-                </div>
-              </li>
-            </ul>
-          </li>
-
-          <li>
-            <h2 class="menu-title text-md">{{ $t('Banquets') }}</h2>
-            <ul>
-              <li class="p-0" @click="clickDrawer(); onNewOrder();">
-                <div class="w-full flex flex-row justify-start items-center">
-                  <BaseIcon color="currentColor" width="20" height="20">
-                    <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
-                      <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                  </BaseIcon>
-
-                  <span class="text-md">
-                    {{ $t('Banquet')}}
-                  </span>
-                </div>
-              </li>
-              <li class="p-0" @click="clickDrawer(); $router.replace(`/place/${restaurantId}/history`)">
-                <div class="w-full flex flex-row justify-start items-center">
-                  <BaseIcon width="20" height="20" class="currentColor">
-                    <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
-                      <path d="M2 2H21.4768V21.477H2V2Z"/>
-                    </mask>
-                    <path d="M11.739 3.5C7.196 3.5 3.5 7.195 3.5 11.738C3.5 16.281 7.196 19.977 11.739 19.977C16.281 19.977 19.977 16.281 19.977 11.738C19.977 7.195 16.281 3.5 11.739 3.5ZM11.739 21.477C6.369 21.477 2 17.108 2 11.738C2 6.368 6.369 2 11.739 2C17.109 2 21.477 6.368 21.477 11.738C21.477 17.108 17.109 21.477 11.739 21.477Z"/>
-                    <mask id="mask1_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="17" width="6" height="6">
-                      <path d="M17.2397 17.707H22.2638V22.7218H17.2397V17.707Z"/>
-                    </mask>
-                    <path d="M21.514 22.7218C21.323 22.7218 21.131 22.6488 20.984 22.5028L17.46 18.9888C17.167 18.6958 17.166 18.2208 17.459 17.9278C17.751 17.6328 18.226 17.6348 18.52 17.9258L22.044 21.4408C22.337 21.7338 22.338 22.2078 22.045 22.5008C21.899 22.6488 21.706 22.7218 21.514 22.7218Z"/>
-                  </BaseIcon>
-
-                  <span class="text-md">
-                    {{ $t('History')}}
-                  </span>
+                  <span class="text-md max-w-xs">{{ address }}</span>
                 </div>
               </li>
             </ul>
@@ -171,7 +178,7 @@
           <li>
             <h2 class="menu-title text-md">{{ $t('Theme') }}</h2>
             <ul>
-              <li class="p-0" @click="onSwitchTheme">
+              <li class="p-0" @click="clickDrawer(); onSwitchTheme()">
                 <div class="w-full flex flex-row justify-start items-center">
                   <BaseIcon v-if="theme === ThemeConfig.dark()" width="20" height="20" title="theme">
                     <svg class="swap-off h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -193,11 +200,10 @@
             </ul>
           </li>
 
-
-          <li>
+          <li v-if="authorized">
             <h2 class="menu-title text-md">{{ $t('User') }}</h2>
             <ul>
-              <li class="p-0" @click="onLogout">
+              <li class="p-0" @click="clickDrawer(); onLogout();">
                 <div class="w-full flex flex-row justify-start items-center">
                   <BaseIcon width="20" height="20" title="logout">
                     <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -379,6 +385,7 @@ export default defineComponent({
   methods: {
     ...mapActions({
       applyTheme: 'theme/apply',
+      logout: 'auth/logout',
       selectTab: 'preview/selectTab',
       selectMenu: 'preview/selectMenu',
       setIsShowingMenusModal: 'preview/setIsShowingMenusModal',
