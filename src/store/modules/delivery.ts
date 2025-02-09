@@ -2,10 +2,12 @@ import {
   AttachingComment,
   IndexOrderResponse,
   IndexProductResponse,
+  IndexProductsRequest,
   Order,
   OrdersApi,
   Product,
   ProductOrderField,
+  ProductsApi,
   ShowOrderResponse,
   StoreOrderRequest,
   StoreOrderRequestProductField,
@@ -17,15 +19,13 @@ import BaseForm from "@/store/BaseForm";
 import {crudActions, crudGetters, crudMutations} from "@/store/utils";
 import router from "@/router";
 import CrudState from "@/store/CrudState";
+import {authHeaders} from "@/helpers";
 
-/**
- *
- */
 class DeliveryForm extends BaseForm<Order> {
+  /** Comments that were set on order */
+  public comments: AttachingComment[] = [];
   /** Product fields that were set on order */
-  public products: StoreOrderRequestProductField[];
-
-  public productFields: StoreOrderRequestProductField[];
+  public productFields: StoreOrderRequestProductField[] = [];
 
   /**
    * Dynamically populate properties from the given data object.
@@ -35,7 +35,61 @@ class DeliveryForm extends BaseForm<Order> {
   public populate(resource: Order) {
     super.populate(resource);
 
-    this.setProductFields(resource.products ?? []);
+    const comments = (resource?.comments ?? [])
+      .map((c) => {
+        return {
+          id: c.id,
+          commentableId: c.commentableId,
+          commentableType: c.commentableType,
+          text: c.text,
+        } as AttachingComment;
+      });
+
+    this.setComments(comments);
+    this.setProductFields(resource?.products ?? []);
+
+    console.log({resource, form: this})
+  }
+
+  /**
+   * Set comments on order.
+   *
+   * @param comments
+   */
+  public setComments(comments: AttachingComment[]): void {
+    this.comments = [...comments];
+    this.setChange(`comments`, [...comments]);
+  }
+
+  /**
+   * Add comment to order.
+   *
+   * @param comment
+   */
+  public addComment(comment: AttachingComment): void {
+    this.setComments([...this.comments, comment]);
+  }
+
+  /**
+   * Update comment by its index on order.
+   *
+   * @param comment
+   * @param index
+   */
+  public updateComment(comment: AttachingComment, index: number): void {
+    this.comments[index]['text'] = comment.text;
+    this.setChange(`comments`, this.comments);
+  }
+
+  /**
+   * Delete comment by its index on order.
+   *
+   * @param index
+   */
+  public deleteComment(index: number): void {
+    console.log({comments: this.comments, index, after: this.comments.splice(index, 1)});
+
+    this.setChange(`comments`, this.comments.splice(index, 1));
   }
 
   /**
@@ -217,6 +271,12 @@ const getters = {
   restaurantId() {
     return router.currentRoute.value.params['restaurantId'] ?? null;
   },
+  comments(state: DeliveryState) {
+    return state.form?.comments ?? [];
+  },
+  products(state: DeliveryState) {
+    return state.form?.getProperty('products') ?? [] as ProductOrderField[];
+  },
   productsTotal(state: DeliveryState) {
     return state.form?.getProperty('totals') ?? 0;
   },
@@ -249,17 +309,17 @@ const getters = {
     };
   },
   isMissingOrderedProducts(state: DeliveryState, getters) {
-    if (!state.resource) {
+    if (!state.selected) {
       return false;
     }
 
-    if (!state.resource.products || !state.resource.products.length) {
+    if (!state.selected.products || !state.selected.products.length) {
       return false;
     }
 
     let isMissing = false;
 
-    (state.resource.products ?? []).forEach((f) => {
+    (state.selected.products ?? []).forEach((f) => {
       if (!getters['orderedProduct'](f.productId)) {
         isMissing = true;
         return;
@@ -267,6 +327,15 @@ const getters = {
     });
 
     return isMissing;
+  },
+  orderedProductsResponse(state: DeliveryState) {
+    return state.orderedProductsResponse;
+  },
+  isLoadingOrderedProducts(state: DeliveryState) {
+    return !state.orderedProductsResponse && !state.orderedProducts;
+  },
+  isSavedSuccessfully(state: DeliveryState) {
+    return state.isSavedSuccessfully;
   },
 };
 
@@ -283,6 +352,18 @@ const actions = {
       update: 'updateOrder',
     }
   ),
+  setShowing({ commit }, showing: boolean) {
+    commit('setShowing', showing);
+  },
+  addComment({ state }: { state: DeliveryState }, comment: AttachingComment) {
+    state.form?.addComment(comment);
+  },
+  updateComment({ state }: { state: DeliveryState }, {comment, index}: {comment: AttachingComment, index: number}) {
+    state.form?.updateComment(comment, index);
+  },
+  deleteComment({ state }: { state: DeliveryState }, {index}: {index: number}) {
+    state.form?.deleteComment(index);
+  },
   recalculate({state, getters, rootGetters}) {
     let productsTotal = 0;
 
@@ -317,6 +398,73 @@ const actions = {
     commit('unsetProductField', {productId, variantId, batch});
     dispatch('recalculate');
   },
+  setIsSavedSuccessfully({ commit }, isSavedSuccessfully: boolean|null) {
+    commit('setIsSavedSuccessfully', isSavedSuccessfully);
+  },
+  async loadProductsForOrder({dispatch, commit, rootGetters}, {order}) {
+    const original = (order?.products ?? []).map((p) => {
+      return p.productId;
+    });
+
+    const ids = [...new Set(original)];
+
+    if (!ids.length) {
+      commit('setOrderedProductsResponse', null);
+      commit('setOrderedProducts', []);
+
+      return;
+    }
+
+    const request: IndexProductsRequest = {
+      filterIds: ids.join(','),
+      pageSize: 200,
+    };
+
+    // todo: replace with a flag, so that alterations are only loaded when alterations preview is on
+    if (rootGetters['auth/authorized']) {
+      request.include = 'pendingAlterations,variants.pendingAlterations';
+    }
+
+    const response = await (new ProductsApi())
+      .indexProducts(request, {headers: {...authHeaders(rootGetters['auth/token'])}})
+      .then(response => response)
+      .catch(error => {
+        dispatch('error/setResponse', error.response, {root:true});
+
+        return error.response;
+      });
+
+    commit('setOrderedProductsResponse', response);
+    commit('setOrderedProducts', response.data);
+  },
+  async loadProductsForOrderIfMissing({ state, commit, dispatch, getters, rootGetters }, { order }) {
+    if (state.orderedProductsResponse && !getters['isMissingOrderedProducts']) {
+      return;
+    }
+
+    if (!state.selected || !state.selected.products || !state.selected.products.length) {
+      commit('setOrderedProductsResponse', null);
+      commit('setOrderedProducts', []);
+
+      return;
+    }
+
+    let isMissing = false;
+
+    (state.selected.products ?? []).forEach((f) => {
+      if (!rootGetters['preview/product'](f.productId)) {
+        isMissing = true;
+        return;
+      }
+    });
+
+    if (isMissing) {
+      dispatch('loadProductsForOrder', { order });
+    } else {
+      commit('setOrderedProductsResponse', null);
+      commit('setOrderedProducts', []);
+    }
+  },
 };
 
 const mutations = {
@@ -329,8 +477,11 @@ const mutations = {
     StoreOrderResponse,
     UpdateOrderResponse
   >(),
+  setShowing(state: DeliveryState, showing) {
+    state.showing = showing;
+  },
   setProductFields(state: DeliveryState, products) {
-    state.form.products = products;
+    state.form.setProductFields(products);
   },
   setProductField(state: DeliveryState, {productId, amount, variantId, batch, serveAt, comments}) {
     variantId = variantId ?? null;
@@ -344,6 +495,15 @@ const mutations = {
 
     state.form.unsetProductField(productId, variantId, batch);
     // state.form.setChange(`products-${productId}-${variantId ?? null}-${batch}`, {productId, amount: null, variantId, batch});
+  },
+  setIsSavedSuccessfully(state: DeliveryState, isSavedSuccessfully) {
+    state.isSavedSuccessfully = isSavedSuccessfully;
+  },
+  setOrderedProducts(state: DeliveryState, products) {
+    state.orderedProducts = products;
+  },
+  setOrderedProductsResponse(state: DeliveryState, response) {
+    state.orderedProductsResponse = response;
   },
 };
 

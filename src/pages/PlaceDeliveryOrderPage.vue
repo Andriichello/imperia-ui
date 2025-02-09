@@ -4,7 +4,7 @@
                v-if="isLoadingRestaurant || isLoadingRestaurants"/>
 
     <div class="flex flex-col justify-center items-start gap-3 w-full min-w-xl max-w-xl">
-      <OrderSwitcher class="w-full z-10"
+      <DeliveryOrderSwitcher class="w-full z-10"
                      @click="onOrderSwitcherClick"
                      :loading-order="isLoadingOrder"
                      :show-arrow="false"
@@ -43,7 +43,7 @@
         </button>
       </div>
 
-      <template v-if="tab === 'products'">
+      <template v-if="true">
 
         <template v-if="nonEmptyProductFields.length">
           <Preloader :title="$t('preview.order.loading_products')" class="p-2"
@@ -125,12 +125,12 @@ import {instanceOfUpdateOrderResponse} from "@/openapi";
 import {ResponseErrors} from "@/helpers";
 import CommentList from "@/components/order/comment/CommentList.vue";
 import List from "@/components/order/list/List.vue";
-import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
+import DeliveryOrderSwitcher from "@/components/delivery/DeliveryOrderSwitcher.vue";
 
 export default defineComponent({
   name: "PlaceDeliveryOrderPage",
   components: {
-    OrderSwitcher,
+    DeliveryOrderSwitcher,
     List,
     CommentList,
     Preloader,
@@ -154,9 +154,6 @@ export default defineComponent({
       maxModalHeight,
       isLoadingProducts: false,
       isLoadingRestaurant: false,
-      isLoadingOrder: false,
-      isCreatingOrder: false,
-      isUpdatingOrder: false,
       wasStoreClicked: false,
       orderErrors: {},
       createOrderErrors: {},
@@ -167,25 +164,32 @@ export default defineComponent({
     ...mapGetters({
       tags: 'preview/tags',
       menus: 'preview/menus',
-      tab: 'order/tab',
-      order: 'order/order',
-      orderId: 'order/orderId',
-      orderForm: 'order/form',
-      comments: 'order/comments',
-      isOrderChanged: 'order/hasRealChanges',
-      productFields: 'order/products',
-      showOrderResponse: 'order/getShowOrderResponse',
-      updateOrderResponse: 'order/getUpdateOrderResponse',
-      orderedProductsResponse: 'order/getOrderedProductsResponse',
-      isLoadingOrderedProducts: 'order/isLoadingOrderedProducts',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/resources',
       isLoadingRestaurants: 'restaurants/isLoadingIndex',
       showRestaurantResponse: 'restaurants/show',
-      isOrderSavedSuccessfully: 'order/isSavedSuccessfully',
+      order: 'delivery/resource',
+      orderForm: 'delivery/form',
+      showOrderResponse: 'delivery/show',
+      updateOrderResponse: 'delivery/update',
+      orderedProductsResponse: 'delivery/orderedProductsResponse',
+      isLoadingOrder: 'delivery/isLoadingShow',
+      isCreatingOrder: 'delivery/isLoadingStore',
+      isUpdatingOrder: 'delivery/isLoadingUpdate',
+      isLoadingOrderedProducts: 'delivery/isLoadingOrderedProducts',
+      isOrderSavedSuccessfully: 'delivery/isSavedSuccessfully',
     }),
-    onlyTabs() {
-      return ['products'];
+    orderId() {
+      return this.order?.id;
+    },
+    isOrderChanged() {
+      return !!this.orderForm?.hasChanges();
+    },
+    comments() {
+      return this.orderForm?.comments ?? [];
+    },
+    productFields() {
+      return this.orderForm?.productFields ?? [];
     },
     nonEmptyProductFields() {
       return this.productFields.filter((f) => {
@@ -194,11 +198,6 @@ export default defineComponent({
     },
   },
   watch: {
-    onlyTabs(newValue, oldValue) {
-      if (!newValue.includes(this.tab)) {
-        this.setTab(newValue[0] ?? 'products');
-      }
-    },
     order(newOrder) {
       if (!newOrder) {
         return;
@@ -208,11 +207,6 @@ export default defineComponent({
       this.updateOrderErrors = {};
 
       this.loadProductsForOrderIfMissing({order: this.order});
-    },
-    showOrderResponse: {
-      handler() {
-        this.isLoadingOrder = false;
-      },
     },
     async updateOrderResponse(newValue) {
       this.isUpdatingOrder = false;
@@ -242,17 +236,15 @@ export default defineComponent({
       loadTagsIfMissing: 'preview/loadTagsIfMissing',
       selectRestaurant: 'restaurants/setSelected',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectResource',
-      setTab: 'order/setTab',
-      loadOrder: 'order/loadOrder',
-      loadOrderIfMissing: 'order/loadOrderIfMissing',
-      loadProductsForOrderIfMissing: 'order/loadProductsForOrderIfMissing',
-      setOrder: 'order/setOrder',
-      createOrder: 'order/createOrder',
-      updateOrder: 'order/updateOrder',
-      addComment: 'order/addComment',
-      updateComment: 'order/updateComment',
-      deleteComment: 'order/deleteComment',
-      setIsOrderSavedSuccessfully: 'order/setIsSavedSuccessfully',
+      loadOrder: 'delivery/loadResource',
+      loadOrderIfMissing: 'delivery/loadAndSelectResourceIfMissing',
+      loadProductsForOrderIfMissing: 'delivery/loadProductsForOrderIfMissing',
+      createOrder: 'delivery/storeResource',
+      updateOrder: 'delivery/updateResource',
+      addComment: 'delivery/addComment',
+      updateComment: 'delivery/updateComment',
+      deleteComment: 'delivery/deleteComment',
+      setIsOrderSavedSuccessfully: 'delivery/setIsSavedSuccessfully',
     }),
     onKeyDown(e) {
       if (this.modal && e.key === 'Escape') {
@@ -295,13 +287,13 @@ export default defineComponent({
     },
     onOrderSwitcherClick() {
       const menuId = this.$store.getters['preview/menu']?.id;
-      const banquetId = this.$route.params['banquetId'];
+      const orderId = this.$route.params['orderId'];
       const restaurantId = this.$route.params['restaurantId'];
 
       let path = `/place/${restaurantId}`;
 
-      if (banquetId) {
-        path += `/order/${banquetId}`;
+      if (orderId) {
+        path += `/delivery/order/${orderId}`;
       }
 
       path += `/menu`;
@@ -313,39 +305,14 @@ export default defineComponent({
       this.$router.push(path);
     },
     validateOrderForm() {
-      const productErrors = [];
       const errors = {};
-
-      if (this.orderForm?.products?.length) {
-        this.orderForm.products.forEach((field) => {
-          if (field?.serveAt) {
-            const serveAt = field?.serveAt.trim()
-
-            if (serveAt.length > 0) {
-              const isValidMinute = /^.*:[0-5]?[0-9]?\s*$/.test(serveAt);
-              const isSingleDigitHour = /^[0-9]:?.*$/.test(serveAt);
-              const isDoubleDigitHour = /^[0-1][0-9]:?.*$/.test(serveAt) || /^[2][0-3]:?.*$/.test(serveAt);
-
-              const isValid = isValidMinute && (isSingleDigitHour || isDoubleDigitHour);
-
-              if (!isValid) {
-                productErrors.push(this.$t('preview.order.errors.serve_at.invalid', {time: serveAt}))
-              }
-            }
-          }
-        });
-
-        if (productErrors.length) {
-          errors.products = productErrors;
-        }
-      }
 
       this.orderErrors = errors;
 
       return !Object.keys(errors).length
-          && this.orderForm?.banquetId
-          && this.orderForm?.products
-          && (this.orderForm?.products?.length || this.orderForm?.comments?.length);
+          && this.orderForm?.id
+          && this.orderForm?.productFields
+          && (this.orderForm?.productFields?.length || this.orderForm?.comments?.length);
     },
     onStoreOrder() {
       if (!this.validateOrderForm() !== false) {
@@ -373,9 +340,6 @@ export default defineComponent({
     onDeleteComment({comment, index}) {
       this.deleteComment({comment, index});
     },
-    onSwitchToTab({from, to}) {
-      this.setTab(to);
-    },
   },
   mounted() {
     this.setIsOrderSavedSuccessfully(null);
@@ -385,7 +349,7 @@ export default defineComponent({
     const orderId = +this.$route.params['orderId'];
 
     if (orderId) {
-      this.loadOrderIfMissing({orderId})
+      this.loadOrderIfMissing({id: orderId, params: {include: 'products'}});
     }
 
     if (this.order) {
