@@ -50,7 +50,8 @@
       "title": "Щось пішло не так...",
       "description": "Під час завантаження даних із сервера сталася помилка."
     },
-    "Invalid credentials": "Недійсні облікові дані."
+    "Invalid credentials": "Недійсні облікові дані",
+    "You are not authorized to perform this request": "Недостатньо прав доступу для виконання даного запиту"
   },
   "login": {
     "title": "З поверненням!",

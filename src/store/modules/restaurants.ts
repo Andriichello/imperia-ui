@@ -138,6 +138,11 @@ class RestaurantForm extends BaseForm<Restaurant> {
 
     delete request['media'];
 
+    this.getProperty('schedules', [])
+      .forEach((schedule) => {
+        schedule.archived = !!schedule.archived;
+      });
+
     return request as UpdateRestaurantRequest;
   }
 

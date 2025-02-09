@@ -159,12 +159,26 @@
 
     </div>
 
-    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4" v-if="!isLoadingRestaurant && form && form.hasRealChanges()">
-      <button class="btn btn-ghost btn-md flex-1" @click="cancelForm">
+    <div class="w-full max-w-xl flex justify-center items-center p-2 mt-4 text-lg"
+         v-for="errorsGroup in (Object.keys(restaurantUpdateResponseErrors ?? {}))"
+         :key="errorsGroup">
+        <span class="label-text-alt text-error text-sm"
+              v-for="error in restaurantUpdateResponseErrors?.[errorsGroup]"
+              :key="error">
+          {{ $t('error.' + error)  }}
+        </span>
+    </div>
+
+    <div class="w-full max-w-xl flex justify-between mt-4 mb-4 gap-4"
+         v-if="!isLoadingRestaurant && form && form.hasRealChanges()">
+      <button class="btn btn-ghost btn-md flex-1" @click="cancelForm"
+        :disabled="isLoadingRestaurant || isUpdatingRestaurant">
         {{ $t('restaurant.cancel_changes') }}
       </button>
-      <button class="btn btn-neutral btn-md flex-1" @click="updateForm">
+      <button class="btn btn-neutral btn-md flex-1" @click="updateForm"
+              :disabled="isLoadingRestaurant || isUpdatingRestaurant || restaurantUpdateResponse?.status === 403">
         {{ $t('restaurant.save_changes') }}
+        <span class="loading loading-spinner" v-if="isUpdatingRestaurant"></span>
       </button>
     </div>
 
@@ -192,6 +206,7 @@ export default defineComponent({
   data() {
     return {
       errors: {},
+      updateRestaurantErrors: null,
     };
   },
   computed: {
@@ -213,6 +228,7 @@ export default defineComponent({
       restaurantUpdateResponse: 'restaurants/update',
       restaurantUpdateResponseErrors: 'restaurants/updateErrors',
       isLoadingRestaurant: 'restaurants/isLoadingShow',
+      isUpdatingRestaurant: 'restaurants/isLoadingUpdate',
     }),
     restaurantId() {
       return this.restaurant?.id ?? null;
