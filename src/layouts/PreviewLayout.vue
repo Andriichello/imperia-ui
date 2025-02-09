@@ -23,9 +23,9 @@
           <li class="opacity-0 w-[300px]"></li>
 
           <li v-if="restaurant" class="max-w-[300px]">
-            <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
-            <ul>
-              <li @click="clickDrawer(); $router.replace(`/preview/${restaurantId}`)">
+<!--            <h2 class="menu-title">{{ $t('Restaurant') }}</h2>-->
+            <ul class="p-0 m-0">
+              <li @click="clickDrawer(); $router.replace(`/preview/${restaurantId}`)" class="p-0 m-0">
                 <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                   <div class="flex justify-center items-center gap-2">
                     <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">

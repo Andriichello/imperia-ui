@@ -25,7 +25,7 @@
 
           <template v-if="authorized">
             <li v-if="restaurant" class="max-w-[300px]">
-              <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
+<!--              <h2 class="menu-title">{{ $t('Restaurant') }}</h2>-->
               <ul>
                 <li @click="clickDrawer(); $router.replace(`/preview/${restaurantId}`)">
                   <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
