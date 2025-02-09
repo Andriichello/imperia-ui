@@ -1,7 +1,7 @@
 <template>
   <div class="order-page w-full">
-    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
-               v-if="isLoadingRestaurant || isLoadingRestaurants"/>
+<!--    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"-->
+<!--               v-if="isLoadingRestaurant || isLoadingRestaurants"/>-->
 
     <Preloader :title="$t('preview.order.loading')" class="p-2"
                v-if="orderId && (isLoadingOrder)"/>

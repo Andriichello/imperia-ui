@@ -220,7 +220,11 @@ export default defineComponent({
     showActionsOnSide: {
       type: Boolean,
       default: false,
-    }
+    },
+    isDelivery: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -237,8 +241,9 @@ export default defineComponent({
       theme: "theme/get",
     }),
     item() {
-      return this.$store.getters['order/orderedProduct'](this.productId)
-        ?? this.$store.getters['preview/product'](this.productId);
+      return this.$store.getters['preview/product'](this.productId)
+          ?? this.$store.getters['order/orderedProduct'](this.productId)
+          ?? this.$store.getters['delivery/orderedProduct'](this.productId);
     },
     alternations() {
       if (this.variant) {
@@ -349,6 +354,8 @@ export default defineComponent({
     ...mapActions({
       setField: 'order/setProduct',
       unsetField: 'order/unsetProduct',
+      setDeliveryField: 'delivery/setProductField',
+      unsetDeliveryField: 'delivery/unsetProductField',
     }),
     weightFormatted(weight, unit) {
       if (unit) {
@@ -405,11 +412,15 @@ export default defineComponent({
     },
     onChangeAmount({amount}) {
       if (amount === null) {
-        this.unsetField({
+        const field = {
           productId: this.id,
           variantId: this.variant?.id,
           batch: this.batch ?? this.current?.batch,
-        });
+        };
+
+        this.isDelivery
+            ? this.unsetDeliveryField(field)
+            : this.unsetField(field);
 
         return;
       }
@@ -423,7 +434,9 @@ export default defineComponent({
         comments: this.comments
       };
 
-      this.setField(field);
+      this.isDelivery
+          ? this.setDeliveryField(field)
+          : this.setField(field);
 
       if (!this.current) {
         this.current = field;
@@ -456,28 +469,36 @@ export default defineComponent({
         delete comment.id;
       });
 
-      this.setField({
+      const field = {
         productId: this.id,
         variantId: this.variant?.id,
         amount: this.current?.amount,
         batch: randomString(4),
         serveAt: this.current?.serveAt,
         comments: structuredClone(this.comments),
-      });
+      };
+
+      this.isDelivery
+          ? this.setDeliveryField(field)
+          : this.setField(field);
     },
     onUpdateServingTime({time}) {
       if (this.current?.serveAt === time) {
         return;
       }
 
-      this.setField({
+      const field = {
         productId: this.id,
         variantId: this.variant?.id,
         amount: this.current?.amount,
         batch: this.current?.batch,
         serveAt: time,
         comments: this.comments
-      });
+      };
+
+      this.isDelivery
+          ? this.setDeliveryField(field)
+          : this.setField(field);
     },
     onUpdateComment({comment, index}) {
       const comments = [...(this.comments ?? [])];
@@ -500,14 +521,18 @@ export default defineComponent({
         }
       }
 
-      this.setField({
+      const field = {
         productId: this.id,
         variantId: this.variant?.id,
         amount: this.current?.amount,
         batch: this.current?.batch,
         serveAt: this.current?.serveAt,
         comments: comments
-      });
+      };
+
+      this.isDelivery
+          ? this.setDeliveryField(field)
+          : this.setField(field);
     },
     timeOnUpdate({time}) {
       this.onUpdateServingTime({time});

@@ -1,7 +1,10 @@
 <template>
   <div class="flex flex-row gap-2 rounded-box select-none p-1">
     <button class="max-h-full" v-if="withIcon">
-      <Icon :restaurant="restaurant"/>
+      <Icon :restaurant="restaurant" v-if="restaurant"/>
+      <div class="h-10 w-10 flex justify-center items-center" v-else>
+        <div class="loading loading-spinner loading-md" />
+      </div>
     </button>
 
     <Details :restaurant="restaurant"/>

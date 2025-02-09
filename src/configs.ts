@@ -8,8 +8,6 @@ export class ThemeConfig {
 
     /** List of available themes */
     public static list(): string[] {
-        console.log(daisyui.themes);
-
         return daisyui.themes.map((theme) => {
             if (typeof theme === 'string') {
                 return theme;

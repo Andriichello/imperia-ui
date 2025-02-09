@@ -1,14 +1,12 @@
 <template>
   <div class="order-page w-full">
-    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
-               v-if="isLoadingRestaurant || isLoadingRestaurants"/>
+<!--    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"-->
+<!--               v-if="isLoadingRestaurant || isLoadingRestaurants"/>-->
 
     <div class="flex flex-col justify-center items-start gap-3 w-full min-w-xl max-w-xl">
       <DeliveryOrderSwitcher class="w-full z-10"
                      @click="onOrderSwitcherClick"
-                     :loading-order="isLoadingOrder"
-                     :show-arrow="false"
-                     :show-tabs="['products']"/>
+                     :show-arrow="false"/>
 
       <Preloader :title="$t('preview.order.loading')" class="p-2"
                  v-if="orderId && (isLoadingOrder)"/>
@@ -16,7 +14,7 @@
       <div class="w-full flex justify-center items-center">
         <button class="w-full btn btn-md btn-primary"
                 :class="{'btn-disabled': !isOrderChanged}"
-                @click="onStoreOrder">
+                @click="onSaveOrder">
           {{ $t('preview.order.store') }}
           <span class="loading loading-spinner" v-if="isCreatingOrder || isUpdatingOrder"></span>
         </button>
@@ -51,6 +49,7 @@
 
           <List class="w-full" v-if="nonEmptyProductFields.length"
                 :type="'products'"
+                :is-delivery="true"
                 :fields="nonEmptyProductFields"
                 :show-descriptions="false"
                 :show-serve-ats="false"
@@ -104,14 +103,6 @@
           {{ $t('preview.order.an_error_occurred_while_saving') }}
         </span>
       </div>
-
-      <div class="w-full flex justify-center items-center"
-           v-if="isOrderChanged">
-        <button class="w-full btn btn-md btn-primary" @click="onStoreOrder">
-          {{ $t('preview.order.store') }}
-          <span class="loading loading-spinner" v-if="isCreatingOrder || isUpdatingOrder"></span>
-        </button>
-      </div>
     </div>
 
   </div>
@@ -153,7 +144,6 @@ export default defineComponent({
       maxModalWidth,
       maxModalHeight,
       isLoadingProducts: false,
-      isLoadingRestaurant: false,
       wasStoreClicked: false,
       orderErrors: {},
       createOrderErrors: {},
@@ -166,12 +156,14 @@ export default defineComponent({
       menus: 'preview/menus',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/resources',
+      isLoadingRestaurant: 'restaurants/isLoadingShow',
       isLoadingRestaurants: 'restaurants/isLoadingIndex',
       showRestaurantResponse: 'restaurants/show',
-      order: 'delivery/resource',
+      order: 'delivery/selected',
       orderForm: 'delivery/form',
       showOrderResponse: 'delivery/show',
       updateOrderResponse: 'delivery/update',
+      productFields: 'delivery/productFields',
       orderedProductsResponse: 'delivery/orderedProductsResponse',
       isLoadingOrder: 'delivery/isLoadingShow',
       isCreatingOrder: 'delivery/isLoadingStore',
@@ -188,9 +180,6 @@ export default defineComponent({
     comments() {
       return this.orderForm?.comments ?? [];
     },
-    productFields() {
-      return this.orderForm?.productFields ?? [];
-    },
     nonEmptyProductFields() {
       return this.productFields.filter((f) => {
         return f.amount;
@@ -203,30 +192,16 @@ export default defineComponent({
         return;
       }
 
-      this.createOrderErrors = {};
-      this.updateOrderErrors = {};
-
-      this.loadProductsForOrderIfMissing({order: this.order});
+      this.loadProductsForOrderIfMissing({order: newOrder});
     },
     async updateOrderResponse(newValue) {
-      this.isUpdatingOrder = false;
-      this.updateOrderErrors = newValue
-          ? await ResponseErrors.from(newValue) : {};
+      await this.setIsOrderSavedSuccessfully(instanceOfUpdateOrderResponse(newValue));
 
-      if (instanceOfUpdateOrderResponse(newValue)) {
-        this.setIsOrderSavedSuccessfully(true);
-      } else {
-        this.setIsOrderSavedSuccessfully(false);
-      }
+      await this.loadOrder({id: newValue.data.id, params: {include: 'comments,products,products.comments'}});
     },
     orderedProductsResponse: {
       handler() {
         this.isLoadingProducts = false;
-      },
-    },
-    showRestaurantResponse: {
-      handler() {
-        this.isLoadingRestaurant = false;
       },
     },
   },
@@ -236,7 +211,7 @@ export default defineComponent({
       loadTagsIfMissing: 'preview/loadTagsIfMissing',
       selectRestaurant: 'restaurants/setSelected',
       loadAndSelectRestaurant: 'restaurants/loadAndSelectResource',
-      loadOrder: 'delivery/loadResource',
+      loadOrder: 'delivery/loadAndSelectResource',
       loadOrderIfMissing: 'delivery/loadAndSelectResourceIfMissing',
       loadProductsForOrderIfMissing: 'delivery/loadProductsForOrderIfMissing',
       createOrder: 'delivery/storeResource',
@@ -305,17 +280,20 @@ export default defineComponent({
       this.$router.push(path);
     },
     validateOrderForm() {
-      const errors = {};
+      this.orderErrors = {};
 
-      this.orderErrors = errors;
+      if (this.productFields) {
+        return true;
+      }
 
-      return !Object.keys(errors).length
-          && this.orderForm?.id
-          && this.orderForm?.productFields
-          && (this.orderForm?.productFields?.length || this.orderForm?.comments?.length);
+      if (this.comments) {
+        return true;
+      }
+
+      return false;
     },
-    onStoreOrder() {
-      if (!this.validateOrderForm() !== false) {
+    onSaveOrder() {
+      if (!this.validateOrderForm()) {
         return;
       }
 
@@ -324,7 +302,14 @@ export default defineComponent({
 
         const request = this.orderForm.asUpdate();
 
-        this.updateOrder({ id: this.orderId, request: this.orderForm.asUpdate() });
+        this.updateOrder({ id: this.orderId, request, params: { include: 'comments,products,products.comments' }});
+      } else {
+        this.isCreatingOrder = true;
+
+        const request = this.orderForm.asCreate();
+
+        this.updateOrder({ id: this.orderId, request, params: { include: 'comments,products,products.comments' }});
+
       }
     },
     onCreateComment() {
@@ -349,7 +334,7 @@ export default defineComponent({
     const orderId = +this.$route.params['orderId'];
 
     if (orderId) {
-      this.loadOrderIfMissing({id: orderId, params: {include: 'products'}});
+      this.loadOrderIfMissing({id: orderId, params: {include: 'comments,products,products.comments'}});
     }
 
     if (this.order) {

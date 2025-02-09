@@ -23,32 +23,31 @@ import {authHeaders} from "@/helpers";
 
 class DeliveryForm extends BaseForm<Order> {
   /** Comments that were set on order */
-  public comments: AttachingComment[] = [];
+  public comments: AttachingComment[];
   /** Product fields that were set on order */
-  public productFields: StoreOrderRequestProductField[] = [];
+  public productFields: StoreOrderRequestProductField[];
 
   /**
    * Dynamically populate properties from the given data object.
    *
    * @param resource
    */
-  public populate(resource: Order) {
+  public populate(resource: Order | null) {
     super.populate(resource);
 
-    const comments = (resource?.comments ?? [])
-      .map((c) => {
-        return {
-          id: c.id,
-          commentableId: c.commentableId,
-          commentableType: c.commentableType,
-          text: c.text,
-        } as AttachingComment;
-      });
+    this.setComments(
+      (resource?.comments ?? [])
+        .map((c) => {
+          return {
+            id: c.id,
+            commentableId: c.commentableId,
+            commentableType: c.commentableType,
+            text: c.text,
+          } as AttachingComment;
+        })
+    );
 
-    this.setComments(comments);
     this.setProductFields(resource?.products ?? []);
-
-    console.log({resource, form: this})
   }
 
   /**
@@ -199,7 +198,6 @@ class DeliveryForm extends BaseForm<Order> {
         }
       });
 
-
     return {...request, products} as StoreOrderRequest;
   }
 
@@ -216,6 +214,9 @@ class DeliveryForm extends BaseForm<Order> {
       .forEach((name) => {
         changed[name] = request?.[name];
       });
+
+    changed['comments'] = this.comments;
+    changed['products'] = this.productFields;
 
     return changed as UpdateOrderRequest;
   }
@@ -277,8 +278,11 @@ const getters = {
   products(state: DeliveryState) {
     return state.form?.getProperty('products') ?? [] as ProductOrderField[];
   },
+  productFields(state: DeliveryState) {
+    return state.form?.productFields ?? [] as StoreOrderRequestProductField[];
+  },
   productsTotal(state: DeliveryState) {
-    return state.form?.getProperty('totals') ?? 0;
+    return state.form?.getProperty('totals')?.['products'] ?? 0;
   },
   productsCount(state: DeliveryState, getters) {
     let count = 0;
@@ -367,10 +371,11 @@ const actions = {
   recalculate({state, getters, rootGetters}) {
     let productsTotal = 0;
 
-    state.form.productFields.forEach((p) => {
+    state.form.productFields?.forEach((p) => {
       if (p.amount) {
-        const product = getters['orderedProduct'](p.productId)
-          ?? rootGetters['preview/product'](p.productId);
+        const product = rootGetters['preview/product'](p.productId)
+          ?? rootGetters['order/orderedProduct'](p.productId)
+          ?? getters['orderedProduct'](p.productId);
 
         if (product) {
           const variant = (product.variants ?? []).find((v) => {
@@ -383,7 +388,7 @@ const actions = {
     });
 
     state.form.setProperty('totals', {
-      productsTotal: productsTotal,
+      products: productsTotal,
       all: productsTotal,
     })
   },
@@ -391,6 +396,8 @@ const actions = {
     commit('setProductFields', products);
   },
   setProductField({ commit, dispatch }, {productId, amount, variantId, batch, serveAt, comments}) {
+    console.log('setProductField', {productId, amount, variantId, batch, serveAt, comments})
+
     commit('setProductField', {productId, amount, variantId, batch, serveAt, comments});
     dispatch('recalculate');
   },
@@ -477,6 +484,16 @@ const mutations = {
     StoreOrderResponse,
     UpdateOrderResponse
   >(),
+  setSelected(state: DeliveryState, selected: Order | null) {
+    console.log('delivery set selected: ', selected);
+    state.selected = selected;
+
+    if (!state.form) {
+       state.form = new DeliveryForm();
+    }
+
+    state.form.populate(selected);
+  },
   setShowing(state: DeliveryState, showing) {
     state.showing = showing;
   },

@@ -1,7 +1,7 @@
 <template>
   <div class="order-page">
-    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
-               v-if="loadingRestaurant || isLoadingRestaurants"/>
+<!--    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"-->
+<!--               v-if="loadingRestaurant || isLoadingRestaurants"/>-->
 
     <template v-if="tab === 'products'">
       <Preloader :title="$t('preview.menu.loading')" class="p-2"

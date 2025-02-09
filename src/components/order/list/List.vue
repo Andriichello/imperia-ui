@@ -6,6 +6,7 @@
         <template v-for="group in groups" :key="'product-' + group[0].productId">
           <template v-for="subGroups in splitGroupByBatch(group)" :key="subGroups[0].productId + '-' + subGroups[0].batch" >
             <Product :fields="subGroups" :product-id="subGroups[0].productId" :batch="subGroups[0].batch"
+              :is-delivery="isDelivery"
               :show-description="showDescriptions" :show-serve-at="showServeAts"
               :show-compactly="showCompactly" :show-actions-on-side="showActionsOnSide"/>
           </template>
@@ -60,6 +61,10 @@ export default defineComponent({
       default: false,
     },
     showActionsOnSide: {
+      type: Boolean,
+      default: false,
+    },
+    isDelivery: {
       type: Boolean,
       default: false,
     }
