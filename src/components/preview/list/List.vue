@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full list flex flex-wrap justify-center items-start gap-4 pb-2">
+  <div class="w-full list flex flex-wrap justify-center items-start gap-4 pb-2" >
 
     <template v-if="type === 'products'">
       <template v-if="number === 1">
@@ -110,5 +110,11 @@ export default defineComponent({
 
 .list-col {
   flex-basis: 45%;
+}
+
+@media (max-width: 585px) {
+  .list-col {
+    flex-basis: 96%;
+  }
 }
 </style>
