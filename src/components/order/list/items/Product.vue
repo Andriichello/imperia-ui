@@ -335,9 +335,6 @@ export default defineComponent({
     },
   },
   watch: {
-    current(newVal, oldVal) {
-      console.log({newCurrent: newVal, oldCurrent: oldVal})
-    },
     timeVal(newVal, oldVal) {
       if (newVal === ((oldVal ? oldVal : '') + ' ')) {
         if (/^\d+\s*$/.test(newVal)) {

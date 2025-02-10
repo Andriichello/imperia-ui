@@ -139,7 +139,23 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/place/:restaurantId(\\d+)?/delivery/order/:orderId(\\d+)?',
+    path: '/place/:restaurantId(\\d+)?/delivery/menu/:menuId(\\d+)?',
+    name: 'place-pre-delivery-menu',
+    component: PlaceMenuPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/delivery/:deliveryId(\\d+)/menu/:menuId(\\d+)?',
+    name: 'place-delivery-menu',
+    component: PlaceMenuPage,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: '/place/:restaurantId(\\d+)?/delivery/:deliveryId(\\d+)?',
     name: 'place-delivery-order',
     component: PlaceDeliveryOrderPage,
     meta: {

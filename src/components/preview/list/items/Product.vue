@@ -1,7 +1,9 @@
 <template>
-  <div class="card w-full bg-base-100 shadow-xl">
+  <div class="card w-full bg-base-100 shadow-2xl"
+    :class="{'added-product': nonEmptyProductFields?.length}">
     <div class="w-full max-h-[180px] select-none" v-if="showImage && image">
-      <figure class="w-full max-h-[180px] rounded-t-box">
+      <figure class="w-full max-h-[180px] rounded-t-box"
+              :class="{'h-[180px]': !imageLoaded}">
         <img :alt="title" :src="image"
              class="overflow-hidden"
              style="object-fit: cover;"
@@ -15,7 +17,7 @@
       </figure>
     </div>
 
-    <div class="card-body min-h-[100px]">
+    <div class="card-body min-h-[100px] rounded">
       <div class="flex justify-between items-center card-title">
         <div class="grow flex justify-center items-start card-title">
           <h2 class="grow line-clamp-2 text-ellipsis flex justify-start items-center">
@@ -143,19 +145,39 @@ export default defineComponent({
       theme: "theme/get",
       authorized: "auth/authorized",
       fields: "order/products",
+      deliveryFields: "delivery/productFields",
     }),
     isPreview() {
       return (this.$route.name ?? '').startsWith('preview');
+    },
+    isDelivery() {
+      const name = this.$route.name ?? '';
+
+      return name === 'place-pre-delivery-menu'
+          || name === 'place-delivery-menu'
+          || name === 'place-delivery-order';
     },
     field() {
       const fields = this.productFields.filter((f) => {
         return f.variantId === (this.variant?.id ?? null);
       });
 
-      return fields?.length ? fields[0] : this.productField;
+      if (fields.length) {
+        return fields[0];
+      }
+
+      if (!this.variant) {
+        return this.productField;
+      }
+
+      return null;
     },
     variantFields() {
-      return this.$store.getters['order/products'].filter(
+      const fields = this.isDelivery
+          ? this.$store.getters['delivery/productFields']
+          : this.$store.getters['order/products'];
+
+      return fields?.filter(
           (p) => p.productId === this.id && p.variantId === this.variant?.id
       );
     },
@@ -164,9 +186,17 @@ export default defineComponent({
           ?? this.productFields[0];
     },
     productFields() {
-      return this.$store.getters['order/products'].filter(
+      const fields = this.isDelivery
+          ? this.$store.getters['delivery/productFields']
+          : this.$store.getters['order/products'];
+
+      return fields?.filter(
           (p) => p.productId === this.id
       );
+    },
+    nonEmptyProductFields() {
+      return this.productFields
+          ?.filter((f) => f.amount > 0);
     },
     id() {
       return this.item.id;
@@ -282,6 +312,8 @@ export default defineComponent({
     ...mapActions({
       setField: 'order/setProduct',
       unsetField: 'order/unsetProduct',
+      setDeliveryField: 'delivery/setProductField',
+      unsetDeliveryField: 'delivery/unsetProductField',
     }),
     weightFormatted(weight, unit) {
       if (unit) {
@@ -309,7 +341,11 @@ export default defineComponent({
         return null;
       }
 
-      return this.fields.find((f) => {
+      const fields = this.isDelivery
+          ? this.deliveryFields
+          : this.fields;
+
+      return fields?.find((f) => {
         return f.productId === this.id && v.id === f.variantId;
       });
     },
@@ -324,23 +360,31 @@ export default defineComponent({
     },
     onChangeAmount({amount}) {
       if (amount === null) {
-        this.unsetField({
+        const field = {
           productId: this.id,
           variantId: this.variant?.id,
           batch: this.field?.batch ?? this.productField?.batch,
-        });
+        };
+
+        this.isDelivery
+            ? this.unsetDeliveryField(field)
+            : this.unsetField(field);
 
         return;
       }
 
-      this.setField({
+      const field = {
         productId: this.id,
         variantId: this.variant?.id,
         batch: this.field?.batch ?? this.productField?.batch,
         serveAt: this.field?.serveAt,
         amount: amount,
         comments: this.field?.comments ?? [],
-      });
+      };
+
+      this.isDelivery
+          ? this.setDeliveryField(field)
+          : this.setField(field);
     },
     async freshRender() {
       // Remove MyComponent from the DOM
@@ -368,5 +412,15 @@ img {
 
 .btn-selected {
   @apply btn-outline border-base-content bg-base-content text-base-100;
+}
+
+.added-product {
+  border-color: var(--yellow);
+  border-width: 4px;
+  border-style: solid;
+}
+
+[data-theme="lofi"] .added-product {
+  border-color: currentColor;
 }
 </style>

@@ -79,7 +79,9 @@
       "history": "Історія",
       "new_order": "Нове замовлення",
       "restaurant": "Заклад",
-      "street_and_address": "Вулиця, аддрес"
+      "street_and_address": "Вулиця, аддрес",
+      "delivery": "Доставка",
+      "banquet": "Банкет"
     },
     "restaurant": {
       "loading": "Завантаження закладу",

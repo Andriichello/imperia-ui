@@ -82,7 +82,9 @@
       "history": "History",
       "new_order": "New order",
       "restaurant": "Restaurant",
-      "street_and_address": "Street, address"
+      "street_and_address": "Street, address",
+      "delivery": "Delivery",
+      "banquet": "Banquet"
     },
     "restaurant": {
       "loading": "Loading restaurant",

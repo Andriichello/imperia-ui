@@ -1,9 +1,6 @@
 <template>
   <div class="order-page">
-<!--    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"-->
-<!--               v-if="loadingRestaurant || isLoadingRestaurants"/>-->
-
-    <template v-if="tab === 'products'">
+    <template v-if="isDeliveryPage || (isPlacePage && tab === 'products')">
       <Preloader :title="$t('preview.menu.loading')" class="p-2"
                  v-if="!isLoadingRestaurants && isLoadingMenus"/>
 
@@ -11,7 +8,7 @@
                    v-if="menu"/>
     </template>
 
-    <template v-if="tab === 'spaces'">
+    <template v-if="isPlacePage && tab === 'spaces'">
       <Preloader :title="$t('preview.menu.loading_spaces')" class="p-2"
                  v-if="!isLoadingRestaurants && (isLoadingSpaceCategories || isLoadingSpaces)"/>
 
@@ -24,7 +21,7 @@
       </template>
     </template>
 
-    <template v-if="tab === 'services'">
+    <template v-if="isPlacePage && tab === 'services'">
       <Preloader :title="$t('preview.menu.loading_services')" class="p-2"
                  v-if="!isLoadingRestaurants && (isLoadingServiceCategories || isLoadingServices)"/>
 
@@ -37,12 +34,23 @@
       </template>
     </template>
 
-    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
-      <OrderSwitcher class="w-full max-w-4xl"
-                     :show-arrow="true"
-                     :loading-banquet="isLoadingBanquet"
-                     @switch-to-order="onSwitchToOrder"/>
-    </div>
+    <template v-if="isPlacePage">
+      <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
+        <OrderSwitcher class="w-full max-w-4xl"
+                       :show-arrow="true"
+                       :loading-banquet="isLoadingBanquet"
+                       @switch-to-order="onSwitchToOrder"/>
+      </div>
+    </template>
+
+    <template v-if="isDeliveryPage">
+      <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm z-[2]">
+        <DeliveryOrderSwitcher class="w-full max-w-4xl"
+                       :show-arrow="true"
+                       @switch-to-delivery="onSwitchToDelivery"/>
+      </div>
+    </template>
+
   </div>
 </template>
 
@@ -54,20 +62,17 @@ import Preloader from "@/components/preview/loading/Preloader.vue";
 import OrderSwitcher from "@/components/order/OrderSwitcher.vue";
 import PreviewSpaces from "@/components/preview/PreviewSpaces.vue";
 import PreviewServices from "@/components/preview/PreviewServices.vue";
+import DeliveryOrderSwitcher from "@/components/delivery/DeliveryOrderSwitcher.vue";
 
 export default defineComponent({
   name: "PlaceMenuPage",
   components: {
+    DeliveryOrderSwitcher,
     PreviewServices,
     PreviewSpaces,
     OrderSwitcher,
     Preloader,
     PreviewMenu,
-  },
-  data() {
-    return {
-      loadingRestaurant: false,
-    }
   },
   watch: {
     tab: {
@@ -120,6 +125,7 @@ export default defineComponent({
       spaceCategories: 'preview/spaceCategories',
       serviceCategories: 'preview/serviceCategories',
       order: 'order/order',
+      delivery: 'delivery/selected',
       restaurant: 'restaurants/selected',
       restaurants: 'restaurants/resources',
       showRestaurantResponse: 'restaurants/show',
@@ -130,9 +136,19 @@ export default defineComponent({
       isLoadingMenus: "preview/isLoadingMenus",
       isLoadingRestaurants: "restaurants/isLoadingIndex",
       isLoadingBanquet: "basket/isLoadingShowResponse",
-      productsCount: 'order/productsCount',
+      isLoadingDelivery: "delivery/isLoadingShow",
       banquetId: 'order/banquetId',
     }),
+    isPlacePage() {
+      return !this.isDeliveryPage;
+    },
+    isDeliveryPage() {
+      const name = this.$route.name ?? '';
+
+      return name === 'place-pre-delivery-menu'
+          || name === 'place-delivery-menu'
+          || name === 'place-delivery-order';
+    },
   },
   methods: {
     ...mapActions({
@@ -156,15 +172,30 @@ export default defineComponent({
       loadProductsForOrderIfMissing: "order/loadProductsForOrderIfMissing",
       loadServicesForOrder: "order/loadServicesForOrder",
       loadServicesForOrderIfMissing: "order/loadServicesForOrderIfMissing",
+      loadDeliveryIfMissing: "delivery/loadAndSelectResourceIfMissing",
     }),
     onSwitchToOrder() {
       const restaurantId = +this.$route.params['restaurantId'];
 
       if (this.banquetId) {
-        this.$router.replace(`/place/${restaurantId}/order/${this.banquetId}`);
+        this.$router.push(`/place/${restaurantId}/order/${this.banquetId}`);
       } else {
-        this.$router.replace(`/place/${restaurantId}/order`);
+        this.$router.push(`/place/${restaurantId}/order`);
       }
+      window.scrollTo(0, 0);
+    },
+    onSwitchToDelivery() {
+      const restaurantId = +this.$route.params['restaurantId'];
+      const deliveryId = +this.$route.params['deliveryId'];
+
+      let path = `/place/${restaurantId}/delivery`;
+
+      if (deliveryId) {
+        path += `/${deliveryId}`;
+      }
+
+      this.$router.push(path);
+      window.scrollTo(0, 0);
     },
   },
   async mounted() {
@@ -174,14 +205,30 @@ export default defineComponent({
       return;
     }
 
+    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
+      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
+
+      if (target) {
+        await this.selectRestaurant(target);
+      } else {
+        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
+      }
+    }
+
     const menuId = +this.$route.params['menuId'];
+    const deliveryId = +this.$route.params['deliveryId'];
     const banquetId = +this.$route.params['banquetId'];
 
     if (menuId < 1) {
-
       let path = `/place/${restaurantId}`;
 
-      if (banquetId) {
+      if (this.isDeliveryPage) {
+        path += '/delivery';
+      }
+
+      if (deliveryId) {
+        path += `/${deliveryId}`;
+      } else if (banquetId) {
         path += `/order/${banquetId}`;
       }
 
@@ -200,41 +247,20 @@ export default defineComponent({
       return;
     }
 
-    if (this.restaurants && this.restaurant?.id === restaurantId) {
-      if (!this.menu || (this.menu && this.menu.id !== menuId)) {
-        const target = (this.menus ?? []).find(r => r.id === menuId);
-
-        if (target) {
-          this.selectMenu(target);
-        } else {
-          this.loadMenusAndSelect({ id: menuId });
-        }
-      } else {
-        this.loadMenusIfMissing();
+    if (this.isDeliveryPage) {
+      if (deliveryId) {
+        this.loadDeliveryIfMissing({id: deliveryId, params: { include: 'comments,products,products.comments' }});
       }
-    }
-
-    if (!this.restaurant || (this.restaurant && this.restaurant.id !== restaurantId)) {
-      const target = (this.restaurants ?? []).find(r => r.id === restaurantId);
-
-      if (target) {
-        await this.selectRestaurant(target);
-      } else {
-        this.loadingRestaurant = true;
-        await this.loadAndSelectRestaurant({ id: restaurantId, params: { include: 'schedules' } });
-      }
-    }
-
-    if (banquetId) {
+    } else if (banquetId) {
       this.loadBanquetIfMissing({id: banquetId});
       this.loadOrderForBanquetIfMissing({banquetId});
-    }
 
-    if (this.order) {
-      this.loadBanquetIfMissing({id: this.order.banquetId});
-      this.loadSpacesForOrderIfMissing({order: this.order});
-      this.loadServicesForOrderIfMissing({order: this.order});
-      this.loadProductsForOrderIfMissing({order: this.order});
+      if (this.order) {
+        this.loadBanquetIfMissing({id: this.order.banquetId});
+        this.loadSpacesForOrderIfMissing({order: this.order});
+        this.loadServicesForOrderIfMissing({order: this.order});
+        this.loadProductsForOrderIfMissing({order: this.order});
+      }
     }
   },
 });
@@ -242,7 +268,7 @@ export default defineComponent({
 
 <style scoped>
 .order-page {
-  @apply flex flex-col w-full gap-3 pb-10;
+  @apply flex flex-col w-full gap-3 pb-[200px];
 
   display: flex;
   flex-basis: 100%;

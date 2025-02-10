@@ -23,9 +23,9 @@ import {authHeaders} from "@/helpers";
 
 class DeliveryForm extends BaseForm<Order> {
   /** Comments that were set on order */
-  public comments: AttachingComment[];
+  public comments: AttachingComment[] = [];
   /** Product fields that were set on order */
-  public productFields: StoreOrderRequestProductField[];
+  public productFields: StoreOrderRequestProductField[] = [];
 
   /**
    * Dynamically populate properties from the given data object.
@@ -86,8 +86,6 @@ class DeliveryForm extends BaseForm<Order> {
    * @param index
    */
   public deleteComment(index: number): void {
-    console.log({comments: this.comments, index, after: this.comments.splice(index, 1)});
-
     this.setChange(`comments`, this.comments.splice(index, 1));
   }
 
@@ -184,6 +182,9 @@ class DeliveryForm extends BaseForm<Order> {
   public asCreate(): StoreOrderRequest {
     const request = super.asCreate();
 
+    const comments = (this.comments ?? [])
+      .filter((c) => c?.text?.length);
+
     const products = (this.productFields ?? [])
       .filter((f) => {
         return f.amount;
@@ -198,7 +199,7 @@ class DeliveryForm extends BaseForm<Order> {
         }
       });
 
-    return {...request, products} as StoreOrderRequest;
+    return {...request, comments, products} as StoreOrderRequest;
   }
 
   /**
@@ -215,8 +216,8 @@ class DeliveryForm extends BaseForm<Order> {
         changed[name] = request?.[name];
       });
 
-    changed['comments'] = this.comments;
-    changed['products'] = this.productFields;
+    changed['comments'] = request?.comments;
+    changed['products'] = request.products;
 
     return changed as UpdateOrderRequest;
   }
@@ -396,8 +397,6 @@ const actions = {
     commit('setProductFields', products);
   },
   setProductField({ commit, dispatch }, {productId, amount, variantId, batch, serveAt, comments}) {
-    console.log('setProductField', {productId, amount, variantId, batch, serveAt, comments})
-
     commit('setProductField', {productId, amount, variantId, batch, serveAt, comments});
     dispatch('recalculate');
   },
@@ -485,7 +484,6 @@ const mutations = {
     UpdateOrderResponse
   >(),
   setSelected(state: DeliveryState, selected: Order | null) {
-    console.log('delivery set selected: ', selected);
     state.selected = selected;
 
     if (!state.form) {

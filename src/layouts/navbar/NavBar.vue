@@ -4,13 +4,13 @@
     <div class="w-full flex flex-col justify-center items-start text-neutral-content">
       <div class="navbar flex w-full bg-neutral text-neutral-content h-[68px]">
         <div class="flex-1">
-          <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isOrderPage || isHistoryPage" @click="onBack">
+          <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isOrderPage || isDeliveryPage || isHistoryPage" @click="onBack">
             <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
               <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
             </BaseIcon>
           </button>
 
-          <Item v-if="isMenuPage || isOrderPage || isReviewsPage || isHistoryPage"
+          <Item v-if="isMenuPage || isOrderPage || isDeliveryPage || isReviewsPage || isHistoryPage"
                 :with-icon="!isNarrowScreen"
                 :restaurant="restaurant"/>
         </div>
@@ -93,7 +93,12 @@ export default defineComponent({
     isOrderPage() {
       const name = this.$route.name;
 
-      return name && name.endsWith('-order');
+      return !this.isDeliveryPage && name && name.endsWith('-order');
+    },
+    isDeliveryPage() {
+      const name = this.$route.name ?? '';
+
+      return name === 'place-delivery-order';
     },
     isHistoryPage() {
       const name = this.$route.name;
@@ -110,7 +115,7 @@ export default defineComponent({
         return;
       }
 
-      if (this.isHomePage || this.isHistoryPage || this.isOrderPage || this.isRestaurantPage || this.isReviewsPage) {
+      if (this.isHomePage || this.isHistoryPage || this.isOrderPage || this.isDeliveryPage || this.isRestaurantPage || this.isReviewsPage) {
         if (!this.isPlacePage) {
           return;
         }
@@ -157,6 +162,23 @@ export default defineComponent({
 
         if (banquetId) {
           path += `/order/${banquetId}`;
+        }
+
+        path += `/menu`;
+
+        if (menuId) {
+          path += `/${menuId}`;
+        }
+
+        this.$router.push(path);
+      } else if (this.isDeliveryPage) {
+        const menuId = this.$store.getters['preview/menu']?.id;
+        const deliveryId = this.$route.params['deliveryId'];
+
+        let path = `/place/${restaurantId}/delivery`;
+
+        if (deliveryId) {
+          path += `/${deliveryId}`;
         }
 
         path += `/menu`;

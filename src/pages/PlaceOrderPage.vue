@@ -584,6 +584,9 @@ export default defineComponent({
       this.loadMenusIfMissing();
       this.loadTagsIfMissing();
     },
+    isPlaceOrder() {
+      return (this.$route.name ?? '') === ('place-order');
+    },
     onOrderSwitcherClick() {
       const menuId = this.$store.getters['preview/menu']?.id;
       const banquetId = this.$route.params['banquetId'];

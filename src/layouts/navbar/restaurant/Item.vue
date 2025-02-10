@@ -7,7 +7,7 @@
       </div>
     </button>
 
-    <Details :restaurant="restaurant"/>
+    <Details :restaurant="restaurant" :description="underText"/>
   </div>
 </template>
 
@@ -31,6 +31,28 @@ export default defineComponent({
       default: true,
     }
   },
+  computed: {
+    isBanquet() {
+      return this.$route['name'] === 'place-menu'
+          || this.$route['name'] === 'place-order';
+    },
+    isDelivery() {
+      return this.$route['name'] === 'place-delivery-menu'
+          || this.$route['name'] === 'place-pre-delivery-menu'
+          || this.$route['name'] === 'place-delivery-order';
+    },
+    underText() {
+      if (this.isDelivery) {
+        return this.$t('preview.navbar.delivery');
+      }
+
+      if (this.isBanquet) {
+        return this.$t('preview.navbar.banquet');
+      }
+
+      return null;
+    },
+  }
 });
 </script>
 

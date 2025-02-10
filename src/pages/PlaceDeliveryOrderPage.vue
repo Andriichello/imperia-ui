@@ -4,9 +4,9 @@
 <!--               v-if="isLoadingRestaurant || isLoadingRestaurants"/>-->
 
     <div class="flex flex-col justify-center items-start gap-3 w-full min-w-xl max-w-xl">
-      <DeliveryOrderSwitcher class="w-full z-10"
-                     @click="onOrderSwitcherClick"
-                     :show-arrow="false"/>
+<!--      <DeliveryOrderSwitcher class="w-full z-10"-->
+<!--                     @click="onOrderSwitcherClick"-->
+<!--                     :show-arrow="false"/>-->
 
       <Preloader :title="$t('preview.order.loading')" class="p-2"
                  v-if="orderId && (isLoadingOrder)"/>
@@ -105,6 +105,12 @@
       </div>
     </div>
 
+      <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
+        <DeliveryOrderSwitcher class="w-full max-w-4xl"
+                               :show-arrow="true"
+                               @switch-to-delivery="onOrderSwitcherClick"/>
+      </div>
+
   </div>
 </template>
 
@@ -112,7 +118,7 @@
 import {defineComponent} from "vue";
 import {mapActions, mapGetters} from "vuex";
 import Preloader from "@/components/preview/loading/Preloader.vue";
-import {instanceOfUpdateOrderResponse} from "@/openapi";
+import {instanceOfStoreOrderResponse, instanceOfUpdateOrderResponse} from "@/openapi";
 import {ResponseErrors} from "@/helpers";
 import CommentList from "@/components/order/comment/CommentList.vue";
 import List from "@/components/order/list/List.vue";
@@ -162,6 +168,7 @@ export default defineComponent({
       order: 'delivery/selected',
       orderForm: 'delivery/form',
       showOrderResponse: 'delivery/show',
+      storeOrderResponse: 'delivery/store',
       updateOrderResponse: 'delivery/update',
       productFields: 'delivery/productFields',
       orderedProductsResponse: 'delivery/orderedProductsResponse',
@@ -194,10 +201,24 @@ export default defineComponent({
 
       this.loadProductsForOrderIfMissing({order: newOrder});
     },
-    async updateOrderResponse(newValue) {
-      await this.setIsOrderSavedSuccessfully(instanceOfUpdateOrderResponse(newValue));
+    async storeOrderResponse(newValue) {
+      const success = instanceOfStoreOrderResponse(newValue);
+      await this.setIsOrderSavedSuccessfully(success);
 
-      await this.loadOrder({id: newValue.data.id, params: {include: 'comments,products,products.comments'}});
+      if (success) {
+        const path = this.$route.path;
+        this.$router.replace(`${path}/${newValue.data.id}`);
+
+        await this.loadOrder({id: newValue.data.id, params: {include: 'comments,products,products.comments'}});
+      }
+    },
+    async updateOrderResponse(newValue) {
+      const success = instanceOfUpdateOrderResponse(newValue);
+      await this.setIsOrderSavedSuccessfully(success);
+
+      if (success) {
+        await this.loadOrder({id: newValue.data.id, params: {include: 'comments,products,products.comments'}});
+      }
     },
     orderedProductsResponse: {
       handler() {
@@ -261,14 +282,14 @@ export default defineComponent({
       this.loadTagsIfMissing();
     },
     onOrderSwitcherClick() {
-      const menuId = this.$store.getters['preview/menu']?.id;
-      const orderId = this.$route.params['orderId'];
+      const menuId = this.$store.getters['preview/selected']?.id;
+      const deliveryId = this.$route.params['deliveryId'];
       const restaurantId = this.$route.params['restaurantId'];
 
-      let path = `/place/${restaurantId}`;
+      let path = `/place/${restaurantId}/delivery`;
 
-      if (orderId) {
-        path += `/delivery/order/${orderId}`;
+      if (deliveryId) {
+        path += `/${deliveryId}`;
       }
 
       path += `/menu`;
@@ -278,6 +299,7 @@ export default defineComponent({
       }
 
       this.$router.push(path);
+      window.scrollTo(0, 0);
     },
     validateOrderForm() {
       this.orderErrors = {};
@@ -308,8 +330,7 @@ export default defineComponent({
 
         const request = this.orderForm.asCreate();
 
-        this.updateOrder({ id: this.orderId, request, params: { include: 'comments,products,products.comments' }});
-
+        this.createOrder({ request, params: { include: 'comments,products,products.comments' }});
       }
     },
     onCreateComment() {
@@ -331,10 +352,10 @@ export default defineComponent({
 
     document.addEventListener("keydown", this.onKeyDown);
     window.addEventListener("resize", this.onResize);
-    const orderId = +this.$route.params['orderId'];
+    const deliveryId = +this.$route.params['deliveryId'];
 
-    if (orderId) {
-      this.loadOrderIfMissing({id: orderId, params: {include: 'comments,products,products.comments'}});
+    if (deliveryId) {
+      this.loadOrderIfMissing({id: deliveryId, params: {include: 'comments,products,products.comments'}});
     }
 
     if (this.order) {
@@ -366,7 +387,7 @@ export default defineComponent({
 
 <style scoped>
 .order-page {
-  @apply flex flex-col w-full gap-3 px-2 pt-4 pb-10;
+  @apply flex flex-col w-full gap-3 px-2 pt-4 pb-[200px];
 
   display: flex;
   flex-basis: 100%;

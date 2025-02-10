@@ -1182,8 +1182,6 @@ const mutations = {
     state.form.setChange(`comments`, state.form.comments);
   },
   deleteComment(state: OrderState, {index}) {
-    console.log({comments: state.form.comments, index, after: state.form.comments.splice(index, 1)});
-
     state.form.setChange(`comments`, state.form.comments.splice(index, 1));
   },
   setOrderedSpaces(state: OrderState, spaces) {

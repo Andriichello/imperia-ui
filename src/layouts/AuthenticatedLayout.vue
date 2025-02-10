@@ -27,7 +27,7 @@
             <li v-if="restaurant" class="max-w-[300px]">
 <!--              <h2 class="menu-title">{{ $t('Restaurant') }}</h2>-->
               <ul>
-                <li @click="clickDrawer(); $router.replace(`/preview/${restaurantId}`)">
+                <li @click="onSideRestaurantClick">
                   <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                     <div class="flex justify-center items-center gap-2">
                       <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">
@@ -276,7 +276,7 @@
 
     <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
       <template v-if="isMenuPage && !failed">
-        <OrderTabs class="bg-base-100 p-2 h-auto w-full overflow-y-hidden"
+        <OrderTabs class="bg-base-100 p-2 h-auto w-full overflow-y-hidden" v-if="!isDelivery"
                    :selected="tab"
                    :only="['products', 'spaces', 'services']"
                    @switch-to-tab="onSwitchTab"/>
@@ -384,9 +384,16 @@ export default defineComponent({
     isHomePage() {
       return this.$route['name'] === 'home';
     },
+    isDelivery() {
+      return this.$route['name'] === 'place-delivery-menu'
+          || this.$route['name'] === 'place-pre-delivery-menu'
+          || this.$route['name'] === 'place-delivery-order';
+    },
     isMenuPage() {
       return this.$route['name'] === 'place-menu'
-          || this.$route['name'] === 'place-order-menu';
+          || this.$route['name'] === 'place-order-menu'
+          || this.$route['name'] === 'place-delivery-menu'
+          || this.$route['name'] === 'place-pre-delivery-menu';
     },
     isRestaurantPage() {
       return this.$route['name'] === 'place-restaurant';
@@ -491,6 +498,13 @@ export default defineComponent({
 
       this.lastScrollPosition = scrollTop;
     },
+    onSideRestaurantClick() {
+      this.clickDrawer();
+
+      if (!this.isHomePage) {
+        this.$router.push(`/place/${this.restaurantId}`);
+      }
+    },
     onSwitchTab({to}) {
       this.selectTab(to);
     },
@@ -499,7 +513,19 @@ export default defineComponent({
       this.selectMenu(menu);
 
       const restaurantId = this.$route.params['restaurantId'];
-      this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+      const deliveryId = this.$route.params['deliveryId'];
+
+      const isDelivery = this.$route.path.includes('/delivery/');
+
+      if (isDelivery) {
+        if (deliveryId) {
+          this.$router.push(`/place/${restaurantId}/delivery/${deliveryId}/menu/${menu.id}`);
+        } else {
+          this.$router.push(`/place/${restaurantId}/delivery/menu/${menu.id}`);
+        }
+      } else {
+        this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+      }
 
       window.scrollTo(0, 0);
     },
@@ -542,7 +568,7 @@ export default defineComponent({
     onNewDelivery() {
       this.clearOrder();
 
-      this.$router.push(`/place/${this.restaurantId}/delivery/order`);
+      this.$router.push(`/place/${this.restaurantId}/delivery`);
     },
     onSwitchTheme() {
       if (this.theme === this.themes[0]) {
