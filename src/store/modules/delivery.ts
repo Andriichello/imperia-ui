@@ -288,7 +288,7 @@ const getters = {
   productsCount(state: DeliveryState, getters) {
     let count = 0;
 
-    getters.products.forEach((p) => {
+    getters.productFields.forEach((p) => {
       if (p.amount) {
         count += p.amount;
       }

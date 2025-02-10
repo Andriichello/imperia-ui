@@ -30,11 +30,13 @@ class PreviewSelections {
   public menu: Menu | null;
   public search: string | null;
   public category: Category | null;
+  public addedOnly: boolean | null;
   constructor() {
     this.tab = 'products';
     this.menu = null;
     this.search = null;
     this.category = null;
+    this.addedOnly = null;
   }
 }
 
@@ -120,6 +122,9 @@ const getters = {
   },
   categories(state: PreviewState) {
     return state.selections.menu ? state.selections.menu.categories : [];
+  },
+  addedOnly(state: PreviewState) {
+    return state.selections.addedOnly ?? false;
   },
   menus(state: PreviewState) {
     return state.menus;
@@ -266,6 +271,9 @@ const actions = {
   },
   selectCategory({commit}, category: Category | null) {
     commit('selectCategory', category);
+  },
+  selectAddedOnly({commit}, addedOnly: boolean | null) {
+    commit('selectAddedOnly', addedOnly);
   },
   setIsShowingMenusModal({commit}, isShowing: boolean | null) {
     commit('setIsShowingMenusModal', isShowing);
@@ -626,6 +634,9 @@ const mutations = {
   },
   selectCategory(state: PreviewState, category) {
     state.selections.category = category;
+  },
+  selectAddedOnly(state: PreviewState, addedOnly) {
+    state.selections.addedOnly = addedOnly;
   },
   setMenu(state: PreviewState, menu) {
     state.menu = menu;

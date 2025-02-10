@@ -84,7 +84,9 @@
       "restaurant": "Restaurant",
       "street_and_address": "Street, address",
       "delivery": "Delivery",
-      "banquet": "Banquet"
+      "banquet": "Banquet",
+      "cart": "Added to Cart",
+      "only_added": "Only added"
     },
     "restaurant": {
       "loading": "Loading restaurant",
@@ -107,7 +109,9 @@
       "loading_spaces": "Loading spaces",
       "loading_products": "Loading items",
       "loading_services": "Loading services",
-      "unfortunately_list_is_empty": "Unfortunately the list is empty"
+      "unfortunately_list_is_empty": "Unfortunately the list is empty",
+      "only_added_list_is_empty": "List of items added to the order is empty",
+      "only_added_to_show_all": "Show all menu items"
     },
     "space": {
       "floor": "Floor",

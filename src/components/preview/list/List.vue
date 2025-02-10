@@ -109,6 +109,7 @@ export default defineComponent({
 }
 
 .list-col {
+  flex-grow: 1;
   flex-basis: 45%;
 }
 

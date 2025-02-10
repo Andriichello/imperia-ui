@@ -82,12 +82,6 @@
         </button>
       </div>
 
-      <OrderSwitcher class="w-full z-10"
-                     @click="onOrderSwitcherClick"
-                     :loading-banquet="isLoadingBanquet"
-                     :loading-order="isLoadingOrder"
-                     :show-arrow="false"/>
-
       <div class="w-full flex justify-center items-center">
         <button class="w-full btn btn-sm btn-ghost max-w-xl"
                 @click="onCreateComment">
@@ -272,6 +266,14 @@
       </div>
 
       <div class="grow w-full min-h-[8px]" @click="modal = null"></div>
+    </div>
+
+    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
+      <OrderSwitcher class="w-full z-10 w-full max-w-4xl"
+                     @click="onOrderSwitcherClick"
+                     :loading-banquet="isLoadingBanquet"
+                     :loading-order="isLoadingOrder"
+                     :show-arrow="false"/>
     </div>
 
   </div>

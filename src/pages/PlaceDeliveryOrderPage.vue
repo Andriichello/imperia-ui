@@ -105,11 +105,11 @@
       </div>
     </div>
 
-      <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
-        <DeliveryOrderSwitcher class="w-full max-w-4xl"
-                               :show-arrow="true"
-                               @switch-to-delivery="onOrderSwitcherClick"/>
-      </div>
+    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
+      <DeliveryOrderSwitcher class="w-full max-w-4xl"
+                             :show-arrow="true"
+                             @switch-to-delivery="onOrderSwitcherClick"/>
+    </div>
 
   </div>
 </template>

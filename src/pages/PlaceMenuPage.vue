@@ -5,6 +5,7 @@
                  v-if="!isLoadingRestaurants && isLoadingMenus"/>
 
       <PreviewMenu class="pb-4"
+                   :only="addedOnly ? addedProductIds : null"
                    v-if="menu"/>
     </template>
 
@@ -120,6 +121,7 @@ export default defineComponent({
     ...mapGetters({
       tab: 'preview/tab',
       menu: 'preview/selected',
+      addedOnly: 'preview/addedOnly',
       spaces: 'preview/spaces',
       services: 'preview/services',
       spaceCategories: 'preview/spaceCategories',
@@ -138,6 +140,8 @@ export default defineComponent({
       isLoadingBanquet: "basket/isLoadingShowResponse",
       isLoadingDelivery: "delivery/isLoadingShow",
       banquetId: 'order/banquetId',
+      orderProductFields: 'order/products',
+      deliveryProductFields: 'delivery/productFields',
     }),
     isPlacePage() {
       return !this.isDeliveryPage;
@@ -148,6 +152,13 @@ export default defineComponent({
       return name === 'place-pre-delivery-menu'
           || name === 'place-delivery-menu'
           || name === 'place-delivery-order';
+    },
+    addedProductIds() {
+      const fields = this.isDeliveryPage
+          ? this.$store.getters['delivery/productFields']
+          : this.$store.getters['order/products'];
+
+      return fields?.map(f => f?.productId);
     },
   },
   methods: {

@@ -81,7 +81,9 @@
       "restaurant": "Заклад",
       "street_and_address": "Вулиця, аддрес",
       "delivery": "Доставка",
-      "banquet": "Банкет"
+      "banquet": "Банкет",
+      "cart": "Додані до Корзини",
+      "only_added": "Лише додані"
     },
     "restaurant": {
       "loading": "Завантаження закладу",
@@ -105,7 +107,9 @@
       "loading_spaces": "Завантаження столів та приміщень",
       "loading_products": "Завантаження страв",
       "loading_services": "Завантаження послуг",
-      "unfortunately_list_is_empty": "На жаль, список порожній"
+      "unfortunately_list_is_empty": "На жаль, список порожній",
+      "only_added_list_is_empty": "Список доданих до замовлення позицій порожній",
+      "only_added_to_show_all": "Показати всі позиції меню"
     },
     "space": {
       "floor": "Поверх",
