@@ -3,7 +3,9 @@
     <div class="w-full flex justify-start items-center p-3 px-4 rounded selected gap-2 cursor-pointer"
             @click="onSwitchOrder(!showing)">
 
-      <span class="loading loading-spinner loading-sm" v-if="isLoadingOrder || isLoadingBanquet"></span>
+      <span class="loading loading-spinner loading-sm"
+            v-if="isLoadingOrder || isLoadingBanquet"
+            :class="{'bg-black': theme === ThemeConfig.dark()}"/>
 
       <template v-if="isEmpty">
         <BaseIcon title="products" color="text-black" :width="32" :height="32" viewBox="0 0 64 64" v-if="isEmpty && !(isLoadingOrder || isLoadingBanquet)">
@@ -115,6 +117,7 @@ import { defineComponent } from 'vue'
 import { mapGetters, mapActions } from "vuex";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import {priceFormatted} from "@/helpers";
+import {ThemeConfig} from "@/configs";
 
 export default defineComponent({
   name: 'OrderSwitcher',
@@ -146,7 +149,11 @@ export default defineComponent({
     };
   },
   computed: {
+    ThemeConfig() {
+      return ThemeConfig
+    },
      ...mapGetters({
+       theme: 'theme/get',
        showing: 'order/showing',
        spacesTotal: 'order/spacesTotal',
        spacesCount: 'order/spacesCount',

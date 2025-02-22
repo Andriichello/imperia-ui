@@ -25,9 +25,9 @@
 
           <template v-if="authorized">
             <li v-if="restaurant" class="max-w-[300px]">
-              <h2 class="menu-title">{{ $t('Restaurant') }}</h2>
+<!--              <h2 class="menu-title">{{ $t('Restaurant') }}</h2>-->
               <ul>
-                <li @click="clickDrawer(); $router.replace(`/preview/${restaurantId}`)">
+                <li @click="onSideRestaurantClick">
                   <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
                     <div class="flex justify-center items-center gap-2">
                       <BaseIcon width="20" height="20" :title="restaurant.name" view-box="0 0 64 64">
@@ -247,7 +247,7 @@
       </div>
     </div>
 
-    <template v-if="isShowingMenusModal && !failed && tab === 'products'">
+    <template v-if="isShowingMenusModal && !failed && (isDelivery || tab === 'products')">
       <div class="w-full max-w-full h-full flex flex-col justify-start items-center gap-2 py-2 px-2">
         <div class="w-full flex justify-between items-center gap-2 p-1">
         <span class="font-semibold text-xl">
@@ -276,7 +276,7 @@
 
     <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
       <template v-if="isMenuPage && !failed">
-        <OrderTabs class="bg-base-100 p-2 h-auto w-full overflow-y-hidden"
+        <OrderTabs class="bg-base-100 p-2 h-auto w-full overflow-y-hidden" v-if="!isDelivery"
                    :selected="tab"
                    :only="['products', 'spaces', 'services']"
                    @switch-to-tab="onSwitchTab"/>
@@ -284,7 +284,7 @@
         <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
                            v-if="pinMenus && isShortScreen"/>
 
-        <div class="w-full sticky top-0 z-40" v-if="tab === 'products'">
+        <div class="w-full sticky top-0 z-40" v-if="isDelivery || tab === 'products'">
           <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
                              v-if="pinMenus && !isShortScreen"/>
 
@@ -302,25 +302,60 @@
         <slot />
       </template>
 
-      <div class="w-full sticky bottom-[68px] left-[8px] ml-4 z-50" v-if="!isWideScreen">
-        <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
-                v-show="isMenuPage && products && products.length > 10 && showGoToTop"
-                @click="goToTop()">
-          <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
-            <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </BaseIcon>
-        </button>
-      </div>
-      <div class="w-fit sticky bottom-2 left-2 z-50 self-start" v-else>
-        <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
-                v-show="isMenuPage && products && products.length > 10 && showGoToTop"
-                @click="goToTop()">
-          <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
-            <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </BaseIcon>
-        </button>
-      </div>
+      <div class="w-full flex justify-center sticky bottom-[68px] z-50 pb-1">
+        <div class="w-full max-w-4xl flex justify-between pr-4"
+        :class="{'pl-2': !isWideScreen, 'pr-2': isWideScreen}">
+          <template v-if="isMenuPage && products && products.length > 10 && showGoToTop">
+            <button class="btn btn-sm w-10 h-10 btn-square btn-ghost rounded up opacity-75" @click="goToTop()">
+              <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
+                <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </BaseIcon>
+            </button>
+          </template>
 
+          <template v-else>
+            <div></div>
+          </template>
+
+          <button class="btn btn-sm h-10 btn-ghost rounded cart"
+                  :class="{'opacity-50': !addedOnly, 'opacity-100': addedOnly}"
+                  @click="onToggleAddedOnly"
+                  v-show="isMenuPage">
+            {{ $t('preview.navbar.only_added') }}
+
+            <BaseIcon :title="$t('preview.navbar.cart')" color="currentColor" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
+              <g id="Buy">
+                <g id="Group 7">
+                  <path id="Fill 1" fill-rule="evenodd" clip-rule="evenodd" d="M6.32772 8.34736L6.93072 15.5194C6.97472 16.0714 7.42572 16.4854 7.97672 16.4854H7.98072H18.8917H18.8937C19.4147 16.4854 19.8597 16.0974 19.9337 15.5824L20.8837 9.02337C20.9057 8.86736 20.8667 8.71136 20.7717 8.58536C20.6777 8.45836 20.5397 8.37636 20.3837 8.35436C20.1747 8.36236 11.5017 8.35036 6.32772 8.34736ZM7.97472 17.9854C6.65772 17.9854 5.54272 16.9574 5.43572 15.6424L4.51972 4.74836L3.01272 4.48836C2.60372 4.41636 2.33072 4.02936 2.40072 3.62036C2.47272 3.21136 2.86772 2.94536 3.26772 3.00936L5.34772 3.36936C5.68272 3.42836 5.93772 3.70637 5.96672 4.04637L6.20172 6.84736C20.4777 6.85336 20.5237 6.86037 20.5927 6.86837C21.1497 6.94937 21.6397 7.24037 21.9737 7.68836C22.3077 8.13537 22.4477 8.68637 22.3677 9.23837L21.4187 15.7964C21.2397 17.0444 20.1557 17.9854 18.8957 17.9854H18.8907H7.98272H7.97472Z"/>
+                  <path id="Fill 3" fill-rule="evenodd" clip-rule="evenodd" d="M17.2876 12.0437H14.5156C14.1006 12.0437 13.7656 11.7077 13.7656 11.2937C13.7656 10.8797 14.1006 10.5437 14.5156 10.5437H17.2876C17.7016 10.5437 18.0376 10.8797 18.0376 11.2937C18.0376 11.7077 17.7016 12.0437 17.2876 12.0437Z"/>
+                  <path id="Fill 5" fill-rule="evenodd" clip-rule="evenodd" d="M7.54451 20.7019C7.84551 20.7019 8.08851 20.9449 8.08851 21.2459C8.08851 21.5469 7.84551 21.7909 7.54451 21.7909C7.24251 21.7909 6.99951 21.5469 6.99951 21.2459C6.99951 20.9449 7.24251 20.7019 7.54451 20.7019Z"/>
+                </g>
+                <g id="Group 10">
+                  <mask id="mask0_33437_4502" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6" y="20" width="3" height="2">
+                    <path id="Clip 9" fill-rule="evenodd" clip-rule="evenodd" d="M6.99902 21.2454C6.99902 21.5474 7.24202 21.7914 7.54502 21.7914C7.84602 21.7914 8.08902 21.5474 8.08902 21.2454C8.08902 20.9444 7.84602 20.7014 7.54502 20.7014C7.24202 20.7014 6.99902 20.9444 6.99902 21.2454Z" fill="white"/>
+                  </mask>
+                  <g mask="url(#mask0_33437_4502)">
+                    <path id="Fill 8" fill-rule="evenodd" clip-rule="evenodd" d="M2 26.7904H13.089V15.7014H2V26.7904Z"/>
+                  </g>
+                </g>
+                <g id="Group 15">
+                  <path id="Fill 11" fill-rule="evenodd" clip-rule="evenodd" d="M7.54351 21.0408C7.43051 21.0408 7.33851 21.1328 7.33851 21.2458C7.33851 21.4728 7.74951 21.4728 7.74951 21.2458C7.74951 21.1328 7.65651 21.0408 7.54351 21.0408ZM7.54351 22.5408C6.82951 22.5408 6.24951 21.9598 6.24951 21.2458C6.24951 20.5318 6.82951 19.9518 7.54351 19.9518C8.25751 19.9518 8.83851 20.5318 8.83851 21.2458C8.83851 21.9598 8.25751 22.5408 7.54351 22.5408Z"/>
+                  <path id="Fill 13" fill-rule="evenodd" clip-rule="evenodd" d="M18.8248 20.7019C19.1258 20.7019 19.3698 20.9449 19.3698 21.2459C19.3698 21.5469 19.1258 21.7909 18.8248 21.7909C18.5228 21.7909 18.2798 21.5469 18.2798 21.2459C18.2798 20.9449 18.5228 20.7019 18.8248 20.7019Z"/>
+                </g>
+                <g id="Group 18">
+                  <mask id="mask1_33437_4502" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="18" y="20" width="2" height="2">
+                    <path id="Clip 17" fill-rule="evenodd" clip-rule="evenodd" d="M18.28 21.2454C18.28 21.5474 18.523 21.7914 18.825 21.7914C19.125 21.7914 19.37 21.5474 19.37 21.2454C19.37 20.9444 19.125 20.7014 18.825 20.7014C18.523 20.7014 18.28 20.9444 18.28 21.2454Z" fill="white"/>
+                  </mask>
+                  <g mask="url(#mask1_33437_4502)">
+                    <path id="Fill 16" fill-rule="evenodd" clip-rule="evenodd" d="M13.28 26.7904H24.37V15.7014H13.28V26.7904Z"/>
+                  </g>
+                </g>
+                <path id="Fill 19" fill-rule="evenodd" clip-rule="evenodd" d="M18.8238 21.0408C18.7118 21.0408 18.6198 21.1328 18.6198 21.2458C18.6208 21.4748 19.0308 21.4728 19.0298 21.2458C19.0298 21.1328 18.9368 21.0408 18.8238 21.0408ZM18.8238 22.5408C18.1098 22.5408 17.5298 21.9598 17.5298 21.2458C17.5298 20.5318 18.1098 19.9518 18.8238 19.9518C19.5388 19.9518 20.1198 20.5318 20.1198 21.2458C20.1198 21.9598 19.5388 22.5408 18.8238 22.5408Z"/>
+              </g>
+            </BaseIcon>
+          </button>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -354,7 +389,7 @@ export default defineComponent({
   data() {
     return {
       isShortScreen: window.innerHeight < 800,
-      isWideScreen: window.innerWidth > 920,
+      isWideScreen: window.innerWidth > 950,
       pinMenus: true,
       scrolledDistance: 0,
       lastScrollPosition: null,
@@ -375,6 +410,7 @@ export default defineComponent({
       failed: 'error/present',
       tab: 'preview/tab',
       menu: 'preview/menu',
+      addedOnly: 'preview/addedOnly',
       menus: 'preview/menus',
       products: 'preview/products',
       restaurant: 'restaurants/selected',
@@ -384,9 +420,16 @@ export default defineComponent({
     isHomePage() {
       return this.$route['name'] === 'home';
     },
+    isDelivery() {
+      return this.$route['name'] === 'place-delivery-menu'
+          || this.$route['name'] === 'place-pre-delivery-menu'
+          || this.$route['name'] === 'place-delivery-order';
+    },
     isMenuPage() {
       return this.$route['name'] === 'place-menu'
-          || this.$route['name'] === 'place-order-menu';
+          || this.$route['name'] === 'place-order-menu'
+          || this.$route['name'] === 'place-delivery-menu'
+          || this.$route['name'] === 'place-pre-delivery-menu';
     },
     isRestaurantPage() {
       return this.$route['name'] === 'place-restaurant';
@@ -421,6 +464,7 @@ export default defineComponent({
       logout: 'auth/logout',
       selectTab: 'preview/selectTab',
       selectMenu: 'preview/selectMenu',
+      selectAddedOnly: 'preview/selectAddedOnly',
       setIsShowingMenusModal: 'preview/setIsShowingMenusModal',
       clearOrder: 'order/clear',
       clearBanquet: 'basket/clear',
@@ -433,7 +477,7 @@ export default defineComponent({
     },
     onResize() {
       this.isShortScreen = window.innerHeight < 800;
-      this.isWideScreen = window.innerWidth > 920;
+      this.isWideScreen = window.innerWidth > 950;
     },
     onScroll() {
       if (this.isShowingMenusModal) {
@@ -491,6 +535,13 @@ export default defineComponent({
 
       this.lastScrollPosition = scrollTop;
     },
+    onSideRestaurantClick() {
+      this.clickDrawer();
+
+      if (!this.isHomePage) {
+        this.$router.push(`/place/${this.restaurantId}`);
+      }
+    },
     onSwitchTab({to}) {
       this.selectTab(to);
     },
@@ -499,7 +550,19 @@ export default defineComponent({
       this.selectMenu(menu);
 
       const restaurantId = this.$route.params['restaurantId'];
-      this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+      const deliveryId = this.$route.params['deliveryId'];
+
+      const isDelivery = this.$route.path.includes('/delivery/');
+
+      if (isDelivery) {
+        if (deliveryId) {
+          this.$router.push(`/place/${restaurantId}/delivery/${deliveryId}/menu/${menu.id}`);
+        } else {
+          this.$router.push(`/place/${restaurantId}/delivery/menu/${menu.id}`);
+        }
+      } else {
+        this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+      }
 
       window.scrollTo(0, 0);
     },
@@ -533,6 +596,9 @@ export default defineComponent({
         behavior: 'smooth',
       });
     },
+    onToggleAddedOnly() {
+      this.selectAddedOnly(!this.addedOnly);
+    },
     onNewOrder() {
       this.clearOrder();
       this.clearBanquet();
@@ -542,7 +608,7 @@ export default defineComponent({
     onNewDelivery() {
       this.clearOrder();
 
-      this.$router.push(`/place/${this.restaurantId}/delivery/order`);
+      this.$router.push(`/place/${this.restaurantId}/delivery`);
     },
     onSwitchTheme() {
       if (this.theme === this.themes[0]) {
@@ -595,6 +661,15 @@ export default defineComponent({
 }
 
 .up:hover {
+  background-color: var(--yellow);
+}
+
+.cart {
+  @apply text-black;
+  background-color: var(--yellow);
+}
+
+.cart:hover {
   background-color: var(--yellow);
 }
 

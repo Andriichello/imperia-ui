@@ -149,10 +149,36 @@ export function crudActions<
       commit('setResource', response?.data ?? null);
       commit('setIsLoadingShow', false);
     },
+    async loadResourceIfMissing({state, dispatch}, {id, params}) {
+      if (state.show || state.resource) {
+        if (state.show && state.show['data'] && state.show['data']['id'] === id) {
+          return;
+        }
+
+        if (state.resource && state.resource.id === id) {
+          return;
+        }
+      }
+
+      dispatch('loadResource', {id, params})
+    },
     async loadAndSelectResource({commit, dispatch, getters}, {id, params}) {
       await dispatch('loadResource', {id, params});
 
       commit('setSelected', getters.resource);
+    },
+    async loadAndSelectResourceIfMissing({state, dispatch}, {id, params}) {
+      if (state.show || state.resource) {
+        if (state.show && state.show['data'] && state.show['data']['id'] === id) {
+          return;
+        }
+
+        if (state.resource && state.resource.id === id) {
+          return;
+        }
+      }
+
+      dispatch('loadAndSelectResource', {id, params})
     },
     async loadResources({commit, dispatch}, {params}) {
       if (!actions.index) {

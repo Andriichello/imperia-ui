@@ -73,7 +73,17 @@ export default defineComponent({
         this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
       }
 
-      if (this.$route.path.includes('/place/')) {
+      const deliveryId = this.$route.params['deliveryId'];
+
+      const isDelivery = this.$route.path.includes('/delivery/');
+
+      if (isDelivery) {
+        if (deliveryId) {
+          this.$router.push(`/place/${restaurantId}/delivery/${deliveryId}/menu/${menu.id}`);
+        } else {
+          this.$router.push(`/place/${restaurantId}/delivery/menu/${menu.id}`);
+        }
+      } else {
         this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
       }
 

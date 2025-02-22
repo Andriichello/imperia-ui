@@ -190,8 +190,8 @@ export class ResponseErrors {
         }
     }
 
-    public static async from(response: Response): Promise<ResponseErrors> {
-        if (response.ok) {
+    public static async from(response: Response | null): Promise<ResponseErrors> {
+        if (!response || response.ok) {
             return new ResponseErrors()
         }
 

@@ -1,7 +1,7 @@
 <template>
   <div class="order-page w-full">
-    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"
-               v-if="isLoadingRestaurant || isLoadingRestaurants"/>
+<!--    <Preloader :title="$t('preview.restaurant.loading')" class="p-2"-->
+<!--               v-if="isLoadingRestaurant || isLoadingRestaurants"/>-->
 
     <Preloader :title="$t('preview.order.loading')" class="p-2"
                v-if="orderId && (isLoadingOrder)"/>
@@ -81,12 +81,6 @@
           <span class="loading loading-spinner" v-if="isCreatingBanquet || isUpdatingBanquet"></span>
         </button>
       </div>
-
-      <OrderSwitcher class="w-full z-10"
-                     @click="onOrderSwitcherClick"
-                     :loading-banquet="isLoadingBanquet"
-                     :loading-order="isLoadingOrder"
-                     :show-arrow="false"/>
 
       <div class="w-full flex justify-center items-center">
         <button class="w-full btn btn-sm btn-ghost max-w-xl"
@@ -272,6 +266,14 @@
       </div>
 
       <div class="grow w-full min-h-[8px]" @click="modal = null"></div>
+    </div>
+
+    <div class="w-full fixed bottom-0 left-0 p-2 pt-1 bg-base-100/10 backdrop-blur-sm">
+      <OrderSwitcher class="w-full z-10 w-full max-w-4xl"
+                     @click="onOrderSwitcherClick"
+                     :loading-banquet="isLoadingBanquet"
+                     :loading-order="isLoadingOrder"
+                     :show-arrow="false"/>
     </div>
 
   </div>
@@ -583,6 +585,9 @@ export default defineComponent({
 
       this.loadMenusIfMissing();
       this.loadTagsIfMissing();
+    },
+    isPlaceOrder() {
+      return (this.$route.name ?? '') === ('place-order');
     },
     onOrderSwitcherClick() {
       const menuId = this.$store.getters['preview/menu']?.id;

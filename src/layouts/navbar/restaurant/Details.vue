@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col flex-wrap justify-center">
     <span class="font-bold text-md text-ellipsis overflow-hidden line-clamp-1">{{ name }}</span>
-    <span class="font-light text-sm text-ellipsis overflow-hidden line-clamp-1">{{ place }}</span>
+    <span class="font-light text-sm text-ellipsis overflow-hidden line-clamp-1">{{ description?.length ? description : place }}</span>
   </div>
 </template>
 
@@ -17,6 +17,10 @@ export default defineComponent({
       type: Restaurant,
       default: null,
     },
+    description: {
+      type: String,
+      default: null,
+    }
   },
   computed: {
     name() {

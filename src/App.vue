@@ -18,12 +18,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import {defineComponent} from "vue";
 import debounce from "lodash.debounce";
-import { mapGetters, mapActions } from "vuex";
+import {mapActions, mapGetters} from "vuex";
 import AuthenticatedLayout from "@/layouts/AuthenticatedLayout.vue";
 import PreviewLayout from "@/layouts/PreviewLayout.vue";
-import {currentTimezone, dateTimezone} from "@/helpers";
+import {ResponseErrors} from "@/helpers";
 
 export default defineComponent({
   name: "App",
@@ -35,6 +35,7 @@ export default defineComponent({
     ...mapGetters({
       page: 'nav/get',
       scrolled: 'nav/scrolled',
+      me: 'auth/me',
       authorized: 'auth/authorized',
     }),
     isPreview() {
@@ -70,6 +71,15 @@ export default defineComponent({
         this.$router.push(this.$route.query.redirect ?? '/place');
       } else if (!newValue && newValue !== oldValue) {
          this.$router.push('/login');
+      }
+    },
+    async me(newValue, oldValue) {
+      if (newValue && newValue !== oldValue) {
+        const errors = await ResponseErrors.from(newValue);
+
+        if (errors.status === 401) {
+          this.$router.push('/login');
+        }
       }
     },
   },

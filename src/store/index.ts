@@ -13,6 +13,7 @@ import reviews from "@/store/modules/reviews";
 import error from "@/store/modules/error";
 import order from "@/store/modules/order";
 import waiters from "@/store/modules/waiters";
+import delivery from "@/store/modules/delivery";
 
 export default createStore({
   modules: {
@@ -22,6 +23,7 @@ export default createStore({
     'theme': theme,
     'order': order,
     'basket': basket,
+    'delivery': delivery,
     'history': history,
     'customers': customers,
     'waiters': waiters,
