@@ -55,47 +55,47 @@
               </ul>
           </li>
 
-            <li>
-              <h2 class="menu-title text-md">{{ $t('Delivery') }}</h2>
-              <ul>
-                <li @click="clickDrawer(); onNewDelivery();">
-                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
-                    <div>
-                      <BaseIcon color="currentColor" width="16" height="16">
-                        <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
-                          <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                      </BaseIcon>
-                    </div>
+<!--            <li>-->
+<!--              <h2 class="menu-title text-md">{{ $t('Delivery') }}</h2>-->
+<!--              <ul>-->
+<!--                <li @click="clickDrawer(); onNewDelivery();">-->
+<!--                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">-->
+<!--                    <div>-->
+<!--                      <BaseIcon color="currentColor" width="16" height="16">-->
+<!--                        <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">-->
+<!--                          <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                        </svg>-->
+<!--                      </BaseIcon>-->
+<!--                    </div>-->
 
-                    <span class="text-md grow font-semibold">
-                      {{ $t('Delivery') }}
-                    </span>
-                  </div>
-                </li>
-                <li @click="clickDrawer(); $router.replace(`/place/${restaurantId}/delivery/history`)">
-                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">
-                    <div>
-                      <BaseIcon width="16" height="16" class="currentColor">
-                        <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">
-                          <path d="M2 2H21.4768V21.477H2V2Z"/>
-                        </mask>
-                        <path d="M11.739 3.5C7.196 3.5 3.5 7.195 3.5 11.738C3.5 16.281 7.196 19.977 11.739 19.977C16.281 19.977 19.977 16.281 19.977 11.738C19.977 7.195 16.281 3.5 11.739 3.5ZM11.739 21.477C6.369 21.477 2 17.108 2 11.738C2 6.368 6.369 2 11.739 2C17.109 2 21.477 6.368 21.477 11.738C21.477 17.108 17.109 21.477 11.739 21.477Z"/>
-                        <mask id="mask1_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="17" width="6" height="6">
-                          <path d="M17.2397 17.707H22.2638V22.7218H17.2397V17.707Z"/>
-                        </mask>
-                        <path d="M21.514 22.7218C21.323 22.7218 21.131 22.6488 20.984 22.5028L17.46 18.9888C17.167 18.6958 17.166 18.2208 17.459 17.9278C17.751 17.6328 18.226 17.6348 18.52 17.9258L22.044 21.4408C22.337 21.7338 22.338 22.2078 22.045 22.5008C21.899 22.6488 21.706 22.7218 21.514 22.7218Z"/>
-                      </BaseIcon>
-                    </div>
+<!--                    <span class="text-md grow font-semibold">-->
+<!--                      {{ $t('Delivery') }}-->
+<!--                    </span>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--                <li @click="clickDrawer(); $router.replace(`/place/${restaurantId}/delivery/history`)">-->
+<!--                  <div class="w-full flex flex-row justify-start items-center w-[270px] max-w-[270px]">-->
+<!--                    <div>-->
+<!--                      <BaseIcon width="16" height="16" class="currentColor">-->
+<!--                        <mask id="mask0_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="20" height="20">-->
+<!--                          <path d="M2 2H21.4768V21.477H2V2Z"/>-->
+<!--                        </mask>-->
+<!--                        <path d="M11.739 3.5C7.196 3.5 3.5 7.195 3.5 11.738C3.5 16.281 7.196 19.977 11.739 19.977C16.281 19.977 19.977 16.281 19.977 11.738C19.977 7.195 16.281 3.5 11.739 3.5ZM11.739 21.477C6.369 21.477 2 17.108 2 11.738C2 6.368 6.369 2 11.739 2C17.109 2 21.477 6.368 21.477 11.738C21.477 17.108 17.109 21.477 11.739 21.477Z"/>-->
+<!--                        <mask id="mask1_1102_7955" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="17" y="17" width="6" height="6">-->
+<!--                          <path d="M17.2397 17.707H22.2638V22.7218H17.2397V17.707Z"/>-->
+<!--                        </mask>-->
+<!--                        <path d="M21.514 22.7218C21.323 22.7218 21.131 22.6488 20.984 22.5028L17.46 18.9888C17.167 18.6958 17.166 18.2208 17.459 17.9278C17.751 17.6328 18.226 17.6348 18.52 17.9258L22.044 21.4408C22.337 21.7338 22.338 22.2078 22.045 22.5008C21.899 22.6488 21.706 22.7218 21.514 22.7218Z"/>-->
+<!--                      </BaseIcon>-->
+<!--                    </div>-->
 
 
-                    <span class="text-md grow font-semibold">
-                      {{ $t('History') }}
-                    </span>
-                  </div>
-                </li>
-              </ul>
-            </li>
+<!--                    <span class="text-md grow font-semibold">-->
+<!--                      {{ $t('History') }}-->
+<!--                    </span>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--              </ul>-->
+<!--            </li>-->
 
             <li>
               <h2 class="menu-title text-md">{{ $t('Banquets') }}</h2>
