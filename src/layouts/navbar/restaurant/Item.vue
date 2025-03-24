@@ -13,7 +13,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Restaurant from "@/openapi/models/Restaurant";
+import Restaurant from "@/openapi/models/Restaurant.ts";
 import Icon from "@/layouts/navbar/restaurant/Icon.vue";
 import Details from "@/layouts/navbar/restaurant/Details.vue";
 

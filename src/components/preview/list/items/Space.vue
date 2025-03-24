@@ -73,7 +73,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Space from "@/openapi/models/Space";
+import Space from "@/openapi/models/Space.ts";
 import {mapActions, mapGetters} from "vuex";
 import {priceFormatted} from "@/helpers";
 import BaseIcon from "@/components/icons/BaseIcon.vue";

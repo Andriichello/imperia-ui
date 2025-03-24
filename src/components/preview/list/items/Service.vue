@@ -65,7 +65,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Service from "@/openapi/models/Service";
+import Service from "@/openapi/models/Service.ts";
 import {mapActions, mapGetters} from "vuex";
 import Counter from "@/components/preview/list/items/Counter.vue";
 import {priceFormatted} from "@/helpers";

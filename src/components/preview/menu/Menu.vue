@@ -17,7 +17,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Menu from "@/openapi/models/Menu";
+import Menu from "@/openapi/models/Menu.ts";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 
 export default defineComponent({

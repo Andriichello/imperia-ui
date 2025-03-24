@@ -8,7 +8,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Restaurant from "@/openapi/models/Restaurant";
+import Restaurant from "@/openapi/models/Restaurant.ts";
 import {DateTime} from "luxon";
 import {filterAndSortSchedules, getCurrentUtcWithOffset, getUpcomingSchedules} from "@/helpers";
 

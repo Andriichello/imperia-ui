@@ -98,7 +98,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Restaurant from "@/openapi/models/Restaurant";
+import Restaurant from "@/openapi/models/Restaurant.ts";
 import Schedule from "@/components/preview/schedule/Schedule.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 import ShortSchedule from "@/components/preview/schedule/ShortSchedule.vue";

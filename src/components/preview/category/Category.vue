@@ -8,7 +8,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import {Category} from "@/openapi/models/Category";
+import {Category} from "@/openapi/models/Category.ts";
 import {mapGetters} from "vuex";
 import {ThemeConfig} from "@/configs";
 

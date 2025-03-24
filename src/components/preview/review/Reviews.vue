@@ -125,7 +125,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Restaurant from "@/openapi/models/Restaurant";
+import Restaurant from "@/openapi/models/Restaurant.ts";
 import {mapActions, mapGetters} from "vuex";
 import {dateFormatted} from "../../../helpers";
 import {instanceOfStoreRestaurantReviewResponse} from "@/openapi";

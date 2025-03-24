@@ -30,7 +30,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Menu from "@/openapi/models/Menu";
+import Menu from "@/openapi/models/Menu.ts";
 import {mapActions, mapGetters} from "vuex";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
 
@@ -71,20 +71,20 @@ export default defineComponent({
 
       if (this.$route.path.includes('/preview/')) {
         this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
-      }
-
-      const deliveryId = this.$route.params['deliveryId'];
-
-      const isDelivery = this.$route.path.includes('/delivery/');
-
-      if (isDelivery) {
-        if (deliveryId) {
-          this.$router.push(`/place/${restaurantId}/delivery/${deliveryId}/menu/${menu.id}`);
-        } else {
-          this.$router.push(`/place/${restaurantId}/delivery/menu/${menu.id}`);
-        }
       } else {
-        this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+        const deliveryId = this.$route.params['deliveryId'];
+
+        const isDelivery = this.$route.path.includes('/delivery/');
+
+        if (isDelivery) {
+          if (deliveryId) {
+            this.$router.push(`/place/${restaurantId}/delivery/${deliveryId}/menu/${menu.id}`);
+          } else {
+            this.$router.push(`/place/${restaurantId}/delivery/menu/${menu.id}`);
+          }
+        } else {
+          this.$router.push(`/place/${restaurantId}/menu/${menu.id}`);
+        }
       }
 
       window.scrollTo(0, 0);

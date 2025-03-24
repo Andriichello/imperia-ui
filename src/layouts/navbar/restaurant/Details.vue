@@ -7,7 +7,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Restaurant from "@/openapi/models/Restaurant";
+import Restaurant from "@/openapi/models/Restaurant.ts";
 
 export default defineComponent({
   // eslint-disable-next-line

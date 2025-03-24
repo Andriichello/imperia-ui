@@ -14,7 +14,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Menu from "@/openapi/models/Menu";
+import Menu from "@/openapi/models/Menu.ts";
 import Category from "@/components/preview/category/Category.vue";
 import {mapActions, mapGetters} from "vuex";
 

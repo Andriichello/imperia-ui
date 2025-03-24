@@ -116,7 +116,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Product from "@/openapi/models/Product";
+import Product from "@/openapi/models/Product.ts";
 import {mapActions, mapGetters} from "vuex";
 import Counter from "@/components/preview/list/items/Counter.vue";
 import {priceFormatted} from "@/helpers";
