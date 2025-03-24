@@ -28,7 +28,8 @@ interface AuthState {
 const state: AuthState = {
   ip: null,
   user: null,
-  token: localStorage.getItem('access-token'),
+  token: localStorage.getItem('access-token') === "null"
+    ? null : (localStorage.getItem('access-token') ?? null),
   me: null,
   login: null,
   logout: null,

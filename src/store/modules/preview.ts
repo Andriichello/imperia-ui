@@ -46,7 +46,7 @@ class PreviewState {
   public tags: Tag[] | null;
   public tagsResponse: IndexTagResponse;
 
-  public menu: Menu[] | null;
+  public menu: Menu | null;
   public showMenuResponse: ShowMenuResponse | null;
   public isShowingMenusModal: boolean | null;
 
