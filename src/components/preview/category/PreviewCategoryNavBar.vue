@@ -1,12 +1,19 @@
 <template>
   <div class="w-full flex flex-col justify-center bg-base-100 shadow-md mb-2" v-if="categories && categories.length">
-    <div class="w-full flex justify-center items-center">
-      <div class="max-w-full flex justify-start gap-2 p-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
+    <div class="w-full flex justify-center items-start">
+      <div class="max-w-full flex justify-start items-start gap-2 p-2 overflow-x-auto overflow-y-hidden" id="category-buttons-scroll">
         <template v-for="c in categories" :key="c.id">
           <Category :item="c" :id="`category-${c.id}-button`"
                     :selected="category && category.id === c.id"
                     @category-toggle="onToggleCategory"/>
         </template>
+      </div>
+
+      <div class="w-fit h-full bg-base-100 sticky right-0 p-2"
+           @click="$emit('open-categories-modal')">
+        <div class="h-full btn btn-sm btn-outline normal-case rounded">
+          <AlignRight class="w-6 h-5"/>
+        </div>
       </div>
     </div>
   </div>
@@ -14,6 +21,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import {AlignRight} from "lucide-vue-next";
 import Menu from "@/openapi/models/Menu.ts";
 import Category from "@/components/preview/category/Category.vue";
 import {mapActions, mapGetters} from "vuex";
@@ -21,7 +29,9 @@ import {mapActions, mapGetters} from "vuex";
 export default defineComponent({
   // eslint-disable-next-line
   name: "PreviewCategoryNavBar",
+  emits: ["open-categories-modal"],
   components: {
+    AlignRight,
     Category,
   },
   props: {
@@ -80,4 +90,11 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.selected {
+  @apply bg-[var(--yellow)];
+}
+
+.selected:hover {
+  @apply bg-[var(--yellow)];
+}
 </style>

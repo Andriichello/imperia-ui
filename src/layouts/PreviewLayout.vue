@@ -12,11 +12,13 @@
 
           <li @click="clickDrawer">
             <div class="flex justify-end">
-              <BaseIcon color="currentColor" width="24" height="24" title="close" style="transform: rotate(45deg);">
-                <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
-                  <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-              </BaseIcon>
+              <button>
+                <BaseIcon color="currentColor" width="24" height="24" title="close" style="transform: rotate(45deg);">
+                  <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </BaseIcon>
+              </button>
             </div>
           </li>
 
@@ -167,30 +169,173 @@
       </div>
     </div>
 
-    <template v-if="isShowingMenusModal && !failed">
-      <div class="w-full max-w-full h-full flex flex-col justify-start items-center gap-2 py-2 px-2">
-        <div class="w-full flex justify-between items-center gap-2 p-1">
-          <span class="font-semibold text-xl">
-            {{ $t('preview.menu.switcher.title') }}
-          </span>
+    <div class="drawer drawer-end">
+      <input id="menu-drawer" type="checkbox" class="drawer-toggle"
+             @change="setIsShowingMenusModal($event.target.checked)"
+             v-model="isShowingMenusModal"/>
 
-          <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">
-            <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">
-              <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-            </BaseIcon>
-          </div>
-        </div>
+      <div class="drawer-side z-[51] min-w-md">
+        <label for="menu-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
 
-        <div class="w-full flex flex-col justify-start items-center gap-2 overflow-y-auto">
-          <template v-for="m in menus" :key="m.id">
-            <Menu :menu="m" v-if="m" @click="onSelectMenu(m)" class="w-full"/>
+        <ul tabindex="0" class="menu bg-base-200 text-base-content min-h-full text-md w-full min-w-md w-md max-w-md"
+            :class="{'bg-neutral': theme === 'dark', 'text-neutral-content': theme === 'dark'}"
+            id="navbar-menu-dropdown-list">
+
+          <li @click="setIsShowingMenusModal(false)">
+            <div class="flex justify-end">
+              <button>
+                <BaseIcon color="currentColor" width="24" height="24" title="close" style="transform: rotate(45deg);">
+                  <svg width="24" height="24" viewBox="0 0 24 24" xmxlns="http://www.w3.org/2000/svg">
+                    <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </BaseIcon>
+              </button>
+            </div>
+          </li>
+
+          <li class="opacity-0 w-full"></li>
+
+          <li v-if="selectedMenu" class="w-full rounded">
+            <div class="w-full flex flex-row justify-start items-center bg-[var(--yellow)] text-black"
+                 style="padding-left: 8px; padding-right: 8px; margin-left: 8px;">
+              <div class="flex justify-center items-center gap-2">
+                <BaseIcon color="currentColor" width="20" height="20" :title="selectedMenu.title" view-box="0 0 24 24">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g id="Iconly/Light/Document">
+                      <g id="Document">
+                        <path id="Stroke 1" d="M15.7161 16.2234H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path id="Stroke 2" d="M15.7161 12.0369H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path id="Stroke 3" d="M11.2511 7.86011H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path id="Stroke 4" fill-rule="evenodd" clip-rule="evenodd" d="M15.9085 2.74982C15.9085 2.74982 8.23149 2.75382 8.21949 2.75382C5.45949 2.77082 3.75049 4.58682 3.75049 7.35682V16.5528C3.75049 19.3368 5.47249 21.1598 8.25649 21.1598C8.25649 21.1598 15.9325 21.1568 15.9455 21.1568C18.7055 21.1398 20.4155 19.3228 20.4155 16.5528V7.35682C20.4155 4.57282 18.6925 2.74982 15.9085 2.74982Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </g>
+                    </g>
+                  </svg>
+                </BaseIcon>
+              </div>
+
+              <span class="text-lg font-semibold grow">{{ selectedMenu.title }}</span>
+            </div>
+
+            <ul style="margin-left: 16px; margin-right: 16px;">
+              <template v-for="c in categories" :key="c.id">
+                <li class="text-md w-full mt-1 first:mt-2 last:mb-2 rounded"
+                    :class="{'bg-[var(--yellow)]': c.id === selectedCategory?.id, 'text-black': c.id === selectedCategory?.id}"
+                    @click="setIsShowingMenusModal(false); selectCategory(c);">
+                  <a class="px-2">{{ c.title }}</a>
+                </li>
+              </template>
+            </ul>
+          </li>
+
+<!--          <li v-if="selectedMenu" class="w-[300px] max-w-[300px]">-->
+<!--            <div class="flex flex-row justify-start items-center bg-[var(&#45;&#45;yellow)]">-->
+<!--              <div class="flex justify-center items-center gap-2">-->
+<!--                <BaseIcon color="currentColor" width="20" height="20" :title="selectedMenu.title" view-box="0 0 24 24">-->
+<!--                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                    <g id="Iconly/Light/Document">-->
+<!--                      <g id="Document">-->
+<!--                        <path id="Stroke 1" d="M15.7161 16.2234H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                        <path id="Stroke 2" d="M15.7161 12.0369H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                        <path id="Stroke 3" d="M11.2511 7.86011H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                        <path id="Stroke 4" fill-rule="evenodd" clip-rule="evenodd" d="M15.9085 2.74982C15.9085 2.74982 8.23149 2.75382 8.21949 2.75382C5.45949 2.77082 3.75049 4.58682 3.75049 7.35682V16.5528C3.75049 19.3368 5.47249 21.1598 8.25649 21.1598C8.25649 21.1598 15.9325 21.1568 15.9455 21.1568C18.7055 21.1398 20.4155 19.3228 20.4155 16.5528V7.35682C20.4155 4.57282 18.6925 2.74982 15.9085 2.74982Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                      </g>-->
+<!--                    </g>-->
+<!--                  </svg>-->
+<!--                </BaseIcon>-->
+<!--              </div>-->
+
+<!--              <span class="text-lg font-semibold grow">{{ selectedMenu.title }}</span>-->
+<!--            </div>-->
+<!--            <ul class="menu-items py-2">-->
+<!--              <template v-for="c in categories" :key="c.id">-->
+<!--                <li class="text-md w-[270px] max-w-[270px]">-->
+<!--                  <a>{{ c.title }}</a>-->
+<!--                </li>-->
+<!--              </template>-->
+<!--            </ul>-->
+<!--          </li>-->
+
+          <template v-for="menu in otherMenus" :key="menu.id">
+            <li @click="setIsShowingMenusModal(false); onSelectMenu(menu)">
+              <div class="w-full flex flex-row justify-start items-center"
+                   style="padding-left: 8px; padding-right: 8px">
+                <div class="flex justify-center items-center gap-2">
+                  <BaseIcon color="currentColor" width="20" height="20" :title="menu.title" view-box="0 0 24 24">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g id="Iconly/Light/Document">
+                        <g id="Document">
+                          <path id="Stroke 1" d="M15.7161 16.2234H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path id="Stroke 2" d="M15.7161 12.0369H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path id="Stroke 3" d="M11.2511 7.86011H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path id="Stroke 4" fill-rule="evenodd" clip-rule="evenodd" d="M15.9085 2.74982C15.9085 2.74982 8.23149 2.75382 8.21949 2.75382C5.45949 2.77082 3.75049 4.58682 3.75049 7.35682V16.5528C3.75049 19.3368 5.47249 21.1598 8.25649 21.1598C8.25649 21.1598 15.9325 21.1568 15.9455 21.1568C18.7055 21.1398 20.4155 19.3228 20.4155 16.5528V7.35682C20.4155 4.57282 18.6925 2.74982 15.9085 2.74982Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </g>
+                      </g>
+                    </svg>
+                  </BaseIcon>
+                </div>
+
+                <span class="text-lg font-semibold grow">{{ menu.title }}</span>
+              </div>
+            </li>
           </template>
-        </div>
 
+<!--          <li v-if="otherMenus?.length" class="max-w-[300px]">-->
+<!--            <h2 class="menu-title">{{ $t('Other Menus') }}</h2>-->
+<!--            <ul>-->
+<!--              <template v-for="menu in otherMenus" :key="menu.id">-->
+<!--                <li @click="setIsShowingMenusModal(false); onSelectMenu(menu)">-->
+<!--                  <div class="flex flex-row justify-start items-center w-[270px] max-w-[270px]">-->
+<!--                    <div class="flex justify-center items-center gap-2">-->
+<!--                      <BaseIcon color="currentColor" width="20" height="20" :title="menu.title" view-box="0 0 24 24">-->
+<!--                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">-->
+<!--                          <g id="Iconly/Light/Document">-->
+<!--                            <g id="Document">-->
+<!--                              <path id="Stroke 1" d="M15.7161 16.2234H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                              <path id="Stroke 2" d="M15.7161 12.0369H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                              <path id="Stroke 3" d="M11.2511 7.86011H8.49609" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                              <path id="Stroke 4" fill-rule="evenodd" clip-rule="evenodd" d="M15.9085 2.74982C15.9085 2.74982 8.23149 2.75382 8.21949 2.75382C5.45949 2.77082 3.75049 4.58682 3.75049 7.35682V16.5528C3.75049 19.3368 5.47249 21.1598 8.25649 21.1598C8.25649 21.1598 15.9325 21.1568 15.9455 21.1568C18.7055 21.1398 20.4155 19.3228 20.4155 16.5528V7.35682C20.4155 4.57282 18.6925 2.74982 15.9085 2.74982Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--                            </g>-->
+<!--                          </g>-->
+<!--                        </svg>-->
+<!--                      </BaseIcon>-->
+<!--                    </div>-->
+
+<!--                    <span class="text-lg font-semibold grow">{{ menu.title }}</span>-->
+<!--                  </div>-->
+<!--                </li>-->
+<!--              </template>-->
+<!--            </ul>-->
+<!--          </li>-->
+
+          <li class="opacity-0 w-full grow"></li>
+        </ul>
       </div>
-    </template>
+    </div>
 
-    <div class="preview-layout" v-show="!isShowingMenusModal || !isMenuPage">
+<!--    <template v-if="isShowingMenusModal && !failed">-->
+<!--      <div class="w-full max-w-full h-full flex flex-col justify-start items-center gap-2 py-2 px-2">-->
+<!--        <div class="w-full flex justify-between items-center gap-2 p-1">-->
+<!--          <span class="font-semibold text-xl">-->
+<!--            {{ $t('preview.menu.switcher.title') }}-->
+<!--          </span>-->
+
+<!--          <div class="btn btn-sm btn-square" @click="setIsShowingMenusModal(false)">-->
+<!--            <BaseIcon width="24" height="24" view-box="0 0 24 24" style="transform: rotate(45deg)">-->
+<!--              <path d="M12 3V12M12 21V12M12 12H21M12 12H3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>-->
+<!--            </BaseIcon>-->
+<!--          </div>-->
+<!--        </div>-->
+
+<!--        <div class="w-full flex flex-col justify-start items-center gap-2 overflow-y-auto">-->
+<!--          <template v-for="m in menus" :key="m.id">-->
+<!--            <Menu :menu="m" v-if="m" @click="onSelectMenu(m)" class="w-full"/>-->
+<!--          </template>-->
+<!--        </div>-->
+
+<!--      </div>-->
+<!--    </template>-->
+
+    <div class="preview-layout">
       <PreviewNavBar class="w-full" id="preview-bar"/>
 
       <template v-if="isMenuPage && !failed">
@@ -201,7 +346,8 @@
           <PreviewMenuNavBar class="w-full" id="preview-menu-bar"
                              v-if="pinMenus && !isShortScreen"/>
 
-          <PreviewCategoryNavBar class="w-full"/>
+          <PreviewCategoryNavBar class="w-min-4xl w-max-4xl"
+            @open-categories-modal="openCategoriesModal"/>
         </div>
       </template>
 
@@ -215,8 +361,8 @@
       </template>
 
       <div class="w-fit sticky bottom-2 left-2 z-50 self-start">
-        <button class="btn btn-sm btn-square btn-ghost rounded up opacity-75"
-                v-show="isMenuPage && products && products.length > 10 && showGoToTop"
+        <button class="btn btn-sm btn-square btn-ghost rounded up"
+                v-show="isMenuPage && products && products.length > 4 && showGoToTop"
                 @click="goToTop()">
           <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="20" height="20" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}" style="transform: rotate(90deg); transform-origin: center;">
             <path d="M8.5 16.5L4 12M4 12L8.5 7.5M4 12L20 12" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -247,7 +393,7 @@ export default defineComponent({
   components: {
     ShortSchedule,
     Error,
-    Menu,
+    // Menu,
     BaseIcon,
     PreviewCategoryNavBar,
     PreviewMenuNavBar,
@@ -273,10 +419,14 @@ export default defineComponent({
       failed: 'error/present',
       menu: 'preview/menu',
       menus: 'preview/menus',
+      categories: 'preview/categories',
       products: 'preview/products',
       restaurant: 'restaurants/selected',
       restaurantId: "restaurants/restaurantId",
       isShowingMenusModal: 'preview/isShowingMenusModal',
+      isShowingCategoriesModal: 'preview/isShowingCategoriesModal',
+      selectedMenu: 'preview/selected',
+      selectedCategory: 'preview/category',
     }),
     isMenuPage() {
       return this.$route['name'] === 'preview-menu';
@@ -300,12 +450,15 @@ export default defineComponent({
     phone() {
       return this.restaurant?.phone;
     },
+    otherMenus() {
+      return this.menus?.filter(m => m.id !== this.selectedMenu?.id);
+    },
   },
   watch: {
     isShowingMenusModal(newValue) {
-      if (newValue) {
-        window.scrollTo(0, 0);
-      }
+      // if (newValue) {
+      //   window.scrollTo(0, 0);
+      // }
     }
   },
   methods: {
@@ -313,7 +466,9 @@ export default defineComponent({
     ...mapActions({
       applyTheme: 'theme/apply',
       selectMenu: 'preview/selectMenu',
+      selectCategory: 'preview/selectCategory',
       setIsShowingMenusModal: 'preview/setIsShowingMenusModal',
+      setIsShowingCategoriesModal: 'preview/setIsShowingCategoriesModal',
     }),
     clickDrawer() {
       document.getElementById('app-drawer')?.click()
@@ -395,6 +550,9 @@ export default defineComponent({
       this.$router.push(`/preview/${restaurantId}/menu/${menu.id}`);
 
       window.scrollTo(0, 0);
+    },
+    openCategoriesModal() {
+      this.setIsShowingMenusModal(true);
     },
     onErrorBackTo() {
       if (this.isMenuPage) {

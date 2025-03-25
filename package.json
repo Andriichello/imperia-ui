@@ -21,6 +21,7 @@
     "@vuepic/vue-datepicker": "^10.0.0",
     "core-js": "^3.8.3",
     "daisyui": "^4.12.10",
+    "lucide-vue-next": "^0.483.0",
     "luxon": "^3.3.0",
     "vue": "^3.2.13",
     "vue-class-component": "^8.0.0-0",

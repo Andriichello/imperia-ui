@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full flex flex-col justify-center items-start">
+  <div class="w-full flex flex-col justify-center items-center bg-neutral text-neutral-content">
 
-    <div class="w-full flex-col text-neutral-content bg-neutral">
-      <div class="navbar flex w-full h-[68px]">
+    <div class="w-full min-w-4xl max-w-4xl flex-col justify-center items-center">
+      <div class="navbar flex h-[68px] self-center">
         <div class="flex-1">
           <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isTipsPage || isTipsForWaiterPage || isTipsForServicePage || isTipsForFoodPage || isTipsForCleannessPage" @click="onBack">
             <BaseIcon :title="$t('preview.navbar.back')" color="transparent" width="24" height="24" viewBox="0 0 24 24" :style="{stroke: 'currentColor'}">
@@ -15,7 +15,7 @@
                 :restaurant="restaurant"/>
         </div>
 
-        <div class="flex-none gap-2 pr-2">
+        <div class="flex-none gap-2">
           <label tabindex="0">
             <label for="app-drawer" class="drawer-button btn btn btn-square btn-ghost">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>

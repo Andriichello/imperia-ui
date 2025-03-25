@@ -49,6 +49,7 @@ class PreviewState {
   public menu: Menu | null;
   public showMenuResponse: ShowMenuResponse | null;
   public isShowingMenusModal: boolean | null;
+  public isShowingCategoriesModal: boolean | null;
 
   public menus: Menu[] | null;
   public menusRequest: IndexMenusRequest | null;
@@ -81,6 +82,7 @@ class PreviewState {
     this.menu = null;
     this.showMenuResponse = null;
     this.isShowingMenusModal = false;
+    this.isShowingCategoriesModal = false;
 
     this.menus = null;
     this.menusResponse = null;
@@ -149,6 +151,9 @@ const getters = {
   },
   isShowingMenusModal(state: PreviewState) {
     return state.isShowingMenusModal;
+  },
+  isShowingCategoriesModal(state: PreviewState) {
+    return state.isShowingCategoriesModal;
   },
   tags(state: PreviewState) {
     return state.tags;
@@ -277,6 +282,9 @@ const actions = {
   },
   setIsShowingMenusModal({commit}, isShowing: boolean | null) {
     commit('setIsShowingMenusModal', isShowing);
+  },
+  setIsShowingCategoriesModal({commit}, isShowing: boolean | null) {
+    commit('setIsShowingCategoriesModal', isShowing);
   },
   async loadMenus({commit, dispatch, rootGetters}) {
     const request: IndexMenusRequest = {};
@@ -655,6 +663,9 @@ const mutations = {
   },
   setIsShowingMenusModal(state: PreviewState, isShowing) {
     state.isShowingMenusModal = isShowing;
+  },
+  setIsShowingCategoriesModal(state: PreviewState, isShowing) {
+    state.isShowingCategoriesModal = isShowing;
   },
   setTags(state: PreviewState, tags) {
     state.tags = tags;

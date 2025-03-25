@@ -68,6 +68,7 @@ import {mapActions, mapGetters} from "vuex";
 import Preloader from "@/components/preview/loading/Preloader.vue";
 import ListOfCategory from "@/components/preview/list/ListOfCategory.vue";
 import BaseIcon from "@/components/icons/BaseIcon.vue";
+import category from "@/components/preview/category/Category.vue";
 
 export default defineComponent({
   // eslint-disable-next-line
@@ -142,6 +143,13 @@ export default defineComponent({
               });
             }, 200);
           }
+        }
+      },
+    },
+    categories: {
+      handler(newCategories, oldCategories) {
+        if (newCategories !== oldCategories) {
+          this.onScroll();
         }
       },
     },
