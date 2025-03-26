@@ -1,14 +1,16 @@
 <script setup lang="ts">
-import {useStore} from 'vuex';
-import {computed, watch} from "vue";
-import {ThemeConfig} from "@/configs";
-import {Menu} from "@/openapi";
-import {X} from "lucide-vue-next";
-import BaseIcon from "@/components/icons/BaseIcon.vue";
-import ShortSchedule from "@/components/preview/schedule/ShortSchedule.vue";
-import {useRouter} from "vue-router";
+  import {useStore} from 'vuex';
+  import {computed, watch} from "vue";
+  import {ThemeConfig} from "@/configs";
+  import {Menu} from "@/openapi";
+  import {X} from "lucide-vue-next";
+  import BaseIcon from "@/components/icons/BaseIcon.vue";
+  import ShortSchedule from "@/components/preview/schedule/ShortSchedule.vue";
+  import {useRouter} from "vue-router";
+  import Schedule from "@/components/preview/schedule/Schedule.vue";
+  import SideSchedule from "@/components/preview/schedule/SideSchedule.vue";
 
-const restaurantId: number | null = computed(() => {
+  const restaurantId: number | null = computed(() => {
     return +router.currentRoute.value.params['restaurantId'];
   });
 
@@ -16,7 +18,11 @@ const restaurantId: number | null = computed(() => {
     const name = router.currentRoute.value.name;
 
     return name && name.endsWith('-menu');
-  })
+  });
+
+  const isRestaurantPage: boolean = computed(() => {
+    return restaurantId.value > 0;
+  });
 
   const router = useRouter();
   const store = useStore();
@@ -109,12 +115,11 @@ const restaurantId: number | null = computed(() => {
 
         <li class="opacity-0 w-full"></li>
 
-
-        <li v-if="restaurant" class="flex"
-            @click="clickDrawer(); onRestaurantClick()">
+        <li v-if="isRestaurantPage && restaurant" class="flex">
           <h2 class="w-full menu-title text-lg pb-0">{{ $t('Restaurant') }}</h2>
 
-          <div class="w-full flex flex-row justify-start items-center gap-5 mt-1">
+          <div class="w-full flex flex-row justify-start items-center gap-5 mt-1"
+               @click="clickDrawer(); onRestaurantClick()">
             <div class="flex justify-center items-center min-h-[44px]">
               <BaseIcon width="28" height="28" :title="restaurant.name" view-box="0 0 64 64">
                 <path d="M11 4C9.355 4 8 5.355 8 7v2.068a13.74 13.74 0 0 1-.465 3.541L4.531 23.875A15.741 15.741 0 0 0 4 27.932V30.5a7.502 7.502 0 0 0 4 6.63V57c0 1.645 1.355 3 3 3h42c1.645 0 3-1.355 3-3V37.13a7.502 7.502 0 0 0 4-6.629v-2.568c0-1.37-.178-2.733-.531-4.057L56.465 12.61A13.74 13.74 0 0 1 56 9.07V7c0-1.645-1.355-3-3-3H11zm0 2h42c.564 0 1 .436 1 1v2.068c0 .312.01.622.03.932H9.97c.019-.31.03-.62.03-.932V7c0-.564.435-1 1-1zm-1.277 6h44.555c.071.377.154.753.254 1.125l3.004 11.266c.053.202.098.406.142.61H6.323c.045-.204.089-.408.143-.61L9.47 13.125c.099-.372.182-.748.253-1.125zm-3.69 15h51.934c.021.31.033.62.033.932V30.5c0 3.064-2.435 5.5-5.5 5.5S47 33.564 47 30.5V30a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0c0 3.341-2.658 6-6 6s-6-2.659-6-6a1 1 0 0 0-2 0v.5c0 3.064-2.435 5.5-5.5 5.5S6 33.564 6 30.5v-2.568c0-.312.012-.622.034-.932zM32 33.664C33.34 36.208 35.928 38 39 38c2.994 0 5.508-1.718 6.88-4.156C47.117 36.28 49.581 38 52.5 38a7.51 7.51 0 0 0 1.5-.15V57c0 .564-.436 1-1 1H30v-8c0-4.415-3.585-8-8-8s-8 3.585-8 8v8h-3c-.564 0-1-.436-1-1V37.85c.485.098.986.15 1.5.15 2.918 0 5.382-1.719 6.621-4.156C19.493 36.282 22.006 38 25.001 38c3.071 0 5.659-1.792 7-4.336zM22 44c3.341 0 6 2.659 6 6v8H16v-8c0-3.341 2.659-6 6-6z"
@@ -126,21 +131,13 @@ const restaurantId: number | null = computed(() => {
             <span class="w-full text-xl font-semibold">{{ restaurant.name }}</span>
           </div>
 
-          <div class="w-full flex flex-row justify-start items-center py-0.5 gap-5 mt-1">
-            <div class="flex justify-center items-center p-0">
-              <BaseIcon width="28" height="28" color="currentColor" :title="restaurant.name" view-box="0 0 24 24">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 3.5C7.313 3.5 3.5 7.313 3.5 12C3.5 16.687 7.313 20.5 12 20.5C16.687 20.5 20.5 16.687 20.5 12C20.5 7.313 16.687 3.5 12 3.5ZM12 22C6.486 22 2 17.514 2 12C2 6.486 6.486 2 12 2C17.514 2 22 6.486 22 12C22 17.514 17.514 22 12 22Z"/>
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M15.4311 15.6925C15.3001 15.6925 15.1681 15.6585 15.0471 15.5875L11.2771 13.3385C11.0511 13.2025 10.9111 12.9575 10.9111 12.6935V7.84546C10.9111 7.43146 11.2471 7.09546 11.6611 7.09546C12.0761 7.09546 12.4111 7.43146 12.4111 7.84546V12.2675L15.8161 14.2975C16.1711 14.5105 16.2881 14.9705 16.0761 15.3265C15.9351 15.5615 15.6861 15.6925 15.4311 15.6925Z"/>
-              </BaseIcon>
-            </div>
-
-            <ShortSchedule id="side-schedule" v-if="restaurant" :item="restaurant"
-                           class="grow text-lg"/>
+          <div class="w-full flex flex-row justify-start items-start py-0.5 gap-5 mt-1">
+            <SideSchedule :item="restaurant" class="w-full"/>
           </div>
         </li>
 
 
-        <template v-if="menus?.length">
+        <template v-if="isRestaurantPage && menus?.length">
           <li class="opacity-0 w-full min-h-5"></li>
 
           <h2 class="w-full menu-title text-lg pb-0">{{ $t('Menus') }}</h2>
@@ -172,7 +169,7 @@ const restaurantId: number | null = computed(() => {
 
         <li class="opacity-0 w-full grow min-h-5"></li>
 
-        <template v-if="(address?.length || phone?.length)">
+        <template v-if="isRestaurantPage && (address?.length || phone?.length)">
           <h2 class="w-full menu-title text-lg pb-0">{{ $t('Contacts') }}</h2>
 
           <li v-if="phone?.length" @click="clickPhone" class="mt-1">
