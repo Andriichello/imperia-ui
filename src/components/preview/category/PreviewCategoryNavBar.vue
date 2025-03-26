@@ -78,12 +78,12 @@ export default defineComponent({
     ...mapActions({
       selectCategory: 'preview/selectCategory',
     }),
-    onToggleCategory({category, selected}) {
-      if (selected) {
-        return;
+    async onToggleCategory({category, selected}) {
+      if (selected && this.category?.id === category?.id) {
+        await this.selectCategory(null);
       }
 
-      this.selectCategory(category);
+      await this.selectCategory(category);
     },
   },
 });

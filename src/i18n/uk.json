@@ -356,6 +356,7 @@
       "phone_rules": "Номер телефону має починатися з + та містити щонайменше 10 символів."
     }
   },
+  "Close": "Закрити",
   "Theme": "Тема",
   "Contacts": "Контакти",
   "Restaurant": "Заклад",
@@ -365,9 +366,12 @@
   "Delivery": "Доставка",
   "Menus": "Меню",
   "Menu": "Меню",
+  "Categories": "Категорії",
+  "Category": "Категорія",
   "History": "Історія",
   "User": "Користувач",
   "Logout": "Вийти",
   "Change to Dark": "Змінити на Темну",
-  "Change to Light": "Змінити на Світлу"
+  "Change to Light": "Змінити на Світлу",
+  "Unfortunately, this category is empty": "На жаль, дана категорія порожня"
 }

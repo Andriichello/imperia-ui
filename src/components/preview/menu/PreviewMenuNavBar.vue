@@ -52,7 +52,7 @@ export default defineComponent({
   methods: {
     ...mapActions({
       selectMenu: 'preview/selectMenu',
-      setIsShowingMenusModal: 'preview/setIsShowingMenusModal',
+      setIsShowingMenusDrawer: 'preview/setIsShowingMenusDrawer',
     }),
     onResize() {
       this.isNarrowScreen = window.innerWidth < 600;
@@ -60,7 +60,7 @@ export default defineComponent({
     onSelectMenu(menu) {
       if (this.isNarrowScreen) {
         if (this.menus && this.menus.length > 1) {
-          this.setIsShowingMenusModal(true);
+          this.setIsShowingMenusDrawer(true);
           return;
         }
       }

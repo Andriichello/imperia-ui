@@ -48,6 +48,10 @@ class PreviewState {
 
   public menu: Menu | null;
   public showMenuResponse: ShowMenuResponse | null;
+
+  public isShowingAppDrawer: boolean | null;
+  public isShowingMenusDrawer: boolean | null;
+
   public isShowingMenusModal: boolean | null;
   public isShowingCategoriesModal: boolean | null;
 
@@ -81,6 +85,10 @@ class PreviewState {
 
     this.menu = null;
     this.showMenuResponse = null;
+
+    this.isShowingAppDrawer = false;
+    this.isShowingMenusDrawer = false;
+
     this.isShowingMenusModal = false;
     this.isShowingCategoriesModal = false;
 
@@ -285,6 +293,12 @@ const actions = {
   },
   setIsShowingCategoriesModal({commit}, isShowing: boolean | null) {
     commit('setIsShowingCategoriesModal', isShowing);
+  },
+  setIsShowingAppDrawer({commit}, isShowing: boolean | null) {
+    commit('setIsShowingAppDrawer', isShowing);
+  },
+  setIsShowingMenusDrawer({commit}, isShowing: boolean | null) {
+    commit('setIsShowingMenusDrawer', isShowing);
   },
   async loadMenus({commit, dispatch, rootGetters}) {
     const request: IndexMenusRequest = {};
@@ -660,6 +674,12 @@ const mutations = {
   },
   setMenusResponse(state: PreviewState, response) {
     state.menusResponse = response;
+  },
+  setIsShowingAppDrawer(state: PreviewState, isShowing) {
+    state.isShowingAppDrawer = isShowing;
+  },
+  setIsShowingMenusDrawer(state: PreviewState, isShowing) {
+    state.isShowingMenusDrawer = isShowing;
   },
   setIsShowingMenusModal(state: PreviewState, isShowing) {
     state.isShowingMenusModal = isShowing;

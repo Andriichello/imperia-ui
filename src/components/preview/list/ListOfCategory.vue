@@ -1,7 +1,13 @@
 <template>
   <div class="w-full flex flex-col justify-start items-center gap-1">
     <Divider :title="category.title" :id="'category-' + category.id" :lines="false"/>
-    <List class="mb-2" :type="type" :items="items"/>
+
+    <List class="mb-2" :type="type" :items="items"
+          v-if="items.length > 0"/>
+
+    <div class="w-full flex justify-center items-center pb-5" v-else>
+      {{ $t('Unfortunately, this category is empty') }}
+    </div>
   </div>
 </template>
 

@@ -24,6 +24,21 @@ const actions = {
 
     commit('set', theme);
   },
+  toggle({ state, dispatch }): void {
+    const list = ThemeConfig.list();
+
+    if (list.length < 2) {
+      return;
+    }
+
+    const current = list.indexOf(state.theme ?? ThemeConfig.default());
+
+    if (current === -1) {
+      return;
+    }
+
+    return dispatch('apply', list[(current + 1) % list.length]);
+  },
   resolve({ dispatch }): void {
     let theme = localStorage.getItem(ThemeConfig.storage);
 

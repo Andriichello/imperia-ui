@@ -51,10 +51,8 @@
 
       <template v-else-if="products && categories">
         <template v-for="c in categories" :key="c.id">
-          {{ (items = filterByOnly(filterByCategory(products, c))) ? '' : '' }}
-
           <ListOfCategory :type="'products'" :category="c"
-                          :items="items" v-if="items?.length"
+                          :items="filterByOnly(filterByCategory(products, c))"
                           :id="`menu-category-${c.id}`"/>
         </template>
       </template>
@@ -149,7 +147,7 @@ export default defineComponent({
     categories: {
       handler(newCategories, oldCategories) {
         if (newCategories !== oldCategories) {
-          this.onScroll();
+          // this.onScroll();
         }
       },
     },

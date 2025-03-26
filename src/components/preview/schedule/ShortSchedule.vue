@@ -1,8 +1,8 @@
 <template>
   <div class="w-full flex flex-col justify-center items-start">
 <!--    <h2 class="text-md font-bold">{{ $t("schedule.working_schedule") }}</h2>-->
-    <p class="text-md font-semibold">{{ statusDescription }}</p>
-    <p class="text-sm">{{ timeBeforeOrUntil }}</p>
+    <p class="text-lg font-semibold">{{ statusDescription }}</p>
+    <p class="text-md">{{ timeBeforeOrUntil }}</p>
   </div>
 </template>
 

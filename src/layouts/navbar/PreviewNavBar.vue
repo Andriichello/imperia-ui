@@ -1,7 +1,7 @@
 <template>
   <div class="w-full flex flex-col justify-center items-center bg-neutral text-neutral-content">
 
-    <div class="w-full min-w-4xl max-w-4xl flex-col justify-center items-center">
+    <div class="w-full flex-col justify-center items-center">
       <div class="navbar flex h-[68px] self-center">
         <div class="flex-1">
           <button class="btn btn-square btn-ghost" v-if="isRestaurantPage || isMenuPage || isReviewsPage || isTipsPage || isTipsForWaiterPage || isTipsForServicePage || isTipsForFoodPage || isTipsForCleannessPage" @click="onBack">

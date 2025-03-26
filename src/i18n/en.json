@@ -354,7 +354,25 @@
         "phone": "Phone number must be at least 2 digits."
       },
       "email_rules": "Email must contain {sign} and must not contain spaces.",
-      "phone_rules": "Phone must start with + and be at least 10 characters.",
+      "phone_rules": "Phone must start with + and be at least 10 characters."
     }
-  }
+  },
+  "Close": "Close",
+  "Theme": "Theme",
+  "Contacts": "Contacts",
+  "Restaurant": "Restaurant",
+  "Banquets": "Banquets",
+  "Banquet": "Banquet",
+  "Deliveries": "Deliveries",
+  "Delivery": "Delivery",
+  "Menus": "Menus",
+  "Menu": "Menu",
+  "Categories": "Categories",
+  "Category": "Category",
+  "History": "History",
+  "User": "User",
+  "Logout": "Logout",
+  "Change to Dark": "Change to Dark",
+  "Change to Light": "Change to Light",
+  "Unfortunately, this category is empty": "Unfortunately, this category is empty"
 }
